@@ -25,6 +25,7 @@ from collections import defaultdict
 from supabase_food_source import (
     is_configured as supabase_is_configured,
     search_foods as supabase_search_foods,
+    fetch_food_by_fdc_id as supabase_fetch_food_by_fdc_id,
     load_portions_for_food_ids,
 )
 
@@ -745,8 +746,17 @@ class USDAIndex:
             for tok in self._tokens(alt):
                 self._index.setdefault(tok, []).append(idx)
 
-    def get(self, fdc_id: str) -> dict | None:
-        return self._by_id.get(fdc_id)
+    def get(self, fdc_id: str, fetch: bool = True) -> dict | None:
+        """
+        Food by FDC ID. Per-ingredient indexes hold only that ingredient's
+        search results, so a pinned ID (boost fdc_id, egg/salmon/tofu
+        shortcuts) is often absent; fetch it directly rather than letting
+        the shortcut silently fall through to name scoring.
+        """
+        food = self._by_id.get(fdc_id)
+        if food is None and fetch and fdc_id:
+            food = _fetch_food_by_fdc_id(str(fdc_id))
+        return food
 
     def candidates(self, search: str) -> list[dict]:
         query_tokens = self._tokens(search)
@@ -788,6 +798,25 @@ def _row_text(row: dict, *keys: str) -> str:
     return ""
 
 
+def _portion_label(portion_row: dict) -> str:
+    """
+    Portion label with its amount, e.g. "4 oz" — the same text the app shows
+    (FoodPortion.displayServingLabel). Supabase keeps the amount in `value`
+    and the unit in `label`; reading `label` alone gave "oz" for a 113 g
+    portion, and the portion maths read that as one ounce.
+    """
+    label = _row_text(portion_row, "label")
+    value = portion_row.get("value")
+    try:
+        value_num = float(value) if value is not None else None
+    except (TypeError, ValueError):
+        value_num = None
+    if label and value_num is not None and not re.match(r"^\d", label):
+        value_text = str(int(value_num)) if value_num == int(value_num) else f"{value_num:g}"
+        return f"{value_text} {label}"
+    return _row_text(portion_row, "description", "label")
+
+
 def _build_supabase_usda_food(row: dict, row_index: int, portions_by_food_id: dict[int, list[dict]]) -> dict | None:
     source_set = _row_text(row, "source_set").lower()
     if source_set == "branded":
@@ -827,7 +856,7 @@ def _build_supabase_usda_food(row: dict, row_index: int, portions_by_food_id: di
 
     portions = []
     for idx, portion_row in enumerate(portions_by_food_id.get(food_id_int, []), start=1):
-        label = _row_text(portion_row, "description", "label")
+        label = _portion_label(portion_row)
         grams = portion_row.get("grams")
         try:
             grams_val = float(grams) if grams is not None else None
@@ -913,7 +942,7 @@ def _build_supabase_branded_food(row: dict, row_index: int, portions_by_food_id:
     }]
 
     for idx, portion_row in enumerate(portions_by_food_id.get(food_id_int, []), start=1):
-        label = _row_text(portion_row, "description", "label")
+        label = _portion_label(portion_row)
         grams = portion_row.get("grams")
         try:
             grams_val = float(grams) if grams is not None else None
@@ -996,6 +1025,32 @@ def _search_and_build_index(
 
     _INGREDIENT_INDEX_CACHE[cache_key] = index
     return index
+
+
+_FDC_FETCH_CACHE: dict[str, dict | None] = {}
+
+
+def _fetch_food_by_fdc_id(fdc_id: str) -> dict | None:
+    """Build one food dict straight from Supabase by FDC ID ("B_" = branded)."""
+    if fdc_id in _FDC_FETCH_CACHE:
+        return _FDC_FETCH_CACHE[fdc_id]
+    branded = fdc_id.startswith("B_")
+    raw_id = fdc_id[2:] if branded else fdc_id
+    food = None
+    try:
+        row = supabase_fetch_food_by_fdc_id(int(raw_id), branded=branded)
+    except ValueError:
+        row = None
+    if row is not None:
+        portions_by_fid = {}
+        try:
+            portions_by_fid = load_portions_for_food_ids([int(row["id"])])
+        except (KeyError, TypeError, ValueError):
+            pass
+        builder = _build_supabase_branded_food if branded else _build_supabase_usda_food
+        food = builder(row, 0, portions_by_fid)
+    _FDC_FETCH_CACHE[fdc_id] = food
+    return food
 
 
 def _search_usda_for_ingredient(query: str) -> USDAIndex:
@@ -1191,6 +1246,42 @@ def get_portion_override(ingredient: str, boost_rules: list, unit: str = "") -> 
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # Matching
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# Score bonus for a food that has a portion in the recipe's unit. Two USDA
+# datasets often carry the same food under the same name (Foundation "Garlic,
+# raw" has only an 85 g RACC portion; SR Legacy "Garlic, raw" has "1 clove"),
+# and without this the one Supabase returned first won. With it, a food that
+# can express "3 cloves" beats one that can't, even from a slightly lower name
+# score. Applied only above UNIT_PORTION_FLOOR, so it can't carry a poor name
+# match over the confidence line on its own.
+UNIT_PORTION_BONUS = 0.15
+UNIT_PORTION_FLOOR = 0.45
+_WEIGHT_UNITS = {"g", "gram", "grams", "kg", "oz", "ounce", "ounces", "lb", "lbs",
+                 "pound", "pounds", "ml", "l"}
+
+
+def _has_unit_portion(food: dict, unit: str) -> bool | None:
+    """
+    Whether *food* has a portion that can express the recipe *unit*.
+    None when the unit doesn't depend on portions (weights convert via grams).
+    """
+    u = (unit or "").lower().strip()
+    if u in _WEIGHT_UNITS:
+        return None
+    if u in VOLUMETRIC_UNITS:
+        return _has_compatible_volumetric_serving(food, u)
+    keywords = PORTION_UNIT_KEYWORDS.get(u) or (
+        PORTION_UNIT_KEYWORDS["piece"] if u in ("", "pieces") else None)
+    if not keywords:
+        return None
+    for p in food.get("portions", []):
+        if abs(p.get("gram_weight", 100.0) - 100.0) <= 1.0:
+            continue
+        label = p.get("label", "").lower()
+        if any(re.search(rf"\b{re.escape(kw)}", label) for kw in keywords):
+            return True
+    return False
+
+
 def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_cooked=False, unit=""):
     """
     Score every food against display_name and alternate names.
@@ -1270,6 +1361,8 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
             s -= _missing_query_token_penalty(search, food["display_name"])
         if boosted and boost_weight:
             s = min(1.0, s + boost_weight * 0.15)
+        if s >= UNIT_PORTION_FLOOR and _has_unit_portion(food, unit):
+            s += UNIT_PORTION_BONUS
         if s > best_score or (s == best_score and food.get("is_raw") and not best_food_is_raw):
             best_score, best_food, best_alt, best_food_is_raw = s, food, winning_alt, bool(food.get("is_raw"))
     return best_food, best_score, best_alt

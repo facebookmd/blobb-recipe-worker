@@ -338,6 +338,29 @@ def search_foods(
     return list(rows_by_id.values())
 
 
+def fetch_food_by_fdc_id(fdc_id: int, *, branded: bool = False) -> dict | None:
+    """
+    One food row by FDC ID, for the matcher's direct lookups (pinned boosts,
+    egg/salmon/tofu shortcuts) when the pinned food isn't among an
+    ingredient's search results. Returns the raw row, or None.
+    """
+    if not is_configured():
+        return None
+    source_filter = "&source_set=eq.branded" if branded else "&source_set=neq.branded"
+    url = (
+        f"{_supabase_url()}/rest/v1/foods"
+        f"?select={quote(_FOOD_SEARCH_SELECT)}"
+        f"&fdc_id=eq.{int(fdc_id)}"
+        f"{source_filter}"
+        f"&limit=1"
+    )
+    try:
+        rows = _request_json(url)
+    except RuntimeError:
+        return None
+    return rows[0] if rows else None
+
+
 def load_portions_for_food_ids(food_ids: list[int]) -> dict[int, list[dict]]:
     """
     Load portions only for specific food IDs.
