@@ -1,0 +1,10 @@
+branded.db
+food_db.csv
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+~$*
+*.xlsx
+recipes.csv
+.env

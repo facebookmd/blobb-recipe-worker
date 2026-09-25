@@ -1,0 +1,1654 @@
+[
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "silken tofu",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "tofu silken",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "super firm tofu",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "tofu super firm",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ KOREAN PANTRY ════════════════════════════════════════════════════"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "gochujang",
+    "boost": "gochujang",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "trigger": "ham stick",
+    "fdc_id": "746952",
+    "weight": 0.95
+  },
+  {
+    "trigger": "ham stick",
+    "portion_gram_weight": 16.2,
+    "portion_label": "1 slice"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "spam",
+    "off_id": "OFF_008007",
+    "weight": 0.95
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "rice cakes",
+    "off_id": "OFF_041524",
+    "category": "korean",
+    "weight": 0.95
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "tteok",
+    "off_id": "OFF_041524",
+    "weight": 0.95
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "danmuji",
+    "off_id": "OFF_037473",
+    "weight": 0.95
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "pickled radish",
+    "off_id": "OFF_037473",
+    "weight": 0.95
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "picked radish",
+    "off_id": "OFF_037473",
+    "weight": 0.95
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "yellow pickled radish",
+    "off_id": "OFF_037473",
+    "weight": 0.95
+  },
+  {
+    "_comment": "═══ SUGARS ══════════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "castor sugar",
+    "boost": "sugar white granulated",
+    "weight": 0.9
+  },
+  {
+    "trigger": "caster sugar",
+    "boost": "sugar white granulated",
+    "weight": 0.9
+  },
+  {
+    "trigger": "superfine sugar",
+    "boost": "sugar white granulated",
+    "weight": 0.9
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "cocktail sausage",
+    "off_id": "OFF_103269",
+    "weight": 0.95
+  },
+  {
+    "_comment": "═══ STOCKS & BROTHS ═════════════════════════════════════════════════"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "corn syrup",
+    "off_id": "OFF_037462",
+    "weight": 0.95
+  },
+  {
+    "trigger": "corn syrup",
+    "portion_gram_weight": 20.5,
+    "portion_label": "1 tbsp",
+    "portion_unit": "tbsp"
+  },
+  {
+    "trigger": "corn syrup",
+    "portion_gram_weight": 6.8,
+    "portion_label": "1 tsp",
+    "portion_unit": "tsp"
+  },
+  {
+    "trigger": "corn syrup",
+    "portion_gram_weight": 328.0,
+    "portion_label": "1 cup",
+    "portion_unit": "cup"
+  },
+  {
+    "trigger": "chicken stock",
+    "fdc_id": "172884",
+    "weight": 0.95,
+    "exclude": [
+      "powder",
+      "cube",
+      "bouillon"
+    ]
+  },
+  {
+    "trigger": "chicken broth",
+    "fdc_id": "172884",
+    "weight": 0.9,
+    "exclude": [
+      "powder",
+      "cube",
+      "bouillon",
+      "condensed"
+    ]
+  },
+  {
+    "trigger": "littleneck clam",
+    "fdc_id": "174214",
+    "weight": 0.95
+  },
+  {
+    "trigger": "littleneck clam",
+    "portion_gram_weight": 9,
+    "portion_label": "1 small",
+    "portion_unit": "piece"
+  },
+  {
+    "_comment": "═══ LEGUMES ═════════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "roasted soybean",
+    "fdc_id": "172441",
+    "weight": 0.95
+  },
+  {
+    "trigger": "dried soybean",
+    "fdc_id": "172441",
+    "weight": 0.95
+  },
+  {
+    "trigger": "pine nuts",
+    "fdc_id": "170591",
+    "weight": 0.9,
+    "exclude": [
+      "roasted",
+      "toasted"
+    ]
+  },
+  {
+    "trigger": "red beans",
+    "boost": "red kidney beans boiled",
+    "weight": 0.85,
+    "exclude": [
+      "refried",
+      "adzuki"
+    ]
+  },
+  {
+    "_comment": "═══ VINEGAR ══════════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "cane vinegar",
+    "boost": "vinegar cane",
+    "weight": 0.7
+  },
+  {
+    "trigger": "sukang maasim",
+    "boost": "vinegar cane",
+    "weight": 0.8
+  },
+  {
+    "trigger": "coconut vinegar",
+    "boost": "vinegar coconut",
+    "weight": 0.7
+  },
+  {
+    "trigger": "rice wine vinegar",
+    "boost": "rice vinegar",
+    "weight": 0.8
+  },
+  {
+    "trigger": "rice vinegar",
+    "boost": "rice vinegar",
+    "weight": 0.8
+  },
+  {
+    "_comment": "═══ TOMATO ═══════════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "tomato paste",
+    "boost": "tomato paste canned no salt added",
+    "weight": 0.8
+  },
+  {
+    "trigger": "tomato puree",
+    "boost": "tomato paste canned no salt added",
+    "weight": 0.7
+  },
+  {
+    "_comment": "═══ DAIRY & COCONUT ══════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "coconut cream",
+    "boost": "coconut cream unsweetened",
+    "weight": 0.75
+  },
+  {
+    "trigger": "heavy cream",
+    "boost": "cream heavy whipping",
+    "weight": 0.8
+  },
+  {
+    "trigger": "heavy whipping",
+    "boost": "cream heavy whipping",
+    "weight": 0.8
+  },
+  {
+    "trigger": "all purpose cream",
+    "boost": "cream heavy whipping",
+    "weight": 0.7
+  },
+  {
+    "_comment": "═══ ASIAN SAUCES & PASTES ════════════════════════════════════════════"
+  },
+  {
+    "trigger": "miso paste",
+    "boost": "miso",
+    "weight": 0.9
+  },
+  {
+    "trigger": "black bean sauce",
+    "boost": "black bean sauce",
+    "weight": 0.7
+  },
+  {
+    "trigger": "doubanjiang",
+    "fdc_id": "B_1662091",
+    "weight": 0.95
+  },
+  {
+    "trigger": "dou ban jiang",
+    "fdc_id": "B_1662091",
+    "weight": 0.95
+  },
+  {
+    "trigger": "dou-ban-jiang",
+    "fdc_id": "B_1662091",
+    "weight": 0.95
+  },
+  {
+    "trigger": "pixian douban",
+    "fdc_id": "B_1662091",
+    "weight": 0.95
+  },
+  {
+    "trigger": "pi xian douban",
+    "fdc_id": "B_1662091",
+    "weight": 0.95
+  },
+  {
+    "trigger": "chili garlic sauce",
+    "boost": "chili sauce red",
+    "weight": 0.7
+  },
+  {
+    "trigger": "sambal",
+    "boost": "chili sauce red",
+    "weight": 0.6
+  },
+  {
+    "trigger": "banana sauce",
+    "boost": "ketchup",
+    "weight": 0.6
+  },
+  {
+    "trigger": "banana ketchup",
+    "boost": "ketchup",
+    "weight": 0.7
+  },
+  {
+    "_comment": "═══ JAPANESE COOKING LIQUIDS ════════════════════════════════════════"
+  },
+  {
+    "trigger": "cooking sake",
+    "boost": "sake",
+    "weight": 0.75
+  },
+  {
+    "trigger": "cooking sake",
+    "portion_gram_weight": 14.3,
+    "portion_label": "1 tbsp"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "mirin",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "trigger": "mirin",
+    "portion_gram_weight": 17.0,
+    "portion_label": "1 tbsp"
+  },
+  {
+    "trigger": "tonkatsu sauce",
+    "fdc_id": "B_2455990",
+    "weight": 0.95,
+    "category": "japanese"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "rice wine",
+    "boost": "mirin",
+    "off_only": true,
+    "weight": 0.85
+  },
+  {
+    "trigger": "rice wine",
+    "portion_gram_weight": 17.0,
+    "portion_label": "1 tbsp"
+  },
+  {
+    "trigger": "shaoxing wine",
+    "fdc_id": "2265852",
+    "weight": 0.95
+  },
+  {
+    "trigger": "shaoxing cooking wine",
+    "fdc_id": "2265852",
+    "weight": 0.95
+  },
+  {
+    "trigger": "shaoxing-style rice cooking wine",
+    "fdc_id": "2265852",
+    "weight": 0.95
+  },
+  {
+    "trigger": "shao hsing wine",
+    "fdc_id": "2265852",
+    "weight": 0.95
+  },
+  {
+    "trigger": "shao xing wine",
+    "fdc_id": "2265852",
+    "weight": 0.95
+  },
+  {
+    "_comment": "═══ PHILIPPINE PANTRY ════════════════════════════════════════════════"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "annatto",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "achuete",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "atsuete",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "trigger": "liver spread",
+    "boost": "liverwurst spread",
+    "weight": 0.8
+  },
+  {
+    "trigger": "banana blossom",
+    "boost": "banana blossom",
+    "weight": 0.9
+  },
+  {
+    "trigger": "white miso",
+    "fdc_id": "B_2053303"
+  },
+  {
+    "trigger": "salted egg",
+    "fdc_id": "B_2626695"
+  },
+  {
+    "trigger": "salted duck egg",
+    "fdc_id": "B_2626695"
+  },
+  {
+    "trigger": "puso ng saging",
+    "boost": "banana blossom",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ OILS & FATS ══════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "sesame oil",
+    "boost": "sesame oil",
+    "weight": 0.9
+  },
+  {
+    "trigger": "vegetable oil",
+    "boost": "vegetable oil soybean",
+    "weight": 0.7
+  },
+  {
+    "trigger": "canola oil",
+    "boost": "oil canola",
+    "weight": 0.8
+  },
+  {
+    "trigger": "olive oil",
+    "boost": "olive oil",
+    "weight": 0.9
+  },
+  {
+    "trigger": "coconut oil",
+    "boost": "coconut oil",
+    "weight": 0.9
+  },
+  {
+    "trigger": "lard",
+    "boost": "lard",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ HERBS & SPICES ═══════════════════════════════════════════════════"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "five spice",
+    "off_only": true,
+    "weight": 0.8
+  },
+  {
+    "trigger": "star anise",
+    "boost": "anise star",
+    "weight": 0.8
+  },
+  {
+    "trigger": "cinnamon stick",
+    "boost": "cinnamon ground",
+    "weight": 0.7
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "pandan",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "trigger": "kaffir lime",
+    "boost": "limes",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ EGGS ════════════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "egg beaten",
+    "boost": "egg raw fresh",
+    "weight": 0.85
+  },
+  {
+    "_comment": "═══ BREADCRUMBS ═════════════════════════════════════════════════════"
+  },
+  {
+    "_comment": "Density ref (Kikkoman): 1 tsp=2g, 1 tbsp=6g, 1 cup=96g. Using 55g/cup as conservative generic."
+  },
+  {
+    "trigger": "panko",
+    "portion_gram_weight": 55,
+    "portion_label": "1 cup",
+    "portion_unit": "cup"
+  },
+  {
+    "trigger": "panko",
+    "portion_gram_weight": 6,
+    "portion_label": "1 tbsp",
+    "portion_unit": "tbsp"
+  },
+  {
+    "trigger": "panko",
+    "portion_gram_weight": 2,
+    "portion_label": "1 tsp",
+    "portion_unit": "tsp"
+  },
+  {
+    "trigger": "panko breadcrumbs",
+    "boost": "panko bread crumbs japanese style",
+    "weight": 0.98
+  },
+  {
+    "trigger": "panko bread crumbs",
+    "boost": "panko bread crumbs japanese style",
+    "weight": 0.98
+  },
+  {
+    "trigger": "breadcrumb",
+    "portion_gram_weight": 55,
+    "portion_label": "1 cup",
+    "portion_unit": "cup"
+  },
+  {
+    "trigger": "breadcrumb",
+    "portion_gram_weight": 6,
+    "portion_label": "1 tbsp",
+    "portion_unit": "tbsp"
+  },
+  {
+    "trigger": "breadcrumb",
+    "portion_gram_weight": 2,
+    "portion_label": "1 tsp",
+    "portion_unit": "tsp"
+  },
+  {
+    "_comment": "═══ NORI & SEAWEED ══════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "nori",
+    "portion_gram_weight": 2.6,
+    "portion_label": "1 sheet"
+  },
+  {
+    "trigger": "nori",
+    "boost": "seaweed nori",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ NOODLES ═════════════════════════════════════════════════════════"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "shirataki",
+    "off_id": "OFF_103669",
+    "weight": 0.95
+  },
+  {
+    "_comment": "═══ MUSHROOMS ═══════════════════════════════════════════════════════"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "wood ear",
+    "off_id": "OFF_033727",
+    "weight": 0.95
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "woodear",
+    "off_id": "OFF_033727",
+    "weight": 0.95
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "black fungus",
+    "off_id": "OFF_033727",
+    "weight": 0.95
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "wood fungus",
+    "off_id": "OFF_033727",
+    "weight": 0.95
+  },
+  {
+    "_comment": "═══ HOTPOT / SHABU-SHABU ════════════════════════════════════════════"
+  },
+  {
+    "trigger": "shabu",
+    "fdc_id": "173984",
+    "weight": 0.95
+  },
+  {
+    "trigger": "shabu-shabu",
+    "fdc_id": "173984",
+    "weight": 0.95
+  },
+  {
+    "_comment": "═══ DASHI STOCK ══════════════════════════════════════════════════════"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "dashi stock",
+    "off_id": "OFF_097974",
+    "weight": 0.95
+  },
+  {
+    "trigger": "dashi stock",
+    "portion_gram_weight": 15.0,
+    "portion_label": "1 serving (15 ml)",
+    "portion_unit": "serving"
+  },
+  {
+    "trigger": "dashi stock",
+    "portion_gram_weight": 15.0,
+    "portion_label": "1 tbsp",
+    "portion_unit": "tbsp"
+  },
+  {
+    "trigger": "dashi stock",
+    "portion_gram_weight": 5.0,
+    "portion_label": "1 tsp",
+    "portion_unit": "tsp"
+  },
+  {
+    "trigger": "dashi stock",
+    "portion_gram_weight": 240.0,
+    "portion_label": "1 cup",
+    "portion_unit": "cup"
+  },
+  {
+    "trigger": "dashi stock",
+    "portion_gram_weight": 120.0,
+    "portion_label": "1/2 cup",
+    "portion_unit": "cup"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "dashi",
+    "off_id": "OFF_097974",
+    "weight": 0.9,
+    "exclude": [
+      "konbu",
+      "kombu",
+      "kelp",
+      "powder",
+      "packet",
+      "granule"
+    ]
+  },
+  {
+    "trigger": "dashi",
+    "portion_gram_weight": 15.0,
+    "portion_label": "1 tbsp",
+    "portion_unit": "tbsp"
+  },
+  {
+    "trigger": "dashi",
+    "portion_gram_weight": 5.0,
+    "portion_label": "1 tsp",
+    "portion_unit": "tsp"
+  },
+  {
+    "trigger": "dashi",
+    "portion_gram_weight": 240.0,
+    "portion_label": "1 cup",
+    "portion_unit": "cup"
+  },
+  {
+    "_comment": "═══ JAPANESE NOODLES ════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "fresh ramen noodles",
+    "fdc_id": "B_1931812",
+    "weight": 0.9
+  },
+  {
+    "trigger": "fresh ramen noodle",
+    "fdc_id": "B_1931812",
+    "weight": 0.9
+  },
+  {
+    "trigger": "curry block",
+    "boost": "curry block",
+    "fdc_id": "B_2031609",
+    "weight": 0.95,
+    "portion_gram_weight": 20.0,
+    "portion_label": "1 block",
+    "portion_unit": "block"
+  },
+  {
+    "trigger": "soba noodles",
+    "fdc_id": "168907",
+    "weight": 0.95
+  },
+  {
+    "trigger": "somen noodles",
+    "fdc_id": "168909",
+    "weight": 0.95
+  },
+  {
+    "_comment": "═══ JAPANESE RICE ═══════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "japanese short grain rice",
+    "fdc_id": "168881",
+    "weight": 0.95,
+    "exclude": [
+      "cooked",
+      "steamed",
+      "boiled",
+      "plain",
+      "day-old",
+      "leftover"
+    ]
+  },
+  {
+    "trigger": "short grain white rice",
+    "fdc_id": "168881",
+    "weight": 0.95,
+    "exclude": [
+      "cooked",
+      "steamed",
+      "boiled",
+      "plain",
+      "day-old",
+      "leftover"
+    ]
+  },
+  {
+    "trigger": "short-grain white rice",
+    "fdc_id": "168881",
+    "weight": 0.95,
+    "exclude": [
+      "cooked",
+      "steamed",
+      "boiled",
+      "plain",
+      "day-old",
+      "leftover"
+    ]
+  },
+  {
+    "trigger": "cooked short grain white rice",
+    "fdc_id": "168882",
+    "weight": 0.98
+  },
+  {
+    "trigger": "cooked short-grain white rice",
+    "fdc_id": "168882",
+    "weight": 0.98
+  },
+  {
+    "trigger": "cooked long grain white rice",
+    "fdc_id": "168878",
+    "weight": 0.98
+  },
+  {
+    "trigger": "cooked long-grain white rice",
+    "fdc_id": "168878",
+    "weight": 0.98
+  },
+  {
+    "trigger": "cooked medium grain white rice",
+    "fdc_id": "168880",
+    "weight": 0.98
+  },
+  {
+    "trigger": "cooked medium-grain white rice",
+    "fdc_id": "168880",
+    "weight": 0.98
+  },
+  {
+    "trigger": "cooked glutinous white rice",
+    "fdc_id": "169711",
+    "weight": 0.98
+  },
+  {
+    "trigger": "short grain rice",
+    "fdc_id": "168881",
+    "weight": 0.9,
+    "exclude": [
+      "cooked",
+      "steamed",
+      "boiled",
+      "plain",
+      "day-old",
+      "leftover"
+    ]
+  },
+  {
+    "trigger": "sushi rice",
+    "fdc_id": "168881",
+    "weight": 0.9,
+    "exclude": [
+      "cooked",
+      "steamed",
+      "boiled",
+      "plain",
+      "day-old",
+      "leftover"
+    ]
+  },
+  {
+    "trigger": "japanese short grain rice",
+    "portion_gram_weight": 185.0,
+    "portion_label": "1 cup uncooked",
+    "portion_unit": "cup"
+  },
+  {
+    "trigger": "japanese short grain rice",
+    "portion_gram_weight": 5.0,
+    "portion_label": "1 tsp",
+    "portion_unit": "tsp"
+  },
+  {
+    "_comment": "═══ RICE (UNCOOKED / RAW) ════════════════════════════════════════════"
+  },
+  {
+    "_comment": "FDC 168878 = White rice, long-grain, raw (~365 kcal/100g dry). Cooked"
+  },
+  {
+    "_comment": "variants (cooked/steamed/boiled rice) go via INGREDIENT_REMAP to the"
+  },
+  {
+    "_comment": "cooked USDA entry. These rules cover UNCOOKED rice only."
+  },
+  {
+    "trigger": "cooked rice",
+    "fdc_id": "168878",
+    "weight": 0.98,
+    "exclude": [
+      "raw",
+      "uncooked",
+      "dry"
+    ]
+  },
+  {
+    "trigger": "cooked white rice",
+    "fdc_id": "168878",
+    "weight": 0.98,
+    "exclude": [
+      "raw",
+      "uncooked",
+      "dry"
+    ]
+  },
+  {
+    "trigger": "steamed rice",
+    "fdc_id": "168878",
+    "weight": 0.98,
+    "exclude": [
+      "raw",
+      "uncooked",
+      "dry"
+    ]
+  },
+  {
+    "trigger": "boiled rice",
+    "fdc_id": "168878",
+    "weight": 0.98,
+    "exclude": [
+      "raw",
+      "uncooked",
+      "dry"
+    ]
+  },
+  {
+    "trigger": "plain rice",
+    "fdc_id": "168878",
+    "weight": 0.98,
+    "exclude": [
+      "raw",
+      "uncooked",
+      "dry"
+    ]
+  },
+  {
+    "trigger": "day-old rice",
+    "fdc_id": "168878",
+    "weight": 0.98,
+    "exclude": [
+      "raw",
+      "uncooked",
+      "dry"
+    ]
+  },
+  {
+    "trigger": "leftover rice",
+    "fdc_id": "168878",
+    "weight": 0.98,
+    "exclude": [
+      "raw",
+      "uncooked",
+      "dry"
+    ]
+  },
+  {
+    "trigger": "jasmine rice",
+    "fdc_id": "168878",
+    "weight": 0.95,
+    "exclude": [
+      "cooked",
+      "steamed",
+      "boiled",
+      "leftover",
+      "day-old"
+    ]
+  },
+  {
+    "trigger": "white rice",
+    "fdc_id": "168878",
+    "weight": 0.9,
+    "exclude": [
+      "cooked",
+      "steamed",
+      "boiled",
+      "leftover",
+      "day-old"
+    ]
+  },
+  {
+    "trigger": "basmati rice",
+    "fdc_id": "168878",
+    "weight": 0.85,
+    "exclude": [
+      "cooked",
+      "steamed",
+      "boiled",
+      "leftover",
+      "day-old"
+    ]
+  },
+  {
+    "trigger": "long grain rice",
+    "fdc_id": "168878",
+    "weight": 0.85,
+    "exclude": [
+      "cooked",
+      "steamed",
+      "boiled",
+      "leftover",
+      "day-old"
+    ]
+  },
+  {
+    "trigger": "long-grain rice",
+    "fdc_id": "168878",
+    "weight": 0.85,
+    "exclude": [
+      "cooked",
+      "steamed",
+      "boiled",
+      "leftover",
+      "day-old"
+    ]
+  },
+  {
+    "trigger": "katakuriko",
+    "fdc_id": "169698",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ GYOZA WRAPPERS ══════════════════════════════════════════════════"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "gyoza wrappers",
+    "boost": "gyoza wrappers",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "gyoza wrapper",
+    "boost": "gyoza wrapper",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "trigger": "gyoza wrappers",
+    "portion_gram_weight": 9.0,
+    "portion_label": "1 wrapper",
+    "portion_unit": "piece"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "dumpling wrappers",
+    "boost": "dumpling wrappers",
+    "off_only": true,
+    "weight": 0.85
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "dumpling wrapper",
+    "boost": "dumpling wrapper",
+    "off_only": true,
+    "weight": 0.85
+  },
+  {
+    "trigger": "dumpling wrappers",
+    "portion_gram_weight": 9.0,
+    "portion_label": "1 wrapper",
+    "portion_unit": "piece"
+  },
+  {
+    "_comment": "═══ TOFU FRIED / ABURAAGE ════════════════════════════════════════════"
+  },
+  {
+    "trigger": "aburaage",
+    "fdc_id": "172451",
+    "weight": 0.95
+  },
+  {
+    "trigger": "aburaage",
+    "portion_gram_weight": 13.0,
+    "portion_label": "1 piece",
+    "portion_unit": "piece"
+  },
+  {
+    "trigger": "tofu fried",
+    "fdc_id": "172451",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ GLUTINOUS RICE FLOUR / MOCHI ═════════════════════════════════════"
+  },
+  {
+    "trigger": "glutinous rice flour",
+    "fdc_id": "1104867",
+    "weight": 0.95
+  },
+  {
+    "trigger": "shiratamako",
+    "fdc_id": "1104867",
+    "weight": 0.95
+  },
+  {
+    "trigger": "mochiko",
+    "fdc_id": "1104867",
+    "weight": 0.95
+  },
+  {
+    "_comment": "═══ KONNYAKU / KONJAC ════════════════════════════════════════════════"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "konnyaku",
+    "off_only": true,
+    "weight": 0.9,
+    "boost": "konjac"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "konjac",
+    "off_only": true,
+    "weight": 0.9,
+    "boost": "konjac"
+  },
+  {
+    "_comment": "═══ ADZUKI / ANKO ════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "adzuki beans",
+    "fdc_id": "173728",
+    "weight": 0.95
+  },
+  {
+    "trigger": "red bean paste anko",
+    "fdc_id": "173730",
+    "weight": 0.95
+  },
+  {
+    "trigger": "anko",
+    "fdc_id": "173730",
+    "weight": 0.9
+  },
+  {
+    "trigger": "anko",
+    "portion_gram_weight": 15.0,
+    "portion_label": "1 tbsp",
+    "portion_unit": "tbsp"
+  },
+  {
+    "_comment": "═══ JAPANESE-SPECIFIC VEGETABLES ════════════════════════════════════"
+  },
+  {
+    "trigger": "burdock root",
+    "weight": 0.95,
+    "fdc_id": "169974"
+  },
+  {
+    "trigger": "gobo",
+    "weight": 0.9,
+    "fdc_id": "169974"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "hijiki",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "trigger": "garland chrysanthemum",
+    "fdc_id": "169995",
+    "weight": 0.9
+  },
+  {
+    "trigger": "chrysanthemum greens",
+    "fdc_id": "169995",
+    "weight": 0.9
+  },
+  {
+    "trigger": "enoki mushroom",
+    "fdc_id": "169382",
+    "weight": 0.95
+  },
+  {
+    "trigger": "enoki",
+    "fdc_id": "169382",
+    "weight": 0.9
+  },
+  {
+    "trigger": "napa cabbage",
+    "fdc_id": "169979",
+    "weight": 0.95
+  },
+  {
+    "_comment": "═══ WARABI / MUGWORT — BRANDED / OFF ══════════════════════════════════"
+  },
+  {
+    "trigger": "warabi starch",
+    "fdc_id": "B_2671914",
+    "weight": 0.6
+  },
+  {
+    "trigger": "warabiko",
+    "fdc_id": "B_2671914",
+    "weight": 0.6
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "mugwort powder",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "yomogi",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ MATCHA ═══════════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "matcha powder",
+    "boost": "matcha powder",
+    "weight": 0.95
+  },
+  {
+    "trigger": "matcha",
+    "boost": "matcha",
+    "weight": 0.9,
+    "exclude": [
+      "latte",
+      "ice cream",
+      "cake",
+      "cookie",
+      "kit kat"
+    ]
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "hojicha",
+    "off_id": "OFF_046882",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ KINAKO ═══════════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "soy flour kinako",
+    "fdc_id": "174273",
+    "weight": 0.95
+  },
+  {
+    "trigger": "kinako",
+    "fdc_id": "174273",
+    "weight": 0.9
+  },
+  {
+    "trigger": "kinako",
+    "portion_gram_weight": 6.0,
+    "portion_label": "1 tbsp",
+    "portion_unit": "tbsp"
+  },
+  {
+    "_comment": "═══ AGAR / KANTEN ════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "agar agar powder",
+    "fdc_id": "170090",
+    "weight": 0.95
+  },
+  {
+    "trigger": "agar agar",
+    "fdc_id": "170090",
+    "weight": 0.9
+  },
+  {
+    "trigger": "kanten",
+    "fdc_id": "170090",
+    "weight": 0.9
+  },
+  {
+    "trigger": "agar agar powder",
+    "portion_gram_weight": 3.0,
+    "portion_label": "1 tsp",
+    "portion_unit": "tsp"
+  },
+  {
+    "trigger": "agar agar powder",
+    "portion_gram_weight": 9.0,
+    "portion_label": "1 tbsp",
+    "portion_unit": "tbsp"
+  },
+  {
+    "_comment": "═══ NATTO ════════════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "natto",
+    "fdc_id": "172443",
+    "weight": 0.95
+  },
+  {
+    "trigger": "natto",
+    "portion_gram_weight": 175.0,
+    "portion_label": "1 cup",
+    "portion_unit": "cup"
+  },
+  {
+    "trigger": "natto",
+    "portion_gram_weight": 43.75,
+    "portion_label": "1/4 cup",
+    "portion_unit": "cup"
+  },
+  {
+    "_comment": "═══ WAKAME ═══════════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "wakame dried",
+    "fdc_id": "170496",
+    "weight": 0.95
+  },
+  {
+    "trigger": "wakame",
+    "fdc_id": "170496",
+    "weight": 0.9
+  },
+  {
+    "trigger": "wakame",
+    "portion_gram_weight": 10.0,
+    "portion_label": "2 tbsp",
+    "portion_unit": "tbsp"
+  },
+  {
+    "_comment": "═══ PORK BONE BROTH ══════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "pork bone broth",
+    "fdc_id": "172884",
+    "weight": 0.7
+  },
+  {
+    "trigger": "pork bone broth",
+    "portion_gram_weight": 240.0,
+    "portion_label": "1 cup",
+    "portion_unit": "cup"
+  },
+  {
+    "trigger": "pork bone broth",
+    "portion_gram_weight": 14.79,
+    "portion_label": "1 tbsp",
+    "portion_unit": "tbsp"
+  },
+  {
+    "_comment": "═══ JAPANESE PANTRY ══════════════════════════════════════════════════"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "potato starch",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "trigger": "matcha powder",
+    "boost": "matcha powder",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ LEAVENING ════════════════════════════════════════════════════════"
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "baking soda",
+    "boost": "baking soda",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ LEGUMES (additions) ══════════════════════════════════════════════"
+  },
+  {
+    "trigger": "soy flour kinako",
+    "fdc_id": "174274",
+    "weight": 0.95
+  },
+  {
+    "trigger": "kinako",
+    "fdc_id": "174274",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ SEAWEED (additions) ══════════════════════════════════════════════"
+  },
+  {
+    "trigger": "agar agar powder",
+    "fdc_id": "170090",
+    "weight": 0.95
+  },
+  {
+    "trigger": "agar agar",
+    "fdc_id": "170090",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ KATSUOBUSHI / BONITO FLAKES ══════════════════════════════════════"
+  },
+  {
+    "trigger": "katsuobushi",
+    "boost": "bonito flakes",
+    "weight": 0.9
+  },
+  {
+    "trigger": "bonito flakes",
+    "boost": "bonito flakes",
+    "weight": 0.95
+  },
+  {
+    "trigger": "dried bonito",
+    "boost": "bonito flakes",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ BAMBOO SHOOTS ════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "bamboo shoots",
+    "fdc_id": "169211",
+    "weight": 0.95,
+    "exclude": [
+      "canned"
+    ]
+  },
+  {
+    "trigger": "bamboo shoot",
+    "fdc_id": "169211",
+    "weight": 0.9,
+    "exclude": [
+      "canned"
+    ]
+  },
+  {
+    "trigger": "bamboo",
+    "fdc_id": "169211",
+    "weight": 0.8,
+    "exclude": [
+      "canned",
+      "charcoal",
+      "flooring",
+      "fabric"
+    ]
+  },
+  {
+    "_comment": "═══ SASHIMI / RAW FISH ═══════════════════════════════════════════════"
+  },
+  {
+    "trigger": "sashimi-grade tuna",
+    "fdc_id": "175159",
+    "weight": 0.95
+  },
+  {
+    "trigger": "sashimi grade tuna",
+    "fdc_id": "175159",
+    "weight": 0.95
+  },
+  {
+    "trigger": "sashimi tuna",
+    "fdc_id": "175159",
+    "weight": 0.95
+  },
+  {
+    "trigger": "tuna sashimi",
+    "fdc_id": "175159",
+    "weight": 0.95
+  },
+  {
+    "_comment": "═══ TAMAGO / EGG ═════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "tamago",
+    "fdc_id": "171287",
+    "weight": 0.95,
+    "exclude": [
+      "yaki",
+      "sando",
+      "sandwich",
+      "gohan",
+      "kake"
+    ]
+  },
+  {
+    "_comment": "═══ KABOCHA / JAPANESE PUMPKIN ═══════════════════════════════════════"
+  },
+  {
+    "trigger": "kabocha",
+    "fdc_id": "170487",
+    "weight": 0.8
+  },
+  {
+    "trigger": "kabocha pumpkin",
+    "fdc_id": "170487",
+    "weight": 0.85
+  },
+  {
+    "trigger": "kabocha squash",
+    "fdc_id": "170487",
+    "weight": 0.85
+  },
+  {
+    "_comment": "â•â•â• CORN KERNELS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•"
+  },
+  {
+    "trigger": "saba banana",
+    "fdc_id": "173944",
+    "weight": 0.95
+  },
+  {
+    "trigger": "saba banana",
+    "portion_gram_weight": 81.0,
+    "portion_label": "1 extra small (less than 6\" long)",
+    "portion_unit": "piece"
+  },
+  {
+    "trigger": "corn kernels",
+    "fdc_id": "169998",
+    "weight": 0.95,
+    "exclude": [
+      "popcorn"
+    ]
+  },
+  {
+    "trigger": "corn kernel",
+    "fdc_id": "169998",
+    "weight": 0.9,
+    "exclude": [
+      "popcorn"
+    ]
+  },
+  {
+    "trigger": "japanese pumpkin",
+    "fdc_id": "170487",
+    "weight": 0.8
+  },
+  {
+    "_comment": "═══ MITSUBA / JAPANESE PARSLEY ══════════════════════════════════════"
+  },
+  {
+    "trigger": "mitsuba",
+    "fdc_id": "170416",
+    "weight": 0.8
+  },
+  {
+    "trigger": "japanese parsley",
+    "fdc_id": "170416",
+    "weight": 0.85
+  },
+  {
+    "trigger": "trefoil",
+    "fdc_id": "170416",
+    "weight": 0.75
+  },
+  {
+    "_comment": "═══ YUZU ═════════════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "yuzu juice",
+    "boost": "yuzu juice",
+    "weight": 0.9,
+    "exclude": [
+      "ponzu"
+    ]
+  },
+  {
+    "trigger": "yuzu juice",
+    "boost": "yuzu juice, yuzu",
+    "weight": 0.98,
+    "exclude": [
+      "ponzu"
+    ]
+  },
+  {
+    "trigger": "yuzu kosho",
+    "boost": "yuzu kosho",
+    "weight": 0.9
+  },
+  {
+    "trigger": "yuzu",
+    "boost": "yuzu",
+    "weight": 0.85,
+    "exclude": [
+      "juice",
+      "kosho"
+    ]
+  },
+  {
+    "_comment": "═══ KOJI ═════════════════════════════════════════════════════════════"
+  },
+  {
+    "trigger": "koji rice",
+    "boost": "koji firm granular rice",
+    "fdc_id": "B_2160102",
+    "weight": 0.95
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "rice koji",
+    "boost": "rice koji",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "shio koji",
+    "boost": "shio koji",
+    "off_only": true,
+    "weight": 0.9
+  },
+  {
+    "_disabled": true,
+    "_comment": "Disabled OFF rule pending branded replacement",
+    "original_trigger": "koji",
+    "boost": "koji",
+    "off_only": true,
+    "weight": 0.8,
+    "exclude": [
+      "rice",
+      "shio"
+    ]
+  },
+  {
+    "_comment": "═══ MALUNGGAY / MORINGA ═══════════════════════════════════════"
+  },
+  {
+    "trigger": "malunggay",
+    "fdc_id": "168416",
+    "weight": 0.95
+  },
+  {
+    "trigger": "malunggay leaves",
+    "fdc_id": "168416",
+    "weight": 0.95
+  },
+  {
+    "trigger": "moringa",
+    "fdc_id": "168416",
+    "weight": 0.95
+  },
+  {
+    "trigger": "moringa leaves",
+    "fdc_id": "168416",
+    "weight": 0.95
+  }
+]
