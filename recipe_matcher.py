@@ -41,10 +41,10 @@ BUILTIN_BOOSTS = [
      "exclude": ["potato starch"]},
     {"trigger": "bell pepper",   "boost": "sweet red pepper raw",        "weight": 0.6},
     {"trigger": "green peas",    "boost": "peas green frozen unprepared","weight": 0.6},
-    {"trigger": "spring onion",  "boost": "scallions raw",               "weight": 0.9},
-    {"trigger": "green onion",   "boost": "scallions raw",               "weight": 0.9},
-    {"trigger": "scallion",      "boost": "scallions raw",               "weight": 0.9},
-    {"trigger": "scallions",     "boost": "scallions raw",               "weight": 0.9},
+    {"trigger": "spring onion",  "boost": "green onion", "fdc_id": "2727585", "weight": 0.9},
+    {"trigger": "green onion",   "fdc_id": "2727585",                     "weight": 0.9},
+    {"trigger": "scallion",      "fdc_id": "2727585",                     "weight": 0.9},
+    {"trigger": "scallions",     "fdc_id": "2727585",                     "weight": 0.9},
     {"trigger": "onion",         "boost": "onions raw",                  "weight": 0.6},
     {"trigger": "garlic chives", "boost": "chives raw",                  "weight": 0.9},
     {"trigger": "garlic",        "boost": "garlic raw",                  "weight": 0.6,
@@ -78,8 +78,9 @@ BUILTIN_BOOSTS = [
     {"trigger": "whole egg mayo", "boost": "mayonnaise",                 "weight": 0.9},
     {"trigger": "whole-egg mayonnaise","boost": "mayonnaise",            "weight": 0.9},
     {"trigger": "whole egg mayonnaise","boost": "mayonnaise",            "weight": 0.9},
-    {"trigger": "butter",        "boost": "butter salted",               "weight": 0.7,
-     "exclude": ["unsalted","peanut","almond","cashew","sunflower","cocoa","shea"]},
+    {"trigger": "butter",        "boost": "butter salted", "fdc_id": "173410", "weight": 0.7,
+     "exclude": ["unsalted","peanut","almond","cashew","sunflower","cocoa","shea",
+                 "buttermilk","butternut","butterscotch","butterhead","butter bean"]},
     {"trigger": "coriander",     "boost": "cilantro raw",                "weight": 0.8,
      "exclude": ["ground","dried","seed","seeds","powder","spice"]},
     {"trigger": "ground coriander","boost": "coriander seed",            "weight": 0.9},
@@ -127,7 +128,7 @@ BUILTIN_BOOSTS = [
      "exclude": ["no dashi"]},
     {"trigger": "katsuobushi",   "boost": "bonito flakes",               "weight": 0.9},
     {"trigger": "bonito flakes", "boost": "bonito flakes dried",         "weight": 0.9},
-    {"trigger": "kombu",         "boost": "kelp kombu",                  "weight": 0.9},
+    {"trigger": "kombu",         "boost": "kelp", "fdc_id": "168457", "weight": 0.9},
     {"trigger": "ponzu",         "boost": "ponzu sauce",                 "weight": 0.9},
     {"trigger": "furikake",      "boost": "furikake seasoning",          "weight": 0.9},
     {"trigger": "panko",         "boost": "panko breadcrumbs",           "weight": 0.9},
@@ -141,8 +142,20 @@ PREP_WORDS = {
     "chopped","sliced","diced","minced","frozen","raw","fresh","cooked","boiled","mashed",
     "fried","grilled","roasted","baked","dried","ground","shredded","grated",
     "peeled","ripe","unripe","blanched","seasoned","sauteed","sauted","squeezed",
-    "boneless","skinless","lean","extra","finely","roughly","thinly",
+    "boneless","skinless","lean","extra","finely","roughly","thinly","thin","thick",
 }
+
+# Cooking-state words that affect density / volume-to-weight conversion.
+# These must stay in the search string when the unit is volumetric (tbsp, cup)
+# because "1 cup cooked rice" ≠ "1 cup raw rice" nutritionally.
+COOKING_STATE_WORDS = {
+    "cooked","boiled","fried","grilled","roasted","baked","mashed",
+    "sauteed","sauted","blanched","seasoned","dried","frozen",
+}
+
+# Form/freshness words that never affect nutritional density — safe to strip
+# even when the unit is volumetric.
+FORM_ONLY_WORDS = PREP_WORDS - COOKING_STATE_WORDS
 
 # Additional filler words present in USDA vegetable names but not ingredient
 # names â€” used only for core-stripped vegetable rescoring (not strip_prep).
@@ -643,6 +656,13 @@ def strip_prep(text):
     kept = [t for t in tokens if t and t not in PREP_WORDS]
     return " ".join(kept) if kept else text.lower()
 
+def strip_prep_light(text):
+    """Strip only form/freshness words (fresh, chopped, sliced …) but keep
+    cooking-state words (cooked, fried, roasted …) that affect density."""
+    tokens = re.split(r"[\s,/\-]+", text.lower())
+    kept = [t for t in tokens if t and t not in FORM_ONLY_WORDS]
+    return " ".join(kept) if kept else text.lower()
+
 def normalise(text):
     return re.sub(r"[^a-z0-9 ]"," ",text.lower()).strip()
 
@@ -893,11 +913,19 @@ def _build_supabase_usda_food(row: dict, row_index: int, portions_by_food_id: di
         for token in (" raw", " uncooked", " unprepared", " fresh", " fresh ")
     ) or raw_hint.startswith("raw ")
 
+    # Keep the raw Supabase description so the scorer can match against
+    # both display_name and description.  USDA descriptions use a different
+    # word order from display_name (e.g. "Salt, table, iodized" vs
+    # "Iodized salt"), and the description often puts the key food word
+    # first, which helps bigram scoring.
+    raw_description = _row_text(row, "description")
+
     return {
         "source": "usda",
         "row": row_index,
         "fdc_id": fdc_id,
         "display_name": display_name,
+        "raw_description": raw_description,
         "alt_names": alt_names,
         "category": category,
         "energy_kcal": energy_kcal,
@@ -960,11 +988,14 @@ def _build_supabase_branded_food(row: dict, row_index: int, portions_by_food_id:
             "portion_idx": idx,
         })
 
+    raw_description = _row_text(row, "description")
+
     return {
         "source": "branded",
         "row": row_index,
         "fdc_id": f"B_{fdc_id}",
         "display_name": display_name,
+        "raw_description": raw_description,
         "item_name": item_name,
         "category": _row_text(row, "brand_owner", "category"),
         "energy_kcal": energy_kcal,
@@ -1156,7 +1187,12 @@ def apply_boosts(ingredient, boost_rules, category=""):
         if "portion_gram_weight" in rule and "boost" not in rule:
             continue
         if rule.get("fdc_id"):
-            return ingredient, 0.0, rule["fdc_id"]
+            # Use the boost text as search query if provided, so the pinned
+            # FDC ID appears in the search results even when the trigger
+            # text wouldn't find it (e.g. "spring onion" → search "green onion"
+            # to find fdc_id 2727585).
+            search_text = rule.get("boost", ingredient)
+            return search_text, 0.0, rule["fdc_id"]
         return rule["boost"], rule.get("weight", 0.6), None
     return ingredient, 0.0, None
 
@@ -1342,6 +1378,41 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
             if s_alt > s:
                 s = s_alt
                 winning_alt = alt
+        # Score against the raw USDA description field when it differs from
+        # display_name.  USDA descriptions use comma-separated word order
+        # ("Salt, table, iodized") which often puts the primary food word
+        # first, while display_name may reorder it ("Iodized salt").
+        # Scoring against both catches whichever word order is closer to
+        # the search term.
+        raw_desc = food.get("raw_description", "")
+        if raw_desc and normalise(raw_desc) != normalise(food["display_name"]):
+            s_desc = bigram_similarity(search, normalise(raw_desc))
+            s_desc += _exact_label_bonus(search, raw_desc)
+            s_desc += _label_prefix_bonus(search, raw_desc)
+            s_desc += _contiguous_phrase_bonus(search, raw_desc)
+            s_desc += _front_label_match_bonus(search, raw_desc)
+            s_desc -= _single_token_prefix_penalty(search, raw_desc)
+            s_desc -= _compound_prefix_penalty(search, raw_desc)
+            s_desc -= _prefix_dish_penalty(search, raw_desc)
+            desc_tokens = [_canonical_token(t) for t in normalise(raw_desc).split()]
+            if single_query:
+                if not _token_in_label(query_token, set(desc_tokens)):
+                    s_desc -= 0.35
+            if query_tokens and all(tok in desc_tokens for tok in query_tokens):
+                s_desc += 0.18
+            if len(query_tokens) > 1:
+                missing = sum(1 for tok in query_tokens if tok not in desc_tokens)
+                if missing:
+                    s_desc -= 0.24 * missing
+                s_desc -= _head_token_mismatch_penalty(search, raw_desc)
+            s_desc -= _extra_token_penalty(search, raw_desc)
+            s_desc += _near_token_bonus(search, raw_desc)
+            s_desc -= _generic_tail_penalty(search, raw_desc)
+            if boosted and boost_weight:
+                s_desc = min(1.0, s_desc + boost_weight * 0.15)
+            if s_desc > s:
+                s = s_desc
+                winning_alt = None  # description match, not alt_name
         # For vegetables, rescore using core-stripped names and take the max.
         # Raw/cooked distinction is irrelevant for produce â€” a cucumber is a
         # cucumber regardless of "with peel, raw" in the USDA name.
@@ -1422,6 +1493,7 @@ def _best_volumetric_portion(portions: list[dict], unit: str) -> dict | None:
 # unmatched in the spreadsheet and omitted from app exports entirely.
 # Reviewers should add a boost rule or manually assign a food_id.
 MIN_CONFIDENCE = 0.66
+MEAT_FALLBACK_THRESHOLD = 0.50  # Below this, prefer generic meat entry
 
 # Ingredients containing these trigger strings get remapped to a cleaner
 # search term before matching. Applied after boost rules.
@@ -1694,9 +1766,21 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
         search_source = re.sub(r"\bfillets?\b", " ", search_source, flags=re.I)
     search_raw = normalise(search_source)
     search  = normalise(strip_prep(search_source))
+    # Re-search Supabase when boosted text changes the query, so pinned
+    # FDC IDs from boost rules (e.g. "spring onion" → search "green onion")
+    # appear in the search results for the direct-pin lookup.
+    boosted_query = normalise(strip_prep(search_source))
+    if boosted_query != search_query:
+        usda_foods = _search_usda_for_ingredient(boosted_query)
+        _branded_fetched = False
+        branded_index = None
+        search_query = boosted_query
     cooked_stripped_source = re.sub(r"\s*,\s*cooked\b", "", search_source, flags=re.I)
     cooked_stripped_search = None
-    scoring_search = search_raw if unit.lower() in VOLUMETRIC_UNITS else search
+    # For volumetric units, keep cooking-state words (they affect density)
+    # but still strip form/freshness words like "fresh", "chopped", "sliced".
+    search_vol = normalise(strip_prep_light(search_source))
+    scoring_search = search_vol if unit.lower() in VOLUMETRIC_UNITS else search
     search_match = _strip_color_words_if_process(scoring_search)
     query_tokens = normalise(search_match).split()
     is_processed = bool(PROCESSED_MARKERS_RE.search(ingredient))

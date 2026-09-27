@@ -310,12 +310,38 @@ def search_foods(
         except RuntimeError:
             pass  # FTS column may not exist; fall through to ilike
 
-    # Strategy 2: ilike fallback (if FTS returned few results)
+    # Strategy 2: FTS + display_name filter for multi-word queries.
+    # FTS indexes the ingredients column, so "rice vinegar" matches any
+    # food that lists both words anywhere (BAKED FALAFEL BALLS, MAYONNAISE…).
+    # Adding a display_name ilike AND-filter narrows FTS to foods whose
+    # *name* contains the phrase.  This is fast because FTS narrows the
+    # scan set first; a bare ilike on the full table times out.
+    import re as _re
+    tokens = _re.findall(r'[a-zA-Z0-9]+', q.lower())
+    if len(tokens) >= 2 and fts:
+        pattern = f"%{_escape_like(q)}%"
+        url = (
+            f"{base_url}/rest/v1/foods"
+            f"?select={quote(_FOOD_SEARCH_SELECT)}"
+            f"&search_vector=fts(english).{fts_encoded}"
+            f"&display_name=ilike.{quote(pattern)}"
+            f"&limit={limit}"
+            f"{source_filter}"
+        )
+        try:
+            for row in _request_json(url):
+                rid = row.get("id")
+                if rid is not None:
+                    rows_by_id.setdefault(int(rid), row)
+        except RuntimeError:
+            pass
+
+    # Strategy 3: broad ilike fallback (if above strategies returned few results)
     if len(rows_by_id) < limit:
         pattern = f"%{_escape_like(q)}%"
         ilike_filters = ",".join([
-            f"description.ilike.{pattern}",
             f"display_name.ilike.{pattern}",
+            f"description.ilike.{pattern}",
             f"category.ilike.{pattern}",
             f"brand_owner.ilike.{pattern}",
             f"ingredients.ilike.{pattern}",

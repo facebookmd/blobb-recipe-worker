@@ -722,6 +722,103 @@
     "portion_unit": "cup"
   },
   {
+    "trigger": "aburaage",
+    "boost": "fried tofu",
+    "fdc_id": "B_2374592",
+    "weight": 0.9
+  },
+  {
+    "trigger": "adzuki",
+    "fdc_id": "173727",
+    "weight": 0.9
+  },
+  {
+    "trigger": "azuki",
+    "boost": "adzuki beans",
+    "fdc_id": "173727",
+    "weight": 0.9
+  },
+  {
+    "trigger": "bonito flakes",
+    "fdc_id": "B_2025412",
+    "weight": 0.9
+  },
+  {
+    "trigger": "katsuobushi",
+    "boost": "bonito flakes",
+    "fdc_id": "B_2025412",
+    "weight": 0.9
+  },
+  {
+    "trigger": "kamaboko",
+    "fdc_id": "B_1924084",
+    "weight": 0.9
+  },
+  {
+    "trigger": "gobo",
+    "boost": "burdock root",
+    "weight": 0.9
+  },
+  {
+    "trigger": "gyoza wrapper",
+    "fdc_id": "B_2029974",
+    "weight": 0.9
+  },
+  {
+    "trigger": "gyoza wrappers",
+    "fdc_id": "B_2029974",
+    "weight": 0.9
+  },
+  {
+    "trigger": "wasabi paste",
+    "fdc_id": "B_2018469",
+    "weight": 0.9
+  },
+  {
+    "trigger": "kinako",
+    "boost": "soy flour roasted",
+    "fdc_id": "174274",
+    "weight": 0.9
+  },
+  {
+    "trigger": "kombu",
+    "boost": "kelp",
+    "fdc_id": "168457",
+    "weight": 0.9
+  },
+  {
+    "trigger": "menma",
+    "boost": "bamboo shoots",
+    "weight": 0.9
+  },
+  {
+    "trigger": "shiratamako",
+    "boost": "glutinous rice flour",
+    "fdc_id": "B_2116453",
+    "weight": 0.9
+  },
+  {
+    "trigger": "glutinous rice flour",
+    "fdc_id": "B_2116453",
+    "weight": 0.9
+  },
+  {
+    "trigger": "unagi",
+    "boost": "eel",
+    "fdc_id": "174193",
+    "weight": 0.9
+  },
+  {
+    "trigger": "white miso",
+    "boost": "miso paste",
+    "weight": 0.9
+  },
+  {
+    "trigger": "white sesame paste",
+    "boost": "sesame paste",
+    "weight": 0.9
+  },
+  {
     "_comment": "═══ JAPANESE NOODLES ════════════════════════════════════════════════"
   },
   {
@@ -731,6 +828,16 @@
   },
   {
     "trigger": "fresh ramen noodle",
+    "fdc_id": "B_1931812",
+    "weight": 0.9
+  },
+  {
+    "trigger": "ramen noodles",
+    "fdc_id": "B_1931812",
+    "weight": 0.9
+  },
+  {
+    "trigger": "ramen noodle",
     "fdc_id": "B_1931812",
     "weight": 0.9
   },
