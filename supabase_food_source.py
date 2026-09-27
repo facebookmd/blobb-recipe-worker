@@ -14,6 +14,8 @@ import hashlib
 import json
 import os
 import pickle
+import re
+import sys
 from pathlib import Path
 from typing import Iterable
 from urllib.error import HTTPError, URLError
@@ -98,6 +100,12 @@ def _request_json(path: str) -> list[dict]:
     if not isinstance(data, list):
         raise RuntimeError(f"Unexpected Supabase response for {path}: {type(data)!r}")
     return data
+
+
+def _warn_failed(what: str, error: RuntimeError) -> None:
+    """Report a failed Supabase request instead of passing it off as no results."""
+    reason = re.sub(r" for \S+", "", str(error))[:200]
+    print(f"[!] Supabase {what} failed: {reason}", file=sys.stderr)
 
 
 def _fetch_table_rows(
@@ -307,8 +315,8 @@ def search_foods(
                 rid = row.get("id")
                 if rid is not None:
                     rows_by_id[int(rid)] = row
-        except RuntimeError:
-            pass  # FTS column may not exist; fall through to ilike
+        except RuntimeError as e:
+            _warn_failed(f"full-text search for {q!r}", e)
 
     # Strategy 2: FTS + display_name filter for multi-word queries.
     # FTS indexes the ingredients column, so "rice vinegar" matches any
@@ -333,18 +341,18 @@ def search_foods(
                 rid = row.get("id")
                 if rid is not None:
                     rows_by_id.setdefault(int(rid), row)
-        except RuntimeError:
-            pass
+        except RuntimeError as e:
+            _warn_failed(f"name search for {q!r}", e)
 
     # Strategy 3: broad ilike fallback (if above strategies returned few results)
     if len(rows_by_id) < limit:
         pattern = f"%{_escape_like(q)}%"
+        # Only the two columns with trigram indexes. An OR over any unindexed
+        # column scans the whole branded table and hits the 3 s anon timeout;
+        # matching `ingredients` also mostly found foods that merely contain it.
         ilike_filters = ",".join([
             f"display_name.ilike.{pattern}",
             f"description.ilike.{pattern}",
-            f"category.ilike.{pattern}",
-            f"brand_owner.ilike.{pattern}",
-            f"ingredients.ilike.{pattern}",
         ])
         url = (
             f"{base_url}/rest/v1/foods"
@@ -358,8 +366,8 @@ def search_foods(
                 rid = row.get("id")
                 if rid is not None:
                     rows_by_id.setdefault(int(rid), row)
-        except RuntimeError:
-            pass
+        except RuntimeError as e:
+            _warn_failed(f"text search for {q!r}", e)
 
     return list(rows_by_id.values())
 
@@ -382,7 +390,8 @@ def fetch_food_by_fdc_id(fdc_id: int, *, branded: bool = False) -> dict | None:
     )
     try:
         rows = _request_json(url)
-    except RuntimeError:
+    except RuntimeError as e:
+        _warn_failed(f"lookup of FDC ID {fdc_id}", e)
         return None
     return rows[0] if rows else None
 
@@ -412,8 +421,8 @@ def load_portions_for_food_ids(food_ids: list[int]) -> dict[int, list[dict]]:
         )
         try:
             all_portions.extend(_request_json(url))
-        except RuntimeError:
-            pass
+        except RuntimeError as e:
+            _warn_failed("portion lookup", e)
 
     return group_portions_by_food_id(all_portions)
 
