@@ -39,8 +39,10 @@ BUILTIN_BOOSTS = [
     {"trigger": "cooking oil",   "boost": "vegetable oil soybean", "fdc_id": "171411", "weight": 0.6},
     {"trigger": "oil",           "boost": "vegetable oil soybean", "fdc_id": "171411", "weight": 0.6,
      "exact": True},
-    {"trigger": "potato",        "boost": "potatoes flesh and skin raw", "weight": 0.6,
-     "exclude": ["potato starch"]},
+    # Pinned: scored, the unspecific search text picked "Potatoes, red".
+    {"trigger": "potato",        "boost": "potatoes flesh and skin raw", "fdc_id": "170028", "weight": 0.6,
+     "exclude": ["potato starch","sweet","chip","crisp","flake","flour","fries",
+                 "salad","instant","tots","hash"]},
     {"trigger": "bell pepper",   "boost": "sweet red pepper raw",        "weight": 0.6},
     {"trigger": "green peas",    "boost": "peas green frozen unprepared","weight": 0.6},
     {"trigger": "spring onion",  "boost": "green onion", "fdc_id": "2727585", "weight": 0.9},
@@ -83,6 +85,22 @@ BUILTIN_BOOSTS = [
     {"trigger": "butter",        "boost": "butter salted", "fdc_id": "173410", "weight": 0.7,
      "exclude": ["unsalted","peanut","almond","cashew","sunflower","cocoa","shea",
                  "buttermilk","butternut","butterscotch","butterhead","butter bean"]},
+    # 80/20 is the everyday supermarket grind; scored, "ground beef" lands on
+    # the 95/5 row or an FNDDS "Beef, ground" with only a cubic-inch portion.
+    {"trigger": "ground beef",   "boost": "beef ground 80 lean raw", "fdc_id": "174036", "weight": 0.7,
+     "exclude": ["pork","lean","90%","93%","95%","85%","cooked","browned","crumbles"]},
+    {"trigger": "minced beef",   "boost": "beef ground 80 lean raw", "fdc_id": "174036", "weight": 0.7,
+     "exclude": ["pork","lean","cooked","browned"]},
+    {"trigger": "beef mince",    "boost": "beef ground 80 lean raw", "fdc_id": "174036", "weight": 0.7,
+     "exclude": ["pork","lean","cooked","browned"]},
+    # USDA words it "Pork, cured, bacon", so "bacon" is never the head, and
+    # scored it lands on an FNDDS "NS as to fresh, smoked or cured" row.
+    {"trigger": "bacon",         "boost": "bacon unprepared", "fdc_id": "168277", "weight": 0.7,
+     "exclude": ["cooked","crispy","bits","turkey","canadian","grease","fat"]},
+    # Plain white bread isn't in the first 160 search hits for "bread", so
+    # scoring picks among egg, cheese and Italian breads. Bare "bread" only.
+    {"trigger": "bread",         "boost": "bread white commercially prepared", "fdc_id": "174924",
+     "weight": 0.7, "exact": True},
     {"trigger": "coriander",     "boost": "cilantro raw",                "weight": 0.8,
      "exclude": ["ground","dried","seed","seeds","powder","spice"]},
     {"trigger": "ground coriander","boost": "coriander seed",            "weight": 0.9},
@@ -940,6 +958,7 @@ def _build_supabase_usda_food(row: dict, row_index: int, portions_by_food_id: di
         "raw_description": raw_description,
         "alt_names": alt_names,
         "category": category,
+        "data_type": _row_text(row, "data_type"),
         "energy_kcal": energy_kcal,
         "is_raw": is_raw,
         "portions": portions,
@@ -1335,6 +1354,106 @@ def _has_unit_portion(food: dict, unit: str) -> bool | None:
     return False
 
 
+# ── USDA head match and variants ───────────────────────────────────────────
+# USDA descriptions read "Food, qualifier, qualifier": "Milk, whole, 3.25%
+# milkfat", "Milk, sheep, fluid". Name similarity alone favours the short
+# niche variant ("Sheep milk") over the everyday product, whose name is long.
+# So: a row whose description *starts with* the ingredient scores at least
+# HEAD_MATCH_SCORE, and any USDA row carrying the ingredient loses points for
+# each qualifier that names a different product than the one asked for.
+HEAD_MATCH_SCORE = 0.95
+HEAD_UNKNOWN_PENALTY = 0.08
+HEAD_FOUNDATION_BONUS = 0.03
+VARIANT_PENALTY = 0.25
+FOUNDATION_NO_ENERGY_PENALTY = 0.30
+
+# Leading USDA group labels skipped before looking for the head:
+# "Spices, cinnamon, ground", "Leavening agents, baking powder, …".
+USDA_GROUP_LABELS = {
+    "spices", "leavening agents", "soup", "beverages", "sweeteners",
+    "nuts", "seeds",
+}
+
+# Qualifier words that describe the everyday product or only its labelling.
+STANDARD_QUALIFIER_WORDS = {
+    "whole", "milk", "fluid", "granulated", "all", "purpose", "enriched",
+    "unenriched", "bleached", "unbleached", "raw", "fresh", "ground", "plain",
+    "regular", "cultured", "ripe", "year", "round", "average", "commercially",
+    "prepared", "unprepared", "table", "white", "with", "added", "vitamin",
+    "a", "d", "and", "milkfat", "double", "acting", "flesh", "skin", "salted",
+    "stick", "iodized", "cured",
+}
+
+# Qualifiers that name a different product: lighter versions, other animals
+# and plants, other forms, and USDA's "not (further) specified" rows, which
+# users can't read. Not counted when the ingredient itself says the word
+# ("brown sugar", "nonfat milk").
+VARIANT_QUALIFIER_RE = re.compile(
+    r"\b(light|lite|reduced fat|low fat|lowfat|nonfat|non fat|fat free|"
+    r"part skim|skim|low sodium|reduced sodium|no salt|sheep|goat|buffalo|"
+    r"human|soy|almond|coconut|oat|rice|green|dried|dry|powdered|condensed|"
+    r"evaporated|instant|imitation|substitute|brown|nfs|ns|alaska native)\b"
+)
+
+
+def _usda_segments(food: dict) -> list[str]:
+    desc = re.sub(r"\([^)]*\)", "", food.get("raw_description") or "")
+    return [seg.strip() for seg in desc.split(",") if seg.strip()]
+
+
+def _usda_head_qualifiers(search: str, food: dict) -> list[str] | None:
+    """
+    The qualifier segments of *food*'s USDA description when *search* is its
+    head: the first segment, or the first two in either order ("Cream, sour"
+    for "sour cream"), after any leading group label. None when it isn't.
+    """
+    segments = _usda_segments(food)
+    if not segments:
+        return None
+    if normalise(segments[0]) in USDA_GROUP_LABELS and len(segments) > 1:
+        segments = segments[1:]
+    query = sorted(_canonical_token(t) for t in normalise(search).split())
+    if not query:
+        return None
+
+    def tokens(segs):
+        return sorted(_canonical_token(t) for seg in segs for t in normalise(seg).split())
+
+    if tokens(segments[:1]) == query:
+        return segments[1:]
+    if len(segments) > 1 and tokens(segments[:2]) == query:
+        return segments[2:]
+    return None
+
+
+def _has_measurable_portion(food: dict) -> bool:
+    """A portion people can measure with: not USDA's "RACC" or a bare 100 g."""
+    for p in food.get("portions", []):
+        label = (p.get("label") or "").strip().lower()
+        if label and "racc" not in label and abs(p.get("gram_weight", 100.0) - 100.0) > 1.0:
+            return True
+    return False
+
+
+def _is_unknown_qualifier(segment: str) -> bool:
+    seg = normalise(segment)
+    if not seg or VARIANT_QUALIFIER_RE.search(seg):
+        return False  # variants are charged by _usda_variant_penalty
+    return not all(tok in STANDARD_QUALIFIER_WORDS or tok.isdigit() for tok in seg.split())
+
+
+def _usda_variant_penalty(search: str, food: dict) -> float:
+    """VARIANT_PENALTY per variant word in a USDA row that carries every query word."""
+    desc = normalise(food.get("raw_description") or "")
+    query = {_canonical_token(t) for t in normalise(search).split()}
+    desc_tokens = {_canonical_token(t) for t in desc.split()}
+    if not query or not query <= desc_tokens:
+        return 0.0
+    hits = {m.group(0) for m in VARIANT_QUALIFIER_RE.finditer(desc)}
+    hits = {h for h in hits if not any(_canonical_token(w) in query for w in h.split())}
+    return VARIANT_PENALTY * len(hits)
+
+
 def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_cooked=False, unit=""):
     """
     Score every food against display_name and alternate names.
@@ -1345,6 +1464,7 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
     Returns (best_food, best_score, matched_alt_name).
     """
     best_food, best_score, best_alt, best_food_is_raw = None, 0.0, None, False
+    best_segments = 99
     search_core = _core(search)
     query_tokens = [_canonical_token(t) for t in normalise(search).split()]
     single_query = len(query_tokens) == 1
@@ -1430,6 +1550,21 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
             if s_desc > s:
                 s = s_desc
                 winning_alt = None  # description match, not alt_name
+        head_won = False
+        if food.get("source") == "usda":
+            qualifiers = _usda_head_qualifiers(search, food)
+            if qualifiers is not None:
+                head_won = True
+                if s < HEAD_MATCH_SCORE:
+                    s = HEAD_MATCH_SCORE
+                    winning_alt = None
+                s -= HEAD_UNKNOWN_PENALTY * sum(_is_unknown_qualifier(q) for q in qualifiers)
+                # Curated Foundation rows break ties, but only with calories
+                # and a unit people can use; many carry only "1 RACC".
+                if (food.get("data_type") == "Foundation" and food.get("energy_kcal")
+                        and _has_measurable_portion(food)):
+                    s += HEAD_FOUNDATION_BONUS
+            s -= _usda_variant_penalty(search, food)
         # For vegetables, rescore using core-stripped names and take the max.
         # Raw/cooked distinction is irrelevant for produce â€” a cucumber is a
         # cucumber regardless of "with peel, raw" in the USDA name.
@@ -1445,14 +1580,26 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
             if s_core > s or (s_core == s and food.get("is_raw") and not best_food_is_raw):
                 s = s_core
                 winning_alt = None  # core match is on display_name
-        if len(query_tokens) > 1:
+        if len(query_tokens) > 1 and not head_won:
             s -= _missing_query_token_penalty(search, food["display_name"])
+        # Foundation rows with no energy value are a USDA data gap (dry beans,
+        # "Tomato, roma"), not zero-calorie foods; keep them behind rows that
+        # have calories.
+        if food.get("data_type") == "Foundation" and not food.get("energy_kcal"):
+            s -= FOUNDATION_NO_ENERGY_PENALTY
         if boosted and boost_weight:
             s = min(1.0, s + boost_weight * 0.15)
         if s >= UNIT_PORTION_FLOOR and _has_unit_portion(food, unit):
             s += UNIT_PORTION_BONUS
-        if s > best_score or (s == best_score and food.get("is_raw") and not best_food_is_raw):
-            best_score, best_food, best_alt, best_food_is_raw = s, food, winning_alt, bool(food.get("is_raw"))
+        # Ties (often two rows at the boosted 1.0 cap) go to a raw row, then
+        # to the plainer description: "Onions, raw" over "Onions, white, raw".
+        segments = len(_usda_segments(food)) if food.get("source") == "usda" else 99
+        is_raw = bool(food.get("is_raw"))
+        if (s > best_score
+                or (s == best_score and is_raw and not best_food_is_raw)
+                or (s == best_score and is_raw == best_food_is_raw and segments < best_segments)):
+            best_score, best_food, best_alt, best_food_is_raw = s, food, winning_alt, is_raw
+            best_segments = segments
     return best_food, best_score, best_alt
 def _serving_unit_compat(serving, unit):
     """
@@ -1553,6 +1700,10 @@ CHICKEN_CUT_IDS = {
     "wing":        ("172390",  "172390"),   # wing meat+skin raw
 }
 CHICKEN_CUT_SKINLESS_TRIGGERS = {"skinless", "skin removed", "skin-off", "skin off", "no skin"}
+# Recipes that say "chicken breast" nearly always mean boneless, skinless;
+# these cuts take skin only when the recipe asks for it.
+CHICKEN_CUT_SKINLESS_BY_DEFAULT = {"breast"}
+CHICKEN_CUT_SKIN_ON_TRIGGERS = {"skin-on", "skin on", "with skin", "bone-in", "bone in"}
 CHICKEN_CUT_EXCLUDES = {
     "ground", "mince", "minced", "broth", "stock", "sausage",
     "nugget", "tender", "strips", "cutlet",
@@ -1719,7 +1870,9 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
     if "chicken" in ing_lower and not any(ex in ing_lower for ex in CHICKEN_CUT_EXCLUDES):
         for cut_kw, (skin_on_id, skinless_id) in CHICKEN_CUT_IDS.items():
             if cut_kw in ing_lower:
-                is_skinless = any(t in ing_lower for t in CHICKEN_CUT_SKINLESS_TRIGGERS)
+                is_skinless = any(t in ing_lower for t in CHICKEN_CUT_SKINLESS_TRIGGERS) or (
+                    cut_kw in CHICKEN_CUT_SKINLESS_BY_DEFAULT
+                    and not any(t in ing_lower for t in CHICKEN_CUT_SKIN_ON_TRIGGERS))
                 fdc_id = skinless_id if is_skinless else skin_on_id
                 food = usda_foods.get(fdc_id)
                 if food:
@@ -1975,7 +2128,9 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
                        "cake", "loaf", "cream", "pink", "chum", "sockeye",
                        "chinook", "coho"}
     if "salmon" in ing_lower and not any(ex in ing_lower for ex in SALMON_EXCLUDES):
-        food = usda_foods.get("2684441")
+        # SR Legacy farmed Atlantic salmon, raw (208 kcal/100g). The Foundation
+        # row for the same fish (2684441) has no calories, so salmon counted 0.
+        food = usda_foods.get("175167") or _fetch_food_by_fdc_id("175167")
         if food:
             return food, 0.95, "high", None
 
