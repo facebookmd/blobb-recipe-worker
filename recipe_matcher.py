@@ -33,10 +33,12 @@ from supabase_food_source import (
 BUILTIN_BOOSTS = [
     {"trigger": "soy sauce",      "boost": "shoyu soy sauce",             "weight": 0.9, "category": "japanese"},
     {"trigger": "curry roux",      "boost": "GOLDEN CURRY",                "weight": 0.9, "category": "japanese"},
-    {"trigger": "cooking oil",   "boost": "vegetable oil soybean",       "weight": 0.6},
-    {"trigger": "oil",           "boost": "vegetable oil soybean",       "weight": 0.6,
-     "exclude": ["sesame","olive","coconut","canola","vegetable","cooking",
-                 "chili","fish","palm","sunflower","peanut","avocado","truffle","infused"]},
+    # Pinned: scored, "vegetable oil soybean" picked a 70%-fat margarine spread.
+    # Bare "oil" only; other generic phrasings ("neutral oil", "salad oil")
+    # are their own rules in boosts.json.
+    {"trigger": "cooking oil",   "boost": "vegetable oil soybean", "fdc_id": "171411", "weight": 0.6},
+    {"trigger": "oil",           "boost": "vegetable oil soybean", "fdc_id": "171411", "weight": 0.6,
+     "exact": True},
     {"trigger": "potato",        "boost": "potatoes flesh and skin raw", "weight": 0.6,
      "exclude": ["potato starch"]},
     {"trigger": "bell pepper",   "boost": "sweet red pepper raw",        "weight": 0.6},
@@ -156,6 +158,12 @@ COOKING_STATE_WORDS = {
 # Form/freshness words that never affect nutritional density — safe to strip
 # even when the unit is volumetric.
 FORM_ONLY_WORDS = PREP_WORDS - COOKING_STATE_WORDS
+
+# "Ground" names a product for meat (USDA "Ground beef, raw") but only a form
+# for spices, where stripping it keeps "ground pepper" on "Black pepper".
+# With a meat word present, keep it and spell "mince"/"minced" as "ground".
+GROUND_MEAT_WORDS = {"beef", "pork", "chicken", "turkey", "lamb", "veal"}
+MINCE_WORDS = {"ground", "mince", "minced"}
 
 # Additional filler words present in USDA vegetable names but not ingredient
 # names â€” used only for core-stripped vegetable rescoring (not strip_prep).
@@ -651,17 +659,21 @@ def _prefix_dish_penalty(search: str, label: str) -> float:
         return 0.65
     return 0.0
 
-def strip_prep(text):
-    tokens = re.split(r"[\s,/\-]+", text.lower())
-    kept = [t for t in tokens if t and t not in PREP_WORDS]
+def _strip_words(text, words):
+    tokens = [t for t in re.split(r"[\s,/\-]+", text.lower()) if t]
+    if GROUND_MEAT_WORDS & set(tokens):
+        tokens = ["ground" if t in MINCE_WORDS else t for t in tokens]
+        words = words - MINCE_WORDS
+    kept = [t for t in tokens if t not in words]
     return " ".join(kept) if kept else text.lower()
+
+def strip_prep(text):
+    return _strip_words(text, PREP_WORDS)
 
 def strip_prep_light(text):
     """Strip only form/freshness words (fresh, chopped, sliced …) but keep
     cooking-state words (cooked, fried, roasted …) that affect density."""
-    tokens = re.split(r"[\s,/\-]+", text.lower())
-    kept = [t for t in tokens if t and t not in FORM_ONLY_WORDS]
-    return " ".join(kept) if kept else text.lower()
+    return _strip_words(text, FORM_ONLY_WORDS)
 
 def normalise(text):
     return re.sub(r"[^a-z0-9 ]"," ",text.lower()).strip()
@@ -1132,18 +1144,22 @@ def _boost_match_is_too_generic(ingredient: str, trigger: str) -> bool:
     return any(tok not in BOOST_NEUTRAL_PREFIXES and tok not in PREP_WORDS for tok in prefixes)
 
 
-def _boost_trigger_matches(ingredient: str, trigger: str) -> bool:
+def _boost_trigger_matches(ingredient: str, trigger: str, exact: bool = False) -> bool:
     """
     Match a boost trigger against an ingredient name.
 
     Keep the fast substring check for ordinary phrases, but also treat
     reordered descriptor pairs as equivalent so rules like "silken tofu"
     and ingredient text like "tofu, silken" resolve through the same map.
+    With exact=True the whole ingredient must be the trigger, so a
+    one-word rule like "oil" can't fire inside "boiled" or "tuna in oil".
     """
     ing_norm = normalise(ingredient)
     trig_norm = normalise(trigger)
     if not ing_norm or not trig_norm:
         return False
+    if exact:
+        return ing_norm == trig_norm
     if trig_norm in ing_norm:
         return True
 
@@ -1161,6 +1177,7 @@ def apply_boosts(ingredient, boost_rules, category=""):
       boost                : alternative search string (required unless portion_gram_weight)
       weight               : confidence bonus 0-1 (default 0.6)
       category             : only fire when recipe category contains this string (optional)
+      exact                : true = fire only when the whole ingredient is the trigger (optional)
       portion_gram_weight  : synthesize a portion with this gram weight
       portion_label        : label for the synthesized portion (e.g. "1 tbsp")
 
@@ -1174,7 +1191,7 @@ def apply_boosts(ingredient, boost_rules, category=""):
             continue
         if "trigger" not in rule:
             continue   # skip comment/metadata objects
-        if not _boost_trigger_matches(ingredient, rule["trigger"]):
+        if not _boost_trigger_matches(ingredient, rule["trigger"], rule.get("exact", False)):
             continue
         if _boost_match_is_too_generic(ingredient, rule["trigger"]):
             continue
@@ -1247,7 +1264,7 @@ def get_portion_override(ingredient: str, boost_rules: list, unit: str = "") -> 
             continue
         if "trigger" not in rule:
             continue
-        if not _boost_trigger_matches(ingredient, rule["trigger"]):
+        if not _boost_trigger_matches(ingredient, rule["trigger"], rule.get("exact", False)):
             continue
         if any(ex.lower() in ing for ex in rule.get("exclude", [])):
             continue
@@ -1528,19 +1545,6 @@ INGREDIENT_REMAP = {
     # boost rules pointing to the raw USDA entry (FDC 168878 raw).
 }
 
-# Direct FDC ID mapping for mince/ground meat ingredients.
-# These bypass bigram matching entirely since "ground" gets stripped by strip_prep
-# making them hard to match. Yield factor 0.75 â€” typical rawâ†’cooked loss for ground meat.
-MINCE_IDS = {
-    #  keyword    fdc_id           yield
-    "pork":    ("167903",   0.75),  # Pork ground
-    "beef":    ("1_171799", 0.75),  # Ground beef, pan-browned (generic)
-    "chicken": ("171117",   0.75),  # Ground chicken, pan-browned
-    "lamb":    ("174370",   0.75),  # Ground lamb, raw
-    "turkey":  ("171505",   0.75),  # Ground turkey, raw
-    "veal":    ("175290",   0.75),  # Ground veal, raw
-}
-
 CHICKEN_CUT_IDS = {
     #  keyword        (skin_on_fdc,  skinless_fdc)
     "thigh":       ("172385",  "173627"),   # thigh meat+skin raw | thigh meat only raw
@@ -1588,11 +1592,11 @@ SHRIMP_IDS = {
 # Source: USDA Agriculture Handbook No. 102 cooking yield tables.
 #
 # Cube portions available in these entries:
-#   Pork, cooked  (1_167855) â€” 1.5" cube, 3 oz card-deck
+#   Pork, cooked  (167855) â€” 1.5" cube, 3 oz card-deck
 #   Beef          (169484)   â€” 1.5" cube, 3 oz card-deck
 MEAT_GENERIC_IDS = {
     #  keyword    fdc_id        yield (rawâ†’cooked)
-    "pork":  ("1_167855",  0.73),   # Pork, cooked â€” ~27% moisture/fat loss
+    "pork":  ("167855",  0.73),   # Pork, cooked â€” ~27% moisture/fat loss
     "beef":  ("169484",    0.70),   # Beef â€” ~30% loss
     "lamb":  ("172509",    0.70),   # Lamb stew/kabob meat, lean, braised
     "veal":  ("169457",    0.74),   # Veal, composite
@@ -1694,9 +1698,6 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
             branded_index = _search_branded_for_ingredient(search_query)
             _branded_fetched = True
         return branded_index
-    # â”€â”€ Mince/ground meat â€” direct FDC ID lookup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # "ground" gets stripped by strip_prep making bigram matching unreliable.
-    # Detect mince keywords and map directly to the correct USDA entry.
     ing_lower = ingredient.lower()
     category_lower = category.lower()
     is_japanese_category = "japanese" in category_lower
@@ -1704,16 +1705,6 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
     if _rice_keyword(ingredient) and not any(raw_kw in ing_lower for raw_kw in ("raw", "uncooked", "dry")):
         rice_default_cooked = True
         is_cooked = True
-    if (unit.lower() not in VOLUMETRIC_UNITS
-            and ("mince" in ing_lower or "minced" in ing_lower or "ground" in ing_lower)):
-        for kw, (fdc_id, yield_factor) in MINCE_IDS.items():
-            if kw in ing_lower:
-                food = usda_foods.get(fdc_id)
-                if food:
-                    tagged = dict(food)
-                    # Recipe already describes cooked weight â€” don't shrink again
-                    tagged["_yield_factor"] = None if is_cooked else yield_factor
-                    return tagged, 0.95, "high", None
 
     # â”€â”€ Ground/powdered spices â€” direct FDC ID lookup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Same strip_prep problem: "ground ginger" â†’ "ginger" â†’ matches Ginger ale.
@@ -1820,7 +1811,7 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
     # yield factors downstream.
     GENERIC_MEAT_IDS = {
         "beef":    "169484",   # Beef, cooked (composite)
-        "pork":    "1_167855", # Pork, cooked
+        "pork":    "167855", # Pork, cooked
         "chicken": "171477",   # Chicken, broilers, meat and skin, cooked
         "lamb":    "172509",   # Lamb, composite
     }
@@ -1834,7 +1825,7 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
         "brisket","chuck","sirloin","rump","flank","round","spare",
     }
     # Only fire for bare/simple meat references, not specific cuts (those
-    # match fine via bigram or MINCE_IDS/MEAT_GENERIC_IDS fallback).
+    # match fine via bigram or the MEAT_GENERIC_IDS fallback).
     for generic_meat_kw, fdc_id in GENERIC_MEAT_IDS.items():
         if (generic_meat_kw in ing_lower
                 and not any(ex in ing_lower for ex in GENERIC_MEAT_EXCLUDES)

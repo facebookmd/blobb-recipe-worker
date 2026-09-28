@@ -49,53 +49,39 @@
     "portion_label": "1 slice"
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "spam",
-    "off_id": "OFF_008007",
+    "trigger": "spam",
+    "fdc_id": "2706211",
     "weight": 0.95
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "rice cakes",
-    "off_id": "OFF_041524",
-    "category": "korean",
+    "trigger": "rice cake",
+    "fdc_id": "B_2167323",
+    "weight": 0.95,
+    "category": "korean"
+  },
+  {
+    "trigger": "tteok",
+    "fdc_id": "B_2167323",
     "weight": 0.95
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "tteok",
-    "off_id": "OFF_041524",
+    "trigger": "danmuji",
+    "fdc_id": "B_2623526",
     "weight": 0.95
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "danmuji",
-    "off_id": "OFF_037473",
+    "trigger": "pickled radish",
+    "fdc_id": "B_2623526",
     "weight": 0.95
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "pickled radish",
-    "off_id": "OFF_037473",
+    "trigger": "picked radish",
+    "fdc_id": "B_2623526",
     "weight": 0.95
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "picked radish",
-    "off_id": "OFF_037473",
-    "weight": 0.95
-  },
-  {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "yellow pickled radish",
-    "off_id": "OFF_037473",
+    "trigger": "yellow pickled radish",
+    "fdc_id": "B_2623526",
     "weight": 0.95
   },
   {
@@ -117,21 +103,22 @@
     "weight": 0.9
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "cocktail sausage",
-    "off_id": "OFF_103269",
+    "trigger": "cocktail sausage",
+    "fdc_id": "B_2016643",
     "weight": 0.95
   },
   {
     "_comment": "═══ STOCKS & BROTHS ═════════════════════════════════════════════════"
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "corn syrup",
-    "off_id": "OFF_037462",
-    "weight": 0.95
+    "trigger": "corn syrup",
+    "fdc_id": "168837",
+    "weight": 0.95,
+    "exclude": [
+      "dark",
+      "high fructose",
+      "high-fructose"
+    ]
   },
   {
     "trigger": "corn syrup",
@@ -467,7 +454,33 @@
   {
     "trigger": "vegetable oil",
     "boost": "vegetable oil soybean",
-    "weight": 0.7
+    "weight": 0.7,
+    "fdc_id": "171411"
+  },
+  {
+    "trigger": "neutral oil",
+    "fdc_id": "171411",
+    "weight": 0.95
+  },
+  {
+    "trigger": "salad oil",
+    "fdc_id": "171411",
+    "weight": 0.95
+  },
+  {
+    "trigger": "light oil",
+    "fdc_id": "171411",
+    "weight": 0.95
+  },
+  {
+    "trigger": "oil for frying",
+    "fdc_id": "171411",
+    "weight": 0.95
+  },
+  {
+    "trigger": "oil for deep frying",
+    "fdc_id": "171411",
+    "weight": 0.95
   },
   {
     "trigger": "canola oil",
@@ -598,41 +611,26 @@
     "_comment": "═══ NOODLES ═════════════════════════════════════════════════════════"
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "shirataki",
-    "off_id": "OFF_103669",
-    "weight": 0.95
-  },
-  {
     "_comment": "═══ MUSHROOMS ═══════════════════════════════════════════════════════"
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "wood ear",
-    "off_id": "OFF_033727",
+    "trigger": "wood ear",
+    "fdc_id": "B_2272024",
     "weight": 0.95
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "woodear",
-    "off_id": "OFF_033727",
+    "trigger": "woodear",
+    "fdc_id": "B_2272024",
     "weight": 0.95
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "black fungus",
-    "off_id": "OFF_033727",
+    "trigger": "black fungus",
+    "fdc_id": "B_2272024",
     "weight": 0.95
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "wood fungus",
-    "off_id": "OFF_033727",
+    "trigger": "wood fungus",
+    "fdc_id": "B_2272024",
     "weight": 0.95
   },
   {
@@ -1202,6 +1200,11 @@
     "weight": 0.95
   },
   {
+    "trigger": "warabi mochiko",
+    "fdc_id": "B_2671914",
+    "weight": 0.95
+  },
+  {
     "trigger": "mochiko",
     "fdc_id": "1104867",
     "weight": 0.95
@@ -1342,11 +1345,9 @@
     ]
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "hojicha",
-    "off_id": "OFF_046882",
-    "weight": 0.9
+    "trigger": "hojicha",
+    "fdc_id": "B_2340442",
+    "weight": 0.95
   },
   {
     "_comment": "═══ KINAKO ═══════════════════════════════════════════════════════════"
@@ -1756,6 +1757,144 @@
   {
     "trigger": "moringa leaves",
     "fdc_id": "168416",
+    "weight": 0.95
+  },
+  {
+    "trigger": "pork belly",
+    "boost": "pork belly raw",
+    "fdc_id": "167812",
+    "weight": 0.9
+  },
+  {
+    "trigger": "pork loin",
+    "boost": "whole pork loin raw",
+    "fdc_id": "167818",
+    "weight": 0.9,
+    "exclude": [
+      "rib",
+      "chop"
+    ]
+  },
+  {
+    "trigger": "beef and pork",
+    "boost": "ground pork raw",
+    "fdc_id": "167902",
+    "weight": 0.9
+  },
+  {
+    "_comment": "═══ JAPANESE: pins added 27 September 2026 ═══════════════════════════════"
+  },
+  {
+    "trigger": "okonomiyaki sauce",
+    "fdc_id": "B_468058",
+    "weight": 0.95
+  },
+  {
+    "trigger": "okonomi sauce",
+    "fdc_id": "B_468058",
+    "weight": 0.95
+  },
+  {
+    "trigger": "uncooked japanese rice",
+    "fdc_id": "168931",
+    "weight": 0.95
+  },
+  {
+    "trigger": "narutomaki",
+    "fdc_id": "B_2127411",
+    "weight": 0.95
+  },
+  {
+    "trigger": "kuromitsu",
+    "fdc_id": "B_2029534",
+    "weight": 0.95
+  },
+  {
+    "trigger": "rice koji",
+    "fdc_id": "B_2160102",
+    "weight": 0.95,
+    "exclude": [
+      "shio"
+    ]
+  },
+  {
+    "trigger": "umeboshi",
+    "fdc_id": "B_2030372",
+    "weight": 0.95
+  },
+  {
+    "trigger": "pickled plum",
+    "fdc_id": "B_2030372",
+    "weight": 0.95
+  },
+  {
+    "trigger": "rice flour blend",
+    "fdc_id": "B_2116453",
+    "weight": 0.95
+  },
+  {
+    "trigger": "water",
+    "fdc_id": "173647",
+    "weight": 0.95,
+    "exclude": [
+      "chestnut",
+      "cress",
+      "melon",
+      "biscuit",
+      "cracker",
+      "coconut",
+      "tonic",
+      "sparkling",
+      "carbonated",
+      "soda",
+      "rose",
+      "orange blossom",
+      "convolvulus",
+      "spinach"
+    ]
+  },
+  {
+    "trigger": "ice water",
+    "fdc_id": "173647",
+    "weight": 0.95
+  },
+  {
+    "trigger": "iced water",
+    "fdc_id": "173647",
+    "weight": 0.95
+  },
+  {
+    "trigger": "cold water",
+    "fdc_id": "173647",
+    "weight": 0.95
+  },
+  {
+    "trigger": "hot water",
+    "fdc_id": "173647",
+    "weight": 0.95,
+    "exclude": [
+      "crust",
+      "pastry"
+    ]
+  },
+  {
+    "trigger": "warm water",
+    "fdc_id": "173647",
+    "weight": 0.95
+  },
+  {
+    "trigger": "boiling water",
+    "fdc_id": "173647",
+    "weight": 0.95
+  },
+  {
+    "trigger": "lukewarm water",
+    "fdc_id": "173647",
+    "weight": 0.95
+  },
+  {
+    "trigger": "room temperature water",
+    "fdc_id": "173647",
     "weight": 0.95
   }
 ]

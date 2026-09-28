@@ -16,6 +16,7 @@ import os
 import pickle
 import re
 import sys
+import time
 from pathlib import Path
 from typing import Iterable
 from urllib.error import HTTPError, URLError
@@ -85,16 +86,24 @@ def _request_json(path: str) -> list[dict]:
         },
     )
 
-    try:
-        with urlopen(req, timeout=120) as resp:
-            payload = resp.read().decode("utf-8")
-    except HTTPError as e:
-        detail = e.read().decode("utf-8", errors="ignore") if e.fp else ""
-        raise RuntimeError(
-            f"Supabase request failed ({e.code}) for {path}: {detail or e.reason}"
-        ) from e
-    except URLError as e:
-        raise RuntimeError(f"Supabase request failed for {path}: {e.reason}") from e
+    # One retry for a statement timeout (Postgres 57014): under the batch's
+    # parallel pre-fetch a common word ("water", "butter") can occasionally
+    # cross the anon role's 3 s limit on a cold cache, then succeed at once.
+    for attempt in range(2):
+        try:
+            with urlopen(req, timeout=120) as resp:
+                payload = resp.read().decode("utf-8")
+            break
+        except HTTPError as e:
+            detail = e.read().decode("utf-8", errors="ignore") if e.fp else ""
+            if attempt == 0 and '"57014"' in detail:
+                time.sleep(1)
+                continue
+            raise RuntimeError(
+                f"Supabase request failed ({e.code}) for {path}: {detail or e.reason}"
+            ) from e
+        except URLError as e:
+            raise RuntimeError(f"Supabase request failed for {path}: {e.reason}") from e
 
     data = json.loads(payload)
     if not isinstance(data, list):
