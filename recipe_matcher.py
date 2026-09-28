@@ -1813,6 +1813,43 @@ CUBE_KEYWORDS = ["cube", "cubes"]
 _MATCH_CACHE: dict[tuple, tuple] = {}
 
 
+def _volume_unit_fallback(food, foods, unit, search, query_tokens,
+                          boost_weight, boosted, is_processed, is_cooked):
+    """
+    For a cup/tbsp/tsp recipe amount, a food with no volume portion can't be
+    measured: "1.5 cups" became 1.5 × its "RACC" serving (flour: 45 g, not
+    190 g). Portion picking can't switch foods, so switch here, to a
+    candidate that has a volume portion and whose name carries every
+    ingredient word ("all-purpose" + "flour", so not rice flour): the one
+    sharing the most description words with *food* (its closest sibling,
+    "enriched, bleached" rather than "unenriched"), then the best score.
+    Keeps *food* when no candidate qualifies.
+    """
+    # ml already converts to grams (1 ml ≈ 1 g), so only spoons and cups
+    # depend on the food having a volume portion.
+    if (unit.lower() not in VOLUMETRIC_UNITS or to_grams(1.0, unit, "") is not None
+            or _has_compatible_volumetric_serving(food, unit)):
+        return food
+    food_tokens = set(normalise(food.get("raw_description") or food["display_name"]).split())
+    best, best_key = None, None
+    for cand in foods:
+        if cand is food or not cand.get("energy_kcal"):
+            continue
+        if not _has_compatible_volumetric_serving(cand, unit):
+            continue
+        if _usda_variant_penalty(search, cand):
+            continue  # never swap to a lighter or other variant ("Lite" syrup)
+        label_tokens = (set(normalise(cand["display_name"]).split())
+                        | set(normalise(cand.get("raw_description", "")).split()))
+        if not all(_token_in_label(tok, label_tokens) for tok in query_tokens):
+            continue
+        _, score, _ = _score_list(search, [cand], boost_weight, boosted, is_processed, is_cooked, unit)
+        overlap = len(food_tokens & set(normalise(cand.get("raw_description") or cand["display_name"]).split()))
+        if best is None or (overlap, score) > best_key:
+            best, best_key = cand, (overlap, score)
+    return best or food
+
+
 def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
                      category="", unit="", is_cooked=False):
     """
@@ -2194,6 +2231,9 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
 
     if usda_food and (usda_score >= MIN_CONFIDENCE
                       or (usda_token_cover and usda_score >= 0.45)):
+        usda_food = _volume_unit_fallback(
+            usda_food, usda_foods, unit, search_match, query_tokens,
+            boost_weight, boosted, is_processed, is_cooked)
         # Tag cooked meat matches with yield factor before returning,
         # so build_output_rows can apply rawâ†’cooked shrinkage.
         if meat_kw and not usda_food.get("is_raw", False):
