@@ -42,6 +42,8 @@ class ParseResponse(BaseModel):
     template: dict[str, Any]
     matched_count: int
     unmatched_count: int
+    # Ingredient names left out of the template, so the app can say which.
+    unmatched: list[str] = Field(default_factory=list)
 
 
 app = FastAPI(title="Blobb Recipe Parser", version="2.0.0")
@@ -125,6 +127,10 @@ def _units_for(row: dict) -> tuple[list[dict[str, Any]], int]:
     return units, default_index
 
 
+def _unmatched_name(row: dict) -> str:
+    return str(row.get("component_label") or row.get("matched_food_name") or "").strip()
+
+
 def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
     meta, ingredients = recipe_parser.parse_single_block(
         text.replace("\r\n", "\n").split("\n"),
@@ -141,15 +147,13 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
 
     sections: dict[str, list[dict[str, Any]]] = {}
     matched_count = 0
-    unmatched_count = 0
+    unmatched: list[str] = []
     for row in rows:
-        if row.get("_type") == "note":
-            unmatched_count += 1
-            continue
+        # "note" rows are "to taste" ingredients, left out on purpose.
         if row.get("_type") != "data":
             continue
         if row.get("_source") not in ("usda", "branded") or not row.get("food_id"):
-            unmatched_count += 1
+            unmatched.append(_unmatched_name(row))
             continue
 
         units, default_index = _units_for(row)
@@ -181,7 +185,8 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
             "subTemplates": sub_templates,
         },
         matched_count=matched_count,
-        unmatched_count=unmatched_count,
+        unmatched_count=len(unmatched),
+        unmatched=[name for name in unmatched if name],
     )
 
 
