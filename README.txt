@@ -2,6 +2,10 @@ Blobb Recipe-to-Template Pipeline
 ===================================
 parse_recipe.py  +  recipe_matcher.py
 
+BEFORE GENERATING RECIPES: read RECIPE_RULES.md. It is the prompt for the
+AI that writes {cuisine}_recipes.txt: units as the sources give them (cups,
+spoons, counts), never grams, plus sub-recipe, serving and oil rules.
+
 
 WHAT THIS DOES
 --------------
