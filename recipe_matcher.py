@@ -2711,6 +2711,99 @@ def _portion_label_volume_qty(label: str) -> tuple[float, str | None]:
     return _portion_label_qty(label), _portion_label_unit(label)
 
 
+# ── Spoon units derived from a cup portion ────────────────────────────────
+# Many USDA foods have "1 cup" but no spoon portion, so "1 tsp sesame seeds"
+# came out as 0.02 cup, or the amount check below swapped it to "Quantity not
+# specified". A spoon is exactly 1/16 or 1/48 of a cup by volume; checked
+# against the 608 USDA foods that have both, cup/16 lands within 5% of the
+# measured tablespoon 89% of the time. Those foods keep their own spoons.
+SPOON_UNITS = {"tsp", "tbsp"}
+# Below this many cups, a fine food reads better in spoons (0.023 cup of
+# cornstarch is 1 tsp).
+SPOON_SWITCH_CUPS = 0.25
+# Cup labels whose extra words still describe a fine, pourable food. Anything
+# else ("chopped", "pieces", "(4.86 large eggs)") measures chunks that don't
+# scale down to a spoon.
+FINE_CUP_WORDS = {
+    "cup", "cups", "unsifted", "sifted", "dipped", "spooned", "stirred",
+    "packed", "unpacked", "not", "level", "ground", "dry", "granulated",
+    "powdered", "melted", "whipped", "and", "or", "into",
+}
+# Foods measured in pieces; a spoon of them only makes sense when the recipe
+# itself says spoons.
+CHUNKY_CATEGORY_RE = re.compile(
+    r"vegetable|fruit|beef|pork|lamb|veal|game|poultry|chicken|turkey|fish|"
+    r"shellfish|seafood|meat|sausage|mixed dish|entree|omelet",
+    re.IGNORECASE,
+)
+
+
+# Portions nobody measures with: switching away from them loses nothing.
+UNMEASURABLE_PORTION_RE = re.compile(r"quantity not specified|\bracc\b", re.IGNORECASE)
+
+
+def _is_fine_cup_label(label: str) -> bool:
+    words = re.findall(r"[a-z]+", label.lower())
+    return all(w in FINE_CUP_WORDS for w in words)
+
+
+def _is_counted_portion(label: str) -> bool:
+    """A piece-style portion: "block", "1 large", "slice". Not a volume, a
+    weight, or USDA's unmeasurable servings."""
+    low = label.lower().strip()
+    if not low or UNMEASURABLE_PORTION_RE.search(low):
+        return False
+    if _portion_label_unit(low) is not None:
+        return False
+    return not re.search(r"\b(g|oz|lb|100g|serving|guideline|nlea)\b", low)
+
+
+def _derived_spoon_portion(food: dict, portion: dict, portion_amt: float,
+                           unit: str) -> dict | None:
+    """
+    A "1 tsp" or "1 tbsp" portion worked out from the food's cup portion,
+    when the food has no spoon portion of its own and either the recipe
+    measured in spoons, or the amount is under SPOON_SWITCH_CUPS of a fine
+    food and the chosen portion is a cup or one nobody measures with. None
+    when the chosen portion should stay.
+    """
+    portions = food.get("portions", [])
+    if any(_portion_label_unit(p.get("label", "")) in SPOON_UNITS for p in portions):
+        return None
+    cups = [p for p in portions
+            if _portion_label_unit(p.get("label", "")) == "cup" and p.get("gram_weight")]
+    if not cups:
+        return None
+    # The chosen cup, else the plainest one.
+    cup = portion if portion in cups else min(cups, key=lambda p: len(p["label"]))
+    serving_qty, serving_unit = _portion_label_volume_qty(cup["label"])
+    serving_tsp = _volume_to_tsp(serving_qty, serving_unit or "cup")
+    if not serving_tsp:
+        return None
+    grams_per_tsp = cup["gram_weight"] / serving_tsp
+    recipe_unit = _normalise_volume_unit(unit)
+    if recipe_unit in SPOON_UNITS:
+        spoon = recipe_unit
+    else:
+        recipe_grams = portion_amt * portion["gram_weight"]
+        recipe_cups = recipe_grams / (grams_per_tsp * VOLUME_TO_TSP["cup"])
+        if (recipe_cups >= SPOON_SWITCH_CUPS
+                or not (portion is cup or UNMEASURABLE_PORTION_RE.search(portion["label"]))
+                or not _is_fine_cup_label(cup["label"])
+                or CHUNKY_CATEGORY_RE.search(food.get("category") or "")
+                or any(_is_counted_portion(p.get("label", "")) for p in portions)):
+            return None
+        spoon = "tbsp" if recipe_cups * 16 >= 1 else "tsp"
+    return {
+        "portion_id": f"{cup['portion_id']}-{spoon}",
+        "label": f"1 {spoon}",
+        "gram_weight": grams_per_tsp * VOLUME_TO_TSP[spoon],
+        "gram_col": cup.get("gram_col", ""),
+        "portion_idx": cup.get("portion_idx", 1),
+        "_derived_spoon": True,
+    }
+
+
 def _best_any_volumetric_portion(portions: list[dict], gram_target: float | None) -> dict | None:
     """
     Find the best real serving portion whose label is volumetric, regardless
@@ -3230,6 +3323,19 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                             # Unit mismatch â€” flag
                             portion_amt = qty
                             vol_mismatch = True
+
+            # Spoons for fine foods that only have a cup portion.
+            if (portion is not None and source == "usda" and not is_countable
+                    and not vol_mismatch and portion_amt > 0):
+                spoon = _derived_spoon_portion(food, portion, portion_amt, unit)
+                if spoon:
+                    recipe_grams = portion_amt * portion["gram_weight"]
+                    portion = spoon
+                    portion_id = spoon["portion_id"]
+                    # One decimal: a teaspoon is often under 3 g.
+                    portion_desc = f"{spoon['label']} ({spoon['gram_weight']:.1f} g)"
+                    portion_amt = recipe_grams / spoon["gram_weight"]
+                    cal_formula = round((spoon["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
 
             # â”€â”€ Portion sanity check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             # If portion_amt is suspiciously small (<0.1) or large (>10),
