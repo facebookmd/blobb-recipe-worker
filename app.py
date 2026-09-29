@@ -4,6 +4,8 @@ HTTP wrapper around the recipe pipeline, deployed as the Cloud Run service
 
     GET  /health        -> {"status": "ok"}
     POST /parse-recipe  {"text": "..."} -> {"template": {...}, ...}
+                        needs `Authorization: Bearer <app session token>`;
+                        see auth.py for who may call it and how often.
 
 The template JSON matches `MealTemplate.fromJson` in the app
 (`lib/data/meal_template.dart`); `foodId` is the FDC ID.
@@ -20,10 +22,12 @@ import re
 import tempfile
 import uuid
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field
+
+from auth import AuthError, Caller, RateLimiter, TokenVerifier
 
 import parse_recipe as recipe_parser
 import recipe_matcher as matcher
@@ -46,7 +50,32 @@ class ParseResponse(BaseModel):
     unmatched: list[str] = Field(default_factory=list)
 
 
-app = FastAPI(title="Blobb Recipe Parser", version="2.0.0")
+app = FastAPI(title="Blobb Recipe Parser", version="2.1.0")
+
+# Each ingredient runs food searches, so the text and the ingredient count
+# are capped; a real recipe is far below both.
+MAX_TEXT_CHARS = 10_000
+MAX_INGREDIENTS = 60
+
+verifier = TokenVerifier()
+# Per user: 10 conversions an hour, 30 a day.
+user_limits = RateLimiter([(10, 3600.0), (30, 86400.0)])
+
+
+def require_caller(authorization: Optional[str] = Header(default=None)) -> Caller:
+    scheme, _, token = (authorization or "").partition(" ")
+    if scheme.lower() != "bearer" or not token.strip():
+        raise HTTPException(status_code=401, detail="Sign in to convert recipes.")
+    try:
+        caller = verifier.verify(token.strip())
+    except AuthError:
+        raise HTTPException(status_code=401, detail="Sign in to convert recipes.")
+    if not user_limits.allow(caller.user_id):
+        raise HTTPException(
+            status_code=429,
+            detail="You've converted a lot of recipes. Try again in an hour.",
+        )
+    return caller
 
 
 def _number(value: Any, fallback: float = 0.0) -> float:
@@ -139,6 +168,11 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
     )
     if not ingredients:
         raise HTTPException(status_code=422, detail="No ingredients found in that text.")
+    if len(ingredients) > MAX_INGREDIENTS:
+        raise HTTPException(
+            status_code=413,
+            detail=f"That recipe has more than {MAX_INGREDIENTS} ingredients.",
+        )
 
     with tempfile.TemporaryDirectory() as tmp:
         recipes_csv = os.path.join(tmp, "recipes.csv")
@@ -196,7 +230,12 @@ def health() -> dict[str, str]:
 
 
 @app.post("/parse-recipe", response_model=ParseResponse)
-def parse_recipe(request: ParseRequest) -> ParseResponse:
+def parse_recipe(
+    request: ParseRequest,
+    caller: Caller = Depends(require_caller),
+) -> ParseResponse:
     if not request.text.strip():
         raise HTTPException(status_code=422, detail="Recipe text is empty.")
+    if len(request.text) > MAX_TEXT_CHARS:
+        raise HTTPException(status_code=413, detail="That recipe is too long.")
     return _match_recipe(request.text, request.threshold, request.category)
