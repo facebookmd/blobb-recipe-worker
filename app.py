@@ -156,6 +156,81 @@ def _units_for(row: dict) -> tuple[list[dict[str, Any]], int]:
     return units, default_index
 
 
+_COUNT_RE = re.compile(r"^(\d+(?:\.\d+)?|\d+/\d+)\s+(.+)$")
+
+
+def _split_count(label: str) -> tuple[float, str]:
+    """("4 oz") -> (4.0, "oz"); a label without a leading count -> (1.0, label)."""
+    match = _COUNT_RE.match(label.strip())
+    if not match:
+        return 1.0, label
+    amount, unit = match.group(1), match.group(2).strip()
+    if "/" in amount:
+        top, bottom = amount.split("/")
+        count = float(top) / float(bottom) if float(bottom) else 0.0
+    else:
+        count = float(amount)
+    if count <= 0 or not unit:
+        return 1.0, label
+    return count, unit
+
+
+def _per_single_unit(units: list[dict[str, Any]], default_index: int) -> tuple[list[dict[str, Any]], int, float]:
+    """Units with the count taken out of the label, as the app's wheel wants.
+
+    Portion labels carry their amount ("4 oz", "6 slices", "100 g") and each
+    unit's calories and grams cover that whole amount, so the wheel read
+    "2 · 4 oz" or "1 · 6 slices". Each unit becomes one of its kind ("oz",
+    calories and grams divided by 4), and the returned factor is what the
+    component's amount must be multiplied by for the default unit ("8 · oz").
+    Units that end up with the same label keep the first.
+    """
+    out: list[dict[str, Any]] = []
+    index_by_label: dict[str, int] = {}
+    new_default = 0
+    factor = 1.0
+    for i, unit in enumerate(units):
+        count, label = _split_count(str(unit["label"]))
+        if i == default_index:
+            factor = count
+        key = label.lower()
+        if key in index_by_label:
+            if i == default_index:
+                new_default = index_by_label[key]
+            continue
+        grams = unit.get("gramsPerUnit")
+        index_by_label[key] = len(out)
+        if i == default_index:
+            new_default = len(out)
+        out.append({
+            "label": label,
+            "caloriesPerUnit": round(unit["caloriesPerUnit"] / count, 4),
+            "gramsPerUnit": round(grams / count, 4) if grams else grams,
+        })
+    return out, new_default, factor
+
+
+# The app's amount wheel: whole numbers plus these fractions (amountFitsWheel
+# in drum_amount_picker.dart). Anything else opens in the keypad.
+_WHEEL_FRACTIONS = (0.0, 1 / 8, 1 / 4, 1 / 3, 1 / 2, 2 / 3, 3 / 4, 7 / 8, 1.0)
+
+
+def _wheel_amount(qty: float) -> float:
+    """[qty] snapped to the nearest amount the app's wheel shows, within 1%.
+
+    The matcher measures in grams, so "8 oz" over a 113.4 g "4 oz" portion
+    came back as 8.028 oz, which the wheel can't show and opens in the
+    keypad. Under 1% is below what the portion weights are accurate to.
+    """
+    if qty <= 0:
+        return qty
+    whole = int(qty)
+    nearest = min((whole + f for f in _WHEEL_FRACTIONS), key=lambda c: abs(c - qty))
+    if nearest > 0 and abs(nearest - qty) / qty < 0.01:
+        return round(nearest, 4)
+    return round(qty, 3)
+
+
 def _unmatched_name(row: dict) -> str:
     return str(row.get("component_label") or row.get("matched_food_name") or "").strip()
 
@@ -191,10 +266,11 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
             continue
 
         units, default_index = _units_for(row)
+        units, default_index, factor = _per_single_unit(units, default_index)
         component = {
             "name": str(row.get("component_label") or row.get("matched_food_name") or "Ingredient"),
             "foodId": _fdc_int(row.get("food_id")),
-            "defaultQty": round(_number(row.get("portion_amt"), 1.0), 3),
+            "defaultQty": _wheel_amount(_number(row.get("portion_amt"), 1.0) * factor),
             "defaultUnitIndex": default_index,
             "units": units,
         }
