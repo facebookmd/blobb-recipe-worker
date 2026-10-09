@@ -2804,6 +2804,41 @@ def _derived_spoon_portion(food: dict, portion: dict, portion_amt: float,
     }
 
 
+def _cup_portion_for_spoon(food: dict, portion: dict, portion_amt: float,
+                           unit: str) -> dict | None:
+    """
+    A cup portion for a recipe measured in cups (SPOON_SWITCH_CUPS or more)
+    when the chosen portion is a spoon: the food's own cup, else "1 cup"
+    worked out from the spoon (16 tbsp, 48 tsp). Foods like vinegar and soy
+    sauce often have only spoon portions, so "1/2 cup vinegar" came out as
+    8 tablespoons. None when the chosen portion should stay.
+    """
+    if _normalise_volume_unit(unit) != "cup":
+        return None
+    spoon_qty, spoon_unit = _portion_label_volume_qty(portion.get("label", ""))
+    if spoon_unit not in SPOON_UNITS or not portion.get("gram_weight"):
+        return None
+    spoon_tsp = _volume_to_tsp(spoon_qty, spoon_unit)
+    if not spoon_tsp:
+        return None
+    grams_per_tsp = portion["gram_weight"] / spoon_tsp
+    recipe_grams = portion_amt * portion["gram_weight"]
+    if recipe_grams / (grams_per_tsp * VOLUME_TO_TSP["cup"]) < SPOON_SWITCH_CUPS:
+        return None
+    for p in food.get("portions", []):
+        if (_portion_label_unit(p.get("label", "")) == "cup" and p.get("gram_weight")
+                and _is_fine_cup_label(p["label"])):
+            return p
+    return {
+        "portion_id": f"{portion['portion_id']}-cup",
+        "label": "1 cup",
+        "gram_weight": grams_per_tsp * VOLUME_TO_TSP["cup"],
+        "gram_col": portion.get("gram_col", ""),
+        "portion_idx": portion.get("portion_idx", 1),
+        "_derived_cup": True,
+    }
+
+
 def _best_any_volumetric_portion(portions: list[dict], gram_target: float | None) -> dict | None:
     """
     Find the best real serving portion whose label is volumetric, regardless
@@ -3336,6 +3371,16 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                     portion_desc = f"{spoon['label']} ({spoon['gram_weight']:.1f} g)"
                     portion_amt = recipe_grams / spoon["gram_weight"]
                     cal_formula = round((spoon["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
+                else:
+                    # Cups for a cup measure of a food that has only spoons.
+                    cup = _cup_portion_for_spoon(food, portion, portion_amt, unit)
+                    if cup:
+                        recipe_grams = portion_amt * portion["gram_weight"]
+                        portion = cup
+                        portion_id = cup["portion_id"]
+                        portion_desc = f"{cup['label']} ({cup['gram_weight']:.0f} g)"
+                        portion_amt = recipe_grams / cup["gram_weight"]
+                        cal_formula = round((cup["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
 
             # â”€â”€ Portion sanity check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             # If portion_amt is suspiciously small (<0.1) or large (>10),
