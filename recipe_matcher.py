@@ -3512,6 +3512,9 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 "calories_kcal":cal_formula,"cal_tot":cal_tot_formula,
                 "sub_template_id":"","notes":note_text,
                 "section":section,
+                # The unit the recipe itself used ("tbsp"), for the app to
+                # start the wheel on it.
+                "recipe_unit":unit,
             })
             data_row_indices.append(current_excel_row)
 

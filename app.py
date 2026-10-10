@@ -231,6 +231,10 @@ def _wheel_amount(qty: float) -> float:
     return round(qty, 3)
 
 
+# Recipe units the app can start the wheel on (parse_recipe.UNIT_MAP names).
+_VOLUME_UNITS = {"tsp", "tbsp", "cup", "ml", "fl oz"}
+
+
 def _unmatched_name(row: dict) -> str:
     return str(row.get("component_label") or row.get("matched_food_name") or "").strip()
 
@@ -274,6 +278,13 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
             "defaultUnitIndex": default_index,
             "units": units,
         }
+        # Volumes only: the app adds the tsp/tbsp/cup/ml a food doesn't list
+        # (lib/utils/volume_units.dart) and then starts the wheel on the
+        # recipe's own unit, so "1 tbsp brown sugar" opens as 1 tbsp, not
+        # 3 tsp. Older apps ignore the field.
+        recipe_unit = str(row.get("recipe_unit") or "").strip().lower()
+        if recipe_unit in _VOLUME_UNITS:
+            component["recipeUnit"] = recipe_unit
         sections.setdefault(row.get("section") or "Main", []).append(component)
         matched_count += 1
 
