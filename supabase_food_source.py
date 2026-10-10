@@ -353,30 +353,33 @@ def search_foods(
         except RuntimeError as e:
             _warn_failed(f"name search for {q!r}", e)
 
-    # Strategy 3: broad ilike fallback (if above strategies returned few results)
-    if len(rows_by_id) < limit:
-        pattern = f"%{_escape_like(q)}%"
-        # Only the two columns with trigram indexes. An OR over any unindexed
-        # column scans the whole branded table and hits the 3 s anon timeout;
-        # matching `ingredients` also mostly found foods that merely contain it.
-        ilike_filters = ",".join([
-            f"display_name.ilike.{pattern}",
-            f"description.ilike.{pattern}",
-        ])
-        url = (
-            f"{base_url}/rest/v1/foods"
-            f"?select={quote(_FOOD_SEARCH_SELECT)}"
-            f"&or=({quote(ilike_filters)})"
-            f"&limit={limit}"
-            f"{source_filter}"
-        )
-        try:
-            for row in _request_json(url):
-                rid = row.get("id")
-                if rid is not None:
-                    rows_by_id.setdefault(int(rid), row)
-        except RuntimeError as e:
-            _warn_failed(f"text search for {q!r}", e)
+    # Strategy 3: name/description match. Always run, not only when the
+    # strategies above came back short: for branded foods full-text search
+    # also matches *ingredient lists*, so "dry white wine" filled all `limit`
+    # rows with salad kits and pot pies and the products actually named
+    # "DRY WHITE COOKING WINE" were never fetched.
+    pattern = f"%{_escape_like(q)}%"
+    # Only the two columns with trigram indexes. An OR over any unindexed
+    # column scans the whole branded table and hits the 3 s anon timeout;
+    # matching `ingredients` also mostly found foods that merely contain it.
+    ilike_filters = ",".join([
+        f"display_name.ilike.{pattern}",
+        f"description.ilike.{pattern}",
+    ])
+    url = (
+        f"{base_url}/rest/v1/foods"
+        f"?select={quote(_FOOD_SEARCH_SELECT)}"
+        f"&or=({quote(ilike_filters)})"
+        f"&limit={limit}"
+        f"{source_filter}"
+    )
+    try:
+        for row in _request_json(url):
+            rid = row.get("id")
+            if rid is not None:
+                rows_by_id.setdefault(int(rid), row)
+    except RuntimeError as e:
+        _warn_failed(f"text search for {q!r}", e)
 
     return list(rows_by_id.values())
 

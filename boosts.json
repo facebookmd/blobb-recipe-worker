@@ -205,9 +205,13 @@
     "_comment": "═══ VINEGAR ══════════════════════════════════════════════════════════"
   },
   {
+    "_comment": "No cane vinegar in the data (10 Oct 2026); plain vinegar has the same nutrition. 'vinegar cane' matched nothing."
+  },
+  {
     "trigger": "cane vinegar",
-    "boost": "vinegar cane",
-    "weight": 0.7
+    "boost": "vinegar",
+    "fdc_id": "2709351",
+    "weight": 0.95
   },
   {
     "trigger": "sukang maasim",
@@ -233,14 +237,37 @@
     "_comment": "═══ TOMATO ═══════════════════════════════════════════════════════════"
   },
   {
+    "_comment": "Pinned 10 Oct 2026: the old boost text 'tomato paste canned no salt added' stopped matching when the foods were renamed '..., unsalted', and puree was pointed at paste."
+  },
+  {
     "trigger": "tomato paste",
-    "boost": "tomato paste canned no salt added",
-    "weight": 0.8
+    "boost": "tomato paste",
+    "fdc_id": "170459",
+    "weight": 0.95
   },
   {
     "trigger": "tomato puree",
-    "boost": "tomato paste canned no salt added",
-    "weight": 0.7
+    "boost": "tomato puree",
+    "fdc_id": "170460",
+    "weight": 0.95
+  },
+  {
+    "_comment": "═══ WINE ═════════════════════════════════════════════════════════════"
+  },
+  {
+    "_comment": "'Dry' wine in a recipe is table wine. Without these, 'dry white wine' finds no USDA food and the branded fallback picks salted cooking wine."
+  },
+  {
+    "trigger": "dry white wine",
+    "boost": "white wine",
+    "fdc_id": "174837",
+    "weight": 0.95
+  },
+  {
+    "trigger": "dry red wine",
+    "boost": "red wine",
+    "fdc_id": "173190",
+    "weight": 0.95
   },
   {
     "_comment": "═══ DAIRY & COCONUT ══════════════════════════════════════════════════"
@@ -369,27 +396,32 @@
   },
   {
     "trigger": "shaoxing wine",
-    "fdc_id": "2265852",
+    "boost": "rice cooking wine",
+    "fdc_id": "B_2265852",
     "weight": 0.95
   },
   {
     "trigger": "shaoxing cooking wine",
-    "fdc_id": "2265852",
+    "boost": "rice cooking wine",
+    "fdc_id": "B_2265852",
     "weight": 0.95
   },
   {
     "trigger": "shaoxing-style rice cooking wine",
-    "fdc_id": "2265852",
+    "boost": "rice cooking wine",
+    "fdc_id": "B_2265852",
     "weight": 0.95
   },
   {
     "trigger": "shao hsing wine",
-    "fdc_id": "2265852",
+    "boost": "rice cooking wine",
+    "fdc_id": "B_2265852",
     "weight": 0.95
   },
   {
     "trigger": "shao xing wine",
-    "fdc_id": "2265852",
+    "boost": "rice cooking wine",
+    "fdc_id": "B_2265852",
     "weight": 0.95
   },
   {

@@ -16,6 +16,7 @@ import argparse
 import csv
 import json
 import os
+import unicodedata
 import re
 import sys
 import time
@@ -694,7 +695,10 @@ def strip_prep_light(text):
     return _strip_words(text, FORM_ONLY_WORDS)
 
 def normalise(text):
-    return re.sub(r"[^a-z0-9 ]"," ",text.lower()).strip()
+    # Accents fold to plain letters first: USDA spells it "Tomato purée", and
+    # stripping the é outright left "pur e", which never matched "puree".
+    folded = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    return re.sub(r"[^a-z0-9 ]"," ",folded.lower()).strip()
 
 
 COLOR_WORDS = {
@@ -1850,8 +1854,48 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens,
     return best or food
 
 
+# Leading words that describe a state, not a food: when "dry white wine" or
+# "melted butter" finds nothing, the food is "white wine" / "butter".
+FALLBACK_DROP_WORDS = {
+    "dry", "melted", "softened", "cold", "warm", "hot", "chilled", "room",
+    "temperature", "fresh", "plain", "regular", "good", "quality",
+}
+
+
 def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
                      category="", unit="", is_cooked=False):
+    """
+    Returns (food, score, confidence, matched_alt); see
+    _match_ingredient_once. When nothing matches, retries before giving up:
+      1. without the boost rules, if one rewrote the ingredient (a rule whose
+         target was renamed in the data must not hide the plain match);
+      2. without leading FALLBACK_DROP_WORDS ("dry white wine" -> "white
+         wine").
+    """
+    result = _match_ingredient_once(ingredient, boost_rules, threshold,
+                                    category, unit, is_cooked)
+    if result[0] is not None:
+        return result
+    rules = BUILTIN_BOOSTS if boost_rules is None else boost_rules
+    if apply_boosts(ingredient, rules, category)[0].lower() != ingredient.lower():
+        retry = _match_ingredient_once(ingredient, [], threshold,
+                                       category, unit, is_cooked)
+        if retry[0] is not None:
+            return retry
+    words = ingredient.split()
+    drop = 0
+    while drop < len(words) - 1 and words[drop].lower() in FALLBACK_DROP_WORDS:
+        drop += 1
+    if drop:
+        retry = match_ingredient(" ".join(words[drop:]), boost_rules, threshold,
+                                 category, unit, is_cooked)
+        if retry[0] is not None:
+            return retry
+    return result
+
+
+def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
+                           category="", unit="", is_cooked=False):
     """
     Returns (food, score, confidence, matched_alt).
     matched_alt is the alternate name string that won the match, or None
