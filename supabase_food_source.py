@@ -10,13 +10,16 @@ matching scripts can still start quickly on later runs.
 
 from __future__ import annotations
 
+import gzip
 import hashlib
 import json
 import os
 import pickle
 import re
 import sys
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Iterable
 from urllib.error import HTTPError, URLError
@@ -26,6 +29,12 @@ from urllib.request import Request, urlopen
 
 DEFAULT_SUPABASE_URL = "https://npjuylxjgaiualfihxpt.supabase.co"
 DEFAULT_PAGE_SIZE = 200
+
+# Requests to Supabase in flight at once, across every thread. A recipe's
+# searches, their three queries and their portion batches all run in
+# parallel; without a cap a long recipe sent ~60 at once, and the anon
+# role's 3 s statement timeout starts biting under that load.
+_REQUEST_SLOTS = threading.BoundedSemaphore(16)
 
 _MEMORY_CACHE: dict[tuple[str, str, str, str], list[dict]] = {}
 
@@ -83,6 +92,8 @@ def _request_json(path: str) -> list[dict]:
             "apikey": key,
             "Authorization": f"Bearer {key}",
             "Accept": "application/json",
+            # JSON rows compress ~10x; a recipe pulled ~6 MB uncompressed.
+            "Accept-Encoding": "gzip",
         },
     )
 
@@ -91,8 +102,11 @@ def _request_json(path: str) -> list[dict]:
     # cross the anon role's 3 s limit on a cold cache, then succeed at once.
     for attempt in range(2):
         try:
-            with urlopen(req, timeout=120) as resp:
-                payload = resp.read().decode("utf-8")
+            with _REQUEST_SLOTS, urlopen(req, timeout=120) as resp:
+                body = resp.read()
+                if resp.headers.get("Content-Encoding", "").lower() == "gzip":
+                    body = gzip.decompress(body)
+                payload = body.decode("utf-8")
             break
         except HTTPError as e:
             detail = e.read().decode("utf-8", errors="ignore") if e.fp else ""
@@ -115,6 +129,22 @@ def _warn_failed(what: str, error: RuntimeError) -> None:
     """Report a failed Supabase request instead of passing it off as no results."""
     reason = re.sub(r" for \S+", "", str(error))[:200]
     print(f"[!] Supabase {what} failed: {reason}", file=sys.stderr)
+
+
+def _request_all(requests: list[tuple[str, str]]) -> list[list[dict]]:
+    """Runs [(what, url), ...] at the same time; results in the same order.
+    A failed request is reported and counts as no rows, as before."""
+    def one(item: tuple[str, str]) -> list[dict]:
+        what, url = item
+        try:
+            return _request_json(url)
+        except RuntimeError as e:
+            _warn_failed(what, e)
+            return []
+    if len(requests) <= 1:
+        return [one(item) for item in requests]
+    with ThreadPoolExecutor(max_workers=len(requests)) as pool:
+        return list(pool.map(one, requests))
 
 
 def _fetch_table_rows(
@@ -256,7 +286,7 @@ _FOOD_SEARCH_SELECT = (
 _PORTION_SELECT = (
     "id, food_id, portion_id, label, description, value, grams, "
     "calories, measure_unit_id, measure_unit_name, "
-    "measure_unit_abbreviation, modifier, sequence_number, amount, raw_jsonb"
+    "measure_unit_abbreviation, modifier, sequence_number, amount"
 )
 
 _LIKE_SPECIAL = str.maketrans({"%": r"\%", "_": r"\_"})
@@ -308,24 +338,21 @@ def search_foods(
     elif source_set in {"non-branded", "usda"}:
         source_filter = "&source_set=neq.branded"
 
+    # The three strategies below are sent at the same time; their rows are
+    # merged in strategy order, so earlier strategies win as before.
+    requests: list[tuple[str, str]] = []
+
     # Strategy 1: Full-text search via search_vector
     fts = _build_fts_query(q)
     if fts:
         fts_encoded = quote(fts)
-        url = (
+        requests.append((f"full-text search for {q!r}", (
             f"{base_url}/rest/v1/foods"
             f"?select={quote(_FOOD_SEARCH_SELECT)}"
             f"&search_vector=fts(english).{fts_encoded}"
             f"&limit={limit}"
             f"{source_filter}"
-        )
-        try:
-            for row in _request_json(url):
-                rid = row.get("id")
-                if rid is not None:
-                    rows_by_id[int(rid)] = row
-        except RuntimeError as e:
-            _warn_failed(f"full-text search for {q!r}", e)
+        )))
 
     # Strategy 2: FTS + display_name filter for multi-word queries.
     # FTS indexes the ingredients column, so "rice vinegar" matches any
@@ -333,25 +360,17 @@ def search_foods(
     # Adding a display_name ilike AND-filter narrows FTS to foods whose
     # *name* contains the phrase.  This is fast because FTS narrows the
     # scan set first; a bare ilike on the full table times out.
-    import re as _re
-    tokens = _re.findall(r'[a-zA-Z0-9]+', q.lower())
+    tokens = re.findall(r'[a-zA-Z0-9]+', q.lower())
     if len(tokens) >= 2 and fts:
         pattern = f"%{_escape_like(q)}%"
-        url = (
+        requests.append((f"name search for {q!r}", (
             f"{base_url}/rest/v1/foods"
             f"?select={quote(_FOOD_SEARCH_SELECT)}"
             f"&search_vector=fts(english).{fts_encoded}"
             f"&display_name=ilike.{quote(pattern)}"
             f"&limit={limit}"
             f"{source_filter}"
-        )
-        try:
-            for row in _request_json(url):
-                rid = row.get("id")
-                if rid is not None:
-                    rows_by_id.setdefault(int(rid), row)
-        except RuntimeError as e:
-            _warn_failed(f"name search for {q!r}", e)
+        )))
 
     # Strategy 3: name/description match. Always run, not only when the
     # strategies above came back short: for branded foods full-text search
@@ -366,20 +385,19 @@ def search_foods(
         f"display_name.ilike.{pattern}",
         f"description.ilike.{pattern}",
     ])
-    url = (
+    requests.append((f"text search for {q!r}", (
         f"{base_url}/rest/v1/foods"
         f"?select={quote(_FOOD_SEARCH_SELECT)}"
         f"&or=({quote(ilike_filters)})"
         f"&limit={limit}"
         f"{source_filter}"
-    )
-    try:
-        for row in _request_json(url):
+    )))
+
+    for rows in _request_all(requests):
+        for row in rows:
             rid = row.get("id")
             if rid is not None:
                 rows_by_id.setdefault(int(rid), row)
-    except RuntimeError as e:
-        _warn_failed(f"text search for {q!r}", e)
 
     return list(rows_by_id.values())
 
@@ -419,22 +437,23 @@ def load_portions_for_food_ids(food_ids: list[int]) -> dict[int, list[dict]]:
     base_url = _supabase_url()
     all_portions: list[dict] = []
 
-    # Supabase supports in() filter — batch in chunks of 50
+    # Supabase supports in() filter — batch in chunks of 50. The batches go
+    # out at the same time; 50 foods keep each reply under PostgREST's
+    # 1000-row cap.
     chunk_size = 50
+    requests = []
     for i in range(0, len(food_ids), chunk_size):
         chunk = food_ids[i:i + chunk_size]
         id_list = ",".join(str(fid) for fid in chunk)
-        url = (
+        requests.append(("portion lookup", (
             f"{base_url}/rest/v1/food_portions"
             f"?select={quote(_PORTION_SELECT)}"
             f"&food_id=in.({id_list})"
             f"&order=food_id.asc,id.asc"
             f"&limit=1000"
-        )
-        try:
-            all_portions.extend(_request_json(url))
-        except RuntimeError as e:
-            _warn_failed("portion lookup", e)
+        )))
+    for rows in _request_all(requests):
+        all_portions.extend(rows)
 
     return group_portions_by_food_id(all_portions)
 

@@ -105,3 +105,57 @@ def test_name_search_runs_even_when_full_text_fills_the_limit(monkeypatch):
     assert 999 in [row["id"] for row in rows]
     assert [row["id"] for row in rows][:5] == [0, 1, 2, 3, 4], (
         "full-text rows keep their place; name matches are added after")
+
+
+def test_parallel_requests_keep_their_order_and_survive_a_failure(monkeypatch):
+    import time
+
+    def fake_request(url):
+        if url == "bad":
+            raise RuntimeError("Supabase request failed (500) for bad: boom")
+        time.sleep(0.05 if url == "slow" else 0)
+        return [{"id": url}]
+
+    monkeypatch.setattr(source, "_request_json", fake_request)
+    results = source._request_all([("a", "slow"), ("b", "bad"), ("c", "fast")])
+    assert results == [[{"id": "slow"}], [], [{"id": "fast"}]]
+
+
+def test_portion_batches_are_merged_in_order(monkeypatch):
+    monkeypatch.setenv("SUPABASE_ANON_KEY", "test")
+
+    def fake_request(url):
+        ids = url.split("food_id=in.(")[1].split(")")[0].split(",")
+        return [{"food_id": int(i), "id": int(i)} for i in ids]
+
+    monkeypatch.setattr(source, "_request_json", fake_request)
+    grouped = source.load_portions_for_food_ids(list(range(1, 121)))
+    assert sorted(grouped) == list(range(1, 121))
+
+
+def test_responses_are_requested_and_read_gzipped(monkeypatch):
+    import gzip
+    import json
+
+    monkeypatch.setenv("SUPABASE_ANON_KEY", "test")
+    seen = {}
+
+    class Response:
+        headers = {"Content-Encoding": "gzip"}
+
+        def read(self):
+            return gzip.compress(json.dumps([{"id": 1}]).encode())
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    def fake_urlopen(req, timeout):
+        seen["encoding"] = req.get_header("Accept-encoding")
+        return Response()
+
+    monkeypatch.setattr(source, "urlopen", fake_urlopen)
+    assert source._request_json("https://example/rest/v1/foods") == [{"id": 1}]
+    assert seen["encoding"] == "gzip"

@@ -2237,24 +2237,11 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     if usda_food and usda_score > best_any_score:
         best_any_food, best_any_score, best_any_alt = usda_food, usda_score, usda_alt
 
-    usda_exact = False
-    if usda_food:
-        usda_exact = (
-            normalise(usda_food["display_name"]) == search_exact
-            or normalise(usda_food.get("item_name", "")) == search_exact
-            or normalise(usda_alt or "") == search_exact
-        )
-
+    # Branded is searched only below, once USDA has fallen short. It used to
+    # be searched here for every ingredient, though nothing reads it before
+    # the branded pass (which scores it itself when it is None).
     branded_food = None
     branded_score = 0.0
-    branded_exact = False
-    if _get_branded():
-        branded_food, branded_score, _ = _score_list(search_match, _get_branded(), boost_weight, boosted, is_cooked=is_cooked, unit=unit)
-        if branded_food:
-            branded_exact = (
-                normalise(branded_food["display_name"]) == search_exact
-                or normalise(branded_food["item_name"]) == search_exact
-            )
 
     # A USDA staple whose label contains *every* query token is the
     # canonical choice for a recipe, so prefer it before the branded
@@ -3101,6 +3088,45 @@ def _sub_template_calories(ref_tid: str, rows: list) -> float | None:
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # Core pipeline
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+def _warm_match_cache(rows_by_template, boost_rules, threshold) -> None:
+    """
+    Matches every ingredient at the same time, before the (sequential) main
+    loop, which then finds each result in _MATCH_CACHE. The searches a match
+    needs beyond the USDA prefetch (a rewritten query, the branded fallback
+    when USDA falls short) used to run one ingredient after another: about
+    3/4 of a recipe's wait (9 Oct 2026). Same arguments as the main loop, so
+    the same results.
+    """
+    jobs = {}
+    for ing_rows in rows_by_template.values():
+        category = ing_rows[0].get("category", "").strip()
+        for ing_row in ing_rows:
+            ingredient = ing_row.get("ingredient", "").strip()
+            unit = ing_row.get("unit", "").strip()
+            qty_raw = ing_row.get("qty", "").strip()
+            if (not ingredient or unit.lower() == "sub_template"
+                    or "to taste" in unit.lower() or "to taste" in qty_raw.lower()):
+                continue
+            is_cooked = ing_row.get("is_cooked", "").strip().lower() in ("true", "1", "yes")
+            key = (ingredient.lower(), category.lower(), unit.lower(), is_cooked)
+            jobs.setdefault(key, (ingredient, category, unit, is_cooked))
+    if len(jobs) < 2:
+        return
+
+    from concurrent.futures import ThreadPoolExecutor
+
+    def warm(job):
+        ingredient, category, unit, is_cooked = job
+        try:
+            match_ingredient(ingredient, boost_rules, threshold, category, unit,
+                             is_cooked=is_cooked)
+        except Exception:
+            pass  # the main loop matches it again and reports any error
+
+    with ThreadPoolExecutor(max_workers=10) as pool:
+        list(pool.map(warm, jobs.values()))
+
+
 def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                       existing_rows=None):
     if existing_rows is None:
@@ -3152,6 +3178,8 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                     pass  # individual failures are handled downstream
         sys.stderr.write("\r" + " " * 70 + "\r")
         sys.stderr.flush()
+
+    _warm_match_cache(rows_by_template, boost_rules, threshold)
 
     total_templates = len(rows_by_template)
     for t_idx, (tid, ing_rows) in enumerate(rows_by_template.items(), 1):
