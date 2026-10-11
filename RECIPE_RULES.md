@@ -106,13 +106,14 @@ These are matched straight to one known-good food in the database. Write them as
 * sesame sauce
 * tonkotsu broth
 * red bean paste — write `red bean paste`, not `anko`; also use it for sweetened red beans (e.g. in halo-halo)
+* dashi powder — instant dashi powder, matched to FDC 2381716 (Traditional Umami Dashi Soup Base & Seasoning). Its label: 8 g powder per 2 cups water, so **1 tsp (4 g) per 1 cup water**. Write it as `dashi powder` (not hondashi or granules), and only inside the Dashi Stock block; dishes use `dashi stock`.
 
 ## Store-bought ingredients
 
 Use the store form where home cooks normally do:
 
 * Japanese curry → `boxed Japanese curry roux`, in blocks (not homemade roux).
-* Dashi → the Dashi Stock base template, made from instant powder, never kelp and bonito flakes (they are strained out):
+* Dashi → the Dashi Stock base template, made from `dashi powder` (FDC 2381716, 1 tsp = 4 g per cup of water, from its label), never kelp and bonito flakes (they are strained out):
 
   ```
   Dashi Stock
