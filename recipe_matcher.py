@@ -2600,7 +2600,7 @@ def load_existing_xlsx(path):
                 "start_row":   None,
                 "end_row":     None,
             })
-        elif "to taste" in notes:
+        elif "to taste" in notes or "no calories logged" in notes:
             rows.append({
                 "_type":          "note",
                 "_confidence":    "",
@@ -3342,7 +3342,7 @@ def _warm_match_cache(rows_by_template, boost_rules, threshold,
             ingredient = ing_row.get("ingredient", "").strip()
             unit = ing_row.get("unit", "").strip()
             qty_raw = ing_row.get("qty", "").strip()
-            if (not ingredient or template_index_skip(ing_row)
+            if (not ingredient or template_index_skip(ing_row) or _is_aromatic_leaf(ingredient)
                     or "to taste" in unit.lower() or "to taste" in qty_raw.lower()):
                 continue
             is_cooked = ing_row.get("is_cooked", "").strip().lower() in ("true", "1", "yes")
@@ -3405,6 +3405,20 @@ def _template_refs(rows_by_template, existing_rows, published_templates):
     return refs + list(published_templates or [])
 
 
+# Leaves that flavour a dish and are mostly taken out or not eaten, with no
+# food of their own in the data: "10 curry leaves" matched a coconut curry
+# (2199 kcal), kaffir lime leaves limes, banana leaf a banana. They are about
+# 0 kcal, so they become note rows, like "to taste": no search, no calories,
+# and left out of the saved template (templates have no notes).
+AROMATIC_LEAVES_RE = re.compile(
+    r"\b(?:curry|(?:kaffir|makrut)\s+lime|lime|pandan|banana)\s+lea(?:f|ves)\b", re.I)
+AROMATIC_NOTE = "aromatic leaf, not eaten - no calories logged"
+
+
+def _is_aromatic_leaf(ingredient: str) -> bool:
+    return bool(AROMATIC_LEAVES_RE.search(ingredient or ""))
+
+
 # Messages from the last build_output_rows: lines that name no template but
 # come close to one ("dashi stok"), and, when not strict, lines that named a
 # template but couldn't use it.
@@ -3450,7 +3464,8 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
         for ing_row in ing_rows:
             ingredient = ing_row.get("ingredient", "").strip()
             unit = ing_row.get("unit", "").strip()
-            if "to taste" in unit.lower() or _uses_template(ing_row):
+            if ("to taste" in unit.lower() or _uses_template(ing_row)
+                    or _is_aromatic_leaf(ingredient)):
                 continue
             sq = normalise(strip_prep(ingredient))
             if sq:
@@ -3520,6 +3535,15 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                     "_type":"note","template_id":tid,"template_name":template_name,
                     "category":category,"component_label":ingredient,
                     "notes":"to taste â€” no calories logged",
+                    "section":section,
+                })
+                continue
+
+            if _is_aromatic_leaf(ingredient):
+                output_rows.append({
+                    "_type":"note","template_id":tid,"template_name":template_name,
+                    "category":category,"component_label":ingredient,
+                    "notes":AROMATIC_NOTE,
                     "section":section,
                 })
                 continue

@@ -120,3 +120,26 @@ def test_a_pinned_food_is_found_in_the_fetch_cache(monkeypatch):
 def test_count_words_and_leaves(line, qty, unit, ingredient):
     r = parse_ingredient_line(line)
     assert (r["qty"], r["unit"], r["ingredient"]) == (qty, unit, ingredient)
+
+
+# ── Aromatic leaves: note rows, no calories ───────────────────────────────
+
+@pytest.mark.parametrize("line, note", [
+    ("10 curry leaves", True), ("4 kaffir lime leaves", True),
+    ("3 makrut lime leaves", True), ("2 pandan leaves", True),
+    ("1 banana leaf", True), ("2 lime leaves", True),
+    ("2 bay leaves", False), ("1 tbsp lime juice", False),
+    ("1 banana", False), ("1 cup curry sauce", False),
+])
+def test_aromatic_leaves_are_notes(tmp_path, monkeypatch, line, note):
+    import parse_recipe
+    import recipe_matcher as matcher
+
+    monkeypatch.setattr(matcher, "match_ingredient", lambda *a, **k: (None, 0.0, "none", None))
+    monkeypatch.setattr(matcher, "_search_and_build_index", lambda *a, **k: None)
+    meta, ings = parse_recipe.parse_single_block(["Test", line], name_hint="recipe")
+    csv = tmp_path / "r.csv"
+    parse_recipe.write_recipes_csv([(meta, ings)], str(csv), append=False)
+    [row] = [r for r in matcher.build_output_rows(str(csv), [], 0.0)
+             if r.get("_type") in ("data", "note")]
+    assert (row["_type"] == "note") is note
