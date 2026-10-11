@@ -1,316 +1,183 @@
-Blobb Recipe-to-Template Pipeline
-===================================
-parse_recipe.py  +  recipe_matcher.py
+Blobb recipe templates
+======================
 
-BEFORE GENERATING RECIPES: read RECIPE_RULES.md. It is the prompt for the
-AI that writes {cuisine}_recipes.txt: units as the sources give them (cups,
-spoons, counts), never grams, plus sub-recipe, serving and oil rules.
+Turns recipe text into Blobb meal templates: each ingredient matched to a
+food in Supabase, with an amount and a unit. Two ways in, one matcher:
 
+  * Batch: recipe files -> parse_recipe.py -> templates_output.xlsx/.csv ->
+    the import tool -> the curated templates everyone sees in the app.
+  * In-app: "Convert recipe" posts pasted text to app.py on Cloud Run,
+    which returns one template to the app.
 
-WHAT THIS DOES
---------------
-You paste or type a recipe ingredient list into a text file. The scripts
-parse it, match every ingredient against your food databases, let you review
-and fix the matches interactively, then output three things:
-
-  1. templates_output.xlsx   — human review spreadsheet (always produced)
-  2. templates.json          — app-ready JSON  (optional, --export-json)
-  3. templates.db            — app-ready SQLite (optional, --export-sqlite)
-
-The JSON and SQLite files are what your Flutter app actually ingests.
-The spreadsheet is just for you to catch bad matches before committing them.
-
-Calories are NOT stored in the app exports. The app computes them at
-runtime by looking up the food in its local database. This is intentional —
-it means portion sizes stay dynamic and the data stays small.
+Before writing recipe files, read RECIPE_RULES.md: it is the prompt for the
+AI that writes {cuisine}_recipes.txt, and the rules those files must follow.
 
 
-REQUIREMENTS
-------------
-  Python 3.10+
-  openpyxl      →  pip install openpyxl       (for .xlsx output)
-  sqlite3       →  built into Python           (for .db output)
-  Supabase anon key is optional, but recommended.
-  Set SUPABASE_ANON_KEY and optionally SUPABASE_URL to read live food tables.
-  The recipe worker (app.py) also needs APP_SUPABASE_KEY, the app project's
-  publishable key (optionally APP_SUPABASE_URL), to use published base
-  templates; without it, lines naming one are matched as foods.
-
-No other packages needed.
-
-Tests: install requirements-dev.txt (pytest, and httpx for test_auth.py),
-then run `.venv/bin/python -m pytest -q`.
-
-
-FILES IN THIS FOLDER
----------------------
-  parse_recipe.py      Parse freeform recipe text + run the full pipeline
-  recipe_matcher.py    Match recipes.csv against food databases
-  boosts.json          Your custom fuzzy-match correction rules
-  README.txt           This file
-
-You need to supply:
-  food_db.csv              Export the blobb_food_database sheet from Google
-                           Sheets as CSV. File → Download → Comma-separated.
-                           Must include cols A-X (FDC_ID through Energy kcal).
-
-  off_clean_with_ids.csv   Your full Open Food Facts database. Used as a
-                           fallback when a food is not found in USDA.
-                           If absent, the script still runs (USDA only).
-
-When SUPABASE_ANON_KEY is set, the USDA and branded food lookups come from the
-remote Supabase `foods` and `food_portions` tables instead of the local exports
-above. OFF still uses the local CSV fallback for now.
+FILES
+-----
+  RECIPE_RULES.md          Rules and prompt for writing recipe files.
+  parse_recipe.py          Reads recipe text into recipes.csv, then runs the
+                           matcher. The batch command.
+  recipe_matcher.py        Matches ingredients to foods, picks portions and
+                           amounts, writes templates_output.xlsx and .csv.
+  template_refs.py         Base templates used by name inside other recipes.
+  supabase_food_source.py  Reads foods and portions from the USDA Supabase
+                           project (cached on disk).
+  boosts.json              Hand-written matching rules (see FIXING A MATCH).
+  app.py                   The Cloud Run server behind "Convert recipe".
+  auth.py                  Who may call it (signed-in app users), how often.
+  Dockerfile, .dockerignore, requirements.txt
+                           How Cloud Build packages the server.
+  requirements-dev.txt     Extra packages for the tests.
+  test_*.py                Tests; see TESTS.
 
 
-NORMAL WORKFLOW
----------------
-Step 1 - Write your recipe as a text file (see INPUT FORMAT below).
+SETUP
+-----
+  Python 3.10+, then:  pip install -r requirements-dev.txt openpyxl
+  SUPABASE_ANON_KEY      The USDA project's key (Blobb App/.env). Required.
+  SUPABASE_URL           Optional; defaults to the USDA project.
 
-Step 2 - Run parse_recipe.py:
-
-    python parse_recipe.py adobo.txt
-
-    Multiple files at once:
-    python parse_recipe.py adobo.txt sinigang.txt kare_kare.txt
-
-    Multiple recipes in one file - separate them with --- or 3+ blank lines:
-    python parse_recipe.py all_recipes.txt
-
-Step 3 - Review the preview table in the terminal. Each recipe is shown
-    one at a time. Available commands:
-      [Enter]       confirm all rows and move to the next recipe
-      s             skip this recipe entirely
-      d 3           drop row 3
-      e 3           edit row 3 (prompts for qty / unit / name)
-      r New Name    rename the recipe
-      q             quit without writing anything
-
-Step 4 - The scripts write recipes.csv, run the matcher automatically,
-    and produce templates_output.xlsx. Open it to review match quality.
-
-Step 5 - Fix bad matches. Two ways:
-      a) Add a rule to boosts.json and re-run (for systematic problems)
-      b) Directly edit the food_id / portion_id in the spreadsheet,
-         then re-run with --parse-only to regenerate the app exports
-         from the corrected recipes.csv
-
-Step 6 - Once satisfied, export for the app:
-
-    python parse_recipe.py adobo.txt \
-        --export-json  templates.json \
-        --export-sqlite templates.db
-
-    Drop templates.db (or templates.json) into your Flutter project.
+The server also reads, on Cloud Run:
+  APP_SUPABASE_KEY       The app project's publishable key, so pasted recipes
+                         can use published base templates. Without it, a line
+                         naming one is matched as a food.
+  APP_SUPABASE_URL       Optional; defaults to the app project.
 
 
-USEFUL FLAGS
-------------
-  --category "Filipino Main"    Tag all recipes in this run with a category
-  --yes / -y                    Skip interactive preview, confirm everything
-  --parse-only                  Write recipes.csv only, skip matching
-  --append                      Add to existing recipes.csv instead of
-                                overwriting (auto-enabled for multiple files)
-  --threshold 0.45              Minimum match score (default 0.45)
-                                Raise to be stricter, lower to get more matches
-  --export-json PATH            Also write app-ready JSON
-  --export-sqlite PATH          Also write app-ready SQLite
+BATCH RUN
+---------
+From this folder, with SUPABASE_ANON_KEY set:
 
-  --db PATH                     Path to food_db.csv (default: food_db.csv)
-  --off PATH                    Path to OFF csv (default: off_clean_with_ids.csv)
-  --output PATH                 Review spreadsheet path (default: templates_output.xlsx)
+    python3 parse_recipe.py ../recipes/japanese_recipes.txt --yes --forceall
 
-All flags work on both parse_recipe.py and recipe_matcher.py.
+  * Several files in one run: list them, files that define base templates
+    first. A file holds many recipes, separated by 3 blank lines or ---.
+  * --yes skips the per-recipe preview. Without it, each recipe is shown
+    first: Enter confirms, s skips, d <n> drops a row, e <n> edits one,
+    r renames, q quits.
+  * --forceall starts the output fresh; without it, recipes already in
+    templates_output.xlsx are kept and only new ones run (--force re-runs
+    the ones in this file).
+  * --parse-only writes recipes.csv and stops. --threshold (default 0.45)
+    is the lowest match score accepted.
 
+Output: templates_output.xlsx (to review) and templates_output.csv (to
+import), in the folder you ran from.
 
-BUILDING UP THE TEMPLATE SET OVER TIME
----------------------------------------
-For a single session (e.g. 10 recipes in one go):
+Then import into the app project, from blobbapp/:
 
-    python parse_recipe.py *.txt --category "Filipino Main" \
-        --export-json templates.json --export-sqlite templates.db
+    python3 tool/csv_templates_to_supabase_migration.py \
+        --input ../templates/templates_output.csv \
+        --output supabase/migrations/<timestamp>_import_templates.sql
 
-To add more recipes later without losing the ones already done:
-
-    python parse_recipe.py new_recipes.txt --append \
-        --export-json templates.json --export-sqlite templates.db
-
---append means:
-  - New recipe rows are added to recipes.csv (old rows kept)
-  - templates_output.xlsx is regenerated from the full CSV
-  - templates.db uses INSERT OR REPLACE, so old rows are preserved
-    and any re-matched rows are cleanly updated
+It replaces every curated template (no submitted_by; people's own templates
+are never touched) and refuses to write anything if an ingredient has no
+food. Review the SQL, then: supabase db push --dry-run, supabase db push.
 
 
-INPUT FORMAT
-------------
-The parser handles almost anything. All of these work:
+RECIPE FILE FORMAT
+------------------
+RECIPE_RULES.md has the full rules. In short:
 
-    * 0.5 lbs __pork belly__ (note 1)
-    - [ ] 2 tablespoons soy sauce
-    ▢ ½ cup vinegar
-    1. 3-4 cloves garlic
-    • 150g chicken breast, grilled
-    Salt to taste
+    Category: Japanese
 
-Supported:
-  ▢ / - [ ] / * [ ]   Markdown checkboxes (from Notion, websites, etc.)
-  * / - / bullets/numbers  Any list format
-  __bold__ / **bold**  Copy-paste formatting markers (inner text is kept)
-  (note 1) etc.        Note annotations (stripped entirely)
-  ½ ¼ ¾ ⅓ ⅔ ⅛        Unicode fractions
-  1/2  1 1/2  3-4      ASCII fractions, mixed numbers, ranges (averaged)
-  150g  2tbsp           Number glued directly to unit (no space needed)
-  to taste / as needed  Written as a note row, no calories counted
 
-Recipe name detection: the first line that does not look like an ingredient
-(no leading number, no unit keyword, 2+ words) becomes the recipe name and
-template_id automatically. A file starting with "Chicken Adobo" names itself.
+
+    Dashi Stock
+    AKA: Dashi", "Dashi broth
+    Servings: 4
+    Serving size: 1 cup
+    4 cup water
+    4 tsp dashi powder
+    SOURCE: url1, url2, url3
+
+  * Amounts are for the whole recipe; the parser divides by Servings.
+  * --Section lines start a section (--Sauce, --Absorbed oil).
+  * "to taste" and "lemon wedge for serving" become note rows, with no
+    calories, left out of the saved template.
+  * The parser also copes with pasted web recipes: bullets, checkboxes,
+    unicode fractions, ranges (averaged), "150g", "(note 1)".
 
 
 BASE TEMPLATES
 --------------
-A recipe that other recipes use (Dashi Stock, Braised Pork Belly) has a
-"Serving size:" line, e.g. "Serving size: 1 cup" (RECIPE_RULES.md). Another
-recipe uses it like any ingredient, by name or AKA, in that kind of unit:
-"1.5 cup dashi stock". The matcher (template_refs.py) copies the template's
-ingredients into the recipe as a "Dashi Stock" section, scaled by amount ÷
-serving size. Batch runs use templates earlier in the run or from earlier runs
-in templates_output.xlsx; a line it can't convert fails the run with the
-reason. The recipe worker uses curated published templates instead.
+A recipe other recipes use (Dashi Stock, Braised Pork Belly) has a
+"Serving size:" line. Another recipe uses it like any ingredient, by name or
+AKA, in that kind of unit: "1.5 cup dashi stock". template_refs.py copies
+its ingredients in as a "Dashi Stock" section, scaled by amount / serving
+size (1.5 servings here). Copies, not links: editing Dashi Stock later
+doesn't change recipes already made from it.
+
+  * Batch runs use templates earlier in the run, or from earlier runs in
+    templates_output.xlsx. The in-app server uses curated published ones.
+  * A line in the wrong kind of unit ("1 cup braised pork belly" when it is
+    measured in slices), a template with no Serving size, or one used
+    before its block stops a batch run with the line named. Close misses
+    ("dashi stok") are listed but matched as foods.
+  * The old slug form ("0.25 dashi_stock") is refused.
 
 
-REVIEW SPREADSHEET (templates_output.xlsx)
-------------------------------------------
-One sheet: templates_output
+REVIEW SPREADSHEET
+------------------
+One row per ingredient, a TOTAL row per recipe. Colours:
+  White          USDA match
+  Light yellow   Branded match
+  Light red      Low confidence - check it
+  Pink           No match - must fix before importing
 
-Columns:
-  template_id         Recipe slug (e.g. chicken_adobo)
-  template_name       Display name
-  other_names         Blank - fill in manually if needed
-  category            Category tag
-  component_label     Ingredient as you wrote it
-  food_id             Matched food ID (FDC_ID for USDA, OFF_xxxxx for OFF)
-  portion_id          {food_id}_{index}  e.g. 174277_4
-  portion_amt         How many of that portion
-  portion_description Portion label and gram weight e.g. "1 cup (255 g)"
-  calories_kcal       Kcal for one unit of that portion (plain number)
-  cal_tot             =calories_kcal x portion_amt  (live Excel formula)
-  sub_template_id     The base template a row was copied from (see below)
-  notes               Match score + source, or "to taste"
-  section             Section within the recipe ("Main", "Dashi Stock")
-  unit_label          The unit the amount is in, e.g. "tsp packed"
-  unit_grams          That unit's exact weight (the description rounds it)
-  servings            The recipe's Servings
-  serving_qty         Its Serving size amount, for base templates (1)
-  serving_unit        Its Serving size unit, for base templates (cup)
-
-Colour coding:
-  White               High-confidence USDA match (score >= 0.55)
-  Amber (#FFD966)     Low-confidence match (0.45-0.54) - worth checking
-  Pale green          Matched from OFF database
-  Pink  (#FFB3B3)     No match found - must fix manually
-
-Each recipe ends with a TOTAL row summing cal_tot for that recipe.
-
-To fix a pink or amber row:
-  1. Find the correct food_id in food_db.csv (search by Display Name)
-  2. Find the right portion_id ({food_id}_{portion index}, starting at 1)
-  3. Edit those two cells in the spreadsheet
-  4. Re-run the matcher to regenerate the app exports with the fix:
-       python recipe_matcher.py --export-sqlite templates.db
+Main columns: component_label (as written), matched_food_name, food_id (FDC
+id; B_ for branded), portion_amt x portion_description ("1 cup (240 g)"),
+calories_kcal per portion, cal_tot, section, notes (score and source, and
+flags like "PORTION NOT FOUND, estimated"), unit_label / unit_grams (the
+unit exactly, for the import), servings / serving_qty / serving_unit.
 
 
-MATCHING LOGIC
+FIXING A MATCH
 --------------
-For each ingredient:
-  1. Strip prep words (chopped, diced, frozen, raw, grilled, etc.)
-  2. Apply boost rules - built-in first, then your boosts.json
-  3. Score every USDA food by bigram similarity to the cleaned ingredient
-  4. If best USDA score < threshold, search OFF database instead
-     (OFF uses an inverted index - fast even at 200k rows)
-  5. Pick the highest-scoring match above threshold
-  6. Select best portion by matching unit keyword to portion label
-     (tbsp → "tablespoon", clove → "clove", piece → "medium/large/small")
-  7. Derive portion_amt from gram conversion if possible,
-     or use qty directly for countable units (piece, clove)
+Fix the cause, then re-run; don't edit the output.
 
-food_id prefix tells the app where to look at runtime:
-  No prefix (e.g. 174277)    →  local USDA table (bundled with app)
-  OFF_ prefix (e.g. OFF_001) →  OFF cache (fetch from cloud on first use,
-                                 then stored locally forever)
+  * Wrong food: pin it in boosts.json,
+      {"trigger": "unagi sauce", "fdc_id": "B_1865541", "weight": 0.95}
+    or rewrite the search,
+      {"trigger": "kangkong", "boost": "swamp cabbage", "weight": 0.6}
+    "exclude" skips lines containing a word; "category" limits a rule to a
+    cuisine. Rules apply in file order, first match wins.
+  * Wrong amount: a portion rule for a unit,
+      {"trigger": "dashi powder", "portion_gram_weight": 4.0,
+       "portion_label": "1 tsp", "portion_unit": "tsp"}
+  * Wrong wording: change the recipe line (RECIPE_RULES.md).
 
+Find FDC ids at fdc.nal.usda.gov or in the Supabase foods table.
 
-UNIT CONVERSIONS
-----------------
-  oz      x 28.35 g
-  lb      x 453.6 g
-  tbsp    x 15 g
-  tsp     x 5 g
-  cup     x 240 g  (default - water, broth, stock)
-          x 245 g  (sauce)
-          x 134 g  (peas, beans, lentils)
-          x 218 g  (oil)
-  g / kg / ml   direct
-  piece / clove / unit   qty used as portion_amt directly (no gram conversion)
+Portion rules the matcher follows on its own:
+  * Volumes stay in the recipe's unit, worked out from the food's own
+    plain volume portions when it lacks that unit (US cups; fine and
+    pourable foods only, never "cup, chopped"). Under 1/4 cup reads in
+    spoons. A cup of water is 250 ml.
+  * Branded foods use their label serving. A label "cup" that isn't
+    230-250 ml is the container it's sold in, and never converts.
+  * "1 packet" is the label's package weight.
+  * Curry, kaffir/makrut lime, pandan and banana leaves are note rows (no
+    food in the data, about 0 kcal).
 
 
-BUILT-IN BOOST RULES
+TESTS
+-----
+    .venv/bin/python -m pytest -q
+
+  test_sub_templates.py        Base templates by name, scaling, errors
+  test_branded_portions.py     Label servings, packets, container cups
+  test_portions.py             Cups for spoon-only foods, water
+  test_recipe_unit_volume.py   Volume lines stay in the recipe's unit
+  test_units.py                Units sent to the app, count words, leaves
+  test_matching_fallbacks.py   Search fallbacks, Supabase requests
+  test_auth.py                 Sign-in and rate limits
+
+
+DEPLOYING THE SERVER
 --------------------
-These run automatically before your boosts.json:
-
-  soy sauce       → shoyu
-  cooking oil     → vegetable oil soybean
-  potato          → potatoes flesh and skin raw
-  bell pepper     → sweet red pepper raw
-  green peas      → peas green frozen unprepared
-  onion           → onions raw
-  garlic          → garlic raw
-  bay leaf        → bay leaf
-  chili pepper    → hot red chili pepper
-  beef broth      → beef broth canned
-  chicken broth   → chicken broth low sodium
-  tomato sauce    → tomato sauce canned
-  liver spread    → liverwurst spread
-  pork bouillon   → beef bouillon cubes dry
-  hotdog          → frankfurter meat
-
-To add your own, edit boosts.json:
-  [
-    { "trigger": "kangkong", "boost": "swamp cabbage", "weight": 0.6 },
-    { "trigger": "kesong puti", "boost": "white fresh cheese", "weight": 0.6 }
-  ]
-  trigger  substring to match in the ingredient name
-  boost    alternative search string sent to the matcher instead
-  weight   confidence bonus (0.0-1.0); 0.6 is a safe default
-
-
-APP EXPORT SCHEMA
------------------
-Both --export-json and --export-sqlite use the same data model.
-
-templates
-  template_id       TEXT  primary key slug
-  template_name     TEXT  display name
-  other_names       TEXT  nullable
-  category          TEXT  nullable
-  sub_template_id   TEXT  nullable
-
-template_components
-  component_id      TEXT  "{template_id}_{sort_order}"
-  template_id       TEXT  foreign key → templates
-  sort_order        INT   display order within the recipe
-  component_label   TEXT  ingredient name as written
-  food_id           TEXT  nullable (null for "to taste" rows)
-  portion_id        TEXT  nullable
-  portion_amt       REAL  nullable - default portion count
-  notes             TEXT  match score, "to taste", etc.
-
-No calorie values are stored. The app computes them at display time:
-  calories = (portion.gramWeight / 100) * food.energyPer100g * component.portionAmt
-
-The user can change portion_id and portion_amt freely in the app.
-food_id routing at runtime:
-  food_id starts with "OFF_"  →  check local OFF cache; fetch from cloud
-                                  on first use, then stored locally forever
-  food_id has no prefix       →  look up in local USDA table (always available)
+Pushing to main deploys: a Cloud Build trigger builds the Dockerfile and
+rolls out a new revision of blobb-recipe-worker (project
+blobb-recipe-worker, us-central1). Environment variables set on the service
+carry over. Check: curl <service url>/health -> {"status":"ok"}.
