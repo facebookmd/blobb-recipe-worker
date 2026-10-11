@@ -816,6 +816,20 @@
     "weight": 0.9
   },
   {
+    "_comment": "Tonkotsu broth: Pacific Foods Organic Pork Tonkotsu Ramen Broth, the only plain tonkotsu broth in the data (USDA has no pork broth). Label 1 cup (240 ml); FDC's household text is only 'Amount per serving'. Lighter than restaurant tonkotsu."
+  },
+  {
+    "trigger": "tonkotsu broth",
+    "fdc_id": "B_2754660",
+    "weight": 0.95
+  },
+  {
+    "trigger": "tonkotsu broth",
+    "portion_gram_weight": 240.0,
+    "portion_label": "1 cup",
+    "portion_unit": "cup"
+  },
+  {
     "_comment": "Unagi (eel) sauce is the sauce, not eel: Kikkoman Unagi Sushi Sauce, label 1 Tbsp = 20 g."
   },
   {
