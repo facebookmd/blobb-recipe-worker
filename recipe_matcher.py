@@ -1003,6 +1003,26 @@ def _branded_label_serving(row: dict, fdc_id: str) -> dict | None:
     }
 
 
+_PACKAGE_GRAMS_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(?:g|grm|gram|grams|ml|mlt)\b", re.I)
+_PACKAGE_UNITS_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(kg|lbs?|oz|onz|ounces?)\b", re.I)
+_PACKAGE_UNIT_GRAMS = {"kg": 1000.0, "lb": 453.59237, "lbs": 453.59237,
+                       "oz": 28.349523125, "onz": 28.349523125,
+                       "ounce": 28.349523125, "ounces": 28.349523125}
+
+
+def _package_grams(package_weight: str) -> float | None:
+    """A branded food's label package size in grams: "1.4 oz/40 g" -> 40
+    (the label's own grams first), "32 ONZ" -> 907. None when unreadable."""
+    text = (package_weight or "").strip()
+    m = _PACKAGE_GRAMS_RE.search(text)
+    if m and float(m.group(1)) > 0:
+        return float(m.group(1))
+    m = _PACKAGE_UNITS_RE.search(text)
+    if m and float(m.group(1)) > 0:
+        return float(m.group(1)) * _PACKAGE_UNIT_GRAMS[m.group(2).lower()]
+    return None
+
+
 def _build_supabase_branded_food(row: dict, row_index: int, portions_by_food_id: dict[int, list[dict]]) -> dict | None:
     if _row_text(row, "source_set").lower() != "branded":
         return None
@@ -1074,6 +1094,7 @@ def _build_supabase_branded_food(row: dict, row_index: int, portions_by_food_id:
         "category": _row_text(row, "brand_owner", "category"),
         "energy_kcal": energy_kcal,
         "portions": portions,
+        "package_grams": _package_grams(_row_text(row, "package_weight")),
     }
 
 
@@ -3545,13 +3566,20 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             # was picked (often one label serving); say it's an estimate.
             packet_estimate = (unit.lower() in PACKET_UNITS and not (
                 portion is not None and PACKET_LABEL_RE.search(portion["label"])))
+            # One packet is the label's package size ("1.4 oz/40 g"), not one
+            # serving of it (tamarind soup mix: 40 g, not the 4 g serving).
+            if packet_estimate and food.get("package_grams"):
+                portion = {"portion_id": f"{food['fdc_id']}-pkg", "label": "1 packet",
+                           "gram_weight": food["package_grams"], "gram_col": "",
+                           "portion_idx": 1}
+                packet_estimate = False
             if source == "branded" and effective_gram_target is None:
                 estimate = _estimated_spoon_portion(food, portion, unit)
                 if estimate:
                     portion, estimated = estimate, True
 
             u_low=unit.lower()
-            is_countable=u_low in ("piece","pieces","clove","cloves","unit","units","item","serving","servings","sheet","sheets","leaf","leaves","stalk","stalks","slice","slices","strip","strips","spear","spears","head","heads","ear","ears","fillet","fillets","steak","steaks","patty","patties","chop","chops","drumstick","drumsticks","knob","knobs","cube","cubes","block","blocks","stick","sticks","wrapper","wrappers","whole")
+            is_countable=u_low in ("piece","pieces","clove","cloves","unit","units","item","serving","servings","sheet","sheets","leaf","leaves","stalk","stalks","slice","slices","strip","strips","spear","spears","head","heads","ear","ears","fillet","fillets","steak","steaks","patty","patties","chop","chops","drumstick","drumsticks","knob","knobs","cube","cubes","block","blocks","stick","sticks","wrapper","wrappers","whole","pack","sachet")
             display_label=matched_alt if matched_alt else ingredient
             vol_mismatch=False
 

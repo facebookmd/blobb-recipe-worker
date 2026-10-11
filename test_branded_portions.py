@@ -278,3 +278,33 @@ def test_a_packet_portion_is_not_flagged(tmp_path, monkeypatch):
     [row] = rows_for(tmp_path, monkeypatch, "2 packets sugar", food)
     assert row["portion_description"] == "1 packet (4 g)"
     assert row["estimated"] is False
+
+
+# ── Packets: the label's package size ──────────────────────────────────────
+
+@pytest.mark.parametrize("text, grams", [
+    ("1.4 oz/40 g", 40.0), ("32 ONZ", 32 * 28.349523125), ("40 g", 40.0),
+    ("1 LB", 453.59237), ("16 OZ/1 LB 454 g", 454.0), ("", None), ("1 packet", None),
+])
+def test_package_weight_in_grams(text, grams):
+    if grams is None:
+        assert matcher._package_grams(text) is None
+    else:
+        assert matcher._package_grams(text) == pytest.approx(grams)
+
+
+def test_a_packet_is_the_package_not_one_serving(tmp_path, monkeypatch):
+    # PAMANA tamarind soup mix: label serving 4 g, package 1.4 oz/40 g.
+    food = build({**TAMARIND, "package_weight": "1.4 oz/40 g"})
+    [row] = rows_for(tmp_path, monkeypatch, "1 packet tamarind soup mix", food)
+    assert row["portion_description"] == "1 packet (40 g)"
+    assert row["portion_amt"] == 1
+    assert row["cal_tot"] == pytest.approx(80.0)
+    assert not row["estimated"]
+    assert "MISMATCH" not in row["notes"]
+
+
+def test_without_a_package_weight_a_packet_is_still_an_estimate(tmp_path, monkeypatch):
+    [row] = rows_for(tmp_path, monkeypatch, "1 packet tamarind soup mix", build(TAMARIND))
+    assert row["estimated"]
+    assert "MISMATCH" not in row["notes"]
