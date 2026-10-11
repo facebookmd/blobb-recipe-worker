@@ -1,4 +1,5 @@
-"""A cup measure stays in cups when the food has only spoon portions.
+"""A cup measure stays in cups when the food has only spoon portions: its
+own cup, else a US cup worked out from the spoon. Water's cups are ml.
 
 Run: .venv/bin/python -m pytest -q
 """
@@ -16,7 +17,10 @@ def portion(portion_id, label, grams):
 
 
 TBSP = portion("v-1", "1 tablespoon", 15.0)
-VINEGAR = {"portions": [TBSP, portion("v-2", "1 teaspoon", 5.0)]}
+VINEGAR = {"raw_description": "Vinegar, distilled",
+           "portions": [TBSP, portion("v-2", "1 teaspoon", 5.0)]}
+WATER = {"raw_description": "Water, bottled, generic",
+         "portions": [TBSP, portion("w-2", "1 teaspoon", 5.0)]}
 
 
 def cup_for(food, chosen, recipe_qty, unit):
@@ -42,9 +46,25 @@ def test_cups_plural_counts_too():
     assert cup_for(VINEGAR, TBSP, 0.5, "cups")["label"] == "1 cup"
 
 
+def test_water_gets_no_cup_its_cups_are_ml():
+    assert cup_for(WATER, TBSP, 1.0, "cup") is None
+
+
+@pytest.mark.parametrize("description, water", [
+    ("Beverages, water, tap, drinking", True), ("Water, carbonated, plain", True),
+    ("Beverages, water, bottled, PERRIER", True),
+    ("Beverages, Water with added vitamins and minerals", False),
+    ("Water chestnuts, raw", False), ("Watercress, raw", False),
+    ("Water convolvulus, raw", False), ("Vinegar, distilled", False),
+])
+def test_what_counts_as_water(description, water):
+    assert matcher._is_plain_water({"raw_description": description}) is water
+
+
 def test_under_a_quarter_cup_stays_in_spoons():
     # 2 tablespoons: small amounts read better in spoons (SPOON_SWITCH_CUPS).
-    assert cup_for(VINEGAR, TBSP, 0.125, "cup") is None
+    own_cup = portion("s-3", "1 cup", 255.0)
+    assert cup_for({"portions": [TBSP, own_cup]}, TBSP, 0.125, "cup") is None
 
 
 @pytest.mark.parametrize("unit", ["tbsp", "tablespoon", "tsp", "ml", "g", ""])
@@ -65,7 +85,8 @@ def test_the_food_s_own_cup_is_used_when_it_has_one():
 
 def test_a_chunky_cup_is_not_used():
     # "1 cup, chopped" measures pieces; work the cup out from the spoon.
-    food = {"portions": [TBSP, portion("x-3", "1 cup, chopped", 150.0)]}
+    food = {"raw_description": "Onions, raw",
+            "portions": [TBSP, portion("x-3", "1 cup, chopped", 150.0)]}
     cup = cup_for(food, TBSP, 0.5, "cup")
     assert cup["_derived_cup"] is True
     assert cup["gram_weight"] == pytest.approx(240.0)

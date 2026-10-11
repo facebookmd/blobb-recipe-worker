@@ -973,6 +973,32 @@ BRANDED_SERVING_UNITS = {"g", "grm", "gram", "grams", "ml", "mlt"}
 WEIGHT_LABEL_RE = re.compile(r"\b(?:g|grm|grams?|mg|kg|oz|onz|ounces?|lbs?)\b", re.IGNORECASE)
 
 
+# ml in one labelled "cup" that is a measuring cup: the FDA label cup (240),
+# the US cup (236.6) and the metric cup (250). In live branded data (11 Oct
+# 2026) 99% of ml "cup" servings fall here; the rest (108, 160, 50 ml) are
+# the cup a food is sold in.
+MEASURING_CUP_ML = (230.0, 250.0)
+_CUP_HOUSEHOLD_RE = re.compile(r"^(\d+(?:\.\d+)?|\d+/\d+)\s*cups?\b")
+
+
+def _is_container_cup(household: str, serving: float, serving_unit: str) -> bool:
+    """A household "cup" (household "1 cup", serving 108 ml) that isn't a
+    measuring cup. Only servings in ml can tell; a gram serving is trusted."""
+    m = _CUP_HOUSEHOLD_RE.match(household)
+    if not m or serving_unit not in ("ml", "mlt"):
+        return False
+    text = m.group(1)
+    if "/" in text:
+        num, den = text.split("/")
+        qty = float(num) / float(den) if float(den) else 0.0
+    else:
+        qty = float(text)
+    if qty <= 0:
+        return False
+    low, high = MEASURING_CUP_ML
+    return not low <= serving / qty <= high
+
+
 def _branded_label_serving(row: dict, fdc_id: str) -> dict | None:
     """
     The package label serving of a branded food, from the foods row itself
@@ -983,7 +1009,9 @@ def _branded_label_serving(row: dict, fdc_id: str) -> dict | None:
 
     The household text is the label when it names a volume or a count
     ("2 tbsp", "1 bar"); a weight ("0.28 oz", "4 GRM") becomes "1 serving"
-    so it is never read as a volume.
+    so it is never read as a volume. A "cup" given in ml that isn't a
+    measuring cup (MEASURING_CUP_ML) is the cup it's sold in (Dole Whip:
+    "1 cup" = 108 ml) and becomes "1 container".
     """
     unit = _row_text(row, "serving_size_unit").lower()
     try:
@@ -995,6 +1023,8 @@ def _branded_label_serving(row: dict, fdc_id: str) -> dict | None:
     household = " ".join(_row_text(row, "household_serving_full_text").lower().split())
     if not household or not re.match(r"^\d", household) or WEIGHT_LABEL_RE.search(household):
         household = "1 serving"
+    elif _is_container_cup(household, grams, unit):
+        household = "1 container"
     return {
         "portion_id": f"B_{fdc_id}-1",
         "label": household,
@@ -2901,6 +2931,20 @@ def _derived_spoon_portion(food: dict, portion: dict, portion_amt: float,
     }
 
 
+# A cup of water, in ml: "1 cup water" is 250 ml (Arianna, 11 Oct 2026).
+# Other foods' cups are US cups, worked out from their plain volume
+# measures when they list none.
+WATER_ML_PER_CUP = 250.0
+
+
+def _is_plain_water(food: dict) -> bool:
+    """USDA water ("Beverages, water, tap, drinking", "Water, bottled,
+    generic"), whose cup lines become ml (WATER_ML_PER_CUP). Not water
+    chestnuts, watercress or water convolvulus."""
+    description = (food.get("raw_description") or "").lower()
+    return description.startswith(("water,", "beverages, water,"))
+
+
 def _cup_portion_for_spoon(food: dict, portion: dict, portion_amt: float,
                            unit: str) -> dict | None:
     """
@@ -2908,7 +2952,8 @@ def _cup_portion_for_spoon(food: dict, portion: dict, portion_amt: float,
     when the chosen portion is a spoon: the food's own cup, else "1 cup"
     worked out from the spoon (16 tbsp, 48 tsp). Foods like vinegar and soy
     sauce often have only spoon portions, so "1/2 cup vinegar" came out as
-    8 tablespoons. None when the chosen portion should stay.
+    8 tablespoons. Water stays out of it (its cups are ml, see
+    WATER_ML_PER_CUP). None when the chosen portion should stay.
     """
     if _normalise_volume_unit(unit) != "cup":
         return None
@@ -2926,6 +2971,8 @@ def _cup_portion_for_spoon(food: dict, portion: dict, portion_amt: float,
         if (_portion_label_unit(p.get("label", "")) == "cup" and p.get("gram_weight")
                 and _is_fine_cup_label(p["label"])):
             return p
+    if _is_plain_water(food):
+        return None
     return {
         "portion_id": f"{portion['portion_id']}-cup",
         "label": "1 cup",
@@ -2959,7 +3006,8 @@ def _recipe_unit_volume_portion(food: dict, portion: dict, unit: str) -> dict | 
     as 0.95 liter, because USDA's water lists fl oz and liter but no cup. The
     food's own portion in that unit, else one worked out from its plain
     volume portions as the app does (cup, tbsp, tsp, fl oz, ml first), so
-    the app finds it among its own units. Cups and spoons are left to
+    the app finds it among its own units. Water's cups go to ml at
+    WATER_ML_PER_CUP ("_cup_as_ml"). Cups and spoons are left to
     _derived_spoon_portion / _cup_portion_for_spoon. None when the chosen
     portion should stay.
     """
@@ -2976,6 +3024,12 @@ def _recipe_unit_volume_portion(food: dict, portion: dict, unit: str) -> dict | 
         return own
     if not plain:
         return None
+    cup_as_ml = target == "cup" and _is_plain_water(food)
+    if cup_as_ml:
+        target = "ml"
+        own_ml = next((p for p in plain if _portion_label_unit(p["label"]) == "ml"), None)
+        if own_ml:
+            return {**own_ml, "_cup_as_ml": True, "_derived_spoon": True}
     basis = portion if portion in plain else min(
         plain, key=lambda p: RECIPE_VOLUME_UNITS.index(_portion_label_unit(p["label"])))
     qty, basis_unit = _portion_label_volume_qty(basis["label"])
@@ -2990,31 +3044,36 @@ def _recipe_unit_volume_portion(food: dict, portion: dict, unit: str) -> dict | 
         "gram_col": basis.get("gram_col", ""),
         "portion_idx": basis.get("portion_idx", 1),
         "_derived_spoon": True,
+        "_cup_as_ml": cup_as_ml,
     }
 
 
-def _branded_spoon_portion(portion: dict, unit: str) -> dict | None:
+def _branded_spoon_portion(portion: dict, unit: str,
+                           recipe_grams: float = 0.0) -> dict | None:
     """
     For a branded food whose chosen portion is a spoon ("1 tsp", 5 ml), the
     same food in the recipe's spoon: "1 tbsp tempura sauce" is one 15 g
-    tablespoon, not three teaspoons. Cup lines go to tablespoons; a cup is
-    hard to gauge from a label serving, and the app converts tbsp to cups
-    itself. None when the chosen portion is already that spoon, or isn't one.
+    tablespoon, not three teaspoons. Cup lines of SPOON_SWITCH_CUPS or more
+    ([recipe_grams] of it) get a US cup worked out from the spoon, as USDA
+    foods do (_cup_portion_for_spoon); smaller ones go to tablespoons. None
+    when the chosen portion is already that spoon, or isn't one.
     """
     spoon_qty, spoon_unit = _portion_label_volume_qty(portion.get("label", ""))
     if spoon_unit not in SPOON_UNITS or not portion.get("gram_weight"):
         return None
+    spoon_tsp = _volume_to_tsp(spoon_qty, spoon_unit)
+    if not spoon_tsp:
+        return None
+    grams_per_tsp = portion["gram_weight"] / spoon_tsp
     recipe_unit = _normalise_volume_unit(unit)
     if recipe_unit in SPOON_UNITS:
         target = recipe_unit
     elif recipe_unit == "cup":
-        target = "tbsp"
+        cups = recipe_grams / (grams_per_tsp * VOLUME_TO_TSP["cup"])
+        target = "cup" if cups >= SPOON_SWITCH_CUPS else "tbsp"
     else:
         return None
     if target == spoon_unit:
-        return None
-    spoon_tsp = _volume_to_tsp(spoon_qty, spoon_unit)
-    if not spoon_tsp:
         return None
     return {
         "portion_id": f"{portion['portion_id']}-{target}",
@@ -3038,7 +3097,8 @@ def _estimated_spoon_portion(food: dict, portion: dict | None,
     """
     The last resort for a branded spoon or cup line: no volume portion, no
     override, and only a weight serving ("0.28 oz") or none. "1 tbsp" at
-    1 g/ml, in the recipe's spoon (cups as tbsp, as _branded_spoon_portion),
+    1 g/ml, in the recipe's spoon (cups as tbsp, which _branded_spoon_portion
+    turns into a cup from SPOON_SWITCH_CUPS up),
     instead of 2 tbsp coming out as 2 x 100 g or 2 x the weight serving.
     The row is flagged so the app can say the portion was estimated. None
     when the chosen portion can already measure the line.
@@ -3691,15 +3751,21 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                     portion = own
                     portion_id = own["portion_id"]
                     portion_desc = f"{own['label']} ({own['gram_weight']:.1f} g)"
-                    portion_amt = recipe_grams / own["gram_weight"]
+                    if own.get("_cup_as_ml"):
+                        # "1 cup water" is 250 ml, not a US cup's 236.6.
+                        ml = _volume_to_ml(qty, unit) / _volume_to_ml(1.0, "cup") * WATER_ML_PER_CUP
+                        portion_amt = ml * _volume_to_ml(1.0, "ml") / _volume_to_ml(
+                            *_portion_label_volume_qty(own["label"]))
+                    else:
+                        portion_amt = recipe_grams / own["gram_weight"]
                     cal_formula = round((own["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
 
-            # Branded spoon servings, in the recipe's spoon (cups as tbsp).
+            # Branded spoon servings, in the recipe's spoon or cup.
             if (portion is not None and source == "branded" and not is_countable
                     and not vol_mismatch and portion_amt > 0):
-                spoon = _branded_spoon_portion(portion, unit)
+                recipe_grams = portion_amt * portion["gram_weight"]
+                spoon = _branded_spoon_portion(portion, unit, recipe_grams)
                 if spoon:
-                    recipe_grams = portion_amt * portion["gram_weight"]
                     portion = spoon
                     portion_id = spoon["portion_id"]
                     portion_desc = f"{spoon['label']} ({spoon['gram_weight']:.1f} g)"
@@ -3762,8 +3828,9 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 "sub_template_id":"","notes":note_text,
                 "section":section,
                 # The unit the recipe itself used ("tbsp"), for the app to
-                # start the wheel on it.
-                "recipe_unit":unit,
+                # start the wheel on it; ml for a cup of water, which is
+                # 250 ml rather than a cup.
+                "recipe_unit":"ml" if portion is not None and portion.get("_cup_as_ml") else unit,
                 # No portion could measure the line; it is 1 g/ml.
                 "estimated":estimated,
                 "unit_label": portion["label"] if portion is not None else "100 g",

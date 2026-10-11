@@ -2,8 +2,9 @@
 
 USDA's tap water has fl oz, "serving 8 fl oz" and liter portions but no cup,
 so "1 cup water" came out as 8 fl oz and "4 cup water" as 0.95 liter, and a
-template reopened as "8 fl oz water". The cup is worked out from the plain
-volume portion, as the app derives its own units.
+template reopened as "8 fl oz water". The recipe's unit is worked out from
+the plain volume portion, as the app derives its own units, except that a
+cup of water is 250 ml.
 
 Run: .venv/bin/python -m pytest -q
 """
@@ -18,7 +19,7 @@ import recipe_matcher as matcher
 # Live values (Supabase, 11 Oct 2026).
 WATER = matcher._build_supabase_usda_food(
     {"id": 10, "fdc_id": 173647, "source_set": "sr_legacy",
-     "description": "Water, tap, drinking", "display_name": "Tap water, drinking",
+     "description": "Beverages, water, tap, drinking", "display_name": "Tap water, drinking",
      "calories_100g": 0},
     0, {10: [{"label": "fl oz", "grams": 29.6, "sequence_number": 1},
              {"label": "serving 8 fl oz", "grams": 237.0, "sequence_number": 2},
@@ -47,8 +48,9 @@ def row_for(tmp_path, monkeypatch, line, food):
 
 
 @pytest.mark.parametrize("line, amount, label, grams", [
-    ("1 cup water", 1, "1 cup", 236.8),
-    ("4 cup water", 4, "1 cup", 236.8),
+    ("1 cup water", 250, "1 ml", 1.0),
+    ("4 cup water", 1000, "1 ml", 1.0),
+    ("1/2 cup water", 125, "1 ml", 1.0),
     ("2 tbsp water", 2, "1 tbsp", 14.8),
     ("250 ml water", 250, "1 ml", 1.0),
 ])
@@ -57,6 +59,26 @@ def test_water_stays_in_the_recipe_unit(tmp_path, monkeypatch, line, amount, lab
     assert row["portion_amt"] == pytest.approx(amount, rel=0.01)
     assert row["unit_label"] == label
     assert row["unit_grams"] == pytest.approx(grams, abs=0.1)
+
+
+def test_the_app_is_told_a_cup_of_water_is_ml(tmp_path, monkeypatch):
+    # The app starts on the recipe's unit; it has a cup for water, so "cup"
+    # would show 250 ml as 1.06 cup.
+    assert row_for(tmp_path, monkeypatch, "1 cup water", WATER)["recipe_unit"] == "ml"
+    assert row_for(tmp_path, monkeypatch, "2 tbsp water", WATER)["recipe_unit"] == "tbsp"
+
+
+def test_other_foods_get_a_us_cup():
+    juice = matcher._build_supabase_usda_food(
+        {"id": 13, "fdc_id": 1, "source_set": "sr_legacy",
+         "description": "Orange juice, raw", "display_name": "Orange juice",
+         "calories_100g": 45},
+        0, {13: [{"label": "fl oz", "grams": 31.0, "sequence_number": 1}]})
+    fl_oz = juice["portions"][0]
+    cup = matcher._recipe_unit_volume_portion(juice, fl_oz, "cup")
+    assert cup["label"] == "1 cup"
+    assert cup["gram_weight"] == pytest.approx(31.0 * 8, rel=0.01)
+    assert not cup["_cup_as_ml"]
 
 
 def test_a_sliver_of_a_cup_still_reads_in_spoons(tmp_path, monkeypatch):

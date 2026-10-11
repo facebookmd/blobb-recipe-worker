@@ -126,7 +126,8 @@ def test_override_calories_follow_its_grams(tmp_path, monkeypatch, unit, grams):
 
 
 @pytest.mark.parametrize("line, label, amount", [
-    ("1/4 cup tempura dipping sauce", "1 tbsp (15.0 g)", 4.0),  # cups go to tbsp
+    ("1/4 cup tempura dipping sauce", "1 cup (240.0 g)", 0.25),  # a US cup
+    ("1/8 cup tempura dipping sauce", "1 tbsp (15.0 g)", 2.0),  # small: spoons
     ("1 tbsp tempura dipping sauce", "1 tbsp (15.0 g)", 1.0),
     ("2 tsp tempura dipping sauce", "1 tsp (5 g)", 2.0),        # already a tsp
 ])
@@ -135,7 +136,8 @@ def test_a_spoon_serving_follows_the_recipe_spoon(tmp_path, monkeypatch,
     [row] = rows_for(tmp_path, monkeypatch, line, build(TEMPURA))
     assert row["portion_description"] == label
     assert row["portion_amt"] == pytest.approx(amount)
-    assert row["cal_tot"] == pytest.approx(amount * 15 if "tbsp" in label else amount * 5)
+    grams = {"cup": 240.0, "tbsp": 15.0, "tsp": 5.0}[label.split()[1]]
+    assert row["cal_tot"] == pytest.approx(amount * grams)  # 100 kcal / 100 g
 
 
 def test_a_tbsp_serving_converts_to_tsp(tmp_path, monkeypatch):
@@ -145,11 +147,11 @@ def test_a_tbsp_serving_converts_to_tsp(tmp_path, monkeypatch):
     assert row["cal_tot"] == pytest.approx(8.4, abs=0.1)
 
 
-def test_many_spoons_stay_spoons(tmp_path, monkeypatch):
-    # 3/4 cup = 12 tbsp; the sanity check used to swap it to 100 g x 1.8.
+def test_many_cups_stay_cups(tmp_path, monkeypatch):
+    # 3/4 cup; the sanity check used to swap 12 tbsp to 100 g x 1.8.
     [row] = rows_for(tmp_path, monkeypatch, "3/4 cup tempura dipping sauce", build(TEMPURA))
-    assert row["portion_description"] == "1 tbsp (15.0 g)"
-    assert row["portion_amt"] == pytest.approx(12.0)
+    assert row["portion_description"] == "1 cup (240.0 g)"
+    assert row["portion_amt"] == pytest.approx(0.75)
     assert row["cal_tot"] == pytest.approx(180.0)
 
 
@@ -225,7 +227,7 @@ SALT_ONLY = branded_row(9, 200, 4.0, "g", "4 GRM")
 @pytest.mark.parametrize("line, label, amount", [
     ("2 tbsp mystery sauce", "1 tbsp (15 g)", 2.0),
     ("1 tsp mystery sauce", "1 tsp (5 g)", 1.0),
-    ("1/4 cup mystery sauce", "1 tbsp (15 g)", 4.0),   # cups as tbsp
+    ("1/4 cup mystery sauce", "1 cup (236.6 g)", 0.25),  # a cup at 1 g/ml
 ])
 def test_a_spoon_line_with_no_volume_portion_is_estimated(
         tmp_path, monkeypatch, food_row, line, label, amount):
@@ -308,3 +310,29 @@ def test_without_a_package_weight_a_packet_is_still_an_estimate(tmp_path, monkey
     [row] = rows_for(tmp_path, monkeypatch, "1 packet tamarind soup mix", build(TAMARIND))
     assert row["estimated"]
     assert "MISMATCH" not in row["notes"]
+
+
+# ── Container cups: a "cup" that is the cup a food is sold in ──────────────
+
+DOLE_WHIP = branded_row(1, 120, 108.0, "ml", "1 cup")       # live: 108 ml "cup"
+ALOE = branded_row(2, 40, 160.0, "MLT", "1 cup")
+MILK_CUP = branded_row(3, 60, 240.0, "MLT", "1 cup")
+HALF_CUP = branded_row(4, 60, 120.0, "ml", "1/2 cup")
+METRIC = branded_row(5, 60, 250.0, "ml", "1 cup")
+CEREAL = branded_row(6, 380, 30.0, "g", "1 cup")
+
+
+@pytest.mark.parametrize("row, label", [
+    (DOLE_WHIP, "1 container"), (ALOE, "1 container"),
+    (MILK_CUP, "1 cup"), (HALF_CUP, "1/2 cup"), (METRIC, "1 cup"),
+    (CEREAL, "1 cup"),  # a gram serving can't be checked; trusted
+])
+def test_only_measuring_cups_stay_cups(row, label):
+    assert build(row)["portions"][1]["label"] == label
+
+
+def test_a_container_cup_is_never_converted(tmp_path, monkeypatch):
+    # 2 tbsp is not worked out from the 108 ml cup it's sold in.
+    [row] = rows_for(tmp_path, monkeypatch, "2 tbsp dole whip", build(DOLE_WHIP))
+    assert row["estimated"]
+    assert "container" not in row["portion_description"]
