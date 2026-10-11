@@ -685,77 +685,54 @@
     "weight": 0.95
   },
   {
-    "_comment": "═══ DASHI STOCK ══════════════════════════════════════════════════════"
+    "_comment": "═══ DASHI POWDER ═════════════════════════════════════════════════════"
   },
   {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "dashi stock",
-    "off_id": "OFF_097974",
+    "_comment": "Dashi stock is the Dashi Stock base template (4 cup water + 4 tsp powder per 4 cups), used by name. These are the powder itself: FDC 2381716, label 8 g per 2 cups of water, so 1 tsp = 4 g."
+  },
+  {
+    "trigger": "dashi powder",
+    "fdc_id": "B_2381716",
     "weight": 0.95
   },
   {
-    "trigger": "dashi stock",
-    "portion_gram_weight": 15.0,
-    "portion_label": "1 serving (15 ml)",
-    "portion_unit": "serving"
-  },
-  {
-    "trigger": "dashi stock",
-    "portion_gram_weight": 15.0,
-    "portion_label": "1 tbsp",
-    "portion_unit": "tbsp"
-  },
-  {
-    "trigger": "dashi stock",
-    "portion_gram_weight": 5.0,
+    "trigger": "dashi powder",
+    "portion_gram_weight": 4.0,
     "portion_label": "1 tsp",
     "portion_unit": "tsp"
   },
   {
-    "trigger": "dashi stock",
-    "portion_gram_weight": 240.0,
-    "portion_label": "1 cup",
-    "portion_unit": "cup"
+    "trigger": "instant dashi",
+    "fdc_id": "B_2381716",
+    "weight": 0.95
   },
   {
-    "trigger": "dashi stock",
-    "portion_gram_weight": 120.0,
-    "portion_label": "1/2 cup",
-    "portion_unit": "cup"
-  },
-  {
-    "_disabled": true,
-    "_comment": "Disabled OFF rule pending branded replacement",
-    "original_trigger": "dashi",
-    "off_id": "OFF_097974",
-    "weight": 0.9,
-    "exclude": [
-      "konbu",
-      "kombu",
-      "kelp",
-      "powder",
-      "packet",
-      "granule"
-    ]
-  },
-  {
-    "trigger": "dashi",
-    "portion_gram_weight": 15.0,
-    "portion_label": "1 tbsp",
-    "portion_unit": "tbsp"
-  },
-  {
-    "trigger": "dashi",
-    "portion_gram_weight": 5.0,
+    "trigger": "instant dashi",
+    "portion_gram_weight": 4.0,
     "portion_label": "1 tsp",
     "portion_unit": "tsp"
   },
   {
-    "trigger": "dashi",
-    "portion_gram_weight": 240.0,
-    "portion_label": "1 cup",
-    "portion_unit": "cup"
+    "trigger": "dashi granules",
+    "fdc_id": "B_2381716",
+    "weight": 0.95
+  },
+  {
+    "trigger": "dashi granules",
+    "portion_gram_weight": 4.0,
+    "portion_label": "1 tsp",
+    "portion_unit": "tsp"
+  },
+  {
+    "trigger": "hondashi",
+    "fdc_id": "B_2381716",
+    "weight": 0.95
+  },
+  {
+    "trigger": "hondashi",
+    "portion_gram_weight": 4.0,
+    "portion_label": "1 tsp",
+    "portion_unit": "tsp"
   },
   {
     "trigger": "aburaage",

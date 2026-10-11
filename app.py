@@ -13,6 +13,11 @@ The template JSON matches `MealTemplate.fromJson` in the app
 Matching runs through `recipe_matcher.build_output_rows`, the same function
 that produces templates_output.xlsx, so a recipe converted in the app gets the
 same foods, portions and amounts as the spreadsheet. Needs SUPABASE_ANON_KEY.
+
+A line naming a curated published template ("1.5 cup dashi stock") gets that
+template's ingredients as their own section (template_refs.py). Reading them
+needs APP_SUPABASE_KEY, the app project's publishable key (and optionally
+APP_SUPABASE_URL); without it those lines are matched as foods.
 """
 
 from __future__ import annotations
@@ -31,6 +36,7 @@ from auth import AuthError, Caller, RateLimiter, TokenVerifier
 
 import parse_recipe as recipe_parser
 import recipe_matcher as matcher
+import template_refs
 
 HERE = Path(__file__).resolve().parent
 BOOST_RULES = matcher.load_boosts(str(HERE / "boosts.json"))
@@ -120,6 +126,11 @@ def _chosen_unit(row: dict) -> dict[str, Any]:
         return {"label": "100 g", "caloriesPerUnit": calories, "gramsPerUnit": 100.0}
     match = _GRAMS_RE.search(desc)
     grams = float(match.group(1)) if match else None
+    # The description rounds the weight ("tsp packed (5 g)" for 4.6 g); the
+    # app finds this unit again by label and grams, so send the exact one.
+    exact = _number(row.get("unit_grams"))
+    if exact > 0:
+        grams = exact
     label = _GRAMS_RE.sub("", desc).strip() or "serving"
     return {"label": label, "caloriesPerUnit": calories, "gramsPerUnit": grams}
 
@@ -244,11 +255,14 @@ def _unmatched_name(row: dict) -> str:
 
 
 def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
-    meta, ingredients = recipe_parser.parse_single_block(
-        text.replace("\r\n", "\n").split("\n"),
-        name_hint="recipe",
-        category_override=category,
-    )
+    try:
+        meta, ingredients = recipe_parser.parse_single_block(
+            text.replace("\r\n", "\n").split("\n"),
+            name_hint="recipe",
+            category_override=category,
+        )
+    except recipe_parser.RecipeFormatError as e:
+        raise HTTPException(status_code=422, detail=str(e))
     if not ingredients:
         raise HTTPException(status_code=422, detail="No ingredients found in that text.")
     if len(ingredients) > MAX_INGREDIENTS:
@@ -260,7 +274,11 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
     with tempfile.TemporaryDirectory() as tmp:
         recipes_csv = os.path.join(tmp, "recipes.csv")
         recipe_parser.write_recipes_csv([(meta, ingredients)], recipes_csv, append=False)
-        rows = matcher.build_output_rows(recipes_csv, BOOST_RULES, threshold)
+        rows = matcher.build_output_rows(
+            recipes_csv, BOOST_RULES, threshold,
+            published_templates=template_refs.load_published_templates(),
+            strict_templates=False,
+        )
 
     sections: dict[str, list[dict[str, Any]]] = {}
     matched_count = 0

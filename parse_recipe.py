@@ -234,6 +234,14 @@ def looks_like_title(line: str) -> bool:
     return len(words) >= 1 and not re.search(r"\d", words[0])
 
 
+class RecipeFormatError(ValueError):
+    """A recipe line or header the rules don't allow; the message says how to
+    write it instead."""
+
+
+SLUG_REFERENCE_RE = re.compile(r"^([\d./]+)\s+([a-z][a-z0-9_-]{2,})$", re.I)
+
+
 def slugify(name: str) -> str:
     s = re.sub(r"[^a-z0-9]+", "_", name.lower().strip()).strip("_")
     if s and "_" not in s:
@@ -260,29 +268,15 @@ def parse_ingredient_line(raw: str) -> dict | None:
     ):
         return None
 
-    # Sub-template reference: "<qty> <template_id>" where template_id contains
-    # an underscore or matches a known slug pattern (no spaces, no units).
-    # e.g. "0.5 banh_mi_template" or "1 gyoza_filling"
-    SUB_TEMPLATE_RE = re.compile(
-        r"^([\d./]+)\s+([a-z][a-z0-9_-]{2,})$", re.I
-    )
-    m = SUB_TEMPLATE_RE.match(line.strip())
-    if m:
-        qty_str = normalise_fractions(m.group(1))
-        qty_val = parse_number(qty_str.strip())
-        ref_id  = m.group(2).strip()
-        # Only treat as sub-template if it looks like a slug (has _ or -)
-        # and isn't a unit keyword
-        if ("_" in ref_id or "-" in ref_id) and ref_id not in UNIT_MAP:
-            return {
-                "qty":        str(round(qty_val, 6)) if qty_val else "1",
-                "unit":       "sub_template",
-                "ingredient": ref_id,
-                "size_hint":  "",
-                "is_cooked":  False,
-                "to_taste":   False,
-                "raw":        raw.strip(),
-            }
+    # The old sub-template reference ("0.25 chashu_pork") is gone: a base
+    # template is used by name, like any ingredient ("2 slice chashu pork").
+    m = SLUG_REFERENCE_RE.match(line.strip())
+    if m and ("_" in m.group(2) or "-" in m.group(2)) and m.group(2) not in UNIT_MAP:
+        raise RecipeFormatError(
+            f"'{line.strip()}' is a template slug. Write the template by name "
+            f"in its serving unit instead, e.g. "
+            f"'1 cup {m.group(2).replace('_', ' ').replace('-', ' ').strip()}'."
+        )
 
     if TO_TASTE_RE.search(line):
         ing = TO_TASTE_RE.sub("", line).strip(" ,;:")
@@ -570,6 +564,9 @@ def parse_single_block(lines: list[str], name_hint: str,
         r"^servings?\s*[:\-]?\s*(\d+(?:\.\d+)?)\b", re.I
     )
     AKA_RE = re.compile(r"^aka\s*[:\-]\s*(.+)$", re.I)
+    SERVING_SIZE_RE = re.compile(r"^serving\s+size\s*[:\-]\s*(.+)$", re.I)
+    serving_qty = None
+    serving_unit = ""
 
     for line in lines:
         stripped = re.sub(r"^#+\s*", "", line).strip()
@@ -579,6 +576,20 @@ def parse_single_block(lines: list[str], name_hint: str,
         sec_m = SECTION_HEADER_RE.match(stripped)
         if sec_m and not DIVIDER_RE.match(stripped):
             current_section = sec_m.group(1).strip()
+            continue
+        # "Serving size: 1 cup" — one serving of a base template, in the unit
+        # recipes measure it by. Checked before "Servings:".
+        ssm = SERVING_SIZE_RE.match(stripped)
+        if ssm:
+            qty, rest = extract_quantity(ssm.group(1))
+            unit, rest = extract_unit(rest)
+            unit = unit or rest.strip().lower()
+            if not qty or qty <= 0 or not unit:
+                raise RecipeFormatError(
+                    f"'{stripped}' needs an amount and a unit, e.g. "
+                    f"'Serving size: 1 cup' or 'Serving size: 1 slice'."
+                )
+            serving_qty, serving_unit = qty, unit
             continue
         # Detect "Servings: 30" or "Serves: 4" — skip as ingredient line
         sm = SERVINGS_RE.match(stripped)
@@ -610,6 +621,9 @@ def parse_single_block(lines: list[str], name_hint: str,
         "template_name": recipe_name,
         "category":      category,
         "other_names":   detected_aka,
+        "servings":      detected_servings or 1,
+        "serving_qty":   serving_qty,
+        "serving_unit":  serving_unit,
     }
     ingredients = []
     for line, sec in ingredient_lines:
@@ -890,7 +904,9 @@ def preview(meta: dict, ingredients: list[dict]) -> list[dict] | None:
 # recipes.csv writer — append-aware
 # ═══════════════════════════════════════════════════════════════════════════════
 
-FIELDNAMES = ["template_id","template_name","other_names","category","section","qty","unit","ingredient","size_hint","is_cooked"]
+FIELDNAMES = ["template_id","template_name","other_names","category","servings",
+              "serving_qty","serving_unit","section","qty","unit","ingredient",
+              "size_hint","is_cooked"]
 
 def write_recipes_csv(recipes: list[tuple[dict, list[dict]]], path: str, append: bool):
     """
@@ -913,6 +929,9 @@ def write_recipes_csv(recipes: list[tuple[dict, list[dict]]], path: str, append:
                     "template_name": meta["template_name"],
                     "other_names":   meta.get("other_names", ""),
                     "category":      meta["category"],
+                    "servings":      meta.get("servings", 1),
+                    "serving_qty":   meta.get("serving_qty") or "",
+                    "serving_unit":  meta.get("serving_unit", ""),
                     "section":       ing.get("section", DEFAULT_SECTION),
                     "qty":           ing["qty"],
                     "unit":          ing["unit"],

@@ -32,6 +32,9 @@ REQUIREMENTS
   sqlite3       →  built into Python           (for .db output)
   Supabase anon key is optional, but recommended.
   Set SUPABASE_ANON_KEY and optionally SUPABASE_URL to read live food tables.
+  The recipe worker (app.py) also needs APP_SUPABASE_KEY, the app project's
+  publishable key (optionally APP_SUPABASE_URL), to use published base
+  templates; without it, lines naming one are matched as foods.
 
 No other packages needed.
 
@@ -162,6 +165,18 @@ Recipe name detection: the first line that does not look like an ingredient
 template_id automatically. A file starting with "Chicken Adobo" names itself.
 
 
+BASE TEMPLATES
+--------------
+A recipe that other recipes use (Dashi Stock, Braised Pork Belly) has a
+"Serving size:" line, e.g. "Serving size: 1 cup" (RECIPE_RULES.md). Another
+recipe uses it like any ingredient, by name or AKA, in that kind of unit:
+"1.5 cup dashi stock". The matcher (template_refs.py) copies the template's
+ingredients into the recipe as a "Dashi Stock" section, scaled by amount ÷
+serving size. Batch runs use templates earlier in the run or from earlier runs
+in templates_output.xlsx; a line it can't convert fails the run with the
+reason. The recipe worker uses curated published templates instead.
+
+
 REVIEW SPREADSHEET (templates_output.xlsx)
 ------------------------------------------
 One sheet: templates_output
@@ -178,8 +193,14 @@ Columns:
   portion_description Portion label and gram weight e.g. "1 cup (255 g)"
   calories_kcal       Kcal for one unit of that portion (plain number)
   cal_tot             =calories_kcal x portion_amt  (live Excel formula)
-  sub_template_id     Blank - fill in manually for nested templates
+  sub_template_id     The base template a row was copied from (see below)
   notes               Match score + source, or "to taste"
+  section             Section within the recipe ("Main", "Dashi Stock")
+  unit_label          The unit the amount is in, e.g. "tsp packed"
+  unit_grams          That unit's exact weight (the description rounds it)
+  servings            The recipe's Servings
+  serving_qty         Its Serving size amount, for base templates (1)
+  serving_unit        Its Serving size unit, for base templates (cup)
 
 Colour coding:
   White               High-confidence USDA match (score >= 0.55)

@@ -23,6 +23,8 @@ import time
 from pathlib import Path
 from collections import defaultdict
 
+import template_refs as tref
+
 from supabase_food_source import (
     is_configured as supabase_is_configured,
     search_foods as supabase_search_foods,
@@ -145,8 +147,6 @@ BUILTIN_BOOSTS = [
      "exclude": ["vinegar"]},
     {"trigger": "sake",          "boost": "sake rice wine",              "weight": 0.9,
      "exclude": ["vinegar","salmon"]},
-    {"trigger": "dashi",         "boost": "dashi stock",                 "weight": 0.8,
-     "exclude": ["no dashi"]},
     {"trigger": "katsuobushi",   "boost": "bonito flakes",               "weight": 0.9},
     {"trigger": "bonito flakes", "boost": "bonito flakes dried",         "weight": 0.9},
     {"trigger": "kombu",         "boost": "kelp", "fdc_id": "168457", "weight": 0.9},
@@ -2410,6 +2410,12 @@ OUT_COLS = {
     "component_label":5,"matched_food_name":6,"food_id":7,"portion_id":8,
     "portion_amt":9,"portion_description":10,"calories_kcal":11,"cal_tot":12,
     "sub_template_id":13,"notes":14,"section":15,
+    # The unit each ingredient is measured in, at its exact weight (the
+    # description rounds it), for the import's unit_label / unit_grams.
+    "unit_label":16,"unit_grams":17,
+    # The recipe's Servings and Serving size, so a later run can use it as a
+    # base template.
+    "servings":18,"serving_qty":19,"serving_unit":20,
 }
 
 
@@ -2485,6 +2491,11 @@ def write_xlsx(output_rows, output_path):
             ("sub_template_id",     rd.get("sub_template_id","")),
             ("notes",               rd.get("notes","")),
             ("section",             rd.get("section","")),
+            ("unit_label",          rd.get("unit_label","")),
+            ("unit_grams",          rd.get("unit_grams","")),
+            ("servings",            rd.get("servings","")),
+            ("serving_qty",         rd.get("serving_qty","")),
+            ("serving_unit",        rd.get("serving_unit","")),
         ]
         for col_name,value in fields:
             cell=ws.cell(row=excel_row,column=OUT_COLS[col_name],value=value)
@@ -2549,6 +2560,10 @@ def load_existing_xlsx(path):
                 "component_label":comp,
                 "notes":          notes,
                 "section":        str(vals.get("section","") or ""),
+                "other_names":    str(vals.get("other_names","") or ""),
+                "servings":       vals.get("servings") or "",
+                "serving_qty":    vals.get("serving_qty") or "",
+                "serving_unit":   str(vals.get("serving_unit","") or ""),
             })
         else:
             # Infer confidence/source from notes text
@@ -2591,6 +2606,11 @@ def load_existing_xlsx(path):
                 "sub_template_id":    _str(vals.get("sub_template_id","")),
                 "notes":              _str(vals.get("notes","")),
                 "section":            _str(vals.get("section","")),
+                "unit_label":         _str(vals.get("unit_label","")),
+                "unit_grams":         _num(vals.get("unit_grams","")),
+                "servings":           _num(vals.get("servings","")),
+                "serving_qty":        _num(vals.get("serving_qty","")),
+                "serving_unit":       _str(vals.get("serving_unit","")),
             })
     return rows
 
@@ -2623,20 +2643,6 @@ def merge_output_rows(existing_rows, new_rows):
             drows = tid_data_rows.get(tid, [])
             r["start_row"] = drows[0]  if drows else None
             r["end_row"]   = drows[-1] if drows else None
-
-    # Recompute sub-template reference rows whose referenced template was updated.
-    for r in merged:
-        if (r.get("_type") == "data"
-                and r.get("_source") == "sub_template"
-                and r.get("sub_template_id","")):
-            ref_tid = r["sub_template_id"]
-            if ref_tid in new_tids:  # referenced template was just updated
-                multiplier = float(r.get("portion_amt") or 1.0)
-                ref_cal = _sub_template_calories(ref_tid, merged)
-                if ref_cal is not None:
-                    r["calories_kcal"] = ref_cal
-                    r["cal_tot"]       = round(ref_cal * multiplier, 1)
-                    r["notes"]         = f"sub-template Ã—{multiplier} [recomputed]"
 
     return merged
 
@@ -3178,28 +3184,11 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
     return portions[0]
 
 
-def _sub_template_calories(ref_tid: str, rows: list) -> float | None:
-    """
-    Sum cal_tot for all data rows belonging to ref_tid.
-    Returns None if the template isn't found.
-    """
-    total = 0.0
-    found = False
-    for r in rows:
-        if r.get("template_id","") == ref_tid and r.get("_type") == "data":
-            found = True
-            try:
-                cal = float(r.get("cal_tot") or r.get("calories_kcal") or 0)
-                total += cal
-            except (ValueError, TypeError):
-                pass
-    return round(total, 1) if found else None
-
-
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # Core pipeline
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-def _warm_match_cache(rows_by_template, boost_rules, threshold) -> None:
+def _warm_match_cache(rows_by_template, boost_rules, threshold,
+                      template_index_skip=lambda row: False) -> None:
     """
     Matches every ingredient at the same time, before the (sequential) main
     loop, which then finds each result in _MATCH_CACHE. The searches a match
@@ -3215,7 +3204,7 @@ def _warm_match_cache(rows_by_template, boost_rules, threshold) -> None:
             ingredient = ing_row.get("ingredient", "").strip()
             unit = ing_row.get("unit", "").strip()
             qty_raw = ing_row.get("qty", "").strip()
-            if (not ingredient or unit.lower() == "sub_template"
+            if (not ingredient or template_index_skip(ing_row)
                     or "to taste" in unit.lower() or "to taste" in qty_raw.lower()):
                 continue
             is_cooked = ing_row.get("is_cooked", "").strip().lower() in ("true", "1", "yes")
@@ -3238,8 +3227,63 @@ def _warm_match_cache(rows_by_template, boost_rules, threshold) -> None:
         list(pool.map(warm, jobs.values()))
 
 
+def _float_or_none(value) -> float | None:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if number > 0 else None
+
+
+def _template_refs(rows_by_template, existing_rows, published_templates):
+    """Base templates a line can use, in precedence order: this run's
+    recipes, earlier runs' output, then [published_templates]."""
+    refs = []
+    for tid, ing_rows in rows_by_template.items():
+        first = ing_rows[0]
+        refs.append(tref.TemplateRef(
+            tid=tid, name=first.get("template_name", "").strip() or tid,
+            aka=tref.parse_aka(first.get("other_names", "")),
+            servings=_float_or_none(first.get("servings")) or 1.0,
+            serving_qty=_float_or_none(first.get("serving_qty")),
+            serving_unit=(first.get("serving_unit") or "").strip(),
+            source="run",
+        ))
+    earlier = defaultdict(list)
+    for row in existing_rows:
+        tid = row.get("template_id", "")
+        if tid and tid not in rows_by_template and row.get("_type") in ("data", "note"):
+            earlier[tid].append(row)
+    for tid, rows in earlier.items():
+        first = rows[0]
+        refs.append(tref.TemplateRef(
+            tid=tid, name=str(first.get("template_name") or tid),
+            aka=tref.parse_aka(str(first.get("other_names") or "")),
+            servings=_float_or_none(first.get("servings")) or 1.0,
+            serving_qty=_float_or_none(first.get("serving_qty")),
+            serving_unit=str(first.get("serving_unit") or "").strip(),
+            source="output", rows=rows,
+        ))
+    return refs + list(published_templates or [])
+
+
+# Messages from the last build_output_rows: lines that name no template but
+# come close to one ("dashi stok"), and, when not strict, lines that named a
+# template but couldn't use it.
+LAST_TEMPLATE_WARNINGS: list[str] = []
+
+
 def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
-                      existing_rows=None):
+                      existing_rows=None, published_templates=None,
+                      strict_templates=True):
+    """
+    Match every recipe in [recipes_path]. A line naming a base template
+    (template_refs) gets the template's ingredients as a section instead of
+    a food. With [strict_templates] (batch runs) a line that names a
+    template but can't use it fails the run with TemplateReferenceError,
+    listing every such line; otherwise (the recipe worker) it is matched as a
+    food and noted in LAST_TEMPLATE_WARNINGS.
+    """
     if existing_rows is None:
         existing_rows = []
     output_rows=[]
@@ -3248,6 +3292,16 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
     with open(recipes_path,newline="",encoding="utf-8") as f:
         for row in csv.DictReader(f):
             rows_by_template[row.get("template_id","").strip()].append(row)
+
+    template_index = tref.build_index(
+        _template_refs(rows_by_template, existing_rows, published_templates))
+    template_errors: list[str] = []
+    LAST_TEMPLATE_WARNINGS.clear()
+    processed: set[str] = set()
+
+    def _uses_template(ing_row) -> bool:
+        ref = template_index.get(tref.template_key(ing_row.get("ingredient", "")))
+        return ref is not None and ref.tid != ing_row.get("template_id", "").strip()
 
     # ── Pre-fetch USDA indexes in parallel ──────────────────────────────────
     # Collect all unique search queries across all ingredients, then fire
@@ -3258,7 +3312,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
         for ing_row in ing_rows:
             ingredient = ing_row.get("ingredient", "").strip()
             unit = ing_row.get("unit", "").strip()
-            if "to taste" in unit.lower() or unit.lower() == "sub_template":
+            if "to taste" in unit.lower() or _uses_template(ing_row):
                 continue
             sq = normalise(strip_prep(ingredient))
             if sq:
@@ -3290,7 +3344,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
         sys.stderr.write("\r" + " " * 70 + "\r")
         sys.stderr.flush()
 
-    _warm_match_cache(rows_by_template, boost_rules, threshold)
+    _warm_match_cache(rows_by_template, boost_rules, threshold, _uses_template)
 
     total_templates = len(rows_by_template)
     for t_idx, (tid, ing_rows) in enumerate(rows_by_template.items(), 1):
@@ -3332,48 +3386,44 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 })
                 continue
 
-            # Sub-template reference â€” look up aggregated calories from existing output.
-            if unit.lower() == "sub_template":
-                try: multiplier = float(qty_raw) if qty_raw else 1.0
-                except ValueError: multiplier = 1.0
-                ref_tid = ingredient.strip()
-                # Find total calories for one serving of the referenced template
-                ref_cal = _sub_template_calories(ref_tid, existing_rows + output_rows)
-                if ref_cal is None:
-                    output_rows.append({
-                        "_type":"data","_confidence":"none","_source":"none",
-                        "template_id":tid,"template_name":template_name,
-                        "other_names":other_names,
-                        "category":category,"component_label":ref_tid,
-                        "sub_template_id":ref_tid,
-                        "portion_amt":multiplier,
-                        "notes":f"UNRESOLVED SUB-TEMPLATE '{ref_tid}'",
-                        "section":section,
+            # A base template by name ("1.5 cup dashi stock"): its
+            # ingredients, scaled, in a section named after it.
+            ref = template_index.get(tref.template_key(ingredient))
+            if ref is not None and ref.tid != tid:
+                try:
+                    if ref.source == "run":
+                        if ref.tid not in processed:
+                            raise tref.TemplateReferenceError(
+                                f"'{qty_raw} {unit} {ingredient}'".replace("  ", " ")
+                                + f" uses {ref.name} before its block; move "
+                                f"{ref.name} above {template_name}.")
+                        ref.rows = [r for r in output_rows
+                                    if r.get("template_id") == ref.tid
+                                    and r.get("_type") in ("data", "note")]
+                    try: line_qty = float(qty_raw) if qty_raw else 1.0
+                    except ValueError: line_qty = 1.0
+                    servings_used = tref.servings_of(line_qty, unit, ref)
+                    copied = tref.expanded_rows(ref, servings_used, {
+                        "template_id": tid, "template_name": template_name,
+                        "category": category, "other_names": other_names,
                     })
-                else:
-                    agg_cal   = round(ref_cal * multiplier, 1)
-                    output_rows.append({
-                        "_type":        "data",
-                        "_confidence":  "high",
-                        "_source":      "sub_template",
-                        "template_id":  tid,
-                        "template_name":template_name,
-                        "other_names":  other_names,
-                        "category":     category,
-                        "component_label": ref_tid,
-                        "matched_food_name": "",
-                        "food_id":      "",
-                        "portion_id":   "",
-                        "portion_amt":  multiplier,
-                        "portion_description": f"Ã—{multiplier} of {ref_tid}",
-                        "calories_kcal": ref_cal,
-                        "cal_tot":       agg_cal,
-                        "sub_template_id": ref_tid,
-                        "notes":        f"sub-template Ã—{multiplier}",
-                        "section":      section,
-                    })
-                data_row_indices.append(len(output_rows) + 1)
-                continue
+                    for row in tref.merge_rows(
+                            [r for r in output_rows if r.get("template_id") == tid], copied):
+                        output_rows.append(row)
+                        if row.get("_type") == "data":
+                            data_row_indices.append(len(output_rows) + 1)
+                    continue
+                except tref.TemplateReferenceError as e:
+                    if strict_templates:
+                        template_errors.append(f"{template_name}: {e}")
+                        continue
+                    LAST_TEMPLATE_WARNINGS.append(f"{template_name}: {e}")
+            else:
+                close = tref.near_miss(ingredient, template_index)
+                if close:
+                    LAST_TEMPLATE_WARNINGS.append(
+                        f"{template_name}: '{ingredient}' is close to the "
+                        f"template {close} but doesn't match it; matched as a food.")
 
             # Boiling/hot water and pasta cooking water are preparation steps,
             # not caloric ingredients â€” skip silently.
@@ -3619,8 +3669,19 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 "recipe_unit":unit,
                 # No portion could measure the line; it is 1 g/ml.
                 "estimated":estimated,
+                "unit_label": portion["label"] if portion is not None else "100 g",
+                "unit_grams": portion["gram_weight"] if portion is not None else 100.0,
             })
             data_row_indices.append(current_excel_row)
+
+        first = ing_rows[0]
+        for row in output_rows:
+            if row.get("template_id") == tid and row.get("_type") in ("data", "note"):
+                row.setdefault("other_names", other_names)
+                row["servings"] = _float_or_none(first.get("servings")) or 1.0
+                row["serving_qty"] = _float_or_none(first.get("serving_qty")) or ""
+                row["serving_unit"] = (first.get("serving_unit") or "").strip()
+        processed.add(tid)
 
         if data_row_indices:
             output_rows.append({
@@ -3630,6 +3691,9 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
 
     sys.stderr.write("\r" + " " * 80 + "\r")  # clear progress bar
     sys.stderr.flush()
+    if template_errors:
+        raise tref.TemplateReferenceError(
+            "Base template lines that can't be used:\n  " + "\n  ".join(template_errors))
     return output_rows
 
 
