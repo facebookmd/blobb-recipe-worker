@@ -2915,6 +2915,63 @@ def _cup_portion_for_spoon(food: dict, portion: dict, portion_amt: float,
     }
 
 
+# Units a recipe line can be measured in that a food's plain volume portion
+# converts to, and the order the app derives them from (volume_units.dart).
+RECIPE_VOLUME_UNITS = ("cup", "tbsp", "tsp", "fl oz", "ml")
+PLAIN_VOLUME_WORDS = {"cup", "cups", "tbsp", "tablespoon", "tablespoons", "tsp",
+                      "teaspoon", "teaspoons", "fl", "oz", "fluid", "ounce",
+                      "ounces", "ml"}
+
+
+def _is_plain_volume_label(label: str) -> bool:
+    """'fl oz', '1 cup', '2 tbsp': a volume and nothing else. Not 'cup,
+    chopped' (it measures pieces) or 'serving 8 fl oz'."""
+    words = re.findall(r"[a-z]+", label.lower())
+    return (bool(words) and all(w in PLAIN_VOLUME_WORDS for w in words)
+            and _portion_label_unit(label) in RECIPE_VOLUME_UNITS)
+
+
+def _recipe_unit_volume_portion(food: dict, portion: dict, unit: str) -> dict | None:
+    """
+    The food in the recipe's own volume unit, when the chosen portion is
+    some other volume: "1 cup water" came out as 8 fl oz, and "4 cup water"
+    as 0.95 liter, because USDA's water lists fl oz and liter but no cup. The
+    food's own portion in that unit, else one worked out from its plain
+    volume portions as the app does (cup, tbsp, tsp, fl oz, ml first), so
+    the app finds it among its own units. Cups and spoons are left to
+    _derived_spoon_portion / _cup_portion_for_spoon. None when the chosen
+    portion should stay.
+    """
+    target = _normalise_volume_unit(unit)
+    if target not in RECIPE_VOLUME_UNITS:
+        return None
+    chosen = _portion_label_unit(portion.get("label", ""))
+    if chosen == target or chosen in SPOON_UNITS or chosen == "cup":
+        return None
+    plain = [p for p in food.get("portions", [])
+             if p.get("gram_weight") and _is_plain_volume_label(p.get("label", ""))]
+    own = next((p for p in plain if _portion_label_unit(p["label"]) == target), None)
+    if own:
+        return own
+    if not plain:
+        return None
+    basis = portion if portion in plain else min(
+        plain, key=lambda p: RECIPE_VOLUME_UNITS.index(_portion_label_unit(p["label"])))
+    qty, basis_unit = _portion_label_volume_qty(basis["label"])
+    basis_ml = _volume_to_ml(qty, basis_unit or _portion_label_unit(basis["label"]) or "")
+    target_ml = _volume_to_ml(1.0, target)
+    if not basis_ml or not target_ml:
+        return None
+    return {
+        "portion_id": f"{basis['portion_id']}-{target.replace(' ', '')}",
+        "label": f"1 {target}",
+        "gram_weight": basis["gram_weight"] / basis_ml * target_ml,
+        "gram_col": basis.get("gram_col", ""),
+        "portion_idx": basis.get("portion_idx", 1),
+        "_derived_spoon": True,
+    }
+
+
 def _branded_spoon_portion(portion: dict, unit: str) -> dict | None:
     """
     For a branded food whose chosen portion is a spoon ("1 tsp", 5 ml), the
@@ -3596,6 +3653,18 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                         portion_desc = f"{cup['label']} ({cup['gram_weight']:.0f} g)"
                         portion_amt = recipe_grams / cup["gram_weight"]
                         cal_formula = round((cup["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
+
+            # Other volumes in the recipe's own unit ("1 cup water", not 8 fl oz).
+            if (portion is not None and source == "usda" and not is_countable
+                    and not vol_mismatch and portion_amt > 0):
+                own = _recipe_unit_volume_portion(food, portion, unit)
+                if own:
+                    recipe_grams = portion_amt * portion["gram_weight"]
+                    portion = own
+                    portion_id = own["portion_id"]
+                    portion_desc = f"{own['label']} ({own['gram_weight']:.1f} g)"
+                    portion_amt = recipe_grams / own["gram_weight"]
+                    cal_formula = round((own["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
 
             # Branded spoon servings, in the recipe's spoon (cups as tbsp).
             if (portion is not None and source == "branded" and not is_countable
