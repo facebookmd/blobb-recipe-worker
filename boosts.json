@@ -830,6 +830,19 @@
     "portion_unit": "cup"
   },
   {
+    "_comment": "Flat-leaf (Italian) parsley is parsley; the name alone matched nothing."
+  },
+  {
+    "trigger": "flat-leaf parsley",
+    "fdc_id": "170416",
+    "weight": 0.95
+  },
+  {
+    "trigger": "italian parsley",
+    "fdc_id": "170416",
+    "weight": 0.95
+  },
+  {
     "_comment": "Unagi (eel) sauce is the sauce, not eel: Kikkoman Unagi Sushi Sauce, label 1 Tbsp = 20 g."
   },
   {

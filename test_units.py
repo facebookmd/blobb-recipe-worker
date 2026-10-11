@@ -8,6 +8,7 @@ from __future__ import annotations
 import pytest
 
 import app as worker
+from parse_recipe import parse_ingredient_line
 
 
 @pytest.mark.parametrize(
@@ -94,3 +95,28 @@ def test_a_pinned_food_is_found_in_the_fetch_cache(monkeypatch):
     monkeypatch.setattr(worker.matcher, "_FDC_FETCH_CACHE", {"B_2171715": food})
     assert worker._find_food("B_2171715") is food
     assert worker._find_food("B_1") is None
+
+
+# ── Count words before the food, and leaves that are the food ─────────────
+
+@pytest.mark.parametrize("line, qty, unit, ingredient", [
+    ("1 fillet salmon", "1.0", "fillet", "salmon"),
+    ("2 salmon fillets", "2.0", "fillet", "salmon"),
+    ("4 leaf basil", "4.0", "leaf", "basil"),          # was dropped
+    ("4 leaves of basil", "4.0", "leaf", "basil"),
+    ("2 sprigs thyme", "2.0", "sprig", "thyme"),        # was dropped
+    ("0.25 cup cilantro leaves", "0.25", "cup", "cilantro"),
+    ("1 tbsp chopped basil leaves", "1.0", "tbsp", "basil"),
+    # Leaves that are a food of their own keep the word (they matched beef
+    # curry, limes and bananas).
+    ("10 curry leaves", "10.0", "piece", "curry leaves"),
+    ("4 kaffir lime leaves", "4.0", "piece", "kaffir lime leaves"),
+    ("1 banana leaf", "1.0", "piece", "banana leaf"),
+    ("2 bay leaves", "2.0", "piece", "bay leaves"),
+    ("2 tbsp flat-leaf parsley", "2.0", "tbsp", "flat-leaf parsley"),
+    ("0.5 cup bamboo shoots", "0.5", "cup", "bamboo shoots"),
+    ("1 cup broccoli florets", "1.0", "cup", "broccoli"),
+])
+def test_count_words_and_leaves(line, qty, unit, ingredient):
+    r = parse_ingredient_line(line)
+    assert (r["qty"], r["unit"], r["ingredient"]) == (qty, unit, ingredient)

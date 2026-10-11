@@ -234,6 +234,33 @@ def looks_like_title(line: str) -> bool:
     return len(words) >= 1 and not re.search(r"\d", words[0])
 
 
+# A count word written before the food: "1 fillet salmon", "4 leaves basil",
+# "2 sprigs of thyme". Not in UNIT_MAP, which would also read them anywhere.
+_LEADING_COUNTS = {
+    "fillet": "fillet", "fillets": "fillet",
+    "drumstick": "drumstick", "drumsticks": "drumstick",
+    "steak": "steak", "steaks": "steak",
+    "leaf": "leaf", "leaves": "leaf",
+    "sprig": "sprig", "sprigs": "sprig",
+}
+_LEADING_COUNT_RE = re.compile(
+    r"^(" + "|".join(sorted(_LEADING_COUNTS, key=len, reverse=True)) + r")\s+(?:of\s+)?",
+    re.I)
+
+# Herbs and greens whose leaves or sprigs are the food itself, so "cilantro
+# leaves" is cilantro. Anything else keeps the word: "curry leaves", "kaffir
+# lime leaves", "banana leaf" and "bay leaves" are foods of their own (they
+# matched beef curry, limes and bananas).
+_LEAFY_HERBS = (
+    r"cilantro|coriander|parsley|basil|mint|dill|thyme|oregano|rosemary|sage|"
+    r"tarragon|marjoram|chervil|celery|spinach|lettuce|cabbage|kale|chard|"
+    r"arugula|watercress|romaine"
+)
+_HERB_LEAVES_RE = re.compile(
+    r"^(.*?\b(?:" + _LEAFY_HERBS + r"))\s*,?\s*\b(?:leaves|leaf|sprigs|sprig)\b.*$",
+    re.I)
+
+
 class RecipeFormatError(ValueError):
     """A recipe line or header the rules don't allow; the message says how to
     write it instead."""
@@ -319,6 +346,11 @@ def parse_ingredient_line(raw: str) -> dict | None:
         _inch_size = _inch_m.group(1)
         rest = re.sub(r'^\d+(?:\.\d+)?"\s*', "", rest)
     unit_val, rest = extract_unit(rest)
+    if unit_val is None:
+        m = _LEADING_COUNT_RE.match(rest)
+        if m:
+            unit_val = _LEADING_COUNTS[m.group(1).lower()]
+            rest = rest[m.end():]
 
     # Strip alternative unit measurement: " / 3 oz" or " / 1 lb" etc.
     # Recipe sites often show metric/imperial pairs: "87.5g / 3 oz chicken"
@@ -336,8 +368,10 @@ def parse_ingredient_line(raw: str) -> dict | None:
     rest = re.sub(r"\s+or\s+\S.*$", "", rest, flags=re.I)
     # Strip " and [size/form descriptor]" — but only trailing ones
     rest = re.sub(r"\s+and\s+(?:small|large|fresh|dry|whole|torn|extra|young|baby|mini)\s+\S+.*$", "", rest, flags=re.I)
-    # Strip trailing noise words: leaves, sprigs, florets, stalks, etc.
-    rest = re.sub(r"\s*,?\s*\b(?:leaves|leaf|sprigs|sprig|florets|floret|stalks|stalk|stems|stem|shoots|fronds)\b.*$", "", rest, flags=re.I)
+    # Strip trailing noise words: an herb's leaves or sprigs, florets, stalks.
+    # Not "shoots" (bamboo shoots, pea shoots are foods).
+    rest = _HERB_LEAVES_RE.sub(r"\1", rest)
+    rest = re.sub(r"\s*,?\s*\b(?:florets|floret|stalks|stalk|stems|stem|fronds)\b.*$", "", rest, flags=re.I)
 
     # Strip em-dash or spaced-dash purpose notes: "– for cooking", "- for boiling water"
     rest = re.sub(r"\s*[–—-]+\s*(for |to |used |mainly |just ).*$", "", rest, flags=re.I)
@@ -490,7 +524,6 @@ def parse_ingredient_line(raw: str) -> dict | None:
         "patty": "patty", "patties": "patty",
         "slice": "slice", "slices": "slice",
         "sheet": "sheet", "sheets": "sheet",
-        "leaf": "leaf", "leaves": "leaf",
         "spear": "spear", "spears": "spear",
         "strip": "strip", "strips": "strip",
         "ear": "ear", "ears": "ear",
