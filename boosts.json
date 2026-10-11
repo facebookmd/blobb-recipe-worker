@@ -39,6 +39,12 @@
     "weight": 0.9
   },
   {
+    "_comment": "Seoul gochujang chili pepper paste (1 Tbsp, 15 g)",
+    "trigger": "gochujang",
+    "fdc_id": "B_2171715",
+    "weight": 0.95
+  },
+  {
     "trigger": "ham stick",
     "fdc_id": "746952",
     "weight": 0.95

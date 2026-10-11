@@ -969,6 +969,40 @@ def _build_supabase_usda_food(row: dict, row_index: int, portions_by_food_id: di
     }
 
 
+BRANDED_SERVING_UNITS = {"g", "grm", "gram", "grams", "ml", "mlt"}
+WEIGHT_LABEL_RE = re.compile(r"\b(?:g|grm|grams?|mg|kg|oz|onz|ounces?|lbs?)\b", re.IGNORECASE)
+
+
+def _branded_label_serving(row: dict, fdc_id: str) -> dict | None:
+    """
+    The package label serving of a branded food, from the foods row itself
+    (serving_size, serving_size_unit, household_serving_full_text). Branded
+    foods have no food_portions rows, so without this "2 tbsp gyoza sauce"
+    fell back to 2 x 100 g. FDC's per-100 basis follows the serving unit,
+    so a 30 ml serving weighs 30 "grams" against calories_100g.
+
+    The household text is the label when it names a volume or a count
+    ("2 tbsp", "1 bar"); a weight ("0.28 oz", "4 GRM") becomes "1 serving"
+    so it is never read as a volume.
+    """
+    unit = _row_text(row, "serving_size_unit").lower()
+    try:
+        grams = float(row.get("serving_size") or 0.0)
+    except (TypeError, ValueError):
+        return None
+    if unit not in BRANDED_SERVING_UNITS or grams <= 0 or abs(grams - 100.0) < 0.001:
+        return None
+    household = " ".join(_row_text(row, "household_serving_full_text").lower().split())
+    if not household or not re.match(r"^\d", household) or WEIGHT_LABEL_RE.search(household):
+        household = "1 serving"
+    return {
+        "portion_id": f"B_{fdc_id}-1",
+        "label": household,
+        "gram_weight": grams,
+        "portion_idx": 1,
+    }
+
+
 def _build_supabase_branded_food(row: dict, row_index: int, portions_by_food_id: dict[int, list[dict]]) -> dict | None:
     if _row_text(row, "source_set").lower() != "branded":
         return None
@@ -1022,6 +1056,11 @@ def _build_supabase_branded_food(row: dict, row_index: int, portions_by_food_id:
             "gram_weight": grams_val,
             "portion_idx": idx,
         })
+
+    if len(portions) == 1:
+        serving = _branded_label_serving(row, fdc_id)
+        if serving:
+            portions.append(serving)
 
     raw_description = _row_text(row, "description")
 
@@ -2870,6 +2909,74 @@ def _cup_portion_for_spoon(food: dict, portion: dict, portion_amt: float,
     }
 
 
+def _branded_spoon_portion(portion: dict, unit: str) -> dict | None:
+    """
+    For a branded food whose chosen portion is a spoon ("1 tsp", 5 ml), the
+    same food in the recipe's spoon: "1 tbsp tempura sauce" is one 15 g
+    tablespoon, not three teaspoons. Cup lines go to tablespoons; a cup is
+    hard to gauge from a label serving, and the app converts tbsp to cups
+    itself. None when the chosen portion is already that spoon, or isn't one.
+    """
+    spoon_qty, spoon_unit = _portion_label_volume_qty(portion.get("label", ""))
+    if spoon_unit not in SPOON_UNITS or not portion.get("gram_weight"):
+        return None
+    recipe_unit = _normalise_volume_unit(unit)
+    if recipe_unit in SPOON_UNITS:
+        target = recipe_unit
+    elif recipe_unit == "cup":
+        target = "tbsp"
+    else:
+        return None
+    if target == spoon_unit:
+        return None
+    spoon_tsp = _volume_to_tsp(spoon_qty, spoon_unit)
+    if not spoon_tsp:
+        return None
+    return {
+        "portion_id": f"{portion['portion_id']}-{target}",
+        "label": f"1 {target}",
+        "gram_weight": portion["gram_weight"] / spoon_tsp * VOLUME_TO_TSP[target],
+        "gram_col": portion.get("gram_col", ""),
+        "portion_idx": portion.get("portion_idx", 1),
+        "_derived_spoon": True,
+    }
+
+
+# Recipe units (as parse_recipe spells them) for a packet of something, and
+# the portion labels that measure one.
+PACKET_UNITS = {"pack", "sachet"}
+PACKET_LABEL_RE = re.compile(r"\b(?:packets?|packs?|sachets?|packages?|envelopes?|pouch(?:es)?)\b",
+                             re.IGNORECASE)
+
+
+def _estimated_spoon_portion(food: dict, portion: dict | None,
+                             unit: str) -> dict | None:
+    """
+    The last resort for a branded spoon or cup line: no volume portion, no
+    override, and only a weight serving ("0.28 oz") or none. "1 tbsp" at
+    1 g/ml, in the recipe's spoon (cups as tbsp, as _branded_spoon_portion),
+    instead of 2 tbsp coming out as 2 x 100 g or 2 x the weight serving.
+    The row is flagged so the app can say the portion was estimated. None
+    when the chosen portion can already measure the line.
+    """
+    recipe_unit = _normalise_volume_unit(unit)
+    if not recipe_unit or recipe_unit in ("ml", "l"):
+        return None  # ml converts to grams already
+    if portion is not None and (portion.get("gram_col") == "override"
+                                or _portion_label_unit(portion["label"]) in VOLUME_TO_TSP):
+        return None
+    target = recipe_unit if recipe_unit in SPOON_UNITS else "tbsp"
+    return {
+        "portion_id": f"{food['fdc_id']}-est-{target}",
+        "label": f"1 {target}",
+        "gram_weight": _volume_to_ml(1.0, target),
+        "gram_col": "",
+        "portion_idx": 1,
+        "_derived_spoon": True,
+        "_estimated": True,
+    }
+
+
 def _best_any_volumetric_portion(portions: list[dict], gram_target: float | None) -> dict | None:
     """
     Find the best real serving portion whose label is volumetric, regardless
@@ -2927,7 +3034,11 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
              if p.get("portion_idx", 0) == 1 and abs(p["gram_weight"] - 100.0) > 1.0),
             None,
         )
-        if real_serving:
+        # A weight-only serving ("1 serving", 8 g) can't measure a spoon or
+        # cup line, so an override or volume portion gets the first say.
+        if real_serving and not (
+                unit.lower() in VOLUMETRIC_UNITS
+                and _portion_label_unit(real_serving["label"]) not in VOLUME_TO_TSP):
             # Branded foods often have both a 100g basis and a package serving.
             # Prefer the actual serving so the output uses the package label
             # instead of collapsing back to an artificial 100g portion.
@@ -3322,6 +3433,15 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             portion=pick_best_portion(food,unit,effective_gram_target,qty,ingredient_for_portion,boost_rules)
             if portion is None and unit.lower() not in VOLUMETRIC_UNITS:
                 portion=food["portions"][0] if food["portions"] else None
+            estimated = False
+            # A packet with no packet portion is measured as whatever portion
+            # was picked (often one label serving); say it's an estimate.
+            packet_estimate = (unit.lower() in PACKET_UNITS and not (
+                portion is not None and PACKET_LABEL_RE.search(portion["label"])))
+            if source == "branded" and effective_gram_target is None:
+                estimate = _estimated_spoon_portion(food, portion, unit)
+                if estimate:
+                    portion, estimated = estimate, True
 
             u_low=unit.lower()
             is_countable=u_low in ("piece","pieces","clove","cloves","unit","units","item","serving","servings","sheet","sheets","leaf","leaves","stalk","stalks","slice","slices","strip","strips","spear","spears","head","heads","ear","ears","fillet","fillets","steak","steaks","patty","patties","chop","chops","drumstick","drumsticks","knob","knobs","cube","cubes","block","blocks","stick","sticks","wrapper","wrappers","whole")
@@ -3333,21 +3453,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 portion_desc="100g"
                 # cal_formula is per-100g; portion_amt must be in 100g units.
                 portion_amt=effective_gram_target / 100 if effective_gram_target is not None else qty
-                if source == "branded":
-                    serving_portion = next(
-                        (p for p in food.get("portions", [])
-                         if p.get("portion_idx", 0) == 1 and p.get("gram_weight")),
-                        None,
-                    )
-                    if serving_portion:
-                        cal_formula = round(
-                            food.get("energy_kcal", 0.0) * 100 / serving_portion["gram_weight"],
-                            1,
-                        )
-                    else:
-                        cal_formula = round(food.get("energy_kcal", 0.0), 1)
-                else:
-                    cal_formula=round(food.get("energy_kcal", 0.0), 1)
+                cal_formula=round(food.get("energy_kcal", 0.0), 1)
             else:
                 portion_id=portion["portion_id"]
                 portion_desc=f"{portion['label']} ({portion['gram_weight']:.0f} g)"
@@ -3357,22 +3463,9 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                     food_row=food["row"]
                     cal_formula=round((portion["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
                 elif source == "branded":
+                    # energy_kcal is calories_100g, as for USDA foods.
                     food_row=food["row"]
-                    if portion.get("portion_idx", 0) == 0:
-                        serving_portion = next(
-                            (p for p in food.get("portions", [])
-                             if p.get("portion_idx", 0) == 1 and p.get("gram_weight")),
-                            None,
-                        )
-                        if serving_portion:
-                            cal_formula = round(
-                                food.get("energy_kcal", 0.0) * 100 / serving_portion["gram_weight"],
-                                1,
-                            )
-                        else:
-                            cal_formula = round(food.get("energy_kcal", 0.0), 1)
-                    else:
-                        cal_formula=round(food.get("energy_kcal", 0.0), 1)
+                    cal_formula=round((portion["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
                 else:
                     sheet="foods"
                     food_row=food["row"]
@@ -3454,17 +3547,37 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                         portion_amt = recipe_grams / cup["gram_weight"]
                         cal_formula = round((cup["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
 
-            # â”€â”€ Portion sanity check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            # Branded spoon servings, in the recipe's spoon (cups as tbsp).
+            if (portion is not None and source == "branded" and not is_countable
+                    and not vol_mismatch and portion_amt > 0):
+                spoon = _branded_spoon_portion(portion, unit)
+                if spoon:
+                    recipe_grams = portion_amt * portion["gram_weight"]
+                    portion = spoon
+                    portion_id = spoon["portion_id"]
+                    portion_desc = f"{spoon['label']} ({spoon['gram_weight']:.1f} g)"
+                    portion_amt = recipe_grams / spoon["gram_weight"]
+                    cal_formula = round((spoon["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
+
+            #â”€â”€ Portion sanity check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             # If portion_amt is suspiciously small (<0.1) or large (>10),
             # compute recipe_grams and find the portion whose gram_weight is
             # closest â€” that's a better fit than the original selection.
             # Skip for countable items and the 100g-basis path (portion is None).
+            # A portion in the recipe's own unit, or the spoon just worked out
+            # for it, is exact, so 12 tbsp stays 12 tbsp (1 gallon against a
+            # fl oz portion still moves); the 100g basis is never a better fit.
+            in_recipe_unit = portion is not None and (
+                portion.get("_derived_spoon")
+                or (_normalise_volume_unit(unit) is not None
+                    and _portion_label_unit(portion["label"]) == _normalise_volume_unit(unit)))
             if (portion is not None and not is_countable
-                    and not vol_mismatch
+                    and not vol_mismatch and not in_recipe_unit
                     and (portion_amt < 0.1 or portion_amt > 10)):
                 recipe_grams = portion_amt * portion["gram_weight"]
-                all_portions = food.get("portions", [])
-                if len(all_portions) > 1:
+                all_portions = [p for p in food.get("portions", [])
+                                if p.get("portion_idx", 0) != 0]
+                if all_portions:
                     better = min(all_portions,
                                  key=lambda p: abs(p["gram_weight"] - recipe_grams))
                     if better["portion_id"] != portion["portion_id"]:
@@ -3472,24 +3585,8 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                         portion_id   = portion["portion_id"]
                         portion_desc = f"{portion['label']} ({portion['gram_weight']:.0f} g)"
                         portion_amt  = recipe_grams / portion["gram_weight"]
-                        if source == "usda":
+                        if source in ("usda", "branded"):
                             cal_formula = round((portion["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
-                        elif source == "branded":
-                            if portion.get("portion_idx", 0) == 0:
-                                serving_portion = next(
-                                    (p for p in food.get("portions", [])
-                                     if p.get("portion_idx", 0) == 1 and p.get("gram_weight")),
-                                    None,
-                                )
-                                if serving_portion:
-                                    cal_formula = round(
-                                        food.get("energy_kcal", 0.0) * 100 / serving_portion["gram_weight"],
-                                        1,
-                                    )
-                                else:
-                                    cal_formula = round(food.get("energy_kcal", 0.0), 1)
-                            else:
-                                cal_formula = round(food.get("energy_kcal", 0.0), 1)
                         else:
                             if portion.get("portion_idx", 0) == 0:
                                 cal_formula = round(food.get("energy_kcal", 0.0), 1)
@@ -3500,6 +3597,11 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             source_tag=" [BRANDED]" if source=="branded" else ""
             yield_tag=f" [yield {yield_factor}]" if yield_factor else ""
             vol_note = "VOL UNIT MISMATCH (3 tsp=1 tbsp, 16 tbsp=1 cup) " if vol_mismatch else ""
+            if estimated:
+                vol_note += "PORTION NOT FOUND, estimated at 1 g/ml "
+            elif packet_estimate:
+                vol_note += "PACKET PORTION NOT FOUND, estimated "
+                estimated = True
             note_text=f"{vol_note}{'LOW CONF ' if confidence=='low' else ''}score {score:.2f}{source_tag}{yield_tag}"
 
             output_rows.append({
@@ -3515,6 +3617,8 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 # The unit the recipe itself used ("tbsp"), for the app to
                 # start the wheel on it.
                 "recipe_unit":unit,
+                # No portion could measure the line; it is 1 g/ml.
+                "estimated":estimated,
             })
             data_row_indices.append(current_excel_row)
 

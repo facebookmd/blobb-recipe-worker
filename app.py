@@ -48,6 +48,9 @@ class ParseResponse(BaseModel):
     unmatched_count: int
     # Ingredient names left out of the template, so the app can say which.
     unmatched: list[str] = Field(default_factory=list)
+    # Ingredients whose portion wasn't found, so their amount is an estimate
+    # (1 g/ml); the app says which.
+    estimated: list[str] = Field(default_factory=list)
 
 
 app = FastAPI(title="Blobb Recipe Parser", version="2.1.0")
@@ -97,12 +100,13 @@ def _fdc_int(food_id: Any) -> int | None:
 
 
 def _find_food(food_id: str) -> dict | None:
-    """The food dict the matcher picked, from its per-ingredient search cache."""
+    """The food dict the matcher picked, from its per-ingredient search cache,
+    or for a pinned ID (boosts.json fdc_id), the one it fetched by ID."""
     for index in matcher._INGREDIENT_INDEX_CACHE.values():
         food = index.get(food_id, fetch=False)
         if food is not None:
             return food
-    return None
+    return matcher._FDC_FETCH_CACHE.get(food_id)
 
 
 _GRAMS_RE = re.compile(r"\((\d+(?:\.\d+)?) g\)$")
@@ -261,6 +265,7 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
     sections: dict[str, list[dict[str, Any]]] = {}
     matched_count = 0
     unmatched: list[str] = []
+    estimated: list[str] = []
     for row in rows:
         # "note" rows are "to taste" ingredients, left out on purpose.
         if row.get("_type") != "data":
@@ -286,6 +291,8 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
         if recipe_unit in _VOLUME_UNITS:
             component["recipeUnit"] = recipe_unit
         sections.setdefault(row.get("section") or "Main", []).append(component)
+        if row.get("estimated"):
+            estimated.append(component["name"])
         matched_count += 1
 
     if not sections:
@@ -308,6 +315,7 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
         matched_count=matched_count,
         unmatched_count=len(unmatched),
         unmatched=[name for name in unmatched if name],
+        estimated=estimated,
     )
 
 

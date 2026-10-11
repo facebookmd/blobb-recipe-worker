@@ -84,3 +84,13 @@ def test_a_unit_without_grams_keeps_none():
 )
 def test_wheel_amount(qty, expected):
     assert worker._wheel_amount(qty) == expected
+
+
+def test_a_pinned_food_is_found_in_the_fetch_cache(monkeypatch):
+    # Boost-pinned foods are fetched by ID, not searched; without them the
+    # component got only its chosen unit (gochujang: tbsp, no g).
+    food = {"fdc_id": "B_2171715", "portions": []}
+    monkeypatch.setattr(worker.matcher, "_INGREDIENT_INDEX_CACHE", {})
+    monkeypatch.setattr(worker.matcher, "_FDC_FETCH_CACHE", {"B_2171715": food})
+    assert worker._find_food("B_2171715") is food
+    assert worker._find_food("B_1") is None
