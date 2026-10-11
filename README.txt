@@ -38,6 +38,9 @@ REQUIREMENTS
 
 No other packages needed.
 
+Tests: install requirements-dev.txt (pytest, and httpx for test_auth.py),
+then run `.venv/bin/python -m pytest -q`.
+
 
 FILES IN THIS FOLDER
 ---------------------

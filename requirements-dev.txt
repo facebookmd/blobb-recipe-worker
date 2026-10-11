@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest
+# starlette.testclient (test_auth.py)
+httpx
