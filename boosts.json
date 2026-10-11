@@ -816,10 +816,26 @@
     "weight": 0.9
   },
   {
+    "_comment": "Unagi (eel) sauce is the sauce, not eel: Kikkoman Unagi Sushi Sauce, label 1 Tbsp = 20 g."
+  },
+  {
+    "trigger": "unagi sauce",
+    "fdc_id": "B_1865541",
+    "weight": 0.95
+  },
+  {
+    "trigger": "eel sauce",
+    "fdc_id": "B_1865541",
+    "weight": 0.95
+  },
+  {
     "trigger": "unagi",
     "boost": "eel",
     "fdc_id": "174193",
-    "weight": 0.9
+    "weight": 0.9,
+    "exclude": [
+      "sauce"
+    ]
   },
   {
     "trigger": "white miso",
