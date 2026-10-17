@@ -166,7 +166,8 @@ For anything cooked in a liquid or fat that is mostly discarded, list only what 
 | Method and food | Absorbed oil (% of raw food weight) |
 |---|---|
 | Deep-fried, breaded (panko, breadcrumbs) | 20% |
-| Deep-fried, battered or starch-coated (tempura, karaage, kwek-kwek) | 15% |
+| Deep-fried, wet-battered (tempura, kwek-kwek) | 15% |
+| Deep-fried, dry starch-dusted (karaage, tatsuta-age) | 8% |
 | Deep-fried, wrapper-enclosed (spring rolls, turon, fried gyoza) | 12% |
 | Deep-fried, unbreaded lean meat, fish, tofu, vegetables | 7% |
 | Deep-fried, thick starchy pieces (whole plantain, thick-cut potato) | 5% |
@@ -175,6 +176,8 @@ For anything cooked in a liquid or fat that is mostly discarded, list only what 
 | Fatty cuts, unbreaded, deep- or pan-fried (pork belly, pata, skin-on cuts) | 0% (they lose fat) |
 
 Sautés, stir-fries, stews and braises: list **all** the oil — it stays in the dish.
+
+Convert recipe applies these rates to "oil for frying" lines as fry types: breaded, battered, starch-dusted, unbreaded (lean), thick-cut and thin-sliced (starchy pieces and slices). The user can change the type and the rows it is a share of in the app. The rates live in `FRY_TYPE_RATES` in `recipe_matcher.py` and `lib/utils/fry_types.dart` in the app; change all three together.
 
 ### Marinades (`--Absorbed marinade`)
 

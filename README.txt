@@ -175,6 +175,7 @@ TESTS
   test_recipe_unit_volume.py   Volume lines stay in the recipe's unit
   test_units.py                Units sent to the app, count words, leaves
   test_recipe_countable_cut.py Trailing cuts (chop, slice) as the unit
+  test_frying_oil.py           Frying oil as the absorbed share, fried rows
   test_matching_fallbacks.py   Search fallbacks, Supabase requests
   test_auth.py                 Sign-in and rate limits
 

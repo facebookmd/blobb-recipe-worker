@@ -57,6 +57,9 @@ class ParseResponse(BaseModel):
     # Ingredients whose portion wasn't found, so their amount is an estimate
     # (1 g/ml); the app says which.
     estimated: list[str] = Field(default_factory=list)
+    # Frying-oil lines, each counted as the share its fried food absorbs:
+    # {"fry_type": "starch-dusted"}, so the app can say so.
+    frying_oil: list[dict[str, str]] = Field(default_factory=list)
 
 
 app = FastAPI(title="Blobb Recipe Parser", version="2.1.0")
@@ -284,6 +287,7 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
     matched_count = 0
     unmatched: list[str] = []
     estimated: list[str] = []
+    frying_oil: list[dict[str, str]] = []
     for row in rows:
         # "note" rows are "to taste" ingredients, left out on purpose.
         if row.get("_type") != "data":
@@ -308,6 +312,14 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
         recipe_unit = str(row.get("recipe_unit") or "").strip().lower()
         if recipe_unit in _VOLUME_UNITS:
             component["recipeUnit"] = recipe_unit
+        # Absorbed frying oil and the rows it is a share of: the app shows
+        # the type on its section and recomputes the oil when the user picks
+        # another type or other rows.
+        if row.get("fried"):
+            component["fried"] = True
+        if row.get("fry_type"):
+            component["fryType"] = row["fry_type"]
+            frying_oil.append({"fry_type": row["fry_type"]})
         sections.setdefault(row.get("section") or "Main", []).append(component)
         if row.get("estimated"):
             estimated.append(component["name"])
@@ -334,6 +346,7 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
         unmatched_count=len(unmatched),
         unmatched=[name for name in unmatched if name],
         estimated=estimated,
+        frying_oil=frying_oil,
     )
 
 

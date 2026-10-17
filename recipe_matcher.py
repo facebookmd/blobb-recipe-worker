@@ -3422,6 +3422,96 @@ def _is_aromatic_leaf(ingredient: str) -> bool:
     return bool(AROMATIC_LEAVES_RE.search(ingredient or ""))
 
 
+# Frying oil ("3 cups oil for frying", parse_recipe.FRYING_OIL_UNIT) is the
+# pot, not what the food keeps: "3 cups" logged 1,445 kcal a serving of
+# karaage. It becomes the absorbed share instead, a percent of the fried
+# food's raw weight by coating (RECIPE_RULES.md, "Absorbed amounts"), in tbsp
+# in an "Absorbed oil" section. The rows it is a share of are marked "fried".
+# The app shows the fry type on that section and lets the user change it and
+# the fried rows, recomputing the oil from them, so these names and rates are
+# the app's too (lib/utils/fry_types.dart).
+FRY_TYPE_RATES = {
+    "breaded": 0.20,
+    "battered": 0.15,
+    "starch-dusted": 0.08,
+    "unbreaded": 0.07,
+    "thick-cut": 0.05,
+    "thin-sliced": 0.30,
+}
+ABSORBED_OIL_SECTION = "Absorbed oil"
+# The unit parse_recipe gives a frying-oil line.
+FRYING_OIL_UNIT = "frying oil"
+OIL_GRAMS_PER_TBSP = 13.6
+_BREADED_RE = re.compile(
+    r"\b(panko|bread\s*crumbs?|breadcrumbs?|cracker\s*crumbs|crushed\s+crackers|"
+    r"corn\s*flakes|cornflakes)\b", re.I)
+_BATTER_RE = re.compile(
+    r"\b(tempura|batter|beer|club\s+soda|sparkling\s+water|soda\s+water|"
+    r"buttermilk)\b", re.I)
+_COATING_RE = re.compile(
+    r"\b(flour|starch|cornstarch|cornflour|katakuriko|cornmeal)\b", re.I)
+_EGG_RE = re.compile(r"\beggs?\b", re.I)
+# What goes in the oil: meat, seafood, tofu. Eggs are left out, since a
+# recipe's eggs are usually the batter.
+_FRIED_FOOD_RE = re.compile(
+    r"\b(chicken|beef|pork|lamb|mutton|goat|veal|turkey|duck|fish|salmon|cod|"
+    r"tilapia|catfish|haddock|pollock|hake|mackerel|sardines?|tuna|snapper|"
+    r"bass|trout|halibut|flounder|sole|milkfish|bangus|shrimps?|prawns?|squid|"
+    r"calamari|octopus|scallops?|oysters?|clams?|mussels?|crabs?|lobster|"
+    r"tofu|tempeh|spam|sausages?|hot\s*dogs?|meatballs?|quail\s+eggs?)\b", re.I)
+_NOT_FRIED_FOOD_RE = re.compile(
+    r"\b(stock|broth|bouillon|powder|sauce|fat|seasoning|cubes?|granules|starch|flour)\b",
+    re.I)
+# With no meat, fish or tofu, the starchy food is what's fried (fries).
+_STARCHY_FRIED_RE = re.compile(
+    r"\b(potato(?:es)?|sweet\s+potato(?:es)?|plantains?|cassava|yuca|taro)\b", re.I)
+# Unbreaded fatty or skin-on cuts lose fat in the fryer: nothing absorbed.
+_FATTY_CUT_RE = re.compile(
+    r"\b(skin[\s-]*on|with\s+skin|belly|pata|wings?|chicharr?on)\b", re.I)
+
+
+def _fry_type(ingredients: list[str]) -> str:
+    """The coating the recipe's ingredients add up to."""
+    text = " | ".join(ingredients)
+    if _BREADED_RE.search(text):
+        return "breaded"
+    if _BATTER_RE.search(text) or (_COATING_RE.search(text) and _EGG_RE.search(text)):
+        return "battered"
+    if _COATING_RE.search(text):
+        return "starch-dusted"
+    return "unbreaded"
+
+
+def _fried_kind(ingredient: str) -> str | None:
+    """"protein" or "starchy" for what may go in the fryer, else None."""
+    if _NOT_FRIED_FOOD_RE.search(ingredient):
+        return None
+    if _FRIED_FOOD_RE.search(ingredient):
+        return "protein"
+    if _STARCHY_FRIED_RE.search(ingredient):
+        return "starchy"
+    return None
+
+
+def _absorbed_oil(ingredients: list[str], fried: list[dict]):
+    """(fry type, tbsp per serving, the rows it is a share of) for a recipe's
+    frying oil. [fried] holds the recipe's possible fried rows so far, each
+    with "_fried_kind" and "_fried_grams". Meat, fish and tofu are what's
+    fried; failing those, the starchy food. None found, or unbreaded fatty
+    cuts (they lose fat), gives 0 tbsp and no rows: the user picks in the app."""
+    fry_type = _fry_type(ingredients)
+    rows = [r for r in fried if r["_fried_kind"] == "protein"]
+    if not rows:
+        rows = [r for r in fried if r["_fried_kind"] == "starchy"]
+        if rows and fry_type == "unbreaded":
+            fry_type = "thick-cut"
+    elif fry_type == "unbreaded" and all(
+            _FATTY_CUT_RE.search(r["component_label"]) for r in rows):
+        rows = []
+    grams = sum(r["_fried_grams"] for r in rows)
+    return fry_type, grams * FRY_TYPE_RATES[fry_type] / OIL_GRAMS_PER_TBSP, rows
+
+
 # Messages from the last build_output_rows: lines that name no template but
 # come close to one ("dashi stok"), and, when not strict, lines that named a
 # template but couldn't use it.
@@ -3519,12 +3609,26 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
         category=ing_rows[0].get("category","").strip()
         other_names=ing_rows[0].get("other_names","").strip()
         data_row_indices=[]
+        # (ingredient, grams per serving) of what goes in the frying oil.
+        fried: list[tuple[str, float]] = []
 
-        for ing_row in ing_rows:
+        def _is_frying_oil(r) -> bool:
+            return r.get("unit", "").strip().lower() == FRYING_OIL_UNIT
+
+        # Frying oil last, once the fried food's weight is known.
+        for ing_row in sorted(ing_rows, key=_is_frying_oil):
             ingredient=ing_row.get("ingredient","").strip()
             qty_raw=ing_row.get("qty","").strip()
             unit=ing_row.get("unit","").strip()
             section=ing_row.get("section","").strip() or "Main"
+            fry_type = None
+            if _is_frying_oil(ing_row):
+                fry_type, tbsp, fried_rows = _absorbed_oil(
+                    [r.get("ingredient", "") for r in ing_rows
+                     if not _is_frying_oil(r)], fried)
+                for r in fried_rows:
+                    r["fried"] = True
+                qty_raw, unit, section = f"{tbsp:.4f}", "tbsp", ABSORBED_OIL_SECTION
             size_hint=ing_row.get("size_hint","").strip()
             is_cooked = ing_row.get("is_cooked","").strip().lower() in ("true","1","yes")
             # ingredient_for_portion: bare name + size hint so pick_best_portion
@@ -3866,8 +3970,16 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 "estimated":estimated,
                 "unit_label": portion["label"] if portion is not None else "100 g",
                 "unit_grams": portion["gram_weight"] if portion is not None else 100.0,
+                "fry_type": fry_type or "",
             })
             data_row_indices.append(current_excel_row)
+            kind = _fried_kind(ingredient)
+            if kind:
+                row = output_rows[-1]
+                row["_fried_kind"] = kind
+                row["_fried_grams"] = portion_amt * (
+                    portion["gram_weight"] if portion is not None else 100.0)
+                fried.append(row)
 
         first = ing_rows[0]
         for row in output_rows:

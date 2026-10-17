@@ -90,6 +90,23 @@ TO_TASTE_RE = re.compile(
     r"\b(to taste|to\s*taste|as needed|as required|for garnish|for serving|"
     r"optional|a pinch|a dash|season(?:ing)? to taste)\b", re.I)
 
+# "3 cups vegetable oil for frying", "oil, for deep-frying": the pot of oil,
+# not what the food keeps. The matcher swaps it for the absorbed amount.
+FRYING_OIL_RE = re.compile(
+    r"\b(?:for\s+(?:the\s+)?(?:deep|shallow|pan)?[\s-]*fr(?:y|ying|yer)"
+    r"|deep[\s-]*fr(?:y|ying))\b", re.I)
+FAT_RE = re.compile(r"\b(oil|lard|shortening|tallow|dripping)s?\b", re.I)
+# Oil named by its use, not its kind, is matched as vegetable oil.
+GENERIC_OIL_RE = re.compile(
+    r"^(?:neutral|cooking|frying|plain|light|flavorless|flavourless)?\s*oil$", re.I)
+FRYING_OIL_UNIT = "frying oil"
+# Up to 3 tbsp of oil "for frying" (an egg, a pan of cutlets) mostly stays
+# in the dish, so it is counted in full like any sauté oil.
+FRYING_OIL_MAX_KEPT_TBSP = 3.0
+_TBSP_PER_UNIT = {"tsp": 1 / 3, "tbsp": 1.0, "cup": 16.0, "ml": 1 / 14.787,
+                  "l": 1000 / 14.787, "fl oz": 2.0, "pint": 32.0,
+                  "quart": 64.0, "gallon": 256.0}
+
 UNICODE_FRACS = {
     "½":"1/2","¼":"1/4","¾":"3/4","⅓":"1/3","⅔":"2/3",
     "⅛":"1/8","⅜":"3/8","⅝":"5/8","⅞":"7/8",
@@ -304,6 +321,24 @@ def parse_ingredient_line(raw: str) -> dict | None:
             f"in its serving unit instead, e.g. "
             f"'1 cup {m.group(2).replace('_', ' ').replace('-', ' ').strip()}'."
         )
+
+    # Before "to taste": "oil for frying, as needed" is frying oil too.
+    # The raw line: cleaning drops a ", for frying" tail.
+    if FRYING_OIL_RE.search(raw) and FAT_RE.search(line):
+        qty, rest = extract_quantity(line)
+        unit, rest = extract_unit(rest)
+        name = re.sub(r"\([^)]*\)", "", rest)
+        name = FRYING_OIL_RE.split(name)[0]
+        name = re.split(r"[,;]", name)[0].strip(" ,;:-")
+        if not name or GENERIC_OIL_RE.match(name):
+            name = "vegetable oil"
+        tbsp = (qty or 0) * _TBSP_PER_UNIT.get(unit or "", 0)
+        if not 0 < tbsp <= FRYING_OIL_MAX_KEPT_TBSP:
+            return {"qty": "", "unit": FRYING_OIL_UNIT, "ingredient": name,
+                    "size_hint": "", "is_cooked": False, "to_taste": False,
+                    "raw": raw.strip()}
+        # Kept in full: "1 tbsp oil for pan-frying" is 1 tbsp vegetable oil.
+        line = f"{line[:len(line) - len(rest)].strip()} {name}"
 
     if TO_TASTE_RE.search(line):
         ing = TO_TASTE_RE.sub("", line).strip(" ,;:")
