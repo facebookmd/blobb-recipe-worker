@@ -442,8 +442,28 @@ def parse_ingredient_line(raw: str) -> dict | None:
         r"minced|mince|grated|grate|shredded|shred|julienned|julienne)\b)\s*$",
         re.I
     )
+    _TRAILING_UNITS = {
+        "fillet": "fillet", "fillets": "fillet",
+        "steak": "steak", "steaks": "steak",
+        "chop": "chop", "chops": "chop",
+        "drumstick": "drumstick", "drumsticks": "drumstick",
+        "patty": "patty", "patties": "patty",
+        "slice": "slice", "slices": "slice",
+        "sheet": "sheet", "sheets": "sheet",
+        "spear": "spear", "spears": "spear",
+        "strip": "strip", "strips": "strip",
+        "ear": "ear", "ears": "ear",
+        "knob": "knob", "knobs": "knob",
+    }
     cut_hint = ""
     _cut_m = _CUT_HINT_RE.search(ing_name)
+    # "pork loin chop" and "bread slice" name a countable unit, not a prep
+    # step; leave the word for the trailing-unit pass below so the line is
+    # counted in chops, not pieces.
+    if (_cut_m and unit_val in (None, "piece", "")
+            and _cut_m.group(0).strip().lower() in _TRAILING_UNITS
+            and len(ing_name.split()) > 1):
+        _cut_m = None
     if _cut_m:
         cut_hint = _cut_m.group(0).strip().lower()
         ing_name = _CUT_HINT_RE.sub("", ing_name).strip(" ,;:")
@@ -516,19 +536,6 @@ def parse_ingredient_line(raw: str) -> dict | None:
     # If unit is still generic (piece) or empty, check if the ingredient name
     # ends with a recognizable unit word — e.g. "salmon fillet" → unit=fillet.
     # Only do this for non-volumetric discrete units that make sense as suffixes.
-    _TRAILING_UNITS = {
-        "fillet": "fillet", "fillets": "fillet",
-        "steak": "steak", "steaks": "steak",
-        "chop": "chop", "chops": "chop",
-        "drumstick": "drumstick", "drumsticks": "drumstick",
-        "patty": "patty", "patties": "patty",
-        "slice": "slice", "slices": "slice",
-        "sheet": "sheet", "sheets": "sheet",
-        "spear": "spear", "spears": "spear",
-        "strip": "strip", "strips": "strip",
-        "ear": "ear", "ears": "ear",
-        "knob": "knob", "knobs": "knob",
-    }
     if unit_val in (None, "piece", ""):
         words = ing_name.split()
         if words:

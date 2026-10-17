@@ -76,7 +76,7 @@ Format: `qty unit ingredient` (`1 cup glutinous rice flour`, `3 tbsp soy sauce`,
 Write amounts the way a home cook would read them. **Never grams**: a user reading "37.5 g onion" can't picture it, and the sources rarely say it.
 
 * **Cups, tbsp, tsp** for liquids, grains, cooked starches, flours, sugars, sauces, pastes, and chopped, sliced or grated produce (`1/2 cup chopped onion`, `2 tbsp sugar`).
-* **Counts** (whole, piece, clove, stalk, sheet, slice, fillet, thigh, drumstick, leaf, block) for anything naturally counted, with size where it varies (`1 large onion`, `2 whole medium tomato`). Without a size the matcher assumes medium.
+* **Counts** (whole, piece, clove, stalk, sheet, slice, fillet, chop, thigh, drumstick, leaf, block) for anything naturally counted, with size where it varies (`1 large onion`, `2 whole medium tomato`). Without a size the matcher assumes medium. The cut can follow the food (`2 boneless pork loin chop`, `2 bread slice`); it is still the unit.
 * **Meat** by count (`2 boneless skinless chicken thigh`) or, when it is sold by weight, **oz or lb** (`8 oz ground beef`, `1.5 lb oxtail`). Never cups of meat: the matcher can't convert them and logs the wrong weight.
 * **Packaged items** by the package (`1 packet tamarind soup mix`, `4 block boxed Japanese curry roux`).
 * Sources disagree on units → use the unit most of them use. The ratios still come from all three.

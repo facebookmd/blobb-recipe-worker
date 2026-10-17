@@ -971,6 +971,9 @@ def _build_supabase_usda_food(row: dict, row_index: int, portions_by_food_id: di
 
 BRANDED_SERVING_UNITS = {"g", "grm", "gram", "grams", "ml", "mlt"}
 WEIGHT_LABEL_RE = re.compile(r"\b(?:g|grm|grams?|mg|kg|oz|onz|ounces?|lbs?)\b", re.IGNORECASE)
+# A portion that is a plain weight: "4 oz", "100 g" (not "1 chop (151 g)").
+WEIGHT_PORTION_LABEL_RE = re.compile(
+    r"^\s*[\d./]+\s*(?:g|grams?|mg|kg|oz|ounces?|lbs?)\b", re.IGNORECASE)
 
 
 # ml in one labelled "cup" that is a measuring cup: the FDA label cup (240),
@@ -3695,7 +3698,11 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
 
                 label_unit = _portion_label_unit(portion["label"])
                 if is_countable or not unit or portion.get("_cube_match"):
-                    if portion.get("_cube_match") or u_low in ("serving", "servings"):
+                    # A weight label's number counts ounces or grams, not
+                    # pieces: one piece against "4 oz" is one 4 oz portion,
+                    # not a quarter of it.
+                    if (portion.get("_cube_match") or u_low in ("serving", "servings")
+                            or WEIGHT_PORTION_LABEL_RE.match(portion["label"])):
                         portion_amt = qty
                     else:
                         serving_qty = _portion_label_qty(portion["label"])

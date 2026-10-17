@@ -158,6 +158,9 @@ Portion rules the matcher follows on its own:
   * Branded foods use their label serving. A label "cup" that isn't
     230-250 ml is the container it's sold in, and never converts.
   * "1 packet" is the label's package weight.
+  * A cut after the food is its unit: "2 boneless pork loin chop" counts
+    chops, as "2 pork chops" does ("bread slice" too). A count against a
+    plain weight portion ("4 oz", no count portion) is one portion each.
   * Curry, kaffir/makrut lime, pandan and banana leaves are note rows (no
     food in the data, about 0 kcal).
 
@@ -171,6 +174,7 @@ TESTS
   test_portions.py             Cups for spoon-only foods, water
   test_recipe_unit_volume.py   Volume lines stay in the recipe's unit
   test_units.py                Units sent to the app, count words, leaves
+  test_recipe_countable_cut.py Trailing cuts (chop, slice) as the unit
   test_matching_fallbacks.py   Search fallbacks, Supabase requests
   test_auth.py                 Sign-in and rate limits
 
