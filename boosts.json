@@ -1,5 +1,58 @@
 [
   {
+    "_comment": "Japanese set, 17 Oct 2026: cooked noodles are the cooked food, not fresh/dry noodles at 1 g/ml. No USDA udon; generic cooked noodles (160 g/cup)."
+  },
+  {
+    "trigger": "cooked ramen noodles",
+    "fdc_id": "2708352",
+    "weight": 0.95
+  },
+  {
+    "trigger": "cooked udon noodles",
+    "fdc_id": "2708352",
+    "weight": 0.95
+  },
+  {
+    "trigger": "curry roux",
+    "portion_unit": "block",
+    "portion_gram_weight": 20.0,
+    "portion_label": "1 block"
+  },
+  {
+    "trigger": "sweet potato",
+    "fdc_id": "168482",
+    "weight": 0.95,
+    "exclude": [
+      "tots",
+      "fries",
+      "chips",
+      "canned",
+      "cooked",
+      "baked"
+    ]
+  },
+  {
+    "trigger": "kabocha",
+    "fdc_id": "170489",
+    "weight": 0.95
+  },
+  {
+    "_comment": "Raw shiitake with a 1 piece portion (19 g); the Foundation row 1999628 has only an 85 g RACC."
+  },
+  {
+    "trigger": "shiitake mushroom",
+    "fdc_id": "169242",
+    "weight": 0.95,
+    "exclude": [
+      "dried"
+    ]
+  },
+  {
+    "trigger": "black cod",
+    "fdc_id": "175134",
+    "weight": 0.95
+  },
+  {
     "_disabled": true,
     "_comment": "Disabled OFF rule pending branded replacement",
     "original_trigger": "silken tofu",
@@ -1655,21 +1708,6 @@
   },
   {
     "_comment": "═══ KABOCHA / JAPANESE PUMPKIN ═══════════════════════════════════════"
-  },
-  {
-    "trigger": "kabocha",
-    "fdc_id": "170487",
-    "weight": 0.8
-  },
-  {
-    "trigger": "kabocha pumpkin",
-    "fdc_id": "170487",
-    "weight": 0.85
-  },
-  {
-    "trigger": "kabocha squash",
-    "fdc_id": "170487",
-    "weight": 0.85
   },
   {
     "_comment": "â•â•â• CORN KERNELS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•"

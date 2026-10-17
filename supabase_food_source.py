@@ -334,11 +334,13 @@ def search_foods(
     rows_by_id: dict[int, dict] = {}
 
     # Build source_set filter param
-    source_filter = ""
+    # Foods with no calories at all (42 Foundation lab entries such as dry
+    # beans at 0% moisture) would match as 0 kcal; real zeros are 0, not null.
+    source_filter = "&calories_100g=not.is.null"
     if source_set in {"branded"}:
-        source_filter = "&source_set=eq.branded"
+        source_filter += "&source_set=eq.branded"
     elif source_set in {"non-branded", "usda"}:
-        source_filter = "&source_set=neq.branded"
+        source_filter += "&source_set=neq.branded"
 
     # The three strategies below are sent at the same time; their rows are
     # merged in strategy order, so earlier strategies win as before.
@@ -413,6 +415,7 @@ def fetch_food_by_fdc_id(fdc_id: int, *, branded: bool = False) -> dict | None:
     if not is_configured():
         return None
     source_filter = "&source_set=eq.branded" if branded else "&source_set=neq.branded"
+    source_filter += "&calories_100g=not.is.null"
     url = (
         f"{_supabase_url()}/rest/v1/foods"
         f"?select={quote(_FOOD_SEARCH_SELECT)}"

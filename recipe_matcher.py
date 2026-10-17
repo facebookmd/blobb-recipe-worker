@@ -35,7 +35,7 @@ from supabase_food_source import (
 # â”€â”€ built-in boost rules â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 BUILTIN_BOOSTS = [
     {"trigger": "soy sauce",      "boost": "shoyu soy sauce",             "weight": 0.9, "category": "japanese"},
-    {"trigger": "curry roux",      "boost": "GOLDEN CURRY",                "weight": 0.9, "category": "japanese"},
+    {"trigger": "curry roux",      "boost": "GOLDEN CURRY", "fdc_id": "B_2031609", "weight": 0.95, "category": "japanese"},
     # Pinned: scored, "vegetable oil soybean" picked a 70%-fat margarine spread.
     # Bare "oil" only; other generic phrasings ("neutral oil", "salad oil")
     # are their own rules in boosts.json.
@@ -46,12 +46,15 @@ BUILTIN_BOOSTS = [
     {"trigger": "potato",        "boost": "potatoes flesh and skin raw", "fdc_id": "170028", "weight": 0.6,
      "exclude": ["potato starch","sweet","chip","crisp","flake","flour","fries",
                  "salad","instant","tots","hash"]},
+    # Green, not the red pepper the rule below searches for.
+    {"trigger": "green bell pepper", "fdc_id": "170427",                   "weight": 0.95},
     {"trigger": "bell pepper",   "boost": "sweet red pepper raw",        "weight": 0.6},
     {"trigger": "green peas",    "boost": "peas green frozen unprepared","weight": 0.6},
-    {"trigger": "spring onion",  "boost": "green onion", "fdc_id": "2727585", "weight": 0.9},
-    {"trigger": "green onion",   "fdc_id": "2727585",                     "weight": 0.9},
-    {"trigger": "scallion",      "fdc_id": "2727585",                     "weight": 0.9},
-    {"trigger": "scallions",     "fdc_id": "2727585",                     "weight": 0.9},
+    # 170005, not the Foundation row 2727585: that one has no calories.
+    {"trigger": "spring onion",  "boost": "scallions raw", "fdc_id": "170005", "weight": 0.9},
+    {"trigger": "green onion",   "fdc_id": "170005",                     "weight": 0.9},
+    {"trigger": "scallion",      "fdc_id": "170005",                     "weight": 0.9},
+    {"trigger": "scallions",     "fdc_id": "170005",                     "weight": 0.9},
     {"trigger": "onion",         "boost": "onions raw",                  "weight": 0.6},
     {"trigger": "garlic chives", "boost": "chives raw",                  "weight": 0.9},
     {"trigger": "garlic",        "boost": "garlic raw",                  "weight": 0.6,
@@ -110,7 +113,7 @@ BUILTIN_BOOSTS = [
     {"trigger": "coriander seed", "boost": "coriander seed",             "weight": 0.9},
     # Spice/herb boosts â€” single-word names score low against USDA's
     # "X, ground" / "X, dried" convention; boost to the expected form.
-    {"trigger": "nutmeg",        "boost": "nutmeg ground",               "weight": 0.9},
+    {"trigger": "nutmeg",        "boost": "nutmeg ground", "fdc_id": "171326", "weight": 0.9},
     {"trigger": "turmeric",      "boost": "turmeric ground",             "weight": 0.9},
     {"trigger": "cinnamon",      "boost": "cinnamon ground",             "weight": 0.9},
     {"trigger": "allspice",      "boost": "allspice ground",             "weight": 0.9},
@@ -123,7 +126,7 @@ BUILTIN_BOOSTS = [
     {"trigger": "rosemary",      "boost": "rosemary fresh",              "weight": 0.9},
     {"trigger": "cayenne",       "boost": "cayenne pepper",              "weight": 0.9},
     {"trigger": "cumin",         "boost": "cumin seed",                  "weight": 0.9},
-    {"trigger": "daikon",        "boost": "daikon radish",               "weight": 0.9},
+    {"trigger": "daikon",        "boost": "radishes oriental raw", "fdc_id": "168451", "weight": 0.9},
     {"trigger": "flour",         "boost": "all-purpose flour",           "weight": 0.8,
      "exclude": ["rice","corn","almond","coconut","oat","bread","cake","self","rye",
                  "buckwheat","whole","00","arrowroot","tapioca","chickpea","cassava"]},
@@ -153,7 +156,7 @@ BUILTIN_BOOSTS = [
     {"trigger": "ponzu",         "boost": "ponzu sauce",                 "weight": 0.9},
     {"trigger": "furikake",      "boost": "furikake seasoning",          "weight": 0.9},
     {"trigger": "panko",         "boost": "panko breadcrumbs",           "weight": 0.9},
-    {"trigger": "nori",          "boost": "seaweed nori",                "weight": 0.9,
+    {"trigger": "nori",          "boost": "laver seaweed", "fdc_id": "168458", "weight": 0.9,
      "exclude": ["furikake"]},
     {"trigger": "miso",          "boost": "miso paste",                  "weight": 0.9,
      "exclude": ["soup"]},
@@ -226,6 +229,7 @@ PORTION_UNIT_KEYWORDS = {
     # Countable â€” generic
     "piece":["medium","large","small","piece","unit","wrapper","wrappers","whole"],
     "clove":["clove"],
+    "bunch":["bunch"],
     "slice":["slice"],
     "can":["can"],
     # Countable â€” shape/cut
@@ -1323,13 +1327,14 @@ def apply_boosts(ingredient, boost_rules, category=""):
             # Use the boost text as search query if provided, so the pinned
             # FDC ID appears in the search results even when the trigger
             # text wouldn't find it (e.g. "spring onion" → search "green onion"
-            # to find fdc_id 2727585).
+            # to find fdc_id 170005).
             search_text = rule.get("boost", ingredient)
             return search_text, 0.0, rule["fdc_id"]
         return rule["boost"], rule.get("weight", 0.6), None
     return ingredient, 0.0, None
 
-def get_portion_override(ingredient: str, boost_rules: list, unit: str = "") -> dict | None:
+def get_portion_override(ingredient: str, boost_rules: list, unit: str = "",
+                         unit_rules_only: bool = False) -> dict | None:
     """
     Return a synthesized portion dict if a portion_gram_weight rule matches
     this ingredient, otherwise None.
@@ -1362,6 +1367,7 @@ def get_portion_override(ingredient: str, boost_rules: list, unit: str = "") -> 
         "slice", "slices",
         "serving", "servings",
         "clove", "cloves",
+        "bunch", "bunches",
         "unit", "units",
         "item", "items",
     }
@@ -1385,6 +1391,8 @@ def get_portion_override(ingredient: str, boost_rules: list, unit: str = "") -> 
         if any(ex.lower() in ing for ex in rule.get("exclude", [])):
             continue
         rule_unit = rule.get("portion_unit", "").lower().strip()
+        if unit_rules_only and not rule_unit:
+            continue
         if rule_unit and rule_unit != u_norm:
             if not (
                 rule_unit in COUNTABLE_OVERRIDE_UNITS
@@ -2823,6 +2831,12 @@ def _portion_label_qty(label: str) -> float:
         # Leading 1 or 1.0 followed by another number â†’ serving count pattern
         if abs(first - 1.0) < 1e-9:
             return second
+    # Fractions and mixed numbers: "1/8 cup" is an eighth of a cup and
+    # "1 1/2 cup" one and a half, not 1 cup.
+    m3 = re.match(r"^(?:(\d+)\s+)?(\d+)/(\d+)\b", label.strip())
+    if m3 and int(m3.group(3)) > 0:
+        whole = float(m3.group(1)) if m3.group(1) else 0.0
+        return whole + int(m3.group(2)) / int(m3.group(3))
     m2 = re.match(r"^([\d.]+)", label.strip())
     return float(m2.group(1)) if m2 else 1.0
 
@@ -3181,6 +3195,14 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
              if p.get("portion_idx", 0) == 1 and abs(p["gram_weight"] - 100.0) > 1.0),
             None,
         )
+        # A boost rule for this recipe unit beats the label serving: a curry
+        # roux label says "0.083 pkg" (20 g), and "1 block" against it read
+        # as 12 servings, a whole box.
+        if boost_rules and ingredient:
+            override = get_portion_override(ingredient, boost_rules, unit,
+                                            unit_rules_only=True)
+            if override:
+                return override
         # A weight-only serving ("1 serving", 8 g) can't measure a spoon or
         # cup line, so an override or volume portion gets the first say.
         if real_serving and not (
@@ -3770,7 +3792,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                     portion, estimated = estimate, True
 
             u_low=unit.lower()
-            is_countable=u_low in ("piece","pieces","clove","cloves","unit","units","item","serving","servings","sheet","sheets","leaf","leaves","stalk","stalks","slice","slices","strip","strips","spear","spears","head","heads","ear","ears","fillet","fillets","steak","steaks","patty","patties","chop","chops","drumstick","drumsticks","knob","knobs","cube","cubes","block","blocks","stick","sticks","wrapper","wrappers","whole","pack","sachet","sprig","sprigs")
+            is_countable=u_low in ("piece","pieces","clove","cloves","unit","units","item","serving","servings","sheet","sheets","leaf","leaves","stalk","stalks","slice","slices","strip","strips","spear","spears","head","heads","ear","ears","fillet","fillets","steak","steaks","patty","patties","chop","chops","drumstick","drumsticks","knob","knobs","cube","cubes","block","blocks","stick","sticks","wrapper","wrappers","whole","pack","sachet","sprig","sprigs","bunch","bunches")
             display_label=matched_alt if matched_alt else ingredient
             vol_mismatch=False
 
