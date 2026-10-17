@@ -86,7 +86,13 @@ OIL = matcher._build_supabase_usda_food(
      "calories_100g": 884},
     0, {3: [{"label": "tbsp", "grams": 13.6, "sequence_number": 1},
             {"label": "cup", "grams": 218.0, "sequence_number": 2}]})
-FOODS = {"chicken": CHICKEN, "starch": STARCH, "oil": OIL, "potato": POTATO}
+EGGPLANT = matcher._build_supabase_usda_food(
+    {"id": 5, "fdc_id": 169228, "source_set": "sr_legacy",
+     "description": "Eggplant, raw", "display_name": "Eggplant, raw",
+     "calories_100g": 25},
+    0, {5: [{"label": "eggplant, unpeeled", "grams": 458.0, "sequence_number": 1}]})
+FOODS = {"chicken": CHICKEN, "starch": STARCH, "oil": OIL, "potato": POTATO,
+         "eggplant": EGGPLANT}
 
 
 def rows_for(tmp_path, monkeypatch, lines):
@@ -165,3 +171,40 @@ def test_nothing_to_fry_starts_at_no_oil(tmp_path, monkeypatch):
     assert oil["fry_type"] == "starch-dusted"
     assert oil["portion_amt"] == 0
     assert not any(r.get("fried") for r in rows)
+
+
+def test_plain_fried_vegetables_keep_10_percent(tmp_path, monkeypatch):
+    rows = rows_for(tmp_path, monkeypatch, [
+        "Su-age eggplant", "Servings: 2",
+        "1 eggplant",
+        "2 cups oil for frying",
+    ])
+    oil = oil_row(rows)
+    # Half an eggplant (229 g) a serving; watery vegetables keep 10%.
+    assert oil["fry_type"] == "unbreaded veg"
+    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(229 * 0.10, rel=0.01)
+    [eggplant] = [r for r in rows if "eggplant" in r["component_label"].lower()]
+    assert eggplant.get("fried")
+
+
+def test_meat_is_fried_before_vegetables(tmp_path, monkeypatch):
+    rows = rows_for(tmp_path, monkeypatch, [
+        "Fried chicken and eggplant", "Servings: 2",
+        "2 boneless chicken thigh",
+        "1 eggplant",
+        "2 cups oil for frying",
+    ])
+    oil = oil_row(rows)
+    # Lean meat, unbreaded: 5% of the chicken only.
+    assert oil["fry_type"] == "unbreaded"
+    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(194 * 0.05, rel=0.01)
+
+
+@pytest.mark.parametrize("fry_type, rate", [
+    ("breaded", 0.12), ("battered", 0.15), ("starch-dusted", 0.08),
+    ("unbreaded", 0.05), ("unbreaded veg", 0.10), ("thick-cut", 0.05),
+    ("thin-sliced", 0.13),
+])
+def test_rates_match_the_sources(fry_type, rate):
+    # ABSORPTION_SOURCES.md; lib/utils/fry_types.dart has the same numbers.
+    assert matcher.FRY_TYPE_RATES[fry_type] == rate

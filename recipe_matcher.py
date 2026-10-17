@@ -3452,13 +3452,15 @@ def _is_aromatic_leaf(ingredient: str) -> bool:
 # The app shows the fry type on that section and lets the user change it and
 # the fried rows, recomputing the oil from them, so these names and rates are
 # the app's too (lib/utils/fry_types.dart).
+# Sources for each rate: ABSORPTION_SOURCES.md.
 FRY_TYPE_RATES = {
-    "breaded": 0.20,
+    "breaded": 0.12,
     "battered": 0.15,
     "starch-dusted": 0.08,
-    "unbreaded": 0.07,
+    "unbreaded": 0.05,
+    "unbreaded veg": 0.10,
     "thick-cut": 0.05,
-    "thin-sliced": 0.30,
+    "thin-sliced": 0.13,
 }
 ABSORBED_OIL_SECTION = "Absorbed oil"
 # The unit parse_recipe gives a frying-oil line.
@@ -3487,6 +3489,13 @@ _NOT_FRIED_FOOD_RE = re.compile(
 # With no meat, fish or tofu, the starchy food is what's fried (fries).
 _STARCHY_FRIED_RE = re.compile(
     r"\b(potato(?:es)?|sweet\s+potato(?:es)?|plantains?|cassava|yuca|taro)\b", re.I)
+# Failing those, the vegetables are (vegetable tempura, su-age eggplant).
+# Watery vegetables keep about twice the oil lean meat does unbreaded.
+_VEGETABLE_FRIED_RE = re.compile(
+    r"\b(eggplants?|aubergines?|shishito|bell\s+peppers?|sweet\s+peppers?|mushrooms?|shiitake|maitake|"
+    r"shimeji|enoki|okra|zucchini|courgettes?|squash|pumpkin|kabocha|"
+    r"lotus\s+root|renkon|burdock|gobo|green\s+beans?|string\s+beans?|"
+    r"asparagus|onions?|broccoli|cauliflower|carrots?|shiso|perilla)\b", re.I)
 # Unbreaded fatty or skin-on cuts lose fat in the fryer: nothing absorbed.
 _FATTY_CUT_RE = re.compile(
     r"\b(skin[\s-]*on|with\s+skin|belly|pata|wings?|chicharr?on)\b", re.I)
@@ -3505,13 +3514,16 @@ def _fry_type(ingredients: list[str]) -> str:
 
 
 def _fried_kind(ingredient: str) -> str | None:
-    """"protein" or "starchy" for what may go in the fryer, else None."""
+    """"protein", "starchy" or "vegetable" for what may go in the fryer,
+    else None."""
     if _NOT_FRIED_FOOD_RE.search(ingredient):
         return None
     if _FRIED_FOOD_RE.search(ingredient):
         return "protein"
     if _STARCHY_FRIED_RE.search(ingredient):
         return "starchy"
+    if _VEGETABLE_FRIED_RE.search(ingredient):
+        return "vegetable"
     return None
 
 
@@ -3519,17 +3531,23 @@ def _absorbed_oil(ingredients: list[str], fried: list[dict]):
     """(fry type, tbsp per serving, the rows it is a share of) for a recipe's
     frying oil. [fried] holds the recipe's possible fried rows so far, each
     with "_fried_kind" and "_fried_grams". Meat, fish and tofu are what's
-    fried; failing those, the starchy food. None found, or unbreaded fatty
-    cuts (they lose fat), gives 0 tbsp and no rows: the user picks in the app."""
+    fried; failing those, the starchy food; failing that, the vegetables.
+    None found, or unbreaded fatty cuts (they lose fat), gives 0 tbsp and no
+    rows: the user picks in the app."""
     fry_type = _fry_type(ingredients)
     rows = [r for r in fried if r["_fried_kind"] == "protein"]
-    if not rows:
-        rows = [r for r in fried if r["_fried_kind"] == "starchy"]
-        if rows and fry_type == "unbreaded":
-            fry_type = "thick-cut"
-    elif fry_type == "unbreaded" and all(
-            _FATTY_CUT_RE.search(r["component_label"]) for r in rows):
-        rows = []
+    if rows:
+        if fry_type == "unbreaded" and all(
+                _FATTY_CUT_RE.search(r["component_label"]) for r in rows):
+            rows = []
+    else:
+        for kind, unbreaded_type in (("starchy", "thick-cut"),
+                                     ("vegetable", "unbreaded veg")):
+            rows = [r for r in fried if r["_fried_kind"] == kind]
+            if rows:
+                if fry_type == "unbreaded":
+                    fry_type = unbreaded_type
+                break
     grams = sum(r["_fried_grams"] for r in rows)
     return fry_type, grams * FRY_TYPE_RATES[fry_type] / OIL_GRAMS_PER_TBSP, rows
 
