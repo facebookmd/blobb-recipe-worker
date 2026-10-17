@@ -1471,6 +1471,13 @@ HEAD_UNKNOWN_PENALTY = 0.08
 HEAD_FOUNDATION_BONUS = 0.03
 VARIANT_PENALTY = 0.25
 FOUNDATION_NO_ENERGY_PENALTY = 0.30
+# Ranking penalty for a USDA row whose only portions are "RACC" or a bare
+# 100 g. Foundation "Ground pork, raw" has only "1 RACC" while SR Legacy
+# "Pork, fresh, ground, raw" has "1 oz"; both reach the same boosted score,
+# and the RACC row turned "5 oz" into "0.2577 RACC". Applied whatever the
+# recipe unit, and only to the ranking: the row still wins, at its real
+# score, when nothing comparable is there.
+NO_MEASURABLE_PORTION_PENALTY = 0.15
 
 # Leading USDA group labels skipped before looking for the head:
 # "Spices, cinnamon, ground", "Leavening agents, baking powder, …".
@@ -1569,6 +1576,7 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
     Returns (best_food, best_score, matched_alt_name).
     """
     best_food, best_score, best_alt, best_food_is_raw = None, 0.0, None, False
+    best_rank = 0.0
     best_segments = 99
     search_core = _core(search)
     query_tokens = [_canonical_token(t) for t in normalise(search).split()]
@@ -1696,15 +1704,20 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
             s = min(1.0, s + boost_weight * 0.15)
         if s >= UNIT_PORTION_FLOOR and _has_unit_portion(food, unit):
             s += UNIT_PORTION_BONUS
+        # Rows people can't measure rank behind ones they can; s itself is
+        # left alone so confidence and thresholds see the real match.
+        rank = s
+        if food.get("source") == "usda" and not _has_measurable_portion(food):
+            rank -= NO_MEASURABLE_PORTION_PENALTY
         # Ties (often two rows at the boosted 1.0 cap) go to a raw row, then
         # to the plainer description: "Onions, raw" over "Onions, white, raw".
         segments = len(_usda_segments(food)) if food.get("source") == "usda" else 99
         is_raw = bool(food.get("is_raw"))
-        if (s > best_score
-                or (s == best_score and is_raw and not best_food_is_raw)
-                or (s == best_score and is_raw == best_food_is_raw and segments < best_segments)):
+        if (rank > best_rank
+                or (rank == best_rank and is_raw and not best_food_is_raw)
+                or (rank == best_rank and is_raw == best_food_is_raw and segments < best_segments)):
             best_score, best_food, best_alt, best_food_is_raw = s, food, winning_alt, is_raw
-            best_segments = segments
+            best_rank, best_segments = rank, segments
     return best_food, best_score, best_alt
 def _serving_unit_compat(serving, unit):
     """
