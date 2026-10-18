@@ -230,6 +230,14 @@ PORTION_UNIT_KEYWORDS = {
     "piece":["medium","large","small","piece","unit","wrapper","wrappers","whole"],
     "clove":["clove"],
     "bunch":["bunch"],
+    # A stalk is one whole stalk: green onion's portions are "1 medium",
+    # "1 large", "1 small" and "1 cup, chopped", and with no keyword the
+    # first one, the cup, was used (6x a stalk). "whole" means the same.
+    "stalk":["stalk","medium","large","small","whole","piece"],
+    "stalks":["stalk","medium","large","small","whole","piece"],
+    "whole":["medium","large","small","whole","piece"],
+    "sprig":["sprig"],
+    "sprigs":["sprig"],
     "slice":["slice"],
     "can":["can"],
     # Countable â€” shape/cut
@@ -3255,7 +3263,7 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
     # treat as "piece" so we pick a whole-unit portion (medium, large, small)
     # rather than whatever happens to be first (e.g. a slice).
     is_unitless = not keywords and not unit
-    is_piece = is_unitless or unit.lower() in ("piece", "pieces")
+    is_piece = is_unitless or unit.lower() in ("piece", "pieces", "stalk", "stalks", "whole")
     is_slice = unit.lower() in ("slice", "slices")
     if is_unitless:
         keywords = PORTION_UNIT_KEYWORDS.get("piece", [])
