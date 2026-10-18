@@ -821,6 +821,39 @@
     "weight": 0.9
   },
   {
+    "_comment": "A kamaboko slice is 13 g: eiyoukeisan.com 13 g per 11 mm slice, Calorie Slism 9 g (4 x 1 cm), Chisou 15 g (dietitian-checked). The label serving is a 2 oz piece."
+  },
+  {
+    "trigger": "kamaboko",
+    "portion_unit": "slice",
+    "portion_gram_weight": 13.0,
+    "portion_label": "1 slice"
+  },
+  {
+    "trigger": "narutomaki",
+    "portion_unit": "slice",
+    "portion_gram_weight": 13.0,
+    "portion_label": "1 slice"
+  },
+  {
+    "trigger": "naruto fish cake",
+    "portion_unit": "slice",
+    "portion_gram_weight": 13.0,
+    "portion_label": "1 slice"
+  },
+  {
+    "trigger": "steamed fish cake",
+    "portion_unit": "slice",
+    "portion_gram_weight": 13.0,
+    "portion_label": "1 slice"
+  },
+  {
+    "trigger": "japanese fish cake",
+    "portion_unit": "slice",
+    "portion_gram_weight": 13.0,
+    "portion_label": "1 slice"
+  },
+  {
     "trigger": "gobo",
     "boost": "burdock root",
     "weight": 0.9
