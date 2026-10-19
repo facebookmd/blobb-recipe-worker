@@ -293,6 +293,30 @@ def slugify(name: str) -> str:
     return s or "recipe"
 
 
+# A curated template's id, as an "ID:" line pins it: what share links
+# (blobb.app/?dish=<id>) and saved meals point at, so it must not follow the
+# title. Lowercase letters, digits, "_" and "-", like slugify's.
+TEMPLATE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,99}$")
+
+
+def check_unique_ids(recipes: list[tuple[dict, list[dict]]]) -> None:
+    """Two recipes with one id would be merged into one template by the
+    matcher and the import, so refuse them, naming both."""
+    seen: dict[str, dict] = {}
+    clashes = []
+    for meta, _ in recipes:
+        tid = meta["template_id"]
+        if tid in seen:
+            clashes.append(f"'{seen[tid]['template_name']}' and "
+                           f"'{meta['template_name']}' both have ID {tid}")
+        else:
+            seen[tid] = meta
+    if clashes:
+        raise RecipeFormatError(
+            "Two recipes can't share an ID (give one its own 'ID:' line or "
+            "title): " + "; ".join(clashes) + ".")
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # Single-line ingredient parser
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -632,6 +656,7 @@ def parse_single_block(lines: list[str], name_hint: str,
     detected_category = ""
     detected_servings = None
     detected_aka = ""
+    pinned_id = None
     ingredient_lines: list[tuple[str, str]] = []   # (line, section)
     current_section = DEFAULT_SECTION
 
@@ -639,6 +664,7 @@ def parse_single_block(lines: list[str], name_hint: str,
         r"^servings?\s*[:\-]?\s*(\d+(?:\.\d+)?)\b", re.I
     )
     AKA_RE = re.compile(r"^aka\s*[:\-]\s*(.+)$", re.I)
+    ID_RE = re.compile(r"^id\s*:\s*(.*)$", re.I)
     SERVING_SIZE_RE = re.compile(r"^serving\s+size\s*[:\-]\s*(.+)$", re.I)
     serving_qty = None
     serving_unit = ""
@@ -676,6 +702,15 @@ def parse_single_block(lines: list[str], name_hint: str,
         if am:
             detected_aka = am.group(1).strip()
             continue
+        # "ID: oyakodon_" — the template's id, kept when the title changes.
+        im = ID_RE.match(stripped)
+        if im:
+            pinned_id = im.group(1).strip()
+            if not TEMPLATE_ID_RE.match(pinned_id):
+                raise RecipeFormatError(
+                    f"'{stripped}' isn't an ID: use lowercase letters, digits, "
+                    f"'_' and '-', e.g. 'ID: oyakodon_'.")
+            continue
         if detected_name is None and looks_like_title(stripped):
             # Try to split "Name - Category" or "Name | Category"
             m = _TITLE_CATEGORY_RE.match(stripped)
@@ -692,7 +727,8 @@ def parse_single_block(lines: list[str], name_hint: str,
     category = category_override or detected_category or sticky_category
 
     meta = {
-        "template_id":   slugify(recipe_name),
+        "template_id":   pinned_id or slugify(recipe_name),
+        "id_pinned":     pinned_id is not None,
         "template_name": recipe_name,
         "category":      category,
         "other_names":   detected_aka,
@@ -754,7 +790,8 @@ def parse_single_block(lines: list[str], name_hint: str,
             ingredients = ingredients[1:]
             recipe_name = detected_name
             category    = category_override or detected_category or sticky_category
-            meta["template_id"]   = slugify(recipe_name)
+            if not pinned_id:
+                meta["template_id"] = slugify(recipe_name)
             meta["template_name"] = recipe_name
             meta["category"]      = category
             meta.setdefault("other_names", detected_aka)
@@ -938,7 +975,8 @@ def preview(meta: dict, ingredients: list[dict]) -> list[dict] | None:
                     new_name = ""
             if new_name:
                 meta["template_name"] = new_name
-                meta["template_id"]   = slugify(new_name)
+                if not meta.get("id_pinned"):
+                    meta["template_id"] = slugify(new_name)
                 print(f"  Renamed → {meta['template_name']} ({meta['template_id']})")
             continue
 
@@ -1083,6 +1121,12 @@ examples:
         for meta, ingredients in results:
             print(f"    {meta['template_name']}: {len(ingredients)} ingredient lines")
         all_parsed.extend(results)
+
+    try:
+        check_unique_ids(all_parsed)
+    except RecipeFormatError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
     if not all_parsed:
         print("No ingredients found. Exiting.")

@@ -34,6 +34,7 @@ Source quality:
 
 ```
 Recipe Name
+ID: recipe_name
 AKA: First alternate name", "Second name", "Third name
 Servings: N
 Serving size: 1 cup
@@ -43,13 +44,19 @@ SOURCE: url1, url2, url3
 
 `Serving size:` is required on base templates (see Base templates) and omitted on everything else.
 
+### ID line
+
+* The template's permanent id: share links and people's saved meals point at it. **Never change an existing recipe's `ID:`**, not even when renaming it; rename by editing the title line only.
+* A new recipe's ID is its title in lowercase with every run of other characters as `_`, and a trailing `_` on a one-word title: `Miso Soup` → `ID: miso_soup`, `Salt-Grilled Mackerel` → `ID: salt_grilled_mackerel`, `Gyoza` → `ID: gyoza_`.
+* Every ID is unique across all recipe files; the batch run stops on a repeat.
+
 ### AKA line
 
 * Zero alternate names → omit the `AKA:` line entirely
 * Single AKA → no quotes (`AKA: Beef bowl`)
 * Two or more → no opening quote on the first, no closing quote on the last, `", "` between each (`AKA: Beef bowl", "Gyudon`)
 * Romanized local names only — NO kanji, kana, hangul, or other non-Latin script. Drop diacritics (`Ragu`, not `Ragù`).
-* The English name is always the primary recipe name; the romanized local name goes in AKA.
+* **The primary recipe name is the name people actually use** — what they'd type into search, read on a menu, or say out loud. When a dish is widely known by its romanized local name, that's the primary name (`Takoyaki`, `Katsudon`, `Gyoza`, `Tonkatsu`, `Karaage`, `Onigiri`); when people say the English name, that's the primary name (`Miso Soup`, `Teriyaki Chicken`, `Coffee Jelly`, `Matcha Latte`). The other name always goes in AKA, so either one finds the recipe. When unsure, ask what a menu or a supermarket label in Manila or the US would print. (Ingredient lines are different: they stay English, see below, because they have to match the food database.)
 
 ### Section headers
 

@@ -85,6 +85,7 @@ RECIPE_RULES.md has the full rules. In short:
 
 
     Dashi Stock
+    ID: dashi_stock
     AKA: Dashi", "Dashi broth
     Servings: 4
     Serving size: 1 cup
@@ -92,6 +93,13 @@ RECIPE_RULES.md has the full rules. In short:
     4 tsp dashi powder
     SOURCE: url1, url2, url3
 
+  * ID: is the template's id, what share links (blobb.app/?dish=<id>) and
+    saved meals point at. It stays when the title changes, so rename by
+    editing the title line only. Lowercase letters, digits, _ and -. A new
+    recipe may leave it out: the id is then made from the title ("Miso
+    Soup" -> miso_soup; one-word titles get a trailing _, "Gyoza" ->
+    gyoza_); add that ID: line before its first import. Two recipes with one ID stop the batch run, and the
+    import tool, naming both.
   * Amounts are for the whole recipe; the parser divides by Servings.
   * --Section lines start a section (--Sauce, --Absorbed oil).
   * "to taste" and "lemon wedge for serving" become note rows, with no
@@ -178,6 +186,7 @@ TESTS
   test_frying_oil.py           Frying oil as the absorbed share, fried rows
   test_matching_fallbacks.py   Search fallbacks, Supabase requests
   test_auth.py                 Sign-in and rate limits
+  test_template_ids.py         ID: lines, renames, duplicate ids refused
 
 
 DEPLOYING THE SERVER
