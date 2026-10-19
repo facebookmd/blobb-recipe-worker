@@ -16,6 +16,8 @@ AI that writes {cuisine}_recipes.txt, and the rules those files must follow.
 FILES
 -----
   RECIPE_RULES.md          Rules and prompt for writing recipe files.
+  recipes/                 The recipe files (japanese_recipes.txt): the
+                           source of every curated template, IDs included.
   parse_recipe.py          Reads recipe text into recipes.csv, then runs the
                            matcher. The batch command.
   recipe_matcher.py        Matches ingredients to foods, picks portions and
@@ -49,7 +51,7 @@ BATCH RUN
 ---------
 From this folder, with SUPABASE_ANON_KEY set:
 
-    python3 parse_recipe.py ../recipes/japanese_recipes.txt --yes --forceall
+    python3 parse_recipe.py recipes/japanese_recipes.txt --yes --forceall
 
   * Several files in one run: list them, files that define base templates
     first. A file holds many recipes, separated by 3 blank lines or ---.

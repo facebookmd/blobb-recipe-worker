@@ -134,9 +134,8 @@ def test_batch_run_refuses_one_id_across_two_files(tmp_path):
 
 
 def test_every_recipe_in_the_recipe_files_pins_a_unique_id():
-    files = sorted((HERE.parent / "recipes").glob("*_recipes.txt"))
-    if not files:
-        pytest.skip("no recipe files next to templates/")
+    files = sorted((HERE / "recipes").glob("*_recipes.txt"))
+    assert files, "no recipe files in templates/recipes/"
     recipes = [r for f in files for r in parse_recipe.parse_file(str(f))]
     unpinned = [m["template_name"] for m, _ in recipes if not m["id_pinned"]]
     assert unpinned == []

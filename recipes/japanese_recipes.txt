@@ -1,0 +1,877 @@
+Category: Japanese
+
+Dashi Stock
+ID: dashi_stock
+AKA: Dashi", "Dashi broth
+Servings: 4
+Serving size: 1 cup
+4 cup water
+4 tsp dashi powder
+SOURCE: https://www.justonecookbook.com/dashi-powder/, https://www.americastestkitchen.com/articles/7231-what-is-instant-dashi-and-how-do-you-use-it, https://www.chopstickchronicles.com/dashi-granules-dashi-pack/
+
+
+
+Chashu Pork
+ID: chashu_pork
+AKA: Chashu", "Ramen pork
+Servings: 16
+Serving size: 1 slice
+2 lb skinless pork belly
+2 stalk green onion
+1 tbsp sliced ginger
+3 clove garlic
+--Absorbed marinade
+1.5 tsp soy sauce
+1.5 tsp rice wine
+1 tsp mirin
+1 tsp sugar
+1.5 tbsp water
+SOURCE: https://www.carolinescooking.com/wprm_print/chashu-pork-for-ramen-and-more, https://bitingatthebits.com/how-to-make-homemade-chashu-pork-marinated-braised-pork-belly-recipe/print/33236/, https://orwhateveryoudo.com/2018/11/chashu-pork-belly-recipe.html
+
+
+
+Ramen Egg
+ID: ramen_egg
+AKA: Ajitsuke tamago", "Ajitama", "Marinated soft-boiled egg", "Ramen eggs
+Servings: 6
+Serving size: 1 whole
+6 large egg
+--Absorbed marinade
+1/2 tsp soy sauce
+1/2 tsp mirin
+1/4 tsp rice wine
+1/2 tbsp water
+SOURCE: https://pickledplum.com/ramen-egg-recipe/, https://kirbiecravings.com/ramen-eggs-ajitsuke-tamago/, https://www.closetcooking.com/ajitsuke-tamago-ramen-eggs/
+
+
+
+Tonkatsu
+ID: tonkatsu_
+AKA: Pork Cutlet", "Pork katsu
+Servings: 4
+Serving size: 1 piece
+4 boneless pork loin chop
+1/2 tsp salt
+1/4 tsp black pepper
+1/2 cup all-purpose flour
+2 large egg
+1 cup panko breadcrumbs
+--Absorbed oil
+4 tbsp vegetable oil
+SOURCE: https://www.bitemybun.com/wprm_print/tonkatsu-pork-recipe, https://tastingtable.com/1341421/crispy-pork-loin-tonkatsu-rosu-katsu-recipe, https://panlasangpinoy.com/wprm_print/pork-loin-tonkatsu-recipe
+
+
+
+Miso Soup
+ID: miso_soup
+AKA: Misoshiru", "Tofu and wakame miso soup
+Servings: 4
+4 cup dashi stock
+3 tbsp white miso
+7 oz silken tofu
+1 tbsp dried wakame
+1 stalk green onion
+SOURCE: https://www.lafujimama.com/how-to-make-basic-tofu-wakame-miso-soup/print/, https://www.justonecookbook.com/homemade-miso-soup/, https://cooking.umamidays.com/wprm_print/miso-soup-with-tofu-and-wakame
+
+
+
+Pork and Vegetable Miso Soup
+ID: pork_and_vegetable_miso_soup
+AKA: Tonjiru", "Butajiru
+Servings: 4
+7 oz thinly sliced pork belly
+1 tsp sesame oil
+1/2 medium onion
+1.5 cup sliced daikon
+1/2 medium carrot
+1/2 cup sliced burdock root
+1/2 cup sliced konjac
+1 tsp grated ginger
+4 cup dashi stock
+3.5 tbsp miso
+2 stalk green onion
+SOURCE: https://noobcook.com/tonjiru/print/, https://kokorocares.com/blogs/recipes/recipe-tonjiru-pork-miso-soup, https://shop.yutaka.london/blogs/recipes/tonjiru-recipe
+
+
+
+Japanese Beef and Potato Stew
+ID: japanese_beef_and_potato_stew
+AKA: Nikujaga
+Servings: 4
+8 oz thinly sliced beef ribeye
+3 medium yukon gold potato
+1 medium onion
+1 medium carrot
+7 oz shirataki noodles
+1/2 cup snow peas
+1 tbsp vegetable oil
+2 cup dashi stock
+1/4 cup soy sauce
+1/4 cup mirin
+3 tbsp rice wine
+1.5 tbsp sugar
+SOURCE: https://www.justonecookbook.com/nikujaga/, https://norecipes.com/nikujaga-recipe/, https://www.americastestkitchen.com/recipes/16020-nikujaga-beef-and-potato-stew
+
+
+
+Chicken Karaage
+ID: chicken_karaage
+AKA: Japanese Fried Chicken", "Karaage
+Servings: 4
+1.5 lb boneless skin-on chicken thigh
+2 tbsp soy sauce
+1.5 tbsp rice wine
+2 tsp grated ginger
+2 clove garlic
+1 tsp sesame oil
+1/2 tsp salt
+1/8 tsp black pepper
+1/4 cup potato starch
+2 tbsp all-purpose flour
+lemon wedge for serving
+--Absorbed oil
+4 tbsp vegetable oil
+SOURCE: https://www.justonecookbook.com/karaage/, https://www.tastingtable.com/687526/ginger-karaage-chicken/, https://japan.recipetineats.com/wprm_print/japanese-fried-chicken-karaage-chicken
+
+
+
+Teriyaki Chicken
+ID: teriyaki_chicken
+AKA: Chicken teriyaki
+Servings: 2
+2 boneless skin-on chicken thigh
+1/4 tsp salt
+1 tsp vegetable oil
+1/4 cup teriyaki sauce
+SOURCE: https://norecipes.com/wprm_print/japanese-teriyaki-chicken, https://www.okonomikitchen.com/teriyaki-chicken/, https://japan.recipetineats.com/teriyaki-chicken/
+
+
+
+Ginger Pork
+ID: ginger_pork
+AKA: Shogayaki", "Buta no shogayaki
+Servings: 2
+10 oz thinly sliced pork loin
+2 tsp all-purpose flour
+2 tsp vegetable oil
+1.5 tbsp grated ginger
+2 tbsp soy sauce
+1.5 tbsp mirin
+1.5 tbsp rice wine
+1.5 tbsp sugar
+SOURCE: https://norecipes.com/shogayaki-japanese-ginger-pork/, https://tabemonomadness.com/buta-no-shougayaki-japanese-stir-fried-pork-with-ginger/, https://www.nippon.com/en/views/b08209/
+
+
+
+Shrimp Tempura
+ID: shrimp_tempura
+AKA: Ebi tempura", "Ebi ten
+Servings: 4
+16 large shrimp
+1/4 tsp salt
+2/3 cup all-purpose flour
+1 large egg
+2/3 cup ice water
+1/2 cup tempura dipping sauce
+--Absorbed oil
+5 tbsp vegetable oil
+SOURCE: https://www.foodfaithfitness.com/wprm_print/shrimp-tempura-recipe, https://www.joshuaweissman.com/recipes/best-classic-shrimp-tempura-recipe, https://xoxobella.com/wprm_print/shrimp-tempura
+
+
+
+Vegetable Tempura
+ID: vegetable_tempura
+AKA: Yasai tempura
+Servings: 4
+1 medium sweet potato
+1.5 cup sliced kabocha squash
+1 medium green bell pepper
+1 small eggplant
+3/4 cup all-purpose flour
+2 tbsp cornstarch
+1/2 tsp baking powder
+1/4 tsp salt
+3/4 cup ice water
+1/2 cup tempura dipping sauce
+--Absorbed oil
+7 tbsp vegetable oil
+SOURCE: https://chefjacooks.com/en/wprm_print/the-best-japanese-vegetable-tempura-recipe, https://noshingwiththenolands.com/wprm_print/vegetable-tempura, https://vickypham.com/blog/easy-vegetable-tempura-sweet-soy-dipping-sauce/print/4072
+
+
+
+Yakitori
+ID: yakitori_
+AKA: Grilled Chicken Skewers", "Negima
+Servings: 8
+1.5 lb boneless skinless chicken thigh
+4 stalk green onion
+--Tare
+1/2 cup soy sauce
+1/4 cup mirin
+1/4 cup rice wine
+3 tbsp brown sugar
+SOURCE: https://www.onceuponachef.com/recipes/yakitori.html, https://madeincookware.com/print/recipes/japanese-chicken-skewers, https://www.jocooks.com/wprm_print/chicken-yakitori
+
+
+
+Okonomiyaki
+ID: okonomiyaki_
+AKA: Savory Cabbage Pancake", "Osaka-style okonomiyaki
+Servings: 2
+2/3 cup all-purpose flour
+2 large egg
+1/3 cup dashi stock
+3 cup shredded cabbage
+2 stalk green onion
+5 oz thinly sliced pork belly
+2 tsp vegetable oil
+--Toppings
+2 tbsp okonomiyaki sauce
+1 tbsp Japanese mayonnaise
+1 tbsp bonito flakes
+1 tsp dried seaweed flakes
+1 tbsp pickled red ginger
+SOURCE: https://norecipes.com/wprm_print/okonomiyaki-osaka-style, https://oishibook.com/wprm_print/basic-okonomiyaki, https://www.chopstickchronicles.com/okonomiyaki/
+
+
+
+Takoyaki
+ID: takoyaki_
+AKA: Octopus Balls
+Servings: 24
+1 cup all-purpose flour
+1 large egg
+1.75 cup dashi stock
+1 tsp soy sauce
+3 oz cooked octopus
+1/4 cup chopped green onion
+1.5 tbsp pickled red ginger
+1 tbsp vegetable oil
+--Toppings
+1/4 cup okonomiyaki sauce
+2 tbsp Japanese mayonnaise
+2 tbsp bonito flakes
+1 tsp dried seaweed flakes
+SOURCE: https://japan.recipetineats.com/wprm_print/takoyaki-recipe-octopus-balls, https://adamliaw.com/recipe/how-to-make-takoyaki, https://www.giallozafferano.com/recipes/takoyaki.html
+
+
+
+Gyoza
+ID: gyoza_
+AKA: Pan-Fried Pork Dumplings", "Pork gyoza", "Yaki gyoza", "Potstickers
+Servings: 30
+5 oz ground pork
+2 cup finely chopped cabbage
+1/4 cup chopped garlic chives
+1 stalk green onion
+1 tsp grated ginger
+1 clove garlic
+2 tsp soy sauce
+1 tsp sesame oil
+30 gyoza wrapper
+1.5 tbsp vegetable oil
+1/2 cup water
+--Dipping sauce
+6 tbsp gyoza dipping sauce
+SOURCE: https://norecipes.com/wprm_print/best-pork-gyoza, https://hungryinthailand.com/wprm_print/pork-gyoza-recipe-pork-dumplings, https://www.justonecookbook.com/gyoza/
+
+
+
+Japanese Hamburger Steak
+ID: japanese_hamburger_steak
+AKA: Hambagu", "Hamburg steak", "Hanbagu
+Servings: 4
+8 oz ground beef
+4 oz ground pork
+1/2 large onion
+1/3 cup panko breadcrumbs
+3 tbsp milk
+1 large egg
+1/2 tsp salt
+1/4 tsp black pepper
+1/8 tsp ground nutmeg
+2 tsp vegetable oil
+--Sauce
+3 tbsp ketchup
+2 tbsp Worcestershire sauce
+3 tbsp red wine
+SOURCE: https://www.beyondkimchee.com/wprm_print/japanese-hamburger-steak-recipe-hambagu, https://norecipes.com/wprm_print/hamburg-steak-hambagu, https://oishibook.com/wprm_print/japanese-hamburger-steak-hambagu
+
+
+
+Salt-Grilled Mackerel
+ID: salt_grilled_mackerel
+AKA: Saba shioyaki
+Servings: 2
+2 mackerel fillet
+1 tbsp rice wine
+1/2 tsp salt
+--Serving
+1/4 cup grated daikon
+1 tsp soy sauce
+lemon wedge for serving
+SOURCE: https://asianinspirations.com.au/recipes/grilled-mackerel-saba-shioyaki/, https://monahansseafood.com/?p=5792, https://justasdelish.com/grilled-mackerel-saba-shioyaki/
+
+
+
+Miso-Marinated Black Cod
+ID: miso_marinated_black_cod
+AKA: Black cod with miso", "Miso cod", "Gindara saikyo yaki
+Servings: 4
+1.5 lb black cod fillet
+--Absorbed marinade
+1 tbsp white miso
+2 tsp sugar
+1 tsp rice wine
+1 tsp mirin
+SOURCE: https://japan.recipetineats.com/wprm_print/nobus-miso-marinated-black-cod-recipe, https://www.lovefood.com/recipes/60597/nobu-matsuhisas-black-cod-with-miso, https://www.sonomacutrer.com/blogs/recipes/miso-marinated-black-cod
+
+
+
+Japanese Chicken Curry
+ID: japanese_chicken_curry
+AKA: Chicken curry rice", "Kare raisu", "Japanese curry
+Servings: 4
+8 oz boneless skinless chicken thigh
+1 tbsp vegetable oil
+1 medium onion
+1 medium yukon gold potato
+1 medium carrot
+2 1/3 cup water
+4 block boxed Japanese curry roux
+--Rice
+4 cup cooked short grain white rice
+SOURCE: https://oishibook.com/wprm_print/basic-japanese-curry, https://littlehousebigalaska.com/wprm_print/japanese-chicken-curry, https://www.chopstickchronicles.com/wprm_print/japanese-curry-rice-%e3%82%ab%e3%83%ac%e3%83%bc%e3%83%a9%e3%82%a4%e3%82%b9
+
+
+
+Japanese Beef Curry
+ID: japanese_beef_curry
+AKA: Beef curry rice", "Beef kare raisu
+Servings: 4
+1 lb beef chuck
+1 tbsp vegetable oil
+1 medium onion
+1 clove garlic
+2 cup chopped carrot
+2 cup chopped yukon gold potato
+2.5 cup water
+4 block boxed Japanese curry roux
+--Rice
+4 cup cooked short grain white rice
+SOURCE: https://www.closetcooking.com/japanese-curry/, https://www.foodologygeek.com/japanese-beef-curry/, https://cookinginchinglish.com/?p=5908
+
+
+
+Oyakodon
+ID: oyakodon_
+AKA: Chicken and Egg Rice Bowl
+Servings: 2
+2 boneless skinless chicken thigh
+1/2 medium onion
+4 large egg
+1/2 cup dashi stock
+2 tbsp soy sauce
+1 tbsp mirin
+1 tbsp rice wine
+2 tsp sugar
+1 stalk green onion
+3 cup cooked short grain white rice
+SOURCE: https://www.justonecookbook.com/oyakodon/, https://www.americastestkitchen.com/recipes/17745-oyakodon-japanese-chicken-and-egg-rice-bowl, https://bittmanproject.com/recipe/oyakodon/
+
+
+
+Gyudon
+ID: gyudon_
+AKA: Beef Rice Bowl", "Gyu don
+Servings: 2
+8 oz thinly sliced beef ribeye
+1 medium onion
+1 cup dashi stock
+3.5 tbsp soy sauce
+2 tbsp mirin
+2 tbsp rice wine
+4 tsp sugar
+1 stalk green onion
+2.5 cup cooked short grain white rice
+SOURCE: https://norecipes.com/wprm_print/yoshinoya-beef-bowl, https://pickledplum.com/recipe-gyudon-japanese-beef-bowl/print/40675, https://www.tastingtable.com/1219115/gyudon-beef-rice-bowl-recipe/?mode=print
+
+
+
+Katsudon
+ID: katsudon_
+AKA: Pork Cutlet Rice Bowl", "Katsu don
+Servings: 2
+2 piece pork cutlet
+1/2 small onion
+2 tsp vegetable oil
+1/2 cup dashi stock
+1 tbsp soy sauce
+2 tsp mirin
+2 tsp sugar
+3 large egg
+1 stalk green onion
+2.5 cup cooked short grain white rice
+SOURCE: https://norecipes.com/wprm_print/katsudon-pork-cutlet-rice-bowl, https://grantourismotravels.com/wprm_print/katsudon-recipe-for-a-japanese-pork-cutlet-and-egg-rice-bowl, https://www.sbs.com.au/food/recipes/katsu-don
+
+
+
+Omurice
+ID: omurice_
+AKA: Omelette Rice", "Omuraisu
+Servings: 2
+--Ketchup rice
+1 boneless skinless chicken thigh
+1/2 medium onion
+1/4 cup diced carrot
+1 tbsp butter
+2 cup cooked short grain white rice
+3 tbsp ketchup
+1 tsp soy sauce
+1/8 tsp black pepper
+--Omelette
+5 large egg
+2 tbsp milk
+1/4 tsp salt
+1 tbsp butter
+--Topping
+2 tbsp ketchup
+SOURCE: https://norecipes.com/wprm_print/omurice-recipe, https://tarasmulticulturaltable.com/wprm_print/omurice-japanese-omelette-rice, https://www.okonomikitchen.com/omurice-japanese-omlette-rice/
+
+
+
+Japanese Fried Rice
+ID: japanese_fried_rice
+AKA: Chahan", "Yakimeshi", "Chashu fried rice
+Servings: 2
+2 slice chashu pork
+2 cup cooked short grain white rice
+1 large egg
+2 stalk green onion
+1 clove garlic
+1 tbsp vegetable oil
+1 tsp soy sauce
+1/8 tsp salt
+1/8 tsp white pepper
+1/2 tsp sesame oil
+SOURCE: https://www.justonecookbook.com/chashu/, https://tarasmulticulturaltable.com/wprm_print/chahan-japanese-fried-rice, https://www.carolinescooking.com/wprm_print/chashu-chahan-japanese-fried-rice-with-pork-belly
+
+
+
+Salmon Onigiri
+ID: salmon_onigiri
+AKA: Salmon Rice Ball", "Shake onigiri
+Servings: 4
+2 cup cooked short grain white rice
+1/4 tsp salt
+4 oz salmon fillet
+1 1/3 sheet nori
+SOURCE: https://chefjacooks.com/en/wprm_print/6-popular-onigiri-recipes, https://sushisushi.co.uk/blogs/recipes/how-to-make-onigiri, https://www.yakult.co.uk/gut-health/onigiri/
+
+
+
+Umeboshi Onigiri
+ID: umeboshi_onigiri
+AKA: Pickled Plum Rice Ball", "Ume onigiri
+Servings: 4
+2 cup cooked short grain white rice
+1/4 tsp salt
+4 whole pickled plum
+1 1/3 sheet nori
+SOURCE: https://chefjacooks.com/en/wprm_print/6-popular-onigiri-recipes, https://sushisushi.co.uk/blogs/recipes/how-to-make-onigiri, https://www.yakult.co.uk/gut-health/onigiri/
+
+
+
+Tuna Mayo Onigiri
+ID: tuna_mayo_onigiri
+AKA: Tuna Mayo Rice Ball", "Tsuna mayo onigiri
+Servings: 4
+2 cup cooked short grain white rice
+1/4 tsp salt
+2.5 oz canned tuna
+1.5 tbsp Japanese mayonnaise
+2 sheet nori
+SOURCE: https://www.kewpie.com/en/products/recipes/H-QP10008965/, https://pickledplum.com/conbini-style-tuna-mayo-onigiri/, https://www.flavournetwork.ca/recipe/easy-tuna-onigiri/
+
+
+
+California Roll
+ID: california_roll
+AKA: California maki
+Servings: 16
+--Sushi rice
+1.25 cup cooked short grain white rice
+1 tbsp rice vinegar
+1 tsp sugar
+1/4 tsp salt
+--Roll
+1 sheet nori
+2 oz imitation crab
+1/3 cup sliced avocado
+1/3 cup sliced cucumber
+1.5 tsp sesame seeds
+SOURCE: https://japan.recipetineats.com/wprm_print/california-rolls, https://www.carolinescooking.com/wprm_print/california-roll, https://tasty.co/recipe/california-roll
+
+
+
+Salmon Nigiri
+ID: salmon_nigiri
+AKA: Sake nigiri", "Salmon sushi
+Servings: 12
+--Sushi rice
+2.25 cup cooked short grain white rice
+1.5 tbsp rice vinegar
+1.5 tsp sugar
+1/4 tsp salt
+--Topping
+8 oz salmon fillet
+1 tsp wasabi paste
+SOURCE: https://pinchandswirl.com/salmon-nigiri/, https://izzycooking.com/wprm_print/salmon-nigiri-sushi-recipe, https://feedmebetter.com/wprm_print/salmon-nigiri-recipe
+
+
+
+Inari Sushi
+ID: inari_sushi
+AKA: Fried Tofu Pouch Sushi", "Inarizushi", "Inari
+Servings: 12
+--Tofu pouches
+6 whole fried tofu pouch
+1.25 cup dashi stock
+2.5 tbsp soy sauce
+3 tbsp sugar
+2 tbsp mirin
+2 tbsp rice wine
+--Sushi rice
+3.25 cup cooked short grain white rice
+1/4 cup rice vinegar
+1.5 tbsp sugar
+1 tsp salt
+1 tbsp sesame seeds
+SOURCE: https://norecipes.com/wprm_print/inari-sushi-fried-tofu-pocket-sushi, https://www.kikkoman.com/en/cookbook/recipe/00002085.html, https://japanesetaste.com/blogs/japanese-taste-recipes/how-to-make-inari-sushi-inarizushi
+
+
+
+Chawanmushi
+ID: chawanmushi_
+AKA: Savory Steamed Egg Custard
+Servings: 4
+3 large egg
+1.5 cup dashi stock
+1 tsp soy sauce
+1 tsp mirin
+1/4 tsp salt
+3 oz boneless skinless chicken breast
+4 slice kamaboko
+2 whole shiitake mushroom
+4 large shrimp
+Japanese parsley sprig for garnish
+SOURCE: https://www.justonecookbook.com/chawanmushi/, https://japan.recipetineats.com/wprm_print/plain-chawanmushi-with-starchy-clear-sauce, https://www.chopstickchronicles.com/chawanmushi/
+
+
+
+Spinach Ohitashi
+ID: spinach_ohitashi
+AKA: Spinach in Dashi", "Horenso no ohitashi
+Servings: 4
+1 bunch spinach
+1 cup dashi stock
+1 tbsp soy sauce
+1 tsp mirin
+1/4 tsp salt
+1 tbsp bonito flakes
+SOURCE: https://norecipes.com/wprm_print/spinach-ohitashi-japanese-spinach-salad, https://pickledplum.com/recipe-oshitashi-boiled-spinach-with-soy-and-sesame-seeds/, https://kokorocares.com/blogs/recipes/recipe-spinach-ohitashi-spinach-steeped-in-dashi
+
+
+
+Tamagoyaki
+ID: tamagoyaki_
+AKA: Rolled Omelette", "Japanese omelette", "Dashimaki tamago
+Servings: 2
+3 large egg
+2 tbsp dashi stock
+2 tsp sugar
+1 tsp soy sauce
+1/8 tsp salt
+1 tsp vegetable oil
+SOURCE: https://tasteasianfood.com/how-to-make-tamagoyaki/, https://www.chopstickchronicles.com/tamagoyaki/, https://www.okonomikitchen.com/tamagoyaki/
+
+
+
+Cucumber Salad
+ID: cucumber_salad
+AKA: Sunomono", "Cucumber sunomono", "Japanese cucumber salad
+Servings: 4
+2 cup thinly sliced cucumber
+1/4 tsp salt
+1.5 tbsp dried wakame
+3 tbsp rice vinegar
+1 tbsp sugar
+1 tsp soy sauce
+1 tsp sesame seeds
+SOURCE: https://tarasmulticulturaltable.com/wprm_print/sunomono-japanese-cucumber-salad, https://www.carolinescooking.com/wprm_print/sunomono-japanese-cucumber-salad, https://pickledplum.com/japanese-cucumber-salad-sunomono/
+
+
+
+Japanese Potato Salad
+ID: japanese_potato_salad
+AKA: Potato sarada
+Servings: 4
+3 medium russet potato
+3/4 cup thinly sliced cucumber
+1/2 small onion
+1 small carrot
+2 oz ham
+2 large hard-boiled egg
+6 tbsp Japanese mayonnaise
+1/2 tsp mustard
+1/2 tsp salt
+1/4 tsp black pepper
+SOURCE: https://japan.recipetineats.com/wprm_print/japanese-potato-salad, https://www.chopstickchronicles.com/japanese-potato-salad/, https://foodgarden.com.au/blogs/news/japanese-potato-salad-with-cucumbers-carrots-and-red-onion
+
+
+
+Agedashi Tofu
+ID: agedashi_tofu
+AKA: Fried Tofu in Dashi Broth
+Servings: 4
+14 oz soft tofu
+1/8 tsp salt
+1/4 cup potato starch
+--Broth
+1.25 cup dashi stock
+2 tbsp soy sauce
+2 tbsp mirin
+1/2 tsp sugar
+--Toppings
+1/2 cup grated daikon
+1 stalk green onion
+--Absorbed oil
+2.5 tbsp vegetable oil
+SOURCE: https://norecipes.com/wprm_print/agedashi-tofu, https://sushisushi.co.uk/blogs/recipes/how-to-make-agedashi-tofu, https://reluctantgourmet.com/wprm_print/traditional-agedashi-tofu-deep-fried
+
+
+
+Braised Burdock and Carrot
+ID: braised_burdock_and_carrot
+AKA: Kinpira gobo", "Kinpira
+Servings: 4
+1.25 cup julienned burdock root
+1 medium carrot
+1 tbsp sesame oil
+1/2 cup dashi stock
+1 tbsp sugar
+1 tbsp mirin
+1.5 tbsp soy sauce
+1 tbsp sesame seeds
+SOURCE: https://fun-japan.jp/en/articles/13034, https://onolicioushawaii.com/kinpira-gobo/, https://tabemonomadness.com/kinpira-gobo/
+
+
+
+Udon Noodle Soup
+ID: udon_noodle_soup
+AKA: Kake udon", "Su udon
+Servings: 2
+3 cup cooked udon noodles
+2 cup dashi stock
+2 tbsp soy sauce
+2 tbsp mirin
+2 tbsp chopped green onion
+SOURCE: https://www.chopstickchronicles.com/kakeudon/, https://pickledplum.com/light-udon-noodle-soup/, https://www.kawalingpinoy.com/kake-udon/
+
+
+
+Shoyu Ramen
+ID: shoyu_ramen
+AKA: Soy Sauce Ramen
+Servings: 1
+1.75 cup chicken broth
+1.5 cup cooked ramen noodles
+1 tbsp vegetable oil
+2 slice chashu pork
+1 whole ramen egg
+2 tbsp chopped green onion
+1/4 sheet nori
+--Tare
+1.5 tbsp soy sauce
+1 tsp mirin
+1 tsp rice wine
+SOURCE: https://cherryonmysundae.com/2020/11/shoyu-ramen-with-chashu-pork.html, https://feedmebetter.com/wprm_print/shoyu-ramen-recipe, https://ramenkaonashi.com/?p=37
+
+
+
+Miso Ramen
+ID: miso_ramen
+AKA: Sapporo miso ramen
+Servings: 2
+2 tsp sesame oil
+1 clove garlic
+1 tsp grated ginger
+4 oz ground pork
+2 tbsp miso
+1 tsp soy sauce
+3 cup chicken broth
+3 cup cooked ramen noodles
+2/3 cup bean sprouts
+2 tbsp corn kernels
+2 tbsp chopped green onion
+SOURCE: https://barrettandtheboys.substack.com/p/miso-ramen, https://kikkomanusa.com/foodservice/recipes/miso-corn-butter-ramen, https://www.laurainthekitchen.com/recipes/miso-ramen/
+
+
+
+Tonkotsu Ramen
+ID: tonkotsu_ramen
+AKA: Pork Bone Broth Ramen
+Servings: 1
+1.5 cup tonkotsu broth
+1 tbsp soy sauce
+1 tsp mirin
+1.5 cup cooked ramen noodles
+2 slice chashu pork
+1 whole ramen egg
+1/4 cup enoki mushrooms
+2 tbsp chopped green onion
+1/4 sheet nori
+SOURCE: https://www.closetcooking.com/tonkotsu-ramen/, https://www.joshuaweissman.com/recipes/best-tonkotsu-ramen-recipe, https://glebekitchen.com/wprm_print/4251
+
+
+
+Yakisoba
+ID: yakisoba_
+AKA: Stir-Fried Noodles", "Pork yakisoba
+Servings: 4
+8 oz thinly sliced pork belly
+3 tbsp vegetable oil
+1/2 medium onion
+1/3 cup carrot matchsticks
+3 cup chopped cabbage
+1 cup bean sprouts
+3 cup yakisoba noodles
+--Sauce
+2 tbsp Worcestershire sauce
+1 tbsp oyster sauce
+1 tbsp soy sauce
+--Toppings
+1 tsp dried seaweed flakes
+1 tbsp pickled red ginger
+SOURCE: https://www.americastestkitchen.com/recipes/17721-pork-and-cabbage-yakisoba, https://noobcook.com/pork-yakisoba/print/, https://www.lafujimama.com/yakisoba/print/
+
+
+
+Zaru Soba
+ID: zaru_soba
+AKA: Chilled Soba Noodles", "Cold soba
+Servings: 2
+4 cup cooked soba noodles
+--Dipping sauce
+3 tbsp soy sauce
+3 tbsp mirin
+1 tbsp rice wine
+1/2 cup water
+--Toppings
+2 tbsp chopped green onion
+1/4 sheet nori
+1/2 tsp wasabi paste
+SOURCE: https://www.bitemybun.com/wprm_print/zaru-soba-recipe, https://www.okonomikitchen.com/?p=15354, https://www.chopstickchronicles.com/zaru-soba/
+
+
+
+Mitarashi Dango
+ID: mitarashi_dango
+AKA: Rice Dumplings with Sweet Soy Glaze
+Servings: 4
+--Dango
+3/4 cup glutinous rice flour
+1/3 cup water
+--Mitarashi sauce
+1/4 cup water
+2 tbsp sugar
+1 tbsp soy sauce
+1 tbsp mirin
+2 tsp potato starch
+SOURCE: https://www.chopstickchronicles.com/mitarashi-dango/, https://norecipes.com/mitarashi-dango/, https://tarasmulticulturaltable.com/wprm_print/mitarashi-dango
+
+
+
+Strawberry Mochi
+ID: strawberry_mochi
+AKA: Ichigo daifuku", "Strawberry daifuku
+Servings: 6
+3/4 cup glutinous rice flour
+1/4 cup sugar
+3/4 cup water
+6 tbsp red bean paste
+6 medium strawberry
+1 tbsp potato starch
+SOURCE: https://www.notquitenigella.com/strawberry-mochi-daifuku/print/, https://www.itslizmiu.com/blog/ichigo-daifuku-strawberry-mochi, https://1mal1japan.de/en/rezepte/ichigo-daifuku-mochi-with-fresh-strawberries-red-adzuki-bean-paste/
+
+
+
+Dorayaki
+ID: dorayaki_
+AKA: Red Bean Pancakes
+Servings: 6
+2 large egg
+6 tbsp sugar
+2 tsp honey
+3/4 cup all-purpose flour
+1/2 tsp baking powder
+2 tbsp water
+1/2 tsp vegetable oil
+1/2 cup red bean paste
+SOURCE: https://tastehongkong.com/dorayaki-japanese-sweet-pancake/, https://www.chopstickchronicles.com/dorayaki/, https://pickledplum.com/dorayaki/
+
+
+
+Taiyaki
+ID: taiyaki_
+AKA: Fish-Shaped Cake
+Servings: 8
+1.5 cup all-purpose flour
+1 tsp baking powder
+2 tbsp sugar
+1 large egg
+2/3 cup milk
+4 tbsp butter
+2 tsp honey
+1 tsp vegetable oil
+3/4 cup red bean paste
+SOURCE: https://chefiso.com/p/taiyaki-recipe/, https://pickledplum.com/taiyaki/, https://norecipes.com/taiyaki-fish-shaped-pastry/
+
+
+
+Coffee Jelly
+ID: coffee_jelly
+AKA: Kohi zeri
+Servings: 4
+2 cup brewed coffee
+1 tbsp unflavored gelatin
+3 tbsp water
+2 tbsp sugar
+--Topping
+1/4 cup heavy cream
+1 tsp sugar
+SOURCE: https://www.brewcoffeehome.com/wprm_print/japanese-coffee-jelly-recipe, https://www.coffees.gr/coffee-jelly-recipe/?sl=en, https://us.balmuda.com/blogs/recipes/japanese-coffee-jelly
+
+
+
+Matcha Latte
+ID: matcha_latte
+AKA: Green tea latte
+Servings: 1
+1.5 tsp matcha powder
+2 tbsp water
+3/4 cup milk
+1 tsp sugar
+SOURCE: https://www.sugimotousa.com/blog/matcha-latte-recipe, https://tarasmulticulturaltable.com/wprm_print/matcha-latte, https://ochaandco.com/blogs/ocha-tea-blog/how-to-make-matcha-latte
+
+
+
+Hojicha Latte
+ID: hojicha_latte
+AKA: Roasted green tea latte
+Servings: 1
+1 tsp hojicha powder
+1/4 cup water
+1 cup milk
+1 tsp sugar
+SOURCE: https://chefiso.com/p/hojicha-latte-recipe/, https://teakandthyme.com/hojicha-latte/, https://lifecurrentsblog.com/wprm_print/hojicha-latte
