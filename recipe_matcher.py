@@ -3086,6 +3086,186 @@ def _recipe_unit_volume_portion(food: dict, portion: dict, unit: str) -> dict | 
     }
 
 
+# ── Exact amounts for same-kind units ────────────────────────────────────
+# A recipe amount in the same kind of unit as the chosen portion (both
+# volumes, or both weights) converts by the units' fixed ratios, never through
+# grams: portion weights are rounded ("2 tbsp (30ml)" is 30 g, a US 2 tbsp is
+# 29.57 ml) or off (a USDA "oz" of 28.25 g), so 1/4 cup mirin over 8
+# servings came out as 0.493 tbsp, not 1/2. Grams are only for calories.
+WEIGHT_TO_G = {"g": 1.0, "kg": 1000.0, "oz": 28.349523125, "lb": 453.59237}
+# The weights recipes are written in (RECIPE_RULES.md: meat sold by weight).
+HOUSEHOLD_WEIGHT_UNITS = {"oz", "lb"}
+WEIGHT_UNIT_ALIASES = {"gram": "g", "grams": "g", "ounce": "oz", "ounces": "oz",
+                       "lbs": "lb", "pound": "lb", "pounds": "lb"}
+# A weight label is trusted when its grams are this close to what it says
+# (USDA's 28.25 g "oz" is; "1 oz yields" at 20 g isn't).
+WEIGHT_LABEL_TOLERANCE = 0.05
+# Under this much of a volume unit, the next smaller one reads better
+# (0.018 fl oz of sake is 1/9 tsp). Below 1/8 tsp it stays tsp.
+STEP_DOWN_BELOW = 1 / 8
+STEP_DOWN_UNIT = {"cup": "tbsp", "fl oz": "tbsp", "tbsp": "tsp"}
+
+
+def _normalise_weight_unit(unit: str) -> str | None:
+    u = unit.lower().strip()
+    u = WEIGHT_UNIT_ALIASES.get(u, u)
+    return u if u in WEIGHT_TO_G else None
+
+
+def _label_measure(portion: dict) -> tuple[float, str, str] | None:
+    """
+    What a portion label measures, read from its leading number and unit
+    with parentheticals and trailing dots ignored: "2 tbsp. (30ml)" is
+    (2, "tbsp", "volume"), "cup, chopped" (1, "cup", "volume"), "4 oz"
+    (4, "oz", "weight"). None for counts, for labels that don't start with
+    their unit ("serving 8 fl oz"), and for weight labels whose grams don't
+    match ("1 oz yields", 20 g).
+    """
+    label = re.sub(r"\([^)]*\)", " ", portion.get("label", "")).lower().strip()
+    words = re.match(r"^\s*((?:\d+\s+)?\d+/\d+|\d*\.?\d+)?\s*(.*)$", label)
+    qty_text, rest = words.group(1), words.group(2).strip()
+    qty = _portion_label_qty(label) if qty_text else 1.0
+    if qty <= 0:
+        return None
+    for two_words in ("fl oz", "fluid ounce", "fluid ounces"):
+        if rest == two_words or re.match(re.escape(two_words) + r"\b", rest):
+            return qty, "fl oz", "volume"
+    head = re.match(r"^([a-z]+)\.?(?=$|[\s,])(.*)$", rest)
+    if not head:
+        return None
+    word, tail = head.group(1), head.group(2).strip(" ,.")
+    volume = _normalise_volume_unit(word)
+    if volume in RECIPE_VOLUME_UNITS or volume in ("l", "pint", "quart", "gallon"):
+        return qty, volume, "volume"
+    weight = _normalise_weight_unit(word)
+    if weight and not tail:
+        expected = qty * WEIGHT_TO_G[weight]
+        grams = portion.get("gram_weight") or 0.0
+        if abs(grams - expected) <= expected * WEIGHT_LABEL_TOLERANCE:
+            return qty, weight, "weight"
+    return None
+
+
+def _unit_kind(unit: str) -> tuple[str, str] | None:
+    """A recipe unit and its kind: ("tbsp", "volume"), ("lb", "weight")."""
+    weight = _normalise_weight_unit(unit)
+    if weight:
+        return weight, "weight"
+    volume = _normalise_volume_unit(unit)
+    if volume in VOLUME_TO_TSP:
+        return volume, "volume"
+    return None
+
+
+def _oz_portion(food: dict) -> dict:
+    """The food's own plain "oz" portion, else 1 oz worked out (28.35 g)."""
+    for p in food.get("portions", []):
+        measure = _label_measure(p) if p.get("gram_weight") else None
+        if measure and measure[1] == "oz" and abs(measure[0] - 1.0) < 1e-9:
+            return p
+    return {
+        "portion_id": f"{food['fdc_id']}-oz",
+        "label": "1 oz",
+        "gram_weight": WEIGHT_TO_G["oz"],
+        "gram_col": "",
+        "portion_idx": 1,
+        "_derived_spoon": True,
+    }
+
+
+def _is_fine_volume_label(label: str) -> bool:
+    """A volume of a fine or pourable food: "2 tbsp. (30ml)", "tsp, ground",
+    "fl oz", "cup". Not "cup, chopped" or "tbsp slices"."""
+    words = re.findall(r"[a-z]+", re.sub(r"\([^)]*\)", " ", label.lower()))
+    return bool(words) and all(w in FINE_CUP_WORDS or w in PLAIN_VOLUME_WORDS for w in words)
+
+
+def _smaller_volume_portion(food: dict, portion: dict, measure: tuple[float, str, str],
+                            target: str) -> dict | None:
+    """
+    The food in [target] (tbsp or tsp), a step down from [portion]: its own
+    plain portion in that unit, else one worked out from [portion] by volume
+    when that is a plain or fine measure ("2 tbsp. (30ml)", "fl oz", "cup";
+    not "cup, chopped" or, for USDA foods, a cup of produce or meat; see
+    _derived_spoon_portion). None when neither is there.
+    """
+    for p in food.get("portions", []):
+        m = _label_measure(p) if p.get("gram_weight") else None
+        if m and m[1] == target and _is_fine_volume_label(p["label"]):
+            return p
+    if not _is_fine_volume_label(portion.get("label", "")):
+        return None
+    # A cup of produce or meat is chunks; a spoon of anything is a spoon.
+    if (measure[1] == "cup" and food.get("source") == "usda"
+            and CHUNKY_CATEGORY_RE.search(food.get("category") or "")):
+        return None
+    portion_tsp = _volume_to_tsp(measure[0], measure[1])
+    if not portion_tsp or not portion.get("gram_weight"):
+        return None
+    return {
+        "portion_id": f"{portion['portion_id']}-{target}",
+        "label": f"1 {target}",
+        "gram_weight": portion["gram_weight"] / portion_tsp * VOLUME_TO_TSP[target],
+        "gram_col": portion.get("gram_col", ""),
+        "portion_idx": portion.get("portion_idx", 1),
+        "_derived_spoon": True,
+    }
+
+
+def exact_same_kind_amount(food: dict, portion: dict | None, qty: float, unit: str,
+                           yield_factor: float | None = None) -> tuple[dict, float] | None:
+    """
+    The portion and amount for a recipe line measured in a volume or a
+    weight, when they can be worked out exactly:
+
+    - An oz or lb line is measured in ounces (the food's own "oz", else
+      1 oz worked out), whatever was picked: "1.5 lb chicken thigh" over 8
+      servings is 3 oz, not 0.88 thigh. Gram lines (recipes don't use them)
+      only convert exactly against a weight portion. [yield_factor] is the
+      raw-to-cooked factor when the food is the cooked form.
+    - A volume line against a volume portion converts by fixed ratios
+      (1 cup = 16 tbsp = 48 tsp, 1 fl oz = 2 tbsp). Water's cups are
+      already 250 ml ("_cup_as_ml") and stay as they are.
+    - Under STEP_DOWN_BELOW of a cup, fl oz or tbsp steps down to tbsp, then
+      tsp, when the food has that portion or one can be worked out.
+
+    None when the units are different kinds (volume to count, weight to
+    volume), which still go through grams.
+    """
+    recipe = _unit_kind(unit)
+    if recipe is None:
+        return None
+    recipe_unit, kind = recipe
+    if kind == "weight":
+        measure = _label_measure(portion) if portion is not None else None
+        if measure is not None and measure[2] != "weight":
+            measure = None
+        if recipe_unit in HOUSEHOLD_WEIGHT_UNITS and (measure is None or measure[1] != "oz"):
+            portion = _oz_portion(food)
+            measure = _label_measure(portion)
+        elif measure is None:
+            return None
+        grams = qty * WEIGHT_TO_G[recipe_unit] * (yield_factor or 1.0)
+        return portion, grams / (measure[0] * WEIGHT_TO_G[measure[1]])
+    if portion is None or portion.get("_cup_as_ml"):
+        return None
+    measure = _label_measure(portion)
+    if measure is None or measure[2] != "volume":
+        return None
+    recipe_tsp = _volume_to_tsp(qty, recipe_unit)
+    portion_tsp = _volume_to_tsp(measure[0], measure[1])
+    if not recipe_tsp or not portion_tsp:
+        return None
+    amount = recipe_tsp / portion_tsp
+    while amount * measure[0] < STEP_DOWN_BELOW and measure[1] in STEP_DOWN_UNIT:
+        smaller = _smaller_volume_portion(food, portion, measure, STEP_DOWN_UNIT[measure[1]])
+        if smaller is None:
+            break
+        portion, measure = smaller, _label_measure(smaller)
+        amount = recipe_tsp / _volume_to_tsp(measure[0], measure[1])
+    return portion, amount
+
+
 def _branded_spoon_portion(portion: dict, unit: str,
                            recipe_grams: float = 0.0) -> dict | None:
     """
@@ -4001,6 +4181,21 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                                 cal_formula = round(food.get("energy_kcal", 0.0), 1)
                             else:
                                 cal_formula = round((portion["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
+
+            # Same kind of unit as the recipe: an exact ratio, not through
+            # grams; weight lines in ounces; tiny volumes a unit smaller.
+            # Absorbed oil is worked out elsewhere and left alone.
+            if (not is_countable and not vol_mismatch and not estimated
+                    and section != ABSORBED_OIL_SECTION
+                    and not (portion is not None and portion.get("_cube_match"))):
+                exact = exact_same_kind_amount(food, portion, qty, unit, yield_factor)
+                if exact:
+                    exact_portion, portion_amt = exact
+                    if exact_portion is not portion:
+                        portion = exact_portion
+                        portion_id = portion["portion_id"]
+                        portion_desc = f"{portion['label']} ({portion['gram_weight']:.1f} g)"
+                        cal_formula = round((portion["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
 
             cal_tot_formula=round(cal_formula * portion_amt, 1) if isinstance(cal_formula, float) else ""
             source_tag=" [BRANDED]" if source=="branded" else ""

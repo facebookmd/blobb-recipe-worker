@@ -622,7 +622,9 @@ def parse_ingredient_line(raw: str) -> dict | None:
                 "size_hint": "", "is_cooked": False, "to_taste": False, "raw": raw.strip()}
 
     return {
-        "qty":        str(round(qty_val, 4)) if qty_val is not None else "",
+        # Unrounded: the matcher converts by exact ratios, and 2/3 cup kept
+        # to 4 places came out as 31.998 tsp.
+        "qty":        str(qty_val) if qty_val is not None else "",
         "unit":       unit_val or ("piece" if qty_val is not None else ""),
         "ingredient": ing_name,
         "size_hint":  size_hint,
@@ -751,7 +753,7 @@ def parse_single_block(lines: list[str], name_hint: str,
             if ing["qty"] and not ing["to_taste"]:
                 try:
                     per_serving = float(ing["qty"]) / detected_servings
-                    ing = {**ing, "qty": str(round(per_serving, 6))}
+                    ing = {**ing, "qty": str(per_serving)}
                 except (ValueError, TypeError):
                     pass
             scaled.append(ing)
