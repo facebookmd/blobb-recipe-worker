@@ -205,3 +205,79 @@ def test_a_tsp_row_copied_in_under_an_eighth_tsp_is_pinches():
     assert pinch["cal_tot"] == round(12.5 * 0.0729166, 1)
     assert matcher._pinches_to_tsp(pinch)["unit_label"] == "1 pinch"
     assert matcher._tsp_to_pinches({**row, "portion_amt": 0.125}) == {**row, "portion_amt": 0.125}
+
+
+# ── Units the wheel can show ──────────────────────────────────────────────
+
+def test_an_off_wheel_tbsp_moves_to_tsp(tmp_path, monkeypatch):
+    # 1.5 tbsp over 4 is 3/8 tbsp, which the wheel can't show: 1 1/8 tsp.
+    food = usda_food(("1 fl oz", 29.1))
+    [row] = rows_for(tmp_path, monkeypatch, food, "1.5 tbsp rice wine", servings=4)
+    assert row["unit_label"] == "1 tsp"
+    assert row["portion_amt"] == pytest.approx(9 / 8, abs=1e-9)
+
+
+def test_an_off_wheel_cup_moves_to_tbsp(tmp_path, monkeypatch):
+    # 3/4 cup over 4 is 3/16 cup: 3 tbsp.
+    food = usda_food(("1 cup", 120.0), category="Cereal Grains and Pasta")
+    [row] = rows_for(tmp_path, monkeypatch, food, "3/4 cup flour", servings=4)
+    assert row["unit_label"] == "1 tbsp"
+    assert row["portion_amt"] == pytest.approx(3.0, abs=1e-9)
+    assert row["unit_grams"] * row["portion_amt"] == pytest.approx(22.5)
+
+
+def test_an_amount_that_fits_nowhere_stays(tmp_path, monkeypatch):
+    # 9/16 tsp is 3/16 tbsp: neither is on the wheel.
+    food = usda_food(("1 tsp", 5.3))
+    [row] = rows_for(tmp_path, monkeypatch, food, "3 tsp soy sauce", servings=16)
+    assert (row["unit_label"], row["portion_amt"]) == ("1 tsp", pytest.approx(3 / 16))
+
+
+def test_a_chunky_cup_does_not_move_to_spoons(tmp_path, monkeypatch):
+    food = usda_food(("1 cup", 120.0), category="Vegetables and Vegetable Products")
+    [row] = rows_for(tmp_path, monkeypatch, food, "3/4 cup cucumber", servings=4)
+    assert row["unit_label"] == "1 cup"
+
+
+def test_fits_wheel():
+    assert matcher.fits_wheel(1.125) and matcher.fits_wheel(2 / 3) and matcher.fits_wheel(3)
+    assert not matcher.fits_wheel(0.375) and not matcher.fits_wheel(0.0625)
+
+
+# ── Water ────────────────────────────────────────────────────────────────
+
+from test_recipe_unit_volume import WATER  # noqa: E402
+
+
+@pytest.mark.parametrize("line, servings, label, amount", [
+    ("1/4 cup water", 4, "1 tbsp", 1.0),        # 1/16 cup
+    ("1/4 cup water", 8, "1 tbsp", 0.5),        # 1/32 cup
+    ("2/3 cup water", 4, "1 tbsp", 8 / 3),      # 1/6 cup
+    ("1/4 cup water", 24, "1 tsp", 0.5),        # 1/96 cup
+    ("1/2 cup water", 2, "1 ml", 62.5),         # 1/4 cup: ml from here up
+    ("1 cup water", 1, "1 ml", 250.0),
+])
+def test_small_water_is_in_spoons(tmp_path, monkeypatch, line, servings, label, amount):
+    monkeypatch.setattr(matcher, "_search_and_build_index", lambda *a, **k: None)
+    [row] = rows_for(tmp_path, monkeypatch, WATER, line, servings=servings)
+    assert row["unit_label"] == label
+    assert row["portion_amt"] == pytest.approx(amount, abs=1e-6)
+
+
+def test_rice_wine_has_no_portion_override():
+    # 17 g a tbsp was heavier than water; USDA's sake is 29.1 g a fl oz.
+    rules = matcher.load_boosts("boosts.json")
+    assert not [r for r in rules if r.get("trigger") == "rice wine"
+                and r.get("portion_gram_weight")]
+
+
+def test_water_copied_in_under_a_quarter_cup_is_in_spoons():
+    # Dashi Stock's 250 ml of water, copied into Tamagoyaki x 1/16.
+    row = {"_type": "data", "portion_id": "173647-1-ml", "unit_label": "1 ml",
+           "unit_grams": 1.0009, "portion_amt": 15.625, "recipe_unit": "ml",
+           "calories_kcal": 0.0}
+    spoon = matcher._water_ml_to_spoons(row)
+    assert (spoon["unit_label"], spoon["portion_amt"]) == ("1 tbsp", pytest.approx(1.0))
+    assert matcher._water_ml_to_spoons({**row, "portion_amt": 62.5}) == {**row, "portion_amt": 62.5}
+    tiny = matcher._water_ml_to_spoons({**row, "portion_amt": 1.0})
+    assert tiny["unit_label"] == "1 tsp"

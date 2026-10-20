@@ -449,11 +449,6 @@
     "weight": 0.85
   },
   {
-    "trigger": "rice wine",
-    "portion_gram_weight": 17.0,
-    "portion_label": "1 tbsp"
-  },
-  {
     "trigger": "shaoxing wine",
     "boost": "rice cooking wine",
     "fdc_id": "B_2265852",

@@ -3173,6 +3173,23 @@ def _oz_portion(food: dict) -> dict:
     }
 
 
+# What the app's amount wheel shows exactly: whole numbers plus these
+# (drum_amount_picker.dart, within 0.001).
+WHEEL_FRACTIONS = (0.0, 1 / 8, 1 / 4, 1 / 3, 1 / 2, 2 / 3, 3 / 4, 7 / 8, 1.0)
+# Units an off-wheel amount may move to, in order, and the amounts each
+# reads naturally at: tsp under a tbsp, tbsp from 1 up to a quarter cup,
+# cups from a quarter cup.
+WHEEL_UNITS = ("tsp", "tbsp", "cup")
+WHEEL_UNIT_RANGE = {"tsp": (STEP_DOWN_BELOW, 3.0), "tbsp": (1.0, 4.0),
+                    "cup": (SPOON_SWITCH_CUPS, float("inf"))}
+
+
+def fits_wheel(qty: float) -> bool:
+    """Whether the app's wheel shows [qty] exactly (amountFitsWheel)."""
+    rem = qty - int(qty)
+    return qty > 0 and any(abs(rem - f) < 0.001 for f in WHEEL_FRACTIONS)
+
+
 # A pinch is 1/16 tsp (Arianna, 20 Oct 2026): amounts under 1/8 tsp of
 # salt or pepper read as 1 pinch, 1/2 pinch, not 0.0625 tsp.
 PINCHES_PER_TSP = 16
@@ -3205,6 +3222,29 @@ def _unit_calories(portion: dict, food: dict) -> float:
         tsp_grams = portion["gram_weight"] * PINCHES_PER_TSP
         return round(round(tsp_grams / 100 * kcal, 1) / PINCHES_PER_TSP, 6)
     return round((portion["gram_weight"] / 100) * kcal, 1)
+
+
+def _water_ml_to_spoons(row: dict) -> dict:
+    """A base template's cup of water (250 ml), copied in under
+    SPOON_SWITCH_CUPS (Dashi Stock's water in Tamagoyaki), in tbsp, or tsp
+    under 1/8 tbsp, as a recipe line of that size would be."""
+    if (row.get("_type") != "data" or row.get("recipe_unit") != "ml"
+            or row.get("unit_label") != "1 ml" or not row.get("unit_grams")):
+        return row
+    cups = float(row.get("portion_amt") or 0) / WATER_ML_PER_CUP
+    if not 0 < cups < SPOON_SWITCH_CUPS:
+        return row
+    spoon = "tbsp" if cups * 16 >= STEP_DOWN_BELOW else "tsp"
+    grams = float(row["unit_grams"]) * _volume_to_ml(1.0, spoon)
+    amt = cups * VOLUME_TO_TSP["cup"] / VOLUME_TO_TSP[spoon]
+    cal = row.get("calories_kcal")
+    if isinstance(cal, (int, float)):
+        cal = round(cal * _volume_to_ml(1.0, spoon), 1)
+    return {**row, "portion_id": f"{row.get('portion_id', '')}-{spoon}",
+            "unit_label": f"1 {spoon}", "unit_grams": grams, "portion_amt": amt,
+            "portion_description": f"1 {spoon} ({grams:.1f} g)", "recipe_unit": "cup",
+            "calories_kcal": cal,
+            "cal_tot": round(cal * amt, 1) if isinstance(cal, (int, float)) else row.get("cal_tot")}
 
 
 def _tsp_to_pinches(row: dict) -> dict:
@@ -3255,10 +3295,10 @@ def _is_fine_volume_label(label: str) -> bool:
     return bool(words) and all(w in FINE_CUP_WORDS or w in PLAIN_VOLUME_WORDS for w in words)
 
 
-def _smaller_volume_portion(food: dict, portion: dict, measure: tuple[float, str, str],
-                            target: str) -> dict | None:
+def _volume_portion_in(food: dict, portion: dict, measure: tuple[float, str, str],
+                       target: str) -> dict | None:
     """
-    The food in [target] (tbsp or tsp), a step down from [portion]: its own
+    The food in [target] (cup, tbsp or tsp) instead of [portion]: its own
     plain portion in that unit, else one worked out from [portion] by volume
     when that is a plain or fine measure ("2 tbsp. (30ml)", "fl oz", "cup";
     not "cup, chopped" or, for USDA foods, a cup of produce or meat; see
@@ -3300,10 +3340,12 @@ def exact_same_kind_amount(food: dict, portion: dict | None, qty: float, unit: s
       raw-to-cooked factor when the food is the cooked form.
     - A volume line against a volume portion converts by fixed ratios
       (1 cup = 16 tbsp = 48 tsp, 1 fl oz = 2 tbsp). Water's cups are
-      already 250 ml ("_cup_as_ml") and stay as they are.
+      already 250 ml ("_cup_as_ml") and stay so from SPOON_SWITCH_CUPS up.
     - Under STEP_DOWN_BELOW of a cup, fl oz or tbsp steps down to tbsp, then
-      tsp, when the food has that portion or one can be worked out, and
-      under 1/8 tsp to pinches (1/16 tsp each).
+      tsp, when the food has that portion or one can be worked out.
+    - An amount the app's wheel can't show (3/8 tbsp) moves to the unit
+      where it can (1 1/8 tsp), within WHEEL_UNIT_RANGE.
+    - Under 1/8 tsp is pinches (1/16 tsp each).
 
     None when the units are different kinds (volume to count, weight to
     volume), which still go through grams.
@@ -3323,8 +3365,17 @@ def exact_same_kind_amount(food: dict, portion: dict | None, qty: float, unit: s
             return None
         grams = qty * WEIGHT_TO_G[recipe_unit] * (yield_factor or 1.0)
         return portion, grams / (measure[0] * WEIGHT_TO_G[measure[1]])
-    if portion is None or portion.get("_cup_as_ml"):
+    if portion is None:
         return None
+    if portion.get("_cup_as_ml"):
+        # Water's cups are 250 ml; under SPOON_SWITCH_CUPS it is measured
+        # in spoons like any other food (1/16 cup is 1 tbsp, US).
+        if recipe_unit != "cup" or qty >= SPOON_SWITCH_CUPS:
+            return None
+        ml_qty, _ = _portion_label_volume_qty(portion["label"])
+        portion = {**portion, "portion_id": f"{portion['portion_id']}-tbsp", "label": "1 tbsp",
+                   "gram_weight": portion["gram_weight"] / ml_qty * _volume_to_ml(1.0, "tbsp"),
+                   "_cup_as_ml": False}
     measure = _label_measure(portion)
     if measure is None or measure[2] != "volume":
         return None
@@ -3334,11 +3385,22 @@ def exact_same_kind_amount(food: dict, portion: dict | None, qty: float, unit: s
         return None
     amount = recipe_tsp / portion_tsp
     while amount * measure[0] < STEP_DOWN_BELOW and measure[1] in STEP_DOWN_UNIT:
-        smaller = _smaller_volume_portion(food, portion, measure, STEP_DOWN_UNIT[measure[1]])
+        smaller = _volume_portion_in(food, portion, measure, STEP_DOWN_UNIT[measure[1]])
         if smaller is None:
             break
         portion, measure = smaller, _label_measure(smaller)
         amount = recipe_tsp / _volume_to_tsp(measure[0], measure[1])
+    if not fits_wheel(amount * measure[0]):
+        for target in WHEEL_UNITS:
+            low, high = WHEEL_UNIT_RANGE[target]
+            n = recipe_tsp / VOLUME_TO_TSP[target]
+            if target == measure[1] or not (low <= n < high and fits_wheel(n)):
+                continue
+            other = _volume_portion_in(food, portion, measure, target)
+            if other is not None:
+                portion, measure = other, _label_measure(other)
+                amount = recipe_tsp / _volume_to_tsp(measure[0], measure[1])
+                break
     if measure[1] == "tsp" and amount * measure[0] < STEP_DOWN_BELOW:
         portion = _pinch_portion(portion, measure)
         amount = recipe_tsp * PINCHES_PER_TSP
@@ -4000,7 +4062,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                     # (its section before copying) is left alone.
                     originals = [r for r in ref.rows or [] if r.get("_type") in ("data", "note")]
                     copied = [new if old.get("section") == ABSORBED_OIL_SECTION
-                              else _pinches_to_tsp(_tsp_to_pinches(new))
+                              else _pinches_to_tsp(_tsp_to_pinches(_water_ml_to_spoons(new)))
                               for old, new in zip(originals, copied)]
                     for row in tref.merge_rows(
                             [r for r in output_rows if r.get("template_id") == tid], copied):
