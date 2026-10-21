@@ -55,6 +55,8 @@ From this folder, with SUPABASE_ANON_KEY set:
 
   * Several files in one run: list them, files that define base templates
     first. A file holds many recipes, separated by 3 blank lines or ---.
+    The import replaces every curated template, so a run that will be
+    imported must list every recipe file; one left out loses its templates.
   * --yes skips the per-recipe preview. Without it, each recipe is shown
     first: Enter confirms, s skips, d <n> drops a row, e <n> edits one,
     r renames, q quits.

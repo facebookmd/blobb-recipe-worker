@@ -22,7 +22,9 @@ For EVERY recipe, research at least 3 real recipe sources before writing it. Cro
 
 Source quality:
 * Use real recipe pages (food blogs, publishers, brand/manufacturer recipe pages, culinary institutions). Prefer 3 different sites over 3 pages from one site.
+* Prefer sites from the cuisine's own country and its brands' recipe pages (for Filipino: Panlasang Pinoy, Kawaling Pinoy, Foxy Folksy, Knorr PH, Del Monte PH, Mama Sita's).
 * Do NOT use AI-generated wikis, aggregator/Q&A pages, scraped mirror sites, or forum posts.
+* Open every URL before citing it: it must load as that recipe's page. Never guess or rebuild a URL's path (21 Oct 2026: two guessed Just One Cookbook links were "Page not found").
 * URLs must contain no commas or spaces. Percent-encode if needed (space → `%20`).
 * Conversion and nutrition references (USDA densities, absorption figures) are cited in the chat response, not on the SOURCE line. SOURCE is for recipe pages only.
 
@@ -84,6 +86,7 @@ Write amounts the way a home cook would read them. **Never grams**: a user readi
 
 * **Cups, tbsp, tsp** for liquids, grains, cooked starches, flours, sugars, sauces, pastes, and chopped, sliced or grated produce (`1/2 cup chopped onion`, `2 tbsp sugar`).
 * **Counts** (whole, piece, clove, stalk, sheet, slice, fillet, chop, thigh, drumstick, leaf, block) for anything naturally counted, with size where it varies (`1 large onion`, `2 whole medium tomato`). Without a size the matcher assumes medium. The cut can follow the food (`2 boneless pork loin chop`, `2 bread slice`); it is still the unit.
+* **Leafy greens sold by the bunch** by the bunch (`1 bunch spinach`), not oz or cups, when the database food has a `bunch` portion (raw spinach's is 340 g; in cups it read as "11 cups"). Without one, use the usual units.
 * **Meat** by count (`2 boneless skinless chicken thigh`) or, when it is sold by weight, **oz or lb** (`8 oz ground beef`, `1.5 lb oxtail`). Never cups of meat: the matcher can't convert them and logs the wrong weight.
 * **Packaged items** by the package (`1 packet tamarind soup mix`, `4 block boxed Japanese curry roux`).
 * Sources disagree on units → use the unit most of them use. The ratios still come from all three.
@@ -186,6 +189,8 @@ For anything cooked in a liquid or fat that is mostly discarded, list only what 
 
 Sautés, stir-fries, stews and braises: list **all** the oil — it stays in the dish.
 
+These rates are fixed. Use them as they are; never change a rate or add a row while writing recipes (the absorbed-oil work has its own owner).
+
 Convert recipe applies these rates to "oil for frying" lines as fry types: breaded, battered, starch-dusted, unbreaded (lean meat, fish, tofu), unbreaded veg, thick-cut and thin-sliced (starchy pieces and slices). The user can change the type and the rows it is a share of in the app. The rates live in `FRY_TYPE_RATES` in `recipe_matcher.py` and `lib/utils/fry_types.dart` in the app; change all three together. Sources for every rate: `ABSORPTION_SOURCES.md`.
 
 ### Marinades (`--Absorbed marinade`)
@@ -209,6 +214,8 @@ Salt in pasta or blanching water is not listed. Aromatics boiled and discarded (
 As small as practically usable for tracking:
 
 * Food that comes in pieces (gyoza, mochi, lumpia): 1 serving = 1 piece
+* Skewered food (yakitori, dango, pork barbecue, banana cue): 1 serving = 1 skewer
+* How much goes into one piece, skewer or bowl comes from the sources: grams or cups per piece, or the batch ÷ its stated yield. A source that gives no yield doesn't count towards that amount; say so in the chat. (21 Oct 2026: nigiri had 35 g of rice a piece from weak sources; Kikkoman, Pinch and Swirl and Great British Chefs agree on about 15 g.)
 * Sauces, pastes, glazes: 1 serving = the smallest amount typically used in one dish
 * Bowls/plates for one person: `Servings: 1`
 * Batch recipes (a pot of curry for 4): `Servings: 4`
@@ -233,5 +240,6 @@ Use commonly known ratios; do not reproduce any published recipe verbatim. Compa
 * No slugs, no fractions of a batch.
 * No pinned food is built from scratch or given its own block.
 * No grams, no cups of meat, no dry pasta/rice/noodles (except the cooked-in-dish exception), no bare `rice`.
-* No "to taste", no non-Latin script in AKA, no commas inside URLs, exactly 3 URLs per SOURCE.
+* No "to taste", no non-Latin script in AKA, no commas inside URLs, exactly 3 URLs per SOURCE, and every URL opened and loading.
+* Every ID is unique across all recipe files, not just this one.
 * Exactly 3 blank lines between blocks.
