@@ -671,7 +671,7 @@ Udon Noodle Soup
 ID: udon_noodle_soup
 AKA: Kake udon", "Su udon
 Servings: 2
-3 cup cooked udon noodles
+2 pack frozen udon noodles
 2 cup dashi stock
 2 tbsp soy sauce
 2 tbsp mirin

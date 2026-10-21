@@ -1,6 +1,6 @@
 [
   {
-    "_comment": "Japanese set, 17 Oct 2026: cooked noodles are the cooked food, not fresh/dry noodles at 1 g/ml. No USDA udon; generic cooked noodles (160 g/cup)."
+    "_comment": "Japanese set, 17 Oct 2026: cooked ramen noodles are the cooked food, not fresh/dry noodles at 1 g/ml: generic cooked noodles (160 g/cup)."
   },
   {
     "trigger": "cooked ramen noodles",
@@ -8,8 +8,11 @@
     "weight": 0.95
   },
   {
-    "trigger": "cooked udon noodles",
-    "fdc_id": "2708352",
+    "_comment": "21 Oct 2026: udon is listed by the pack, as its sources do. Wegmans Asian Classics frozen udon: water, wheat flour, tapioca starch, salt; 124 kcal/100 g; 1 pouch = 250 g."
+  },
+  {
+    "trigger": "udon noodles",
+    "fdc_id": "B_2074076",
     "weight": 0.95
   },
   {
