@@ -462,11 +462,11 @@ Salmon Onigiri
 ID: salmon_onigiri
 AKA: Salmon Rice Ball", "Shake onigiri
 Servings: 4
-2 cup cooked short grain white rice
+2 1/4 cup cooked short grain white rice
 1/4 tsp salt
 4 oz salmon fillet
 1 1/3 sheet nori
-SOURCE: https://chefjacooks.com/en/wprm_print/6-popular-onigiri-recipes, https://sushisushi.co.uk/blogs/recipes/how-to-make-onigiri, https://www.yakult.co.uk/gut-health/onigiri/
+SOURCE: https://www.justonecookbook.com/wprm_print/onigiri-japanese-rice-balls, https://ryukoch.com/en/recipes/salmon-onigiri, https://sudachirecipes.com/salmon-onigiri-recipe
 
 
 
@@ -474,11 +474,11 @@ Umeboshi Onigiri
 ID: umeboshi_onigiri
 AKA: Pickled Plum Rice Ball", "Ume onigiri
 Servings: 4
-2 cup cooked short grain white rice
+2 1/4 cup cooked short grain white rice
 1/4 tsp salt
 4 whole pickled plum
 1 1/3 sheet nori
-SOURCE: https://chefjacooks.com/en/wprm_print/6-popular-onigiri-recipes, https://sushisushi.co.uk/blogs/recipes/how-to-make-onigiri, https://www.yakult.co.uk/gut-health/onigiri/
+SOURCE: https://www.justonecookbook.com/wprm_print/onigiri-japanese-rice-balls, https://www.justonecookbook.com/wprm_print/umeboshi-onigiri-plum-rice-ball, https://www.chopstickchronicles.com/umeboshi-onigiri/
 
 
 
@@ -519,14 +519,14 @@ ID: salmon_nigiri
 AKA: Sake nigiri", "Salmon sushi
 Servings: 12
 --Sushi rice
-2.25 cup cooked short grain white rice
-1.5 tbsp rice vinegar
-1.5 tsp sugar
-1/4 tsp salt
+1 cup cooked short grain white rice
+2 tsp rice vinegar
+5/8 tsp sugar
+1/8 tsp salt
 --Topping
 8 oz salmon fillet
 1 tsp wasabi paste
-SOURCE: https://pinchandswirl.com/salmon-nigiri/, https://izzycooking.com/wprm_print/salmon-nigiri-sushi-recipe, https://feedmebetter.com/wprm_print/salmon-nigiri-recipe
+SOURCE: https://www.kikkoman.co.uk/recipes/detail/nigiri, https://pinchandswirl.com/salmon-nigiri/, https://www.greatbritishchefs.com/recipes/salmon-nigiri-recipe
 
 
 
