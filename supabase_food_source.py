@@ -38,6 +38,20 @@ _REQUEST_SLOTS = threading.BoundedSemaphore(16)
 
 _MEMORY_CACHE: dict[tuple[str, str, str, str], list[dict]] = {}
 
+# Batch runs stop on a failed request: counted as no rows, a lost portion
+# lookup wrote Yakisoba's oyster sauce as 1/4 of 100 g instead of 1/4 tbsp
+# (21 Oct 2026). The Convert recipe server keeps going with a warning.
+_fail_on_request_errors = False
+
+
+class SupabaseLookupError(RuntimeError):
+    """A Supabase request failed during a batch run."""
+
+
+def fail_on_request_errors(enabled: bool = True) -> None:
+    global _fail_on_request_errors
+    _fail_on_request_errors = enabled
+
 
 def is_configured() -> bool:
     return bool(_supabase_key())
@@ -100,6 +114,8 @@ def _request_json(path: str) -> list[dict]:
     # One retry for a statement timeout (Postgres 57014): under the batch's
     # parallel pre-fetch a common word ("water", "butter") can occasionally
     # cross the anon role's 3 s limit on a cold cache, then succeed at once.
+    # Also one for a server error or a dropped connection (a 500 and a DNS
+    # failure in one 21 Oct batch run), which are just as passing.
     for attempt in range(2):
         try:
             with _REQUEST_SLOTS, urlopen(req, timeout=120) as resp:
@@ -110,13 +126,16 @@ def _request_json(path: str) -> list[dict]:
             break
         except HTTPError as e:
             detail = e.read().decode("utf-8", errors="ignore") if e.fp else ""
-            if attempt == 0 and '"57014"' in detail:
+            if attempt == 0 and ('"57014"' in detail or e.code >= 500):
                 time.sleep(1)
                 continue
             raise RuntimeError(
                 f"Supabase request failed ({e.code}) for {path}: {detail or e.reason}"
             ) from e
         except URLError as e:
+            if attempt == 0:
+                time.sleep(1)
+                continue
             raise RuntimeError(f"Supabase request failed for {path}: {e.reason}") from e
 
     data = json.loads(payload)
@@ -126,14 +145,18 @@ def _request_json(path: str) -> list[dict]:
 
 
 def _warn_failed(what: str, error: RuntimeError) -> None:
-    """Report a failed Supabase request instead of passing it off as no results."""
+    """Report a failed Supabase request instead of passing it off as no results.
+    In a batch run (fail_on_request_errors), raise instead."""
     reason = re.sub(r" for \S+", "", str(error))[:200]
+    if _fail_on_request_errors:
+        raise SupabaseLookupError(f"Supabase {what} failed: {reason}") from error
     print(f"[!] Supabase {what} failed: {reason}", file=sys.stderr)
 
 
 def _request_all(requests: list[tuple[str, str]]) -> list[list[dict]]:
     """Runs [(what, url), ...] at the same time; results in the same order.
-    A failed request is reported and counts as no rows, as before."""
+    A failed request is reported and counts as no rows, unless
+    fail_on_request_errors is on."""
     def one(item: tuple[str, str]) -> list[dict]:
         what, url = item
         try:

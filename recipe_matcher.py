@@ -26,6 +26,8 @@ from collections import defaultdict
 import template_refs as tref
 
 from supabase_food_source import (
+    SupabaseLookupError,
+    fail_on_request_errors,
     is_configured as supabase_is_configured,
     search_foods as supabase_search_foods,
     fetch_food_by_fdc_id as supabase_fetch_food_by_fdc_id,
@@ -4497,8 +4499,17 @@ def main():
             print(f"    No existing file — fresh write.")
 
     print(f"[→] Processing recipes: {args.recipes}")
-    new_rows=build_output_rows(args.recipes, boost_rules, args.threshold,
-                               existing_rows=existing_rows)
+    # A failed lookup would otherwise count as no results and quietly change
+    # amounts; stop before anything is written and let the run be repeated.
+    fail_on_request_errors()
+    try:
+        new_rows=build_output_rows(args.recipes, boost_rules, args.threshold,
+                                   existing_rows=existing_rows)
+    except SupabaseLookupError as e:
+        print(f"\n[!] {e}", file=sys.stderr)
+        print("[!] Stopped; the output files were not changed. Run it again.",
+              file=sys.stderr)
+        sys.exit(1)
 
     output_rows = merge_output_rows(existing_rows, new_rows)
     new_tids = {r.get("template_id","") for r in new_rows}

@@ -67,6 +67,10 @@ From this folder, with SUPABASE_ANON_KEY set:
 Output: templates_output.xlsx (to review) and templates_output.csv (to
 import), in the folder you ran from.
 
+A Supabase request that still fails after one retry stops the run, and
+the output files are left as they were: run it again. (Taken as no
+results, a failed lookup quietly changed amounts.)
+
 Then import into the app project, from blobbapp/:
 
     python3 tool/csv_templates_to_supabase_migration.py \
