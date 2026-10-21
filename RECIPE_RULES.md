@@ -96,7 +96,7 @@ Pasta, rice and noodles are listed **cooked, in cups**, so lookups hit the cooke
 
 * Name the cooked form and type: `cooked spaghetti`, `cooked elbow macaroni`, `cooked short grain white rice`, `cooked glutinous rice`, `cooked rice vermicelli`.
 * Converting a dry amount from a source: long pasta 1 cup cooked ≈ 2 oz dry; dried wheat pasta cooked weight ≈ 2.35 × dry.
-* Typical portions: side = 1 cup cooked; main plate = 1.5 cups cooked.
+* Use the sources' amount: when a source gives one (grams, cups, or an uncooked weight), convert it to cooked cups and use it. Only when none gives an amount, use the typical portions: side = 1 cup cooked; main plate = 1.5 cups cooked.
 * **Exception:** when the starch cooks inside the dish and absorbs its liquid (arroz caldo, champorado, biko, risotto, soups with pasta cooked in the broth), list it uncooked by volume (`1 cup uncooked glutinous rice`) together with the liquid.
 * **Exception:** noodles sold in single-serving packs (frozen or fresh udon, and others where the sources count packs) are listed by the pack, as the sources do (`2 pack frozen udon noodles`), not in cooked cups.
 
