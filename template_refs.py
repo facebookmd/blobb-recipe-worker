@@ -56,6 +56,8 @@ class TemplateRef:
     source: str = "run"
     # Per-serving output rows; for "run" templates, filled once processed.
     rows: list[dict] | None = None
+    # The recipe file's Category (published: the template's cuisine).
+    category: str = ""
 
 
 # ── Names ───────────────────────────────────────────────────────────────────
@@ -93,6 +95,36 @@ def build_index(refs: list[TemplateRef]) -> dict[str, TemplateRef]:
             if key and key not in index:
                 index[key] = ref
     return index
+
+
+def build_cuisine_index(refs: list[TemplateRef]) -> dict[tuple[str, str], TemplateRef]:
+    """(cuisine, name) keys to templates, earlier refs winning as in
+    build_index. Two cuisines may each have a "Chicken Stock"; a recipe
+    uses its own cuisine's."""
+    index: dict[tuple[str, str], TemplateRef] = {}
+    for ref in refs:
+        cuisine = ref.category.strip().lower()
+        if not cuisine:
+            continue
+        for name in [ref.name, *ref.aka]:
+            key = template_key(name)
+            if key and (cuisine, key) not in index:
+                index[(cuisine, key)] = ref
+    return index
+
+
+def find(
+    ingredient: str,
+    category: str,
+    index: dict[str, TemplateRef],
+    cuisine_index: dict[tuple[str, str], TemplateRef],
+) -> TemplateRef | None:
+    """The template [ingredient] names: the recipe's own cuisine's first,
+    then any cuisine's."""
+    key = template_key(ingredient)
+    if not key:
+        return None
+    return cuisine_index.get((category.strip().lower(), key)) or index.get(key)
 
 
 def near_miss(ingredient: str, index: dict[str, TemplateRef]) -> str | None:
@@ -266,7 +298,7 @@ def _fetch_published_templates() -> list[TemplateRef]:
     import supabase_food_source as food_source
 
     templates = _app_request(
-        "meal_templates?select=id,name,aka,serving_qty,serving_unit"
+        "meal_templates?select=id,name,aka,cuisine,serving_qty,serving_unit"
         "&is_published=eq.true&submitted_by=is.null&serving_qty=not.is.null")
     if not templates:
         return []
@@ -321,5 +353,6 @@ def _fetch_published_templates() -> list[TemplateRef]:
             tid=t["id"], name=t["name"], aka=list(t.get("aka") or []),
             serving_qty=float(t["serving_qty"]), serving_unit=t.get("serving_unit") or "",
             source="published", rows=by_template[t["id"]],
+            category=t.get("cuisine") or "",
         ))
     return refs

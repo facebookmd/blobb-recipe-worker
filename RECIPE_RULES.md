@@ -51,6 +51,7 @@ SOURCE: url1, url2, url3
 * The template's permanent id: share links and people's saved meals point at it. **Never change an existing recipe's `ID:`**, not even when renaming it; rename by editing the title line only.
 * A new recipe's ID is its title in lowercase with every run of other characters as `_`, and a trailing `_` on a one-word title: `Miso Soup` → `ID: miso_soup`, `Salt-Grilled Mackerel` → `ID: salt_grilled_mackerel`, `Gyoza` → `ID: gyoza_`.
 * Every ID is unique across all recipe files; the batch run stops on a repeat.
+* The same title in two cuisines is fine: the app shows each with its cuisine tag. Only the ID changes: the existing recipe keeps its ID and the new one adds `_01` (then `_02`): `Fried Rice` in Chinese is `fried_rice`, in Filipino `fried_rice_01`.
 
 ### AKA line
 
@@ -165,6 +166,7 @@ Check these in order and stop at the first that applies:
 Write it as a **normal ingredient line**, by its exact name or an AKA, in the same kind of unit as its serving size: `1.5 cup dashi stock`, `2 tbsp dashi stock`, `2 slice braised pork belly`, `1 whole ramen egg`. The parser recognises the name and adds the template's ingredients to the recipe as their own section, scaled to the amount.
 
 * Amounts are what the whole recipe uses; the parser divides by Servings.
+* When two cuisines each have a base template with that name (two "Chicken Stock"s), a recipe gets its own cuisine's; another cuisine's is used only when its own has none.
 * Volume converts to volume and counts to counts. Never cross them (NOT `1 cup braised pork belly` when the serving size is `1 slice`).
 * Never write slugs (`0.375 dashi_stock`) or fractions of a batch.
 

@@ -216,6 +216,52 @@ def test_this_runs_templates_win_over_published_ones(tmp_path, foods):
     assert lines(rows, "Soup")[0].startswith("[Dashi Stock] water")
 
 
+# ── Same name, two cuisines ─────────────────────────────────────────────────
+
+def run_cuisines(tmp_path, *blocks):
+    """[(category, block), ...] in one run, as two recipe files would be."""
+    recipes = [parse_recipe.parse_single_block(b.split("\n"), name_hint="recipe",
+                                               sticky_category=cat)
+               for cat, b in blocks]
+    csv = tmp_path / "r.csv"
+    parse_recipe.write_recipes_csv(recipes, str(csv), append=False)
+    return matcher.build_output_rows(str(csv), POWDER_TSP, 0.0)
+
+
+STOCK_WATER = "Soup Stock\nServings: 1\nServing size: 1 cup\n1 cup water"
+STOCK_MISO = ("Soup Stock\nID: soup_stock_01\nServings: 1\nServing size: 1 cup\n"
+              "1 tbsp white miso")
+
+
+def test_a_recipe_uses_its_own_cuisines_template(tmp_path, foods):
+    # Listed first, the Japanese stock used to win for every cuisine.
+    rows = run_cuisines(tmp_path,
+                        ("Japanese", STOCK_WATER),
+                        ("Filipino", STOCK_MISO),
+                        ("Filipino", "Sinigang\nServings: 1\n1 cup soup stock"),
+                        ("Japanese", "Nabe\nServings: 1\n1 cup soup stock"))
+    assert lines(rows, "Sinigang") == ["[Soup Stock] white miso 1 x tbsp"]
+    assert lines(rows, "Nabe") == ["[Soup Stock] water 1 x cup"]
+
+
+def test_another_cuisines_template_is_used_when_its_own_has_none(tmp_path, foods):
+    rows = run_cuisines(tmp_path,
+                        ("Japanese", DASHI_STOCK),
+                        ("Filipino", "Misua Soup\nServings: 1\n1 cup dashi stock"))
+    assert lines(rows, "Misua Soup")[0].startswith("[Dashi Stock] water")
+
+
+def test_published_templates_carry_their_cuisine():
+    japanese = tref.TemplateRef(tid="a", name="Soup Stock", category="Japanese")
+    filipino = tref.TemplateRef(tid="b", name="Soup Stock", category="Filipino")
+    refs = [japanese, filipino]
+    index, by_cuisine = tref.build_index(refs), tref.build_cuisine_index(refs)
+    assert tref.find("soup stock", "Filipino", index, by_cuisine) is filipino
+    assert tref.find("soup stocks", "japanese", index, by_cuisine) is japanese
+    assert tref.find("soup stock", "", index, by_cuisine) is japanese
+    assert tref.find("soup stock", "Korean", index, by_cuisine) is japanese
+
+
 @pytest.mark.parametrize("name, key", [
     ("Ramen Eggs", "ramen egg"), ("Dashi-Stock", "dashi stock"),
     ("Sauces", "sauce"), ("glass", "glass"),

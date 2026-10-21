@@ -3773,7 +3773,7 @@ def _template_refs(rows_by_template, existing_rows, published_templates):
             servings=_float_or_none(first.get("servings")) or 1.0,
             serving_qty=_float_or_none(first.get("serving_qty")),
             serving_unit=(first.get("serving_unit") or "").strip(),
-            source="run",
+            source="run", category=(first.get("category") or "").strip(),
         ))
     earlier = defaultdict(list)
     for row in existing_rows:
@@ -3789,6 +3789,7 @@ def _template_refs(rows_by_template, existing_rows, published_templates):
             serving_qty=_float_or_none(first.get("serving_qty")),
             serving_unit=str(first.get("serving_unit") or "").strip(),
             source="output", rows=rows,
+            category=str(first.get("category") or "").strip(),
         ))
     return refs + list(published_templates or [])
 
@@ -3941,14 +3942,16 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
         for row in csv.DictReader(f):
             rows_by_template[row.get("template_id","").strip()].append(row)
 
-    template_index = tref.build_index(
-        _template_refs(rows_by_template, existing_rows, published_templates))
+    refs = _template_refs(rows_by_template, existing_rows, published_templates)
+    template_index = tref.build_index(refs)
+    cuisine_index = tref.build_cuisine_index(refs)
     template_errors: list[str] = []
     LAST_TEMPLATE_WARNINGS.clear()
     processed: set[str] = set()
 
     def _uses_template(ing_row) -> bool:
-        ref = template_index.get(tref.template_key(ing_row.get("ingredient", "")))
+        ref = tref.find(ing_row.get("ingredient", ""), ing_row.get("category", ""),
+                        template_index, cuisine_index)
         return ref is not None and ref.tid != ing_row.get("template_id", "").strip()
 
     # ── Pre-fetch USDA indexes in parallel ──────────────────────────────────
@@ -4060,7 +4063,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
 
             # A base template by name ("1.5 cup dashi stock"): its
             # ingredients, scaled, in a section named after it.
-            ref = template_index.get(tref.template_key(ingredient))
+            ref = tref.find(ingredient, category, template_index, cuisine_index)
             if ref is not None and ref.tid != tid:
                 try:
                     if ref.source == "run":
