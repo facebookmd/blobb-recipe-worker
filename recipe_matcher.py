@@ -883,6 +883,20 @@ def _portion_label(portion_row: dict) -> str:
     return _row_text(portion_row, "description", "label")
 
 
+def _portion_display_label(portion_row: dict, label: str) -> str:
+    """[label] (from [_portion_label]) with the unit's clean name from the
+    USDA project's display_label: "1 medium" for 'medium (2-1/2" dia)', "2
+    piece, cooked" for "2 piece, cooked, excluding refuse (yield from 1 lb
+    raw meat with refuse)". The count stays in front, as a whole, decimal or
+    fraction ("1/2 English muffin" -> "1/2 English muffin"); the import
+    divides it out. [label] when the row has no display_label (RACC)."""
+    display = _row_text(portion_row, "display_label")
+    if not display:
+        return label
+    count = re.match(r"^(\d+(?:\.\d+)?|\d+/\d+)\s+", label)
+    return f"{count.group(1)} {display}" if count else display
+
+
 def _build_supabase_usda_food(row: dict, row_index: int, portions_by_food_id: dict[int, list[dict]]) -> dict | None:
     source_set = _row_text(row, "source_set").lower()
     if source_set == "branded":
@@ -936,6 +950,10 @@ def _build_supabase_usda_food(row: dict, row_index: int, portions_by_food_id: di
             "gram_weight": grams_val,
             "gram_col": "",
             "portion_idx": idx,
+            # The template's unit_label: the matcher reads `label`, the app
+            # shows this. Kept with the label it belongs to, so a portion
+            # derived from this one under a new label doesn't take it.
+            "_display": (label, _portion_display_label(portion_row, label)),
         })
 
     try:
@@ -1120,6 +1138,7 @@ def _build_supabase_branded_food(row: dict, row_index: int, portions_by_food_id:
             "label": label,
             "gram_weight": grams_val,
             "portion_idx": idx,
+            "_display": (label, _portion_display_label(portion_row, label)),
         })
 
     if len(portions) == 1:
@@ -4372,6 +4391,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 # No portion could measure the line; it is 1 g/ml.
                 "estimated":estimated,
                 "unit_label": portion["label"] if portion is not None else "100 g",
+                "_unit_display": portion.get("_display") if portion is not None else None,
                 # A pinch row's teaspoon, for copies that come back to it.
                 "_tsp_label": portion.get("_tsp_label", "") if portion is not None else "",
                 "_tsp_qty": portion.get("_tsp_qty", "") if portion is not None else "",
@@ -4407,7 +4427,18 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
     if template_errors:
         raise tref.TemplateReferenceError(
             "Base template lines that can't be used:\n  " + "\n  ".join(template_errors))
-    return output_rows
+    return [_with_display_unit(row) for row in output_rows]
+
+
+def _with_display_unit(row: dict) -> dict:
+    """[row] with its USDA unit under the display name ("1 medium" for
+    'medium (4-1/8" long)'), once matching is done: the unit maths above
+    read the raw label. A unit the matcher made (a pinch, 1 tsp from a
+    cup) keeps its own label."""
+    display = row.get("_unit_display")
+    if row.get("_type") != "data" or not display or row.get("unit_label") != display[0]:
+        return row
+    return {**row, "unit_label": display[1]}
 
 
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•

@@ -241,7 +241,7 @@ def load_portion_rows(*, force_refresh: bool = False) -> list[dict]:
     return _fetch_table_rows(
         "food_portions",
         (
-            "id, food_id, portion_id, label, description, value, grams, "
+            "id, food_id, portion_id, label, display_label, description, value, grams, "
             "calories, measure_unit_id, measure_unit_name, "
             "measure_unit_abbreviation, modifier, sequence_number, amount, raw_jsonb"
         ),
@@ -286,7 +286,7 @@ _FOOD_SEARCH_SELECT = (
 )
 
 _PORTION_SELECT = (
-    "id, food_id, portion_id, label, description, value, grams, "
+    "id, food_id, portion_id, label, display_label, description, value, grams, "
     "calories, measure_unit_id, measure_unit_name, "
     "measure_unit_abbreviation, modifier, sequence_number, amount"
 )
