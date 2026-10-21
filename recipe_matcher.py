@@ -3194,7 +3194,7 @@ def _oz_portion(food: dict) -> dict:
 
 # What the app's amount wheel shows exactly: whole numbers plus these
 # (drum_amount_picker.dart, within 0.001).
-WHEEL_FRACTIONS = (0.0, 1 / 8, 1 / 4, 1 / 3, 1 / 2, 2 / 3, 3 / 4, 7 / 8, 1.0)
+WHEEL_FRACTIONS = (0.0, 1 / 8, 1 / 4, 1 / 3, 3 / 8, 1 / 2, 5 / 8, 2 / 3, 3 / 4, 7 / 8, 1.0)
 # Units an off-wheel amount may move to, in order, and the amounts each
 # reads naturally at: tsp under a tbsp, tbsp from 1 up to a quarter cup,
 # cups from a quarter cup.

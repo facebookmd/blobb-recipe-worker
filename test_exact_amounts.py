@@ -210,11 +210,19 @@ def test_a_tsp_row_copied_in_under_an_eighth_tsp_is_pinches():
 # ── Units the wheel can show ──────────────────────────────────────────────
 
 def test_an_off_wheel_tbsp_moves_to_tsp(tmp_path, monkeypatch):
-    # 1.5 tbsp over 4 is 3/8 tbsp, which the wheel can't show: 1 1/8 tsp.
+    # 1 tbsp over 6 is 1/6 tbsp, which the wheel can't show: 1/2 tsp.
+    food = usda_food(("1 fl oz", 29.1))
+    [row] = rows_for(tmp_path, monkeypatch, food, "1 tbsp rice wine", servings=6)
+    assert row["unit_label"] == "1 tsp"
+    assert row["portion_amt"] == pytest.approx(1 / 2, abs=1e-9)
+
+
+def test_three_eighths_tbsp_stays_in_tbsp(tmp_path, monkeypatch):
+    # 1.5 tbsp over 4: 3/8 is on the wheel since 21 Oct.
     food = usda_food(("1 fl oz", 29.1))
     [row] = rows_for(tmp_path, monkeypatch, food, "1.5 tbsp rice wine", servings=4)
-    assert row["unit_label"] == "1 tsp"
-    assert row["portion_amt"] == pytest.approx(9 / 8, abs=1e-9)
+    assert row["unit_label"] == "1 tbsp"
+    assert row["portion_amt"] == pytest.approx(3 / 8, abs=1e-9)
 
 
 def test_an_off_wheel_cup_moves_to_tbsp(tmp_path, monkeypatch):
@@ -241,7 +249,8 @@ def test_a_chunky_cup_does_not_move_to_spoons(tmp_path, monkeypatch):
 
 def test_fits_wheel():
     assert matcher.fits_wheel(1.125) and matcher.fits_wheel(2 / 3) and matcher.fits_wheel(3)
-    assert not matcher.fits_wheel(0.375) and not matcher.fits_wheel(0.0625)
+    assert matcher.fits_wheel(0.375) and matcher.fits_wheel(1.625)   # 3/8, 5/8 (21 Oct)
+    assert not matcher.fits_wheel(0.1875) and not matcher.fits_wheel(0.0625)
 
 
 # ── Water ────────────────────────────────────────────────────────────────
