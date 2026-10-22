@@ -2023,5 +2023,14 @@
     "trigger": "room temperature water",
     "fdc_id": "173647",
     "weight": 0.95
+  },
+  {
+    "_comment": "22 Oct 2026: the only products named just ZITI are deli dishes (143 and 235 kcal/100 g); the dry pastas are named ZITI PASTA. Exact, so 'uncooked ziti' reaches it on the fallback and 'cooked ziti' never matches dry pasta."
+  },
+  {
+    "trigger": "ziti",
+    "boost": "ziti pasta",
+    "exact": true,
+    "weight": 0.6
   }
 ]

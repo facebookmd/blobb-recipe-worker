@@ -134,7 +134,28 @@ def test_pasta_by_weight_onto_a_cooked_food_still_gets_its_yield(tmp_path, monke
     assert "[yield 2.0]" in r["notes"]
 
 
+def test_a_cooked_shape_with_no_cooked_food_is_its_dry_pasta(tmp_path, monkeypatch, stubbed):
+    # USDA cooks only some shapes; 1 cup cooked is about 2 oz dry.
+    def fake(ing, *a, **k):
+        return (DRY_LINGUINE, 2.3, "high", None) if ing == "linguine" else (None, 0.0, "none", None)
+    monkeypatch.setattr(matcher, "match_ingredient", fake)
+    r = row(run(tmp_path, "X\nServings: 2\n3 cup cooked linguine"), "cooked linguine")
+    assert r["matched_food_name"] == "LINGUINE"
+    assert "[DRY, from cooked]" in r["notes"]
+    # 3 cups for 2 servings: 3 oz dry each.
+    assert r["cal_tot"] == pytest.approx(3 * 28.35 / 100 * 357, rel=0.02)
+
+
+def test_cooked_pasta_by_weight_on_a_dry_product_is_its_dry_weight(tmp_path, monkeypatch, stubbed):
+    # By weight a dry product can win outright; 1 lb cooked was counted as 1 lb dry.
+    monkeypatch.setattr(matcher, "match_ingredient",
+                        lambda ing, *a, **k: (DRY_LINGUINE, 2.1, "high", None))
+    r = row(run(tmp_path, "X\nServings: 1\n1 lb cooked linguine"), "cooked linguine")
+    assert "[DRY, from cooked]" in r["notes"]
+    assert r["cal_tot"] == pytest.approx(453.6 / 2.35 / 100 * 357, rel=0.02)
+
+
 def test_names_without_an_alias_match_as_before(tmp_path, stubbed):
-    r = row(run(tmp_path, "X\nServings: 1\n1 cup cooked linguine"), "cooked linguine")
+    r = row(run(tmp_path, "X\nServings: 1\n1 cup cooked quinoa"), "cooked quinoa")
     assert r["_confidence"] == "none"
-    assert stubbed == ["cooked linguine"]
+    assert stubbed == ["cooked quinoa"]

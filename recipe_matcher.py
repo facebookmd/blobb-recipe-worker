@@ -13,7 +13,7 @@ Usage:
 """
 
 import argparse
-import contextvars
+import statistics
 import csv
 import json
 import os
@@ -22,7 +22,7 @@ import re
 import sys
 import time
 from pathlib import Path
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 import template_refs as tref
 
@@ -1163,6 +1163,9 @@ def _build_supabase_branded_food(row: dict, row_index: int, portions_by_food_id:
         "energy_kcal": energy_kcal,
         "portions": portions,
         "package_grams": _package_grams(_row_text(row, "package_weight")),
+        # The label's own serving ("2 ONZ", 56 g), for _typical_branded.
+        "serving_text": _row_text(row, "household_serving_full_text"),
+        "serving_grams": row.get("serving_size"),
     }
 
 
@@ -1170,12 +1173,7 @@ def _build_supabase_branded_food(row: dict, row_index: int, portions_by_food_id:
 
 # Cache of per-ingredient USDAIndex objects so repeated ingredients don't
 # re-query Supabase within the same run.
-_INGREDIENT_INDEX_CACHE: dict[tuple[str, str | None, bool], "USDAIndex"] = {}
-
-# Searches cover food names only, until match_ingredient's last pass turns
-# this on to include branded ingredient lists (see search_foods).
-_SEARCH_INGREDIENT_LISTS: contextvars.ContextVar[bool] = contextvars.ContextVar(
-    "search_ingredient_lists", default=False)
+_INGREDIENT_INDEX_CACHE: dict[tuple[str, str | None], "USDAIndex"] = {}
 
 
 def _search_and_build_index(
@@ -1190,14 +1188,12 @@ def _search_and_build_index(
     This mirrors the app's FoodDatabase.search() pattern — only the foods
     relevant to the current ingredient are fetched, not the entire database.
     """
-    ingredient_lists = _SEARCH_INGREDIENT_LISTS.get()
-    cache_key = (query.strip().lower(), source_set, ingredient_lists)
+    cache_key = (query.strip().lower(), source_set)
     cached = _INGREDIENT_INDEX_CACHE.get(cache_key)
     if cached is not None:
         return cached
 
-    rows = supabase_search_foods(query, source_set=source_set, limit=limit,
-                                 ingredient_lists=ingredient_lists)
+    rows = supabase_search_foods(query, source_set=source_set, limit=limit)
     if not rows:
         idx = USDAIndex()
         _INGREDIENT_INDEX_CACHE[cache_key] = idx
@@ -1654,6 +1650,43 @@ def _usda_variant_penalty(search: str, food: dict) -> float:
     return VARIANT_PENALTY * len(hits)
 
 
+_SERVING_VOLUME_RE = re.compile(r"\b(cups?|tbsp|tablespoons?|tsp|teaspoons?|ml|fl)\b", re.I)
+_SERVING_WEIGHT_RE = re.compile(r"\b(onz|oz|ounces?|lbs?|pounds?|g|grm|grams?|kg)\b", re.I)
+
+
+def _serving_kind(food: dict) -> str:
+    """A branded label's serving ("2 ONZ", "1 1/4 cup", "1 bar") as "weight",
+    "volume" or "count", the kinds _unit_kind gives recipe units."""
+    text = str(food.get("serving_text") or "")
+    if _SERVING_VOLUME_RE.search(text):
+        return "volume"
+    return "weight" if _SERVING_WEIGHT_RE.search(text) else "count"
+
+
+def _typical_branded(group: list[dict], unit: str) -> dict:
+    """
+    One of several branded products with the same name and score: the one
+    whose label serving is in the recipe's kind of unit, then the most common
+    serving size among those, then the closest to their median calories.
+    Twelve products are named "LINGUINE": nine dry pastas labelled per 2 oz
+    (56 g, 333-375 kcal), two fresh deli pastas per 1 1/4 cup (85 g, 282-306)
+    and a dinner kit. The first one fetched used to win, a fresh one
+    (22 Oct 2026).
+    """
+    kind = (_unit_kind(unit) or (None, "count"))[1]
+    fit = [f for f in group if _serving_kind(f) == kind] or group
+    def serving(f):
+        try:
+            return round(float(f.get("serving_grams") or 0))
+        except (TypeError, ValueError):
+            return 0
+    counts = Counter(serving(f) for f in fit)
+    common = max(sorted(counts), key=lambda s: counts[s])
+    typical = [f for f in fit if serving(f) == common]
+    median = statistics.median_low([f.get("energy_kcal") or 0.0 for f in typical])
+    return min(typical, key=lambda f: (abs((f.get("energy_kcal") or 0.0) - median), str(f["fdc_id"])))
+
+
 def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_cooked=False, unit=""):
     """
     Score every food against display_name and alternate names.
@@ -1672,6 +1705,7 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
     query_token = query_tokens[0] if single_query else ""
     raw_rice_request = "rice" in search and any(k in search for k in ("raw", "uncooked", "dry"))
     food_iter = foods.candidates(search) if hasattr(foods, "candidates") else foods
+    ranked = []  # (rank, food, score, alt), for the branded tie-break below
     for food in food_iter:
         food_tokens = [_canonical_token(t) for t in normalise(food["display_name"]).split()]
         s_display = bigram_similarity(search, normalise(food["display_name"]))
@@ -1801,11 +1835,20 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
         # to the plainer description: "Onions, raw" over "Onions, white, raw".
         segments = len(_usda_segments(food)) if food.get("source") == "usda" else 99
         is_raw = bool(food.get("is_raw"))
+        ranked.append((rank, food, s, winning_alt))
         if (rank > best_rank
                 or (rank == best_rank and is_raw and not best_food_is_raw)
                 or (rank == best_rank and is_raw == best_food_is_raw and segments < best_segments)):
             best_score, best_food, best_alt, best_food_is_raw = s, food, winning_alt, is_raw
             best_rank, best_segments = rank, segments
+    if best_food is not None and best_food.get("source") == "branded":
+        name = normalise(best_food["display_name"])
+        tied = [(f, sc, alt) for r, f, sc, alt in ranked
+                if r >= best_rank - 1e-9 and f.get("source") == "branded"
+                and normalise(f["display_name"]) == name]
+        if len(tied) > 1:
+            pick = _typical_branded([f for f, _, _ in tied], unit)
+            best_food, best_score, best_alt = next(x for x in tied if x[0] is pick)
     return best_food, best_score, best_alt
 def _serving_unit_compat(serving, unit):
     """
@@ -1989,8 +2032,18 @@ PASTA_KEYWORDS = {
     "tagliatelle","pappardelle","fusilli","orecchiette","cavatappi",
     "macaroni","macaroni","vermicelli","angel hair","capellini","ziti",
     "conchiglie","gemelli","campanelle","ditalini","orzo","pasta",
+    "bucatini","acini di pepe",
 }
 PASTA_YIELD_FACTOR = 2.0
+# Cooked pasta from dry (RECIPE_RULES, "Cooked starches"): a cup is about
+# 2 oz dry, and cooked weight is about 2.35 x dry.
+DRY_PASTA_OZ_PER_COOKED_CUP = 2.0
+DRY_PASTA_COOKED_WEIGHT_RATIO = 2.35
+
+
+def _is_cooked_food(food: dict) -> bool:
+    return bool(re.search(r"\bcooked\b", f"{food.get('raw_description', '')} "
+                                         f"{food.get('display_name', '')}".lower()))
 
 def _pasta_keyword(ingredient: str) -> bool:
     """Return True if the ingredient name contains a pasta keyword."""
@@ -2074,26 +2127,8 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
       1. without the boost rules, if one rewrote the ingredient (a rule whose
          target was renamed in the data must not hide the plain match);
       2. without leading FALLBACK_DROP_WORDS ("dry white wine" -> "white
-         wine");
-      3. all of the above again with branded ingredient lists searched too,
-         not just food names.
+         wine").
     """
-    result = _match_with_fallbacks(ingredient, boost_rules, threshold,
-                                   category, unit, is_cooked)
-    if result[0] is not None or _SEARCH_INGREDIENT_LISTS.get():
-        return result
-    token = _SEARCH_INGREDIENT_LISTS.set(True)
-    try:
-        retry = _match_with_fallbacks(ingredient, boost_rules, threshold,
-                                      category, unit, is_cooked)
-    finally:
-        _SEARCH_INGREDIENT_LISTS.reset(token)
-    return retry if retry[0] is not None else result
-
-
-def _match_with_fallbacks(ingredient, boost_rules=None, threshold=0.45,
-                          category="", unit="", is_cooked=False):
-    """match_ingredient's steps 1 and 2, with the current search scope."""
     result = _match_ingredient_once(ingredient, boost_rules, threshold,
                                     category, unit, is_cooked)
     if result[0] is not None:
@@ -2109,8 +2144,8 @@ def _match_with_fallbacks(ingredient, boost_rules=None, threshold=0.45,
     while drop < len(words) - 1 and words[drop].lower() in FALLBACK_DROP_WORDS:
         drop += 1
     if drop:
-        retry = _match_with_fallbacks(" ".join(words[drop:]), boost_rules, threshold,
-                                      category, unit, is_cooked)
+        retry = match_ingredient(" ".join(words[drop:]), boost_rules, threshold,
+                                 category, unit, is_cooked)
         if retry[0] is not None:
             return retry
     return result
@@ -4050,7 +4085,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 all_search_queries.add(sq)
 
     uncached = [q for q in all_search_queries
-                if (q, "usda", False) not in _INGREDIENT_INDEX_CACHE]
+                if (q, "usda") not in _INGREDIENT_INDEX_CACHE]
     if uncached:
         sys.stderr.write(f"  Pre-fetching {len(uncached)} ingredient searches …\n")
         sys.stderr.flush()
@@ -4218,6 +4253,29 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                     is_cooked=is_cooked)
                 match_cache[match_key] = (food, score, confidence, matched_alt)
 
+            # Cooked pasta that ends on dry pasta ("1 cup cooked ziti": USDA
+            # cooks only some shapes, see food_aliases; by weight a dry
+            # product can win outright) is measured as the dry pasta it was
+            # cooked from: DRY_PASTA_OZ_PER_COOKED_CUP a cup, or the cooked
+            # weight over DRY_PASTA_COOKED_WEIGHT_RATIO.
+            from_cooked = False
+            if (_pasta_keyword(ingredient) and re.match(r"(?i)cooked\s+", ingredient)
+                    and (food is None or not _is_cooked_food(food))):
+                cooked_ml = _volume_to_ml(qty, unit)
+                if food is None and (cooked_ml or gram_target):
+                    dry = match_ingredient(re.sub(r"(?i)^cooked\s+", "", ingredient), boost_rules,
+                                           threshold, category, "oz", is_cooked=False)
+                    if dry[0] is not None:
+                        food, score, confidence, matched_alt = dry
+                if food is not None and cooked_ml:
+                    qty = cooked_ml / _volume_to_ml(1.0, "cup") * DRY_PASTA_OZ_PER_COOKED_CUP
+                    unit, from_cooked = "oz", True
+                elif food is not None and gram_target:
+                    qty = gram_target / DRY_PASTA_COOKED_WEIGHT_RATIO
+                    unit, from_cooked = "g", True
+                if from_cooked:
+                    gram_target = to_grams(qty, unit, ingredient)
+
             current_excel_row=len(output_rows)+2
 
             if food is None:
@@ -4243,8 +4301,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                     and gram_target is not None
                     and not is_cooked
                     and _pasta_keyword(ingredient)
-                    and re.search(r"\bcooked\b", f"{food.get('raw_description', '')} "
-                                                f"{food.get('display_name', '')}".lower())):
+                    and _is_cooked_food(food)):
                 yield_factor = PASTA_YIELD_FACTOR
 
             effective_gram_target=gram_target
@@ -4462,6 +4519,8 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             source_tag=" [BRANDED]" if source=="branded" else ""
             if alias is not None:
                 source_tag += " [ALIAS]"
+            if from_cooked:
+                source_tag += " [DRY, from cooked]"
             yield_tag=f" [yield {yield_factor}]" if yield_factor else ""
             vol_note = "VOL UNIT MISMATCH (3 tsp=1 tbsp, 16 tbsp=1 cup) " if vol_mismatch else ""
             if estimated:
