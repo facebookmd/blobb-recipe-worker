@@ -335,10 +335,17 @@ def search_foods(
     *,
     source_set: str | None = None,
     limit: int = 160,
+    ingredient_lists: bool = False,
 ) -> list[dict]:
     """
     Search the foods table per-ingredient using FTS + ilike fallback.
     Matches the app's FoodDatabase.search() pattern.
+
+    Full-text search also matches branded *ingredient lists* (search_vector
+    includes them), so "rigatoni" came back as 165 ready meals and no plain
+    RIGATONI (22 Oct 2026). Unless `ingredient_lists` (the matcher's last
+    pass), rows whose name or description lacks a query word are dropped,
+    and foods named exactly the query are added after the rest.
 
     source_set: None=all, "usda"=non-branded, "branded"=branded only.
     Returns raw food rows (not built into food dicts yet).
@@ -420,13 +427,56 @@ def search_foods(
         f"{source_filter}"
     )))
 
+    # Strategy 4: foods named exactly the query. The searches above cap at
+    # `limit` in no particular order, so a common word can crowd out its own
+    # product. Last, so it only adds rows. Full-text search narrows the scan
+    # first: alone, an exact match over the branded table timed out ("milk").
+    if fts:
+        exact = _escape_like(q)
+        requests.append((f"exact name search for {q!r}", (
+            f"{base_url}/rest/v1/foods"
+            f"?select={quote(_FOOD_SEARCH_SELECT)}"
+            f"&search_vector=fts(english).{fts_encoded}"
+            f"&or=({quote(f'display_name.ilike.{exact},description.ilike.{exact}')})"
+            f"&limit={limit}"
+            f"{source_filter}"
+        )))
+
     for rows in _request_all(requests):
         for row in rows:
             rid = row.get("id")
             if rid is not None:
                 rows_by_id.setdefault(int(rid), row)
 
-    return list(rows_by_id.values())
+    found = list(rows_by_id.values())
+    if ingredient_lists:
+        return found
+    # Only branded foods have ingredient lists; USDA rows stay as found.
+    return [row for row in found
+            if str(row.get("source_set") or "").lower() != "branded"
+            or names_every_word(row, q)]
+
+
+def _word_stem(word: str) -> str:
+    """Enough of a word to find its plural or singular: "strawberr" for
+    strawberry and strawberries, "tomato" for tomatoes."""
+    for ending in ("ies", "es", "s", "y"):
+        if len(word) > len(ending) + 3 and word.endswith(ending):
+            return word[: -len(ending)]
+    return word
+
+
+def names_every_word(row: dict, query: str) -> bool:
+    """Whether the food's name or description has every word of [query]
+    (any order, plural or singular) rather than only its ingredient list."""
+    name = " ".join(str(row.get(k) or "") for k in ("display_name", "description")).lower()
+    words = [w for w in re.findall(r"[a-z0-9]+", query.lower())
+             if len(w) > 1 and w not in _FILLER_WORDS]
+    return all(_word_stem(w) in name for w in words)
+
+
+_FILLER_WORDS = {"and", "or", "of", "with", "in", "the", "a", "for"}
+
 
 
 def fetch_food_by_fdc_id(fdc_id: int, *, branded: bool = False) -> dict | None:

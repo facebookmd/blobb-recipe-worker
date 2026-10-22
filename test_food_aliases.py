@@ -112,6 +112,28 @@ def test_another_unit_keeps_the_food_but_not_the_portion(tmp_path, stubbed):
     assert r["unit_grams"] == 64.0
 
 
+DRY_LINGUINE = {"display_name": "LINGUINE", "raw_description": "LINGUINE",
+                "fdc_id": "B_2", "source": "branded", "energy_kcal": 357.0, "row": {},
+                "portions": [{"portion_id": "B_2-1", "label": "2 oz", "gram_weight": 56.0,
+                              "gram_col": "", "portion_idx": 1}]}
+
+
+def test_dry_pasta_by_weight_is_not_doubled(tmp_path, monkeypatch, stubbed):
+    # The 2x raw-to-cooked factor is for a cooked food; branded pasta is dry.
+    monkeypatch.setattr(matcher, "match_ingredient",
+                        lambda ing, *a, **k: (DRY_LINGUINE, 2.3, "high", None))
+    r = row(run(tmp_path, "X\nServings: 1\n8 oz uncooked linguine"), "uncooked linguine")
+    assert "[yield" not in r["notes"]
+    assert r["cal_tot"] == pytest.approx(226.8 / 100 * 357, rel=0.02)
+
+
+def test_pasta_by_weight_onto_a_cooked_food_still_gets_its_yield(tmp_path, monkeypatch, stubbed):
+    monkeypatch.setattr(matcher, "match_ingredient",
+                        lambda ing, *a, **k: (PASTA, 1.0, "high", None))
+    r = row(run(tmp_path, "X\nServings: 1\n4 oz linguine"), "linguine")
+    assert "[yield 2.0]" in r["notes"]
+
+
 def test_names_without_an_alias_match_as_before(tmp_path, stubbed):
     r = row(run(tmp_path, "X\nServings: 1\n1 cup cooked linguine"), "cooked linguine")
     assert r["_confidence"] == "none"

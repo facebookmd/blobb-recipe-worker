@@ -13,6 +13,7 @@ Usage:
 """
 
 import argparse
+import contextvars
 import csv
 import json
 import os
@@ -1169,7 +1170,12 @@ def _build_supabase_branded_food(row: dict, row_index: int, portions_by_food_id:
 
 # Cache of per-ingredient USDAIndex objects so repeated ingredients don't
 # re-query Supabase within the same run.
-_INGREDIENT_INDEX_CACHE: dict[tuple[str, str | None], "USDAIndex"] = {}
+_INGREDIENT_INDEX_CACHE: dict[tuple[str, str | None, bool], "USDAIndex"] = {}
+
+# Searches cover food names only, until match_ingredient's last pass turns
+# this on to include branded ingredient lists (see search_foods).
+_SEARCH_INGREDIENT_LISTS: contextvars.ContextVar[bool] = contextvars.ContextVar(
+    "search_ingredient_lists", default=False)
 
 
 def _search_and_build_index(
@@ -1184,12 +1190,14 @@ def _search_and_build_index(
     This mirrors the app's FoodDatabase.search() pattern — only the foods
     relevant to the current ingredient are fetched, not the entire database.
     """
-    cache_key = (query.strip().lower(), source_set)
+    ingredient_lists = _SEARCH_INGREDIENT_LISTS.get()
+    cache_key = (query.strip().lower(), source_set, ingredient_lists)
     cached = _INGREDIENT_INDEX_CACHE.get(cache_key)
     if cached is not None:
         return cached
 
-    rows = supabase_search_foods(query, source_set=source_set, limit=limit)
+    rows = supabase_search_foods(query, source_set=source_set, limit=limit,
+                                 ingredient_lists=ingredient_lists)
     if not rows:
         idx = USDAIndex()
         _INGREDIENT_INDEX_CACHE[cache_key] = idx
@@ -2051,7 +2059,9 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens,
 # Leading words that describe a state, not a food: when "dry white wine" or
 # "melted butter" finds nothing, the food is "white wine" / "butter".
 FALLBACK_DROP_WORDS = {
-    "dry", "melted", "softened", "cold", "warm", "hot", "chilled", "room",
+    # "uncooked": branded pasta is dry and never says so ("LINGUINE"); USDA
+    # lists only some shapes (food_aliases), so "uncooked linguine" lands here.
+    "dry", "uncooked", "melted", "softened", "cold", "warm", "hot", "chilled", "room",
     "temperature", "fresh", "plain", "regular", "good", "quality",
 }
 
@@ -2064,8 +2074,26 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
       1. without the boost rules, if one rewrote the ingredient (a rule whose
          target was renamed in the data must not hide the plain match);
       2. without leading FALLBACK_DROP_WORDS ("dry white wine" -> "white
-         wine").
+         wine");
+      3. all of the above again with branded ingredient lists searched too,
+         not just food names.
     """
+    result = _match_with_fallbacks(ingredient, boost_rules, threshold,
+                                   category, unit, is_cooked)
+    if result[0] is not None or _SEARCH_INGREDIENT_LISTS.get():
+        return result
+    token = _SEARCH_INGREDIENT_LISTS.set(True)
+    try:
+        retry = _match_with_fallbacks(ingredient, boost_rules, threshold,
+                                      category, unit, is_cooked)
+    finally:
+        _SEARCH_INGREDIENT_LISTS.reset(token)
+    return retry if retry[0] is not None else result
+
+
+def _match_with_fallbacks(ingredient, boost_rules=None, threshold=0.45,
+                          category="", unit="", is_cooked=False):
+    """match_ingredient's steps 1 and 2, with the current search scope."""
     result = _match_ingredient_once(ingredient, boost_rules, threshold,
                                     category, unit, is_cooked)
     if result[0] is not None:
@@ -2081,8 +2109,8 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
     while drop < len(words) - 1 and words[drop].lower() in FALLBACK_DROP_WORDS:
         drop += 1
     if drop:
-        retry = match_ingredient(" ".join(words[drop:]), boost_rules, threshold,
-                                 category, unit, is_cooked)
+        retry = _match_with_fallbacks(" ".join(words[drop:]), boost_rules, threshold,
+                                      category, unit, is_cooked)
         if retry[0] is not None:
             return retry
     return result
@@ -4022,7 +4050,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 all_search_queries.add(sq)
 
     uncached = [q for q in all_search_queries
-                if (q, "usda") not in _INGREDIENT_INDEX_CACHE]
+                if (q, "usda", False) not in _INGREDIENT_INDEX_CACHE]
     if uncached:
         sys.stderr.write(f"  Pre-fetching {len(uncached)} ingredient searches …\n")
         sys.stderr.flush()
@@ -4207,10 +4235,16 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             yield_factor=food.get("_yield_factor",None)
 
             # Pasta given in grams is raw â€” DB entries are cooked.
-            # Apply a 2Ã— yield factor to convert raw â†’ cooked gram weight.
+            # Apply a 2Ã— yield factor to convert raw â†’ cooked gram weight,
+            # but only onto a cooked food: dry pasta (branded "LINGUINE",
+            # "Pasta, dry") is weighed as it is, and so is a line that says
+            # it's cooked already.
             if (yield_factor is None
                     and gram_target is not None
-                    and _pasta_keyword(ingredient)):
+                    and not is_cooked
+                    and _pasta_keyword(ingredient)
+                    and re.search(r"\bcooked\b", f"{food.get('raw_description', '')} "
+                                                f"{food.get('display_name', '')}".lower())):
                 yield_factor = PASTA_YIELD_FACTOR
 
             effective_gram_target=gram_target
