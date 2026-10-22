@@ -31,6 +31,7 @@ from supabase_food_source import (
     is_configured as supabase_is_configured,
     search_foods as supabase_search_foods,
     fetch_food_by_fdc_id as supabase_fetch_food_by_fdc_id,
+    load_food_aliases,
     load_portions_for_food_ids,
 )
 
@@ -1243,6 +1244,56 @@ def _fetch_food_by_fdc_id(fdc_id: str) -> dict | None:
         food = builder(row, 0, portions_by_fid)
     _FDC_FETCH_CACHE[fdc_id] = food
     return food
+
+
+_FOOD_ALIASES: dict[str, dict] = {}
+_FOOD_ALIASES_TRIED_AT: float | None = None
+_FOOD_ALIASES_RETRY_SECONDS = 600
+
+
+def _food_aliases() -> dict[str, dict]:
+    """food_aliases rows by template_key(alias), loaded once. An empty load
+    (a failed request on the server; a batch run stops instead) is tried
+    again after _FOOD_ALIASES_RETRY_SECONDS, not on every line."""
+    global _FOOD_ALIASES_TRIED_AT
+    now = time.time()
+    if not _FOOD_ALIASES and (_FOOD_ALIASES_TRIED_AT is None
+                              or now - _FOOD_ALIASES_TRIED_AT > _FOOD_ALIASES_RETRY_SECONDS):
+        _FOOD_ALIASES_TRIED_AT = now
+        for row in load_food_aliases():
+            if row.get("food") and row.get("portion") and row.get("alias"):
+                _FOOD_ALIASES[tref.template_key(row["alias"])] = row
+    return _FOOD_ALIASES
+
+
+def _alias_match(ingredient: str, size_hint: str, unit: str) -> tuple[dict, dict | None] | None:
+    """
+    The food a food_aliases name stands for ("cooked penne" -> Pasta, cooked,
+    enriched), and its portion when the recipe's unit is the alias's: "1 cup
+    cooked penne" is "cup penne" (107 g), "1 baguette" is "1 baguette
+    (about 22\" long)". Another unit ("2 slice baguette") keeps the food and
+    leaves the portion to pick_best_portion. The size hint can name its own
+    alias ("mini baguette"). None when no alias names the ingredient.
+    """
+    aliases = _food_aliases()
+    row = aliases.get(tref.template_key(f"{size_hint} {ingredient}")) if size_hint else None
+    row = row or aliases.get(tref.template_key(ingredient))
+    if row is None:
+        return None
+    branded = str(row["food"].get("source_set") or "").lower() == "branded"
+    food = _fetch_food_by_fdc_id(f"{'B_' if branded else ''}{row['food']['fdc_id']}")
+    if food is None:
+        return None
+    u = unit.strip().lower()
+    unit_fits = (u in ("cup", "cups") if row["unit"] == "cup"
+                 else u in ("", "piece", "pieces", "whole"))
+    portion = None
+    if unit_fits:
+        label = _portion_label(row["portion"])
+        grams = float(row["portion"].get("grams") or 0)
+        portion = next((p for p in food["portions"]
+                        if p["label"] == label and abs(p["gram_weight"] - grams) < 1e-6), None)
+    return food, portion
 
 
 def _search_usda_for_ingredient(query: str) -> USDAIndex:
@@ -4126,7 +4177,12 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 bool(is_cooked),
                 float(threshold),
             )
-            if match_key in match_cache:
+            alias_portion = None
+            alias = _alias_match(ingredient, size_hint, unit)
+            if alias is not None:
+                food, alias_portion = alias
+                score, confidence, matched_alt = 1.0, "high", None
+            elif match_key in match_cache:
                 food, score, confidence, matched_alt = match_cache[match_key]
             else:
                 food, score, confidence, matched_alt = match_ingredient(
@@ -4161,7 +4217,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             if yield_factor and gram_target is not None:
                 effective_gram_target=gram_target*yield_factor
 
-            portion=pick_best_portion(food,unit,effective_gram_target,qty,ingredient_for_portion,boost_rules)
+            portion=alias_portion or pick_best_portion(food,unit,effective_gram_target,qty,ingredient_for_portion,boost_rules)
             if portion is None and unit.lower() not in VOLUMETRIC_UNITS:
                 portion=food["portions"][0] if food["portions"] else None
             estimated = False
@@ -4370,6 +4426,8 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
 
             cal_tot_formula=round(cal_formula * portion_amt, 1) if isinstance(cal_formula, float) else ""
             source_tag=" [BRANDED]" if source=="branded" else ""
+            if alias is not None:
+                source_tag += " [ALIAS]"
             yield_tag=f" [yield {yield_factor}]" if yield_factor else ""
             vol_note = "VOL UNIT MISMATCH (3 tsp=1 tbsp, 16 tbsp=1 cup) " if vol_mismatch else ""
             if estimated:

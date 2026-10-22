@@ -454,6 +454,22 @@ def fetch_food_by_fdc_id(fdc_id: int, *, branded: bool = False) -> dict | None:
     return rows[0] if rows else None
 
 
+def load_food_aliases() -> list[dict]:
+    """
+    The food_aliases table: names USDA keeps in a food's portions ("cup
+    penne" under "Pasta, cooked, enriched"). Each row carries its food's
+    FDC ID and source set and its portion row:
+      {"alias": "cooked penne", "unit": "cup",
+       "food": {"fdc_id": 169737, "source_set": "sr_legacy"},
+       "portion": {...food_portions row...}}
+    """
+    if not is_configured():
+        return []
+    select = f"alias,unit,food:foods(fdc_id,source_set),portion:food_portions({_PORTION_SELECT})"
+    url = f"{_supabase_url()}/rest/v1/food_aliases?select={quote(select)}"
+    return _request_all([("food alias lookup", url)])[0]
+
+
 def load_portions_for_food_ids(food_ids: list[int]) -> dict[int, list[dict]]:
     """
     Load portions only for specific food IDs.
