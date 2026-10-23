@@ -1654,6 +1654,9 @@ HEAD_MATCH_SCORE = 0.95
 # Set with BLOBB_HEAD_SCORING; head_scoring_trial.py compares the two.
 HEAD_SCORING = os.environ.get("BLOBB_HEAD_SCORING", "tier")
 HEAD_TIER_RANK = 10.0
+# A head match on the line's food with its preparation ("fried chicken")
+# over one on the food alone; see _score_list.
+PREP_HEAD_BONUS = 0.10
 HEAD_UNKNOWN_PENALTY = 0.08
 HEAD_FOUNDATION_BONUS = 0.03
 VARIANT_PENALTY = 0.25
@@ -1704,6 +1707,33 @@ STANDARD_QUALIFIER_WORDS = set(SEARCH_RULES["standard_qualifier_words"]["words"]
 # the ingredient itself says the word ("brown sugar", "nonfat milk").
 VARIANT_QUALIFIER_RE = re.compile(r"\b(" + "|".join(
     SEARCH_RULES["variant_qualifiers"]["patterns"] + SEARCH_RULES["cooking_words"]["words"]) + r")\b")
+# A preparation the line names that makes a different food: "mashed
+# potatoes", "fried rice", "hard boiled egg". A shortcut (a boost's pinned
+# food, the egg, rice, chicken and generic-meat fast paths) stands aside
+# when its food doesn't name it, and the line is scored like any other:
+# the potato pin took "mashed potatoes" to raw potatoes (23 Oct 2026).
+PRODUCT_PREP_WORDS = set(SEARCH_RULES["cooking_words"]["words"]) | {
+    "mashed", "fried", "scrambled", "deviled"}
+
+
+def _line_preparations(ingredient: str) -> set[str]:
+    """Preparations named before the food, not after a comma: "eggs,
+    scrambled" is raw eggs to scramble."""
+    return {w for w in normalise(ingredient.split(",")[0]).split() if w in PRODUCT_PREP_WORDS}
+
+
+def _fits_preparations(food: dict | None, preparations: set[str]) -> bool:
+    """Whether *food* is what the line's preparations make: it names each one,
+    or, for a plain cooking word ("grilled", "roasted"), is cooked at all;
+    "grilled chicken" is the generic cooked chicken. "mashed", "fried",
+    "scrambled" and "deviled" make a different food and must be named."""
+    if food is None or not preparations:
+        return True
+    named = set(normalise(f"{food.get('display_name', '')} {food.get('raw_description', '')}").split())
+    cooked = any(COOKING_WORD_RE.fullmatch(w) for w in named)
+    return all(w in named or (cooked and COOKING_WORD_RE.fullmatch(w)) for w in preparations)
+
+
 # Cooking words are variants too, in recipes only: a recipe's food is raw
 # ("Turkey, Ground, cooked" isn't "ground turkey", "1 cup quinoa" is
 # uncooked), unless the line is cooked or names a way of cooking it ("baked
@@ -1874,30 +1904,39 @@ def _has_measurable_portion(food: dict) -> bool:
     return False
 
 
-def _is_unknown_qualifier(segment: str) -> bool:
+def _is_unknown_qualifier(segment: str, said: frozenset[str] = frozenset()) -> bool:
+    """A qualifier that isn't standard, a variant, or a word the line said
+    (*said*: the prep words it left out of the search, "diced" of "diced
+    tomatoes", canonical)."""
     seg = normalise(segment)
     if not seg or VARIANT_QUALIFIER_RE.search(seg):
         return False  # variants are charged by _usda_variant_penalty
-    return not all(tok in STANDARD_QUALIFIER_WORDS or tok.isdigit() for tok in seg.split())
+    return not all(tok in STANDARD_QUALIFIER_WORDS or tok.isdigit() or _canonical_token(tok) in said
+                   for tok in seg.split())
 
 
-def _usda_variant_penalty(search: str, food: dict, is_cooked: bool = False) -> float:
+def _usda_variant_penalty(search: str, food: dict, is_cooked: bool = False,
+                          said: frozenset[str] = frozenset()) -> float:
     """VARIANT_PENALTY per variant word in a USDA row that carries every query word."""
-    return VARIANT_PENALTY * _usda_variant_count(search, food, is_cooked)
+    return VARIANT_PENALTY * _usda_variant_count(search, food, is_cooked, said)
 
 
-def _usda_variant_count(search: str, food: dict, is_cooked: bool = False) -> int:
+def _usda_variant_count(search: str, food: dict, is_cooked: bool = False,
+                        said: frozenset[str] = frozenset()) -> int:
     """Variant words in *food*'s description that *search* doesn't say, when
     the description carries every query word; a skin-on row counts one more
     for a cut that's skinless by default ("chicken breast"). Cooking words
-    don't count for a line read as cooked."""
+    don't count for a line read as cooked, nor does a word the line said
+    but left out of the search (*said*, canonical: "canned" of "1 can
+    diced tomatoes")."""
     desc = normalise(food.get("raw_description") or "")
     query = {_canonical_token(t) for t in normalise(search).split()}
     desc_tokens = {_canonical_token(t) for t in desc.split()}
     if not query or not query <= desc_tokens:
         return 0
     hits = {m.group(0) for m in VARIANT_QUALIFIER_RE.finditer(desc)}
-    hits = {h for h in hits if not any(_canonical_token(w) in query for w in h.split())}
+    hits = {h for h in hits if not any(_canonical_token(w) in query or _canonical_token(w) in said
+                                       for w in h.split())}
     # A row's cooking state is one variant ("cooked, baked"), and none when
     # the line names a way of cooking it ("baked potato") or is cooked.
     cooking = {h for h in hits if COOKING_WORD_RE.fullmatch(h)}
@@ -2000,9 +2039,22 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
     """
     best_food, best_score, best_alt, best_food_is_raw = None, 0.0, None, False
     form_words = {_canonical_token(w) for w in form_words}
+    # Words the line said but the search left out ("diced" of "diced
+    # tomatoes") cost a row that names them nothing: "Tomatoes, canned, red,
+    # ripe, diced" lost "1 can diced tomatoes" to "Tomatoes, raw" for its
+    # "diced" and "canned" (23 Oct 2026). A row that doesn't name them is
+    # ranked as before.
+    said = frozenset(form_words)
     # A cooking word the search left out ("baked" of "baked beans") still
     # says how the line's food is cooked.
-    line_cooked = is_cooked or any(COOKING_WORD_RE.fullmatch(w) for w in form_words)
+    line_cooked = is_cooked or any(COOKING_WORD_RE.fullmatch(w) or w in PRODUCT_PREP_WORDS
+                                   for w in form_words)
+    # The search with its product preparations put back ("fried chicken" of
+    # a search for "chicken"): a USDA row headed by the whole phrase ("Fried
+    # chicken, wing", "Potatoes, mashed") ranks above one headed by the food
+    # alone ("Chicken, skinless, raw").
+    preps = sorted(w for w in form_words if w in PRODUCT_PREP_WORDS)
+    prep_search = f"{' '.join(preps)} {search}" if preps else ""
     best_rank = 0.0
     best_segments = 99
     search_core = _core(search)
@@ -2099,19 +2151,26 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
                 winning_alt = None  # description match, not alt_name
         head_won = False
         if food.get("source") == "usda":
-            qualifiers = _usda_head_qualifiers(search, food)
+            qualifiers = _usda_head_qualifiers(prep_search, food) if prep_search else None
+            prep_head = qualifiers is not None
+            if not prep_head:
+                qualifiers = _usda_head_qualifiers(search, food)
             if qualifiers is not None:
                 head_won = True
                 if HEAD_SCORING == "tier" or s < HEAD_MATCH_SCORE:
                     s = HEAD_MATCH_SCORE
                     winning_alt = None
-                s -= HEAD_UNKNOWN_PENALTY * sum(_is_unknown_qualifier(q) for q in qualifiers)
+                # Not for a prepared dish whose name starts with the phrase
+                # ("Grilled chicken, bacon and tomato club sandwich").
+                if prep_head and not _is_dish_category(food):
+                    s += PREP_HEAD_BONUS
+                s -= HEAD_UNKNOWN_PENALTY * sum(_is_unknown_qualifier(q, said) for q in qualifiers)
                 # Curated Foundation rows break ties, but only with calories
                 # and a unit people can use; many carry only "1 RACC".
                 if (food.get("data_type") == "Foundation" and food.get("energy_kcal")
                         and _has_measurable_portion(food)):
                     s += HEAD_FOUNDATION_BONUS
-            s -= _usda_variant_penalty(search, food, line_cooked)
+            s -= _usda_variant_penalty(search, food, line_cooked, said)
         # For vegetables, rescore using core-stripped names and take the max.
         # Raw/cooked distinction is irrelevant for produce â€” a cucumber is a
         # cucumber regardless of "with peel, raw" in the USDA name.
@@ -2734,7 +2793,9 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     category_lower = category.lower()
     is_japanese_category = "japanese" in category_lower
     rice_default_cooked = False
-    if _rice_keyword(ingredient) and not any(raw_kw in ing_lower for raw_kw in ("raw", "uncooked", "dry")):
+    preparations = _line_preparations(ingredient)
+    if (_rice_keyword(ingredient) and not any(raw_kw in ing_lower for raw_kw in ("raw", "uncooked", "dry"))
+            and not preparations - {"cooked"}):
         rice_default_cooked = True
         is_cooked = True
 
@@ -2756,7 +2817,7 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
                     and not any(t in ing_lower for t in CHICKEN_CUT_SKIN_ON_TRIGGERS))
                 fdc_id = skinless_id if is_skinless else skin_on_id
                 food = usda_foods.get(fdc_id)
-                if food:
+                if food and _fits_preparations(food, preparations):
                     tagged = dict(food)
                     tagged["_cut_keyword"] = cut_kw  # used by pick_best_portion
                     return tagged, 0.95, "high", None
@@ -2785,6 +2846,19 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
             break
 
     boosted_text, boost_weight, pinned_fdc_id = apply_boosts(remapped, boost_rules, category)
+    # A boost that loses the line's preparation stands aside, rewritten search
+    # and all: the potato pin took "mashed potatoes" to raw potatoes, the
+    # "egg" rule rewrote "fried egg" as "egg raw fresh". One that keeps it,
+    # in its search or its pinned food, stays.
+    if preparations and boosted_text.lower() != remapped.lower():
+        keeps = preparations <= set(normalise(boosted_text).split())
+        if pinned_fdc_id:
+            pinned = (usda_foods.get(pinned_fdc_id) or _get_branded().get(pinned_fdc_id)
+                      if pinned_fdc_id.startswith("B_") and _get_branded()
+                      else usda_foods.get(pinned_fdc_id) or _fetch_food_by_fdc_id(pinned_fdc_id))
+            keeps = keeps or (pinned is not None and _fits_preparations(pinned, preparations))
+        if not keeps:
+            boosted_text, boost_weight, pinned_fdc_id = remapped, 0.0, None
     boosted = boosted_text.lower() != remapped.lower()
     search_source = boosted_text
     if "fillet" in ing_lower and _is_fish_or_seafood_name(ing_lower):
@@ -2841,11 +2915,11 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     # â”€â”€ Direct FDC ID pin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if pinned_fdc_id:
         food = usda_foods.get(pinned_fdc_id)
-        if food:
+        if food and _fits_preparations(food, preparations):
             return dict(food), 0.95, "high", None
         if pinned_fdc_id.startswith("B_") and _get_branded():
             branded_food = _get_branded().get(pinned_fdc_id)
-            if branded_food:
+            if branded_food and _fits_preparations(branded_food, preparations):
                 return dict(branded_food), 0.95, "high", None
 
     # â”€â”€ Generic meat â€” direct FDC ID lookup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -2878,7 +2952,7 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
                 and not any(ex in ing_lower for ex in GENERIC_MEAT_EXCLUDES)
                 and not ("ground" in ing_lower or "mince" in ing_lower or "minced" in ing_lower)):
             food = usda_foods.get(fdc_id)
-            if food:
+            if food and _fits_preparations(food, preparations):
                 tagged = dict(food)
                 # Suppress yield when recipe weight is already post-cook
                 if not is_cooked:
@@ -2910,7 +2984,7 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         for kw, fdc_id in [("egg", "171287")]:
             if kw in ing_lower:
                 food = usda_foods.get(fdc_id)
-                if food:
+                if food and _fits_preparations(food, preparations):
                     return food, 0.95, "high", None
 
     # â”€â”€ Tofu â€” direct FDC ID lookup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -3032,6 +3106,9 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     best_any_food, best_any_score, best_any_alt = None, -1.0, None
     form_words = {t for t in normalise(search_source).split()
                   if t in PREP_WORDS and t not in NOT_FORM_WORDS} - set(query_tokens)
+    # A can is canned: "1 can diced tomatoes".
+    if unit.strip().lower() in ("can", "cans") and "canned" not in query_tokens:
+        form_words.add("canned")
     usda_food, usda_score, usda_alt = _score_list(search_match, usda_foods, boost_weight, boosted,
                                                   is_processed, is_cooked, unit, form_words)
     if usda_score < threshold and cooked_stripped_source.lower() != search_source.lower():

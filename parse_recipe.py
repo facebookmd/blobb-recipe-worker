@@ -320,6 +320,13 @@ def check_unique_ids(recipes: list[tuple[dict, list[dict]]]) -> None:
 # ═══════════════════════════════════════════════════════════════════════════════
 # Single-line ingredient parser
 # ═══════════════════════════════════════════════════════════════════════════════
+# Cut words USDA portions are labelled by ("1 cup, sliced", "1 cup,
+# chopped", "1 cup, grated").
+_CUT_WORDS_RE = re.compile(
+    r"\b(sliced|chopped|diced|minced|grated|shredded|cubed|crushed|julienned|"
+    r"halved|quartered|mashed|crumbled|pureed)\b", re.I)
+
+
 def parse_ingredient_line(raw: str) -> dict | None:
     line = clean_line(raw)
     if not line:
@@ -469,10 +476,14 @@ def parse_ingredient_line(raw: str) -> dict | None:
         r"leveled|sifted|whisked|beaten|drained|rinsed|"
         r"blanched|seasoned|sauteed|sauted|squeezed"
     )
-    rest = re.sub(
-        r"\s*,\s*[^.;]*?\b(?:" + _PREP_COMMA_PAT + r")\b[^.;]*$",
-        "", rest, flags=re.I
+    _comma_prep = re.search(
+        r"\s*,\s*[^.;]*?\b(?:" + _PREP_COMMA_PAT + r")\b[^.;]*$", rest, flags=re.I
     )
+    # The cut words it names ("onion, thinly sliced") stay for portion
+    # picking: USDA weighs a cup of sliced onion at 115 g, chopped at 160.
+    cut_words = _CUT_WORDS_RE.findall(_comma_prep.group(0)) if _comma_prep else []
+    if _comma_prep:
+        rest = rest[:_comma_prep.start()]
 
     # Strip imperative cooking instructions that sometimes follow prep notes:
     # "walnuts, shelled, break into smaller pieces to fit into the mold"
@@ -589,8 +600,16 @@ def parse_ingredient_line(raw: str) -> dict | None:
     is_cooked = bool(re.search(r'\bcooked\b', ing_name, re.I))
 
     if ing_name.lower() not in _PROTECTED_COMPOUNDS:
-        while _leading_re.match(ing_name):
-            ing_name = _leading_re.sub("", ing_name).strip()
+        while (_lead := _leading_re.match(ing_name)):
+            cut_words += _CUT_WORDS_RE.findall(_lead.group(0))
+            ing_name = ing_name[_lead.end():].strip()
+    # Cut words that left the name ("sliced onion", "onion, diced") join the
+    # size hint, which goes to portion picking but not to the food search:
+    # "1 cup sliced onion" was weighed as chopped, 160 g for 115.
+    for _word in cut_words:
+        _word = _word.lower()
+        if _word not in size_hint.lower().split():
+            size_hint = f"{size_hint} {_word}".strip()
 
     # Strip trailing bare past-participles (no comma) left after other stripping:
     # "baking powder sifted" → "baking powder"
