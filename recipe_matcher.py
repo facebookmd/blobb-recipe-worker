@@ -1716,6 +1716,25 @@ PRODUCT_PREP_WORDS = set(SEARCH_RULES["cooking_words"]["words"]) | {
     "mashed", "fried", "scrambled", "deviled"}
 
 
+# Words a line can add to a bare meat ("1 lb boneless skinless chicken
+# pieces") and still mean the meat itself.
+MEAT_LINE_WORDS = {
+    "boneless", "skinless", "bone", "skin", "less", "meat", "pieces", "piece",
+    "chunks", "bite", "sized", "size", "leftover", "organic", "free", "range",
+    "pasture", "raised", "lean", "fresh", "frozen", "thawed", "cut", "into",
+    "of", "or", "and", "any", "mixed",
+}
+
+
+def _only_the_meat(ingredient: str, meat: str) -> bool:
+    """Whether *ingredient* names just *meat*, give or take prep, size and
+    cooking words: "shredded cooked chicken", not "chicken nuggets"."""
+    others = set(normalise(ingredient).split()) - {meat, meat + "s"}
+    return all(w in MEAT_LINE_WORDS or w in PREP_WORDS or w in STANDARD_QUALIFIER_WORDS
+               or COOKING_WORD_RE.fullmatch(w) or w in PRODUCT_PREP_WORDS
+               or w in {"small", "medium", "large"} or w.isdigit() for w in others)
+
+
 def _line_preparations(ingredient: str) -> set[str]:
     """Preparations named before the food, not after a comma: "eggs,
     scrambled" is raw eggs to scramble."""
@@ -2334,6 +2353,11 @@ INGREDIENT_REMAP = {
     "day-old rice":       "white rice long grain cooked",
     "leftover rice":      "white rice long grain cooked",
     "shimeji mushroom":   "beech mushroom",
+    # USDA's skim milk is "Milk, nonfat, ..." or "Milk, fat free (skim)";
+    # "skim milk" found "Yogurt, plain, skim milk" (23 Oct 2026).
+    "skim milk":          "nonfat milk",
+    "fat free milk":      "nonfat milk",
+    "fat-free milk":      "nonfat milk",
     # NOTE: bare "white rice", "jasmine rice", "basmati rice", "long grain rice"
     # are intentionally NOT remapped here â€” they are uncooked and handled by
     # boost rules pointing to the raw USDA entry (FDC 168878 raw).
@@ -2836,6 +2860,10 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
             remapped = "cooked glutinous white rice"
         elif any(kw in ing_lower for kw in ("jasmine", "basmati")):
             remapped = "cooked rice"
+        elif (colour := next((c for c in ("brown", "wild", "black", "red")
+                              if re.search(rf"\b{c}\b", ing_lower)), None)):
+            # "1 cup brown rice" was cooked white rice (23 Oct 2026).
+            remapped = f"{colour} rice cooked"
         elif is_japanese_category:
             remapped = "cooked medium grain white rice"
         else:
@@ -2946,10 +2974,16 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         "brisket","chuck","sirloin","rump","flank","round","spare",
     }
     # Only fire for bare/simple meat references, not specific cuts (those
-    # match fine via bigram or the MEAT_GENERIC_IDS fallback).
+    # match fine via bigram or the MEAT_GENERIC_IDS fallback), and only when
+    # the line is just the meat: "chicken nuggets", "chicken salad" and
+    # "chicken noodle soup" were all roasted chicken breast (23 Oct 2026).
     for generic_meat_kw, fdc_id in GENERIC_MEAT_IDS.items():
         if (generic_meat_kw in ing_lower
-                and not any(ex in ing_lower for ex in GENERIC_MEAT_EXCLUDES)
+                and _only_the_meat(ingredient, generic_meat_kw)
+                # Whole words: "skin" and "bone" are excluded, "skinless"
+                # and "boneless" aren't ("1 lb boneless skinless chicken
+                # pieces" was breaded fried pieces).
+                and not any(re.search(rf"\b{ex}s?\b", ing_lower) for ex in GENERIC_MEAT_EXCLUDES)
                 and not ("ground" in ing_lower or "mince" in ing_lower or "minced" in ing_lower)):
             food = usda_foods.get(fdc_id)
             if food and _fits_preparations(food, preparations):
