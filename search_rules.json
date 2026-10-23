@@ -1,0 +1,75 @@
+{
+  "_about": "Word lists for ranking USDA foods, shared by the app's food search (lib/data/search_matcher.dart, through search_rules.g.dart: dart run tool/gen_search_rules.dart) and the recipe matcher (blobb-recipe-worker, recipe_matcher.py). Each repo keeps a copy: blobb-app lib/data/search_rules.json, blobb-recipe-worker search_rules.json. Edit one, copy it to the other; a test on each side fails while they differ. search_rank_cases.json holds the cases both must pass.",
+
+  "group_labels": {
+    "_about": "Leading USDA labels skipped when looking for a description's head: 'Spices, cinnamon, ground', 'Fish, salmon, Atlantic, raw', 'Peppers, jalapenos', 'Coffee, Latte'.",
+    "words": [
+      "spices", "leavening agents", "beverages", "sweeteners", "nuts", "seeds",
+      "cheese", "fish", "finfish", "crustaceans", "mollusks", "peppers", "coffee"
+    ]
+  },
+
+  "soup_label": {
+    "_about": "'Soup, ...' is a group label only for a query that asks for a soup: 'Soup, chicken broth' heads 'chicken broth', 'Soup, potato' is not 'potato' (23 Oct 2026 search eval).",
+    "label": "soup",
+    "query_words": ["soup", "broth", "stock", "bouillon", "chowder", "bisque", "consomme"]
+  },
+
+  "kind_segments": {
+    "_about": "Kind-of-bird segments USDA puts between the animal and the cut: 'Chicken, broiler or fryers, breast, ...'. Skipped when finding the head.",
+    "words": ["broiler or fryers", "broilers or fryers"]
+  },
+
+  "standard_qualifier_words": {
+    "_about": "Qualifier words that describe the everyday product or only its labelling; a head match loses nothing for them.",
+    "words": [
+      "whole", "milk", "fluid", "granulated", "all", "purpose", "enriched",
+      "bleached", "unbleached", "raw", "fresh", "ground", "plain",
+      "regular", "cultured", "ripe", "year", "round", "average", "commercially",
+      "prepared", "unprepared", "table", "white", "with", "added", "vitamin",
+      "a", "d", "and", "milkfat", "double", "acting", "flesh", "skin", "salted",
+      "stick", "iodized", "cured", "skinless", "boneless", "meat", "only",
+      "brewed"
+    ]
+  },
+
+  "variant_qualifiers": {
+    "_about": "Regex alternatives (joined as \\b(a|b|...)\\b over the normalized description) naming a different product: lighter versions, other animals and plants, other forms, preparations that change the food, unenriched grains (US flour, rice and pasta are enriched), and USDA's 'not (further) specified' rows. Not counted when the query says one of its words ('brown sugar', 'fried chicken').",
+    "patterns": [
+      "light", "lite", "reduced fat", "low fat", "lowfat", "nonfat", "non fat",
+      "fat free", "part skim", "skim", "low sodium", "reduced sodium", "no salt",
+      "sheep", "goat", "buffalo", "turkey", "human", "soy", "almond", "coconut",
+      "oat", "rice", "green", "dried", "dry", "powdered", "powder", "drink mix",
+      "condensed", "evaporated", "instant", "imitation", "substitute", "brown",
+      "black", "baby", "unenriched", "nfs", "ns", "alaska native",
+      "fried", "breaded", "battered", "glazed", "candied", "honey roasted",
+      "stuffed", "meatless", "pickled", "fermented", "sprouted", "edible podded",
+      "coated", "caramel", "chocolate", "flavored", "canned", "gluten free",
+      "skin only",
+      "skin and breading from all pieces", "with cheese", "with milk",
+      "fat added", "for use", "[a-z]+ style"
+    ]
+  },
+
+  "cooking_words": {
+    "_about": "Recipe matcher only. Words that say a USDA row is cooked. In a recipe a food means it raw ('ground turkey' is 'Turkey, Ground, raw', not '..., cooked'; '1 cup quinoa' is uncooked), so a row's cooking state counts as one variant, however many of these it names ('cooked, baked'), unless the line is cooked or names a way of cooking ('baked beans'). The app's search leaves them out: someone logging quinoa or spaghetti ate it cooked, and with these the app picked dry quinoa (368 kcal) over cooked (120) (23 Oct 2026). 'eaten' is FNDDS's cooked meat ('Pork, chop, lean only eaten').",
+    "words": [
+      "cooked", "boiled", "baked", "roasted", "braised", "stewed", "grilled",
+      "broiled", "steamed", "sauteed", "simmered", "poached", "microwaved",
+      "eaten"
+    ]
+  },
+
+  "skin": {
+    "_about": "Chicken breast means skinless unless the query mentions skin; other cuts keep their skin. A skin-on row is one more variant for a skinless-by-default cut.",
+    "skinless_by_default_cuts": ["breast"],
+    "skin_on_pattern": "meat and skin|skin eaten|skin coating eaten"
+  },
+
+  "modifier_rules": {
+    "_about": "A name that uses the query's food only to describe another ('Steak sauce' for 'steak') ranks lower; one that mixes it with a food the query doesn't say ('Clam and tomato juice') or says it lacks it ('Chili hot dog, no bun') ranks below every plain match. The food is the last word of a name's first part, before any of these words. 'or' isn't a mix word: 'Beef broth or bouillon' names alternatives.",
+    "part_breaks": ["with", "in", "on"],
+    "mix_words": ["and"],
+    "lack_words": ["no", "without"]
+  }
+}

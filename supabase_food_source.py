@@ -474,11 +474,45 @@ def fetch_food_by_fdc_id(fdc_id: int, *, branded: bool = False) -> dict | None:
     return rows[0] if rows else None
 
 
+_SPELLING_CACHE: dict[str, list[dict]] = {}
+_SPELLING_MISSING = False
+
+
+def search_food_names_by_spelling(word: str, limit: int = 40) -> list[dict]:
+    """
+    Non-branded food rows whose names hold a word spelled close to [word]
+    (search_food_names_by_spelling, migration 20261023090000): "cremini"
+    finds "Mushrooms, brown, italian, or crimini, raw". Loose on purpose;
+    the matcher keeps only words one letter off. Raw rows, like
+    search_foods. [] until that migration is pushed.
+    """
+    global _SPELLING_MISSING
+    w = word.strip().lower()
+    if not w or not is_configured() or _SPELLING_MISSING:
+        return []
+    if w in _SPELLING_CACHE:
+        return _SPELLING_CACHE[w]
+    url = (f"{_supabase_url()}/rest/v1/rpc/search_food_names_by_spelling"
+           f"?word={quote(w)}&max_rows={int(limit)}&select={quote(_FOOD_SEARCH_SELECT)}")
+    try:
+        rows = _request_json(url)
+    except RuntimeError as e:
+        if "(404)" in str(e) or "PGRST202" in str(e):
+            _SPELLING_MISSING = True  # not pushed yet: matching goes on without it
+            return []
+        _warn_failed(f"spelling search for {w!r}", e)
+        rows = []
+    _SPELLING_CACHE[w] = rows
+    return rows
+
+
 def load_food_aliases() -> list[dict]:
     """
     The food_aliases table: names USDA keeps in a food's portions ("cup
-    penne" under "Pasta, cooked, enriched"). Each row carries its food's
-    FDC ID and source set and its portion row:
+    penne" under "Pasta, cooked, enriched"), and common names USDA files
+    another way ("hot sauce" is Hot pepper sauce), which the app's food
+    search reads too. Each row carries its food's FDC ID and source set and
+    its portion row, or a null unit and portion when the name implies none:
       {"alias": "cooked penne", "unit": "cup",
        "food": {"fdc_id": 169737, "source_set": "sr_legacy"},
        "portion": {...food_portions row...}}

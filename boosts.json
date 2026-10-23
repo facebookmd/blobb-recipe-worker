@@ -511,6 +511,86 @@
     "weight": 0.8
   },
   {
+    "_comment": "22 Oct 2026: lechon sauce is Mang Tomas, whose FDC row is named only ALL PURPOSE SAUCE (brand MANG TOMAS). Searching 'lechon sauce' found a Spanish lechonera marinade."
+  },
+  {
+    "trigger": "lechon sauce",
+    "fdc_id": "B_2024572",
+    "weight": 0.95
+  },
+  {
+    "_comment": "22 Oct 2026: calamansi juice as USDA lime juice, raw (25 kcal/100 g). Searches rank sweetened calamansi juice drinks first, and the one pure juice (B_2116524) rounds to 0 kcal on its 1 tsp label."
+  },
+  {
+    "trigger": "calamansi juice",
+    "fdc_id": "168156",
+    "weight": 0.95
+  },
+  {
+    "_comment": "22 Oct 2026: sinigang packets. Matched on its own at 0.46, just over the threshold; its label gives the 40 g packet."
+  },
+  {
+    "trigger": "tamarind soup mix",
+    "fdc_id": "B_2116522",
+    "weight": 0.95
+  },
+  {
+    "_comment": "22 Oct 2026: lye water (kutsinta) is potassium carbonate in water, a teaspoon or two per batch: 0 kcal, logged as the same water as 'water'. The generic-trigger guard keeps the 'water' rule from reaching it."
+  },
+  {
+    "trigger": "lye water",
+    "fdc_id": "173647",
+    "weight": 0.95
+  },
+  {
+    "_comment": "22 Oct 2026 (Arianna): annatto powder is LA NUESTRA GROUND ANNATTO. Named 'ground annatto', so the 'annatto powder' searches never fetched it, and the old substring trigger 'natto' pinned natto."
+  },
+  {
+    "_comment": "23 Oct 2026 (Arianna): lasagna noodles are dry sheets, Barilla WHOLE GRAIN LASAGNE (label 2 sheets = 50 g, 360 kcal/100 g). The search found only a hearts-of-palm 'LASAGNA SHAPE VEGGIE PASTA NOODLES', about 30 kcal/100 g. Cooked and uncooked lines are food_aliases."
+  },
+  {
+    "trigger": "lasagna noodles",
+    "fdc_id": "B_2549622",
+    "boost": "whole grain lasagne",
+    "weight": 0.95,
+    "exclude": [
+      "cooked"
+    ]
+  },
+  {
+    "_comment": "23 Oct 2026 (Arianna): grated pecorino at 1 tbsp = 5 g, as 33 of the 40 pecorino labels with a tbsp serving say. The match was a PECORINO ROMANO with only a 28 g serving, measured at 1 g/ml (about 3x). Not 1916075, whose label says 28 g a tbsp."
+  },
+  {
+    "trigger": "pecorino",
+    "fdc_id": "B_2013880",
+    "boost": "grated pecorino romano cheese",
+    "weight": 0.95
+  },
+  {
+    "_comment": "23 Oct 2026 (Arianna): mascarpone at 1 tbsp = 14 g (Safeway label). The match said 28 g a tbsp, about 2x; five mascarpone labels say 28 g."
+  },
+  {
+    "trigger": "mascarpone",
+    "fdc_id": "B_2281341",
+    "boost": "mascarpone cheese",
+    "weight": 0.95
+  },
+  {
+    "trigger": "annatto powder",
+    "fdc_id": "B_2015015",
+    "boost": "ground annatto",
+    "weight": 0.95
+  },
+  {
+    "_comment": "22 Oct 2026: smoked fish (tinapa flakes in palabok and malabon) as USDA kippered Atlantic herring, the closest smoked fish, written in oz. Filipino only: other cuisines name their smoked fish."
+  },
+  {
+    "trigger": "smoked fish",
+    "fdc_id": "173668",
+    "weight": 0.95,
+    "category": "filipino"
+  },
+  {
     "trigger": "banana blossom",
     "boost": "banana blossom",
     "weight": 0.9
@@ -2032,5 +2112,85 @@
     "boost": "ziti pasta",
     "exact": true,
     "weight": 0.6
+  },
+  {
+    "_comment": "23 Oct 2026 (American templates): foods the search got wrong for common US recipe words."
+  },
+  {
+    "_comment": "Synonyms from the same run (hamburger bun, canned pumpkin, pumpkin puree, hot sauce, semisweet chocolate chips, baby back ribs) are food_aliases rows (supabase-usda 20261023130000), which the app's food search reads too. The rules below depend on the recipe, so search keeps every option."
+  },
+  {
+    "_comment": "'pie crust' found homemade baked crust, counted in eighths; a home cook's crust is the refrigerated one, 1 crust 229 g unbaked."
+  },
+  {
+    "trigger": "pie crust",
+    "fdc_id": "167932",
+    "weight": 0.95,
+    "exclude": [
+      "graham",
+      "cookie",
+      "crumb",
+      "baked",
+      "homemade"
+    ]
+  },
+  {
+    "_comment": "'1 whole chicken' found roasted skinless breast by the cup. Roasting chicken with skin, raw, '1 chicken' 1509 g edible."
+  },
+  {
+    "trigger": "whole chicken",
+    "fdc_id": "172394",
+    "weight": 0.95,
+    "exclude": [
+      "breast",
+      "thigh",
+      "wing",
+      "leg",
+      "drumstick",
+      "broth",
+      "stock"
+    ]
+  },
+  {
+    "_comment": "'breakfast sausage' found lean cooked pork (generic meat); it is pork sausage."
+  },
+  {
+    "trigger": "breakfast sausage",
+    "boost": "pork sausage",
+    "weight": 0.9,
+    "exclude": [
+      "turkey",
+      "chicken",
+      "beef",
+      "plant",
+      "vegan",
+      "meatless"
+    ]
+  },
+  {
+    "_comment": "'clam juice' found Clamato (clam and tomato juice). USDA has no plain clam juice and the branded ones are many and right, so the app's search falls through to them; the bottled product is CLAM JUICE BROTH."
+  },
+  {
+    "trigger": "clam juice",
+    "boost": "clam juice broth",
+    "weight": 0.9,
+    "exclude": [
+      "tomato",
+      "clamato"
+    ]
+  },
+  {
+    "_comment": "'dry grits' (from 'uncooked grits') found flavored instant packets."
+  },
+  {
+    "trigger": "dry grits",
+    "fdc_id": "171654",
+    "weight": 0.9,
+    "exclude": [
+      "instant",
+      "cheese",
+      "butter",
+      "yellow"
+    ]
   }
 ]

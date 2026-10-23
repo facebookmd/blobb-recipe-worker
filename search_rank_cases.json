@@ -1,0 +1,108 @@
+{
+  "_about": "Cases the app's food search (test/search_rules_shared_test.dart) and the recipe matcher (blobb-recipe-worker, test_search_rules_shared.py) must both pass, so their ranking rules can't drift apart. Each repo keeps a copy (blobb-app test/search_rank_cases.json, blobb-recipe-worker search_rank_cases.json); a test on each side fails while they differ. A candidate's display_name defaults to its description, data_type to 'SR Legacy', kcal to 100.",
+
+  "tokens": [
+    ["pickles", "pickle"], ["tomatoes", "tomato"], ["peaches", "peach"],
+    ["boxes", "box"], ["berries", "berry"], ["almonds", "almond"],
+    ["powdered", "powder"], ["glass", "glass"], ["hummus", "hummus"],
+    ["egg", "egg"]
+  ],
+
+  "head_qualifiers": [
+    {"query": "milk", "description": "Milk, whole, 3.25% milkfat, with added vitamin D", "expect": ["whole", "3.25% milkfat", "with added vitamin D"]},
+    {"query": "sour cream", "description": "Cream, sour", "expect": []},
+    {"query": "squid", "description": "Mollusks, squid, mixed species, raw", "expect": ["mixed species", "raw"]},
+    {"query": "cinnamon", "description": "Spices, cinnamon, ground", "expect": ["ground"]},
+    {"query": "chicken breast", "description": "Chicken, broilers or fryers, breast, skinless, boneless, meat only, raw", "expect": ["skinless", "boneless", "meat only", "raw"]},
+    {"query": "potato", "description": "Soup, potato", "expect": null},
+    {"query": "potato soup", "description": "Soup, potato", "expect": []},
+    {"query": "chicken broth", "description": "Soup, chicken broth, ready-to-serve", "expect": ["ready-to-serve"]},
+    {"query": "milk chocolate", "description": "Chocolate milk, whole", "expect": null},
+    {"query": "bacon", "description": "Pork, cured, bacon, cooked, baked", "display_name": "Bacon, baked", "expect": ["baked"]},
+    {"query": "jalapeno", "description": "Peppers, jalapenos", "expect": []},
+    {"query": "latte", "description": "Coffee, Latte", "expect": []},
+    {"query": "yellow cornmeal", "description": "Cornmeal, yellow (Navajo)", "expect": ["Navajo"]},
+    {"query": "brown rice", "description": "Rice, brown, long-grain, raw (Includes foods for USDA's Food Distribution Program)", "expect": ["long-grain", "raw"]}
+  ],
+
+  "variant_count": [
+    {"query": "milk", "description": "Milk, sheep, fluid", "expect": 1},
+    {"query": "milk", "description": "Milk, whole, 3.25% milkfat", "expect": 0},
+    {"query": "tofu", "description": "Tofu, fried", "expect": 1},
+    {"query": "fried tofu", "description": "Tofu, fried", "expect": 0},
+    {"query": "chicken breast", "description": "Chicken, broilers or fryers, breast, meat and skin, raw", "expect": 1},
+    {"query": "chicken thigh", "description": "Chicken, broilers or fryers, thigh, meat and skin, raw", "expect": 0},
+    {"query": "bacon", "description": "Bacon, meatless", "expect": 1},
+    {"query": "walnuts", "description": "Nuts, walnuts, glazed", "expect": 1},
+    {"query": "potato salad", "description": "Potato salad, German style", "expect": 1},
+    {"query": "brown sugar", "description": "Sugars, brown", "expect": 0},
+    {"query": "dry egg noodles", "description": "Noodles, egg, dry, unenriched", "expect": 1},
+    {"query": "pasta", "description": "Pasta, gluten free", "expect": 1}
+  ],
+
+  "modifies": [
+    {"query": "steak", "name": "Steak sauce", "expect": "describes"},
+    {"query": "steak", "name": "Swiss steak", "expect": "none"},
+    {"query": "marinara sauce", "name": "OLIVE GARDEN, cheese ravioli with marinara sauce", "expect": "describes"},
+    {"query": "grilled cheese", "name": "Grilled cheese sandwich, on wheat bread", "expect": "none"},
+    {"query": "clam juice", "name": "Clam and tomato juice, canned", "expect": "mix_or_lacks"},
+    {"query": "hot dog bun", "name": "Chili hot dog, no bun", "expect": "mix_or_lacks"},
+    {"query": "half and half", "name": "Cream, half and half", "expect": "none"},
+    {"query": "beef broth", "name": "Beef broth or bouillon, canned, ready-to-serve", "expect": "none"},
+    {"query": "salt", "name": "Pumpkin, canned, without salt", "expect": "mix_or_lacks"},
+    {"query": "milk chocolate", "name": "Chocolate milk, whole", "expect": "describes"}
+  ],
+
+  "rank": [
+    {"query": "milk", "first": "Milk, whole, 3.25% milkfat, with added vitamin D", "candidates": [
+      {"description": "Milk, sheep, fluid", "display_name": "Sheep milk"},
+      {"description": "Milk, reduced fat, fluid, 2% milkfat"},
+      {"description": "Milk, whole, 3.25% milkfat, with added vitamin D", "display_name": "Whole milk, 3.25%, vitamin D-fortified"},
+      {"description": "Milk, malted"}
+    ]},
+    {"query": "chicken breast", "first": "Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw", "candidates": [
+      {"description": "Chicken breast, stewed, skin eaten", "data_type": "Survey (FNDDS)", "kcal": 184},
+      {"description": "Chicken, broilers or fryers, breast, meat and skin, raw", "display_name": "Chicken breast, with skin, raw", "kcal": 172},
+      {"description": "Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw", "display_name": "Chicken breast, boneless, skinless, raw", "kcal": 120}
+    ]},
+    {"query": "tofu", "first": "Tofu, raw, regular, prepared with calcium sulfate", "candidates": [
+      {"description": "Tofu, fried", "display_name": "Fried tofu", "kcal": 270},
+      {"description": "Tofu, salted and fermented (fuyu)", "kcal": 116},
+      {"description": "Tofu, raw, regular, prepared with calcium sulfate", "kcal": 76}
+    ]},
+    {"query": "walnuts", "first": "Nuts, walnuts, english", "candidates": [
+      {"description": "Nuts, walnuts, glazed", "kcal": 500},
+      {"description": "Nuts, walnuts, english", "kcal": 654}
+    ]},
+    {"query": "potato", "first": "Potatoes, flesh and skin, raw", "candidates": [
+      {"description": "Soup, potato", "kcal": 90},
+      {"description": "Potatoes, flesh and skin, raw", "kcal": 77}
+    ]},
+    {"query": "chicken broth", "first": "Soup, chicken broth, ready-to-serve", "candidates": [
+      {"description": "Chicken, broilers or fryers, meat only, stewed", "kcal": 177},
+      {"description": "Soup, chicken broth, ready-to-serve", "kcal": 6}
+    ]},
+    {"query": "bacon", "first": "Pork, cured, bacon, unprepared", "candidates": [
+      {"description": "Bacon, meatless", "kcal": 309},
+      {"description": "Bacon, turkey, unprepared", "display_name": "Turkey bacon, unprepared", "kcal": 226},
+      {"description": "Pork, cured, bacon, cooked, baked", "display_name": "Bacon, baked", "kcal": 548},
+      {"description": "Pork, cured, bacon, unprepared", "display_name": "Bacon, unprepared", "kcal": 417}
+    ]},
+    {"query": "ground turkey", "first": "Turkey, Ground, raw", "candidates": [
+      {"description": "Turkey, Ground, cooked", "display_name": "Ground turkey, cooked", "kcal": 203},
+      {"description": "Turkey, Ground, raw", "display_name": "Ground turkey, raw", "kcal": 148}
+    ]},
+    {"query": "milk chocolate", "first": "Candies, milk chocolate", "candidates": [
+      {"description": "Chocolate milk, whole", "kcal": 83},
+      {"description": "Candies, milk chocolate", "display_name": "Milk chocolate", "kcal": 535}
+    ]},
+    {"query": "clam juice", "first": "CLAM JUICE", "candidates": [
+      {"description": "Beverages, Clam and tomato juice, canned", "display_name": "Clam and tomato juice, canned", "kcal": 48},
+      {"description": "CLAM JUICE", "branded": true, "kcal": 2}
+    ]},
+    {"query": "steak", "first": "Beef, tenderloin steak, raw", "candidates": [
+      {"description": "Steak sauce", "kcal": 95},
+      {"description": "Beef, tenderloin steak, raw", "display_name": "Beef tenderloin steak, raw", "kcal": 149}
+    ]}
+  ]
+}

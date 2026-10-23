@@ -37,6 +37,11 @@ BREAD = matcher._build_supabase_usda_food(
      "description": "Bread, French or Vienna", "display_name": "Bread, French or Vienna",
      "calories_100g": 272},
     0, {465842: BREAD_PORTIONS})
+HOT_SAUCE = matcher._build_supabase_usda_food(
+    {"id": 468325, "fdc_id": 2710093, "source_set": "survey_fndds",
+     "description": "Hot pepper sauce", "display_name": "Hot pepper sauce",
+     "calories_100g": 12},
+    0, {468325: [{"label": "1 tablespoon", "grams": 16, "sequence_number": 1}]})
 SPAGHETTI_RINGS = {"name": "SPAGHETTI RINGS", "display_name": "SPAGHETTI RINGS",
                    "fdc_id": "B_1", "source": "branded", "energy_kcal": 80.0,
                    "portions": [{"portion_id": "B_1-1", "label": "1 cup", "gram_weight": 242.0,
@@ -51,6 +56,9 @@ ALIASES = [
      "food": {"fdc_id": 2707610, "source_set": "survey_fndds_food"}, "portion": BREAD_PORTIONS[2]},
     {"alias": "mini baguette", "unit": "piece",
      "food": {"fdc_id": 2707610, "source_set": "survey_fndds_food"}, "portion": BREAD_PORTIONS[1]},
+    # A synonym (23 Oct 2026): no portion; the app's search reads it too.
+    {"alias": "hot sauce", "unit": None,
+     "food": {"fdc_id": 2710093, "source_set": "survey_fndds"}, "portion": None},
 ]
 
 
@@ -69,7 +77,7 @@ def stubbed(monkeypatch):
     monkeypatch.setattr(matcher, "load_food_aliases", lambda: ALIASES)
     monkeypatch.setattr(matcher, "_FOOD_ALIASES", {})
     monkeypatch.setattr(matcher, "_FOOD_ALIASES_TRIED_AT", None)
-    foods = {"169737": PASTA, "2707610": BREAD}
+    foods = {"169737": PASTA, "2707610": BREAD, "2710093": HOT_SAUCE}
     monkeypatch.setattr(matcher, "_fetch_food_by_fdc_id", lambda fdc: foods.get(fdc))
     return searched
 
@@ -153,6 +161,14 @@ def test_cooked_pasta_by_weight_on_a_dry_product_is_its_dry_weight(tmp_path, mon
     r = row(run(tmp_path, "X\nServings: 1\n1 lb cooked linguine"), "cooked linguine")
     assert "[DRY, from cooked]" in r["notes"]
     assert r["cal_tot"] == pytest.approx(453.6 / 2.35 / 100 * 357, rel=0.02)
+
+
+def test_a_synonym_with_no_portion_is_its_food_by_any_unit(tmp_path, stubbed):
+    # "hot sauce" found Hot Thai sauce; the alias needs no portion.
+    rows = run(tmp_path, "X\nServings: 1\n2 tbsp hot sauce\n1 cup hot sauce")
+    assert [r["matched_food_name"] for r in rows] == ["Hot pepper sauce"] * 2
+    assert all("[ALIAS]" in r["notes"] for r in rows)
+    assert rows[0]["unit_grams"] == 16.0
 
 
 def test_names_without_an_alias_match_as_before(tmp_path, stubbed):

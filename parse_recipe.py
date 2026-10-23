@@ -490,8 +490,10 @@ def parse_ingredient_line(raw: str) -> dict | None:
     # "free range"), so prep notes that slipped through are not affected.
     rest = re.sub(r"(\s*,\s*(?:[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s*,?\s*)+)$", "", rest)
 
-    # Strip "e.g. X, Y" / "such as X" / "like X" variety/example clauses
-    rest = re.sub(r",?\s*(?:e\.?g\.?|such as|like|i\.?e\.?)\s+.+$", "", rest, flags=re.I)
+    # Strip "e.g. X, Y" / "such as X" / "like X" variety/example clauses.
+    # Whole words only: "hoagie roll" and "pie crust" end in "ie", and were
+    # cut to "hoag" and "p" (23 Oct 2026).
+    rest = re.sub(r",?\s*\b(?:e\.?g\.?|such as|like|i\.?e\.?)\s+.+$", "", rest, flags=re.I)
 
     ing_name = re.sub(r"\([^)]*\)", "", rest).strip(" ,;:")
     ing_name = re.sub(r"\s+", " ", ing_name)
@@ -536,16 +538,27 @@ def parse_ingredient_line(raw: str) -> dict | None:
     #  pick_best_portion receives "carrot medium" and picks the medium piece portion).
     # Loop to handle multi-word sequences like "finely sliced"
     _SIZE_WORDS = r"small|medium|large|big|jumbo|mini|tiny|giant|extra-large|extra large"
+    # Words that name the product stay: a form USDA sells ("grated
+    # parmesan", "canned diced tomatoes", "frozen peas", "dried oregano"),
+    # and a cuisine ("Italian sausage" was matched as "sausage", beef
+    # sausage; the matcher retries without the cuisine word when nothing
+    # carries it). 22 Oct 2026.
     _LEADING_PREP = (
         r"finely|thinly|roughly|coarsely|freshly|lightly|"
-        r"sliced|chopped|diced|minced|grated|shredded|crushed|torn|peeled|"
+        r"sliced|chopped|minced|torn|peeled|"
         r"julienned|julienne|"
-        r"frozen|dried|toasted|roasted|"
         r"lukewarm|warm|hot|cold|chilled|iced|"
-        r"English|Japanese|Korean|Chinese|Thai|French|Italian|Spanish|"
         + _SIZE_WORDS
     )
-    _leading_re = re.compile(r"^(?:" + _LEADING_PREP + r")\s+(?=\S)", re.I)
+    # A temperature word that is part of the food's name stays: "hot sauce"
+    # was matched as "sauce" (barbecue sauce), "hot dog bun" as "dog bun"
+    # (23 Oct 2026).
+    _TEMP_COMPOUND = (
+        r"(?!(?<=hot )(?:sauce|dogs?\b|peppers?\b|chil[ie]|chocolate|cocoa|"
+        r"sausage|mustard|fudge|links?\b|wings?\b|italian sausage)|"
+        r"(?<=iced )(?:tea|coffee|latte)|(?<=cold )(?:brew|cuts))"
+    )
+    _leading_re = re.compile(r"^(?:" + _LEADING_PREP + r")\s+(?=\S)" + _TEMP_COMPOUND, re.I)
     _size_re    = re.compile(r"^(?:" + _SIZE_WORDS + r")\s+(?=\S)", re.I)
 
     # Compounds where the leading adjective is nutritionally significant and must

@@ -34,6 +34,7 @@ from supabase_food_source import (
     fetch_food_by_fdc_id as supabase_fetch_food_by_fdc_id,
     load_food_aliases,
     load_portions_for_food_ids,
+    search_food_names_by_spelling as supabase_search_food_names_by_spelling,
 )
 
 # â”€â”€ built-in boost rules â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -168,7 +169,7 @@ BUILTIN_BOOSTS = [
 ]
 PREP_WORDS = {
     "chopped","sliced","diced","minced","frozen","raw","fresh","cooked","boiled","mashed",
-    "fried","grilled","roasted","baked","dried","ground","shredded","grated",
+    "fried","grilled","roasted","baked","dried","ground","shredded","grated","crushed",
     "peeled","ripe","unripe","blanched","seasoned","sauteed","sauted","squeezed",
     "boneless","skinless","lean","extra","finely","roughly","thinly","thin","thick",
 }
@@ -202,7 +203,7 @@ MINCE_WORDS = {"ground", "mince", "minced"}
 # but preserved in the general search string â€” important for names like
 # "Whole egg, large" and "Whole milk" where "whole" is semantically meaningful.
 VEG_FILLER = PREP_WORDS | {
-    "whole","with","without","and","or","from","peel","skin","bone","unprepared",
+    "whole","with","without","and","or","from","peel","skin","bone","unprepared","includes",
     "prepared","drained","year","round","average","type","ns","as","purchased",
 }
 
@@ -559,7 +560,11 @@ def _canonical_token(token: str) -> str:
         return "powder"
     if t.endswith("ies") and len(t) > 4:
         return t[:-3] + "y"
-    if t.endswith("es") and len(t) > 4 and not t.endswith(("ses", "xes", "zes", "ches", "shes")):
+    # "-es" is a plural ending only after o, ch, sh, x, z (tomatoes, peaches);
+    # elsewhere the e is the word's own: "pickles" became "pickl" while
+    # "pickle" stayed "pickle", so "dill pickle" lost USDA's "Pickles, dill"
+    # to a branded product (23 Oct 2026).
+    if len(t) > 4 and t.endswith(("oes", "ches", "shes", "xes", "zes")):
         return t[:-2]
     if t.endswith("s") and not t.endswith(("ss", "us", "is")):
         return t[:-1]
@@ -1265,7 +1270,7 @@ def _food_aliases() -> dict[str, dict]:
                               or now - _FOOD_ALIASES_TRIED_AT > _FOOD_ALIASES_RETRY_SECONDS):
         _FOOD_ALIASES_TRIED_AT = now
         for row in load_food_aliases():
-            if row.get("food") and row.get("portion") and row.get("alias"):
+            if row.get("food") and row.get("alias"):
                 _FOOD_ALIASES[tref.template_key(row["alias"])] = row
     return _FOOD_ALIASES
 
@@ -1276,8 +1281,9 @@ def _alias_match(ingredient: str, size_hint: str, unit: str) -> tuple[dict, dict
     enriched), and its portion when the recipe's unit is the alias's: "1 cup
     cooked penne" is "cup penne" (107 g), "1 baguette" is "1 baguette
     (about 22\" long)". Another unit ("2 slice baguette") keeps the food and
-    leaves the portion to pick_best_portion. The size hint can name its own
-    alias ("mini baguette"). None when no alias names the ingredient.
+    leaves the portion to pick_best_portion, as does an alias with no portion
+    (a synonym: "hot sauce" -> Hot pepper sauce). The size hint can name its
+    own alias ("mini baguette"). None when no alias names the ingredient.
     """
     aliases = _food_aliases()
     row = aliases.get(tref.template_key(f"{size_hint} {ingredient}")) if size_hint else None
@@ -1289,15 +1295,36 @@ def _alias_match(ingredient: str, size_hint: str, unit: str) -> tuple[dict, dict
     if food is None:
         return None
     u = unit.strip().lower()
-    unit_fits = (u in ("cup", "cups") if row["unit"] == "cup"
+    unit_fits = (u in ("cup", "cups") if row.get("unit") == "cup"
                  else u in ("", "piece", "pieces", "whole"))
     portion = None
-    if unit_fits:
+    if unit_fits and row.get("portion"):
         label = _portion_label(row["portion"])
         grams = float(row["portion"].get("grams") or 0)
         portion = next((p for p in food["portions"]
                         if p["label"] == label and abs(p["gram_weight"] - grams) < 1e-6), None)
     return food, portion
+
+
+def _merged_index(*indexes: USDAIndex) -> USDAIndex:
+    """One index of several searches' foods, each once, in search order."""
+    merged = USDAIndex()
+    for index in indexes:
+        for food in index:
+            if food["fdc_id"] not in merged._by_id:
+                merged.add(food)
+    return merged
+
+
+def _form_query(text: str) -> str:
+    """
+    The search text with its form words kept ("canned crushed tomatoes"),
+    only "finely" and the like dropped. strip_prep's query ("canned
+    tomatoes") fills the 160 search rows before "Tomatoes, crushed, canned"
+    comes up.
+    """
+    return " ".join(t for t in normalise(text).split()
+                    if t not in PREP_WORDS or (t not in NOT_FORM_WORDS and t != "raw"))
 
 
 def _search_usda_for_ingredient(query: str) -> USDAIndex:
@@ -1327,25 +1354,54 @@ BOOST_NEUTRAL_PREFIXES = {
 }
 
 
-def _boost_match_is_too_generic(ingredient: str, trigger: str) -> bool:
+# Words after a one-word trigger that leave it the food: its parts and the
+# ways it is counted ("garlic clove", "basil leaves", "salt, kosher").
+BOOST_NEUTRAL_SUFFIXES = {
+    "raw", "fresh", "whole", "leaf", "leaves", "clove", "cloves", "sprig",
+    "sprigs", "stalk", "stalks", "stem", "stems", "root", "piece", "pieces",
+    "bulb", "head", "kosher", "sea", "flake", "flakes", "fillet", "fillets",
+}
+
+
+def _boost_match_is_too_generic(ingredient: str, trigger: str, rule: dict | None = None) -> bool:
     """
     Block short generic boost triggers from hijacking more specific phrases.
     This keeps matches like "pickled red ginger" from collapsing to a plain
     ginger root entry while still allowing neutral prep variants such as
     "ground ginger" or "plain rice".
     """
-    ing_tokens = normalise(ingredient).split()
-    trig_tokens = normalise(trigger).split()
+    ing_tokens = [_canonical_token(t) for t in normalise(ingredient).split()]
+    trig_tokens = [_canonical_token(t) for t in normalise(trigger).split()]
     if len(trig_tokens) != 1 or len(ing_tokens) <= 1:
         return False
     token = trig_tokens[0]
     if token not in ing_tokens:
         return False
     idx = ing_tokens.index(token)
-    if idx == 0:
-        return False
     prefixes = ing_tokens[:idx]
-    return any(tok not in BOOST_NEUTRAL_PREFIXES and tok not in PREP_WORDS for tok in prefixes)
+    if any(tok not in BOOST_NEUTRAL_PREFIXES and tok not in PREP_WORDS for tok in prefixes):
+        return True
+    # A word after it that the rule's food doesn't have names a food the
+    # trigger only describes: "potato gnocchi" is gnocchi, and the "potato"
+    # rule made it raw potato, though USDA "Gnocchi, potato" scored 1.675;
+    # "garlic fried rice" was garlic (22 Oct 2026). "kabocha squash" keeps
+    # its rule: the pinned "Squash, winter" has the word.
+    raw_tokens = normalise(ingredient).split()
+    suffixes = [tok for tok, raw in zip(ing_tokens[idx + 1:], raw_tokens[idx + 1:])
+                if raw not in BOOST_NEUTRAL_SUFFIXES and raw not in PREP_WORDS]
+    if not suffixes or rule is None:
+        return False
+    named = normalise(rule.get("boost", ""))
+    if rule.get("fdc_id"):
+        try:
+            pinned = _fetch_food_by_fdc_id(str(rule["fdc_id"]))
+        except Exception:
+            return False  # can't tell; keep the rule
+        if pinned is None:
+            return False
+        named += " " + normalise(f"{pinned['display_name']} {pinned.get('raw_description', '')}")
+    named_tokens = {_canonical_token(t) for t in named.split()}
+    return any(tok not in named_tokens for tok in suffixes)
 
 
 def _boost_trigger_matches(ingredient: str, trigger: str, exact: bool = False) -> bool:
@@ -1364,13 +1420,28 @@ def _boost_trigger_matches(ingredient: str, trigger: str, exact: bool = False) -
         return False
     if exact:
         return ing_norm == trig_norm
-    if trig_norm in ing_norm:
+    # Whole words (a plural too): "egg" isn't in "eggplant", "salt" in
+    # "unsalted", "ginger" in "gingerbread", "butter" in "buttermilk".
+    if re.search(rf"(?<![a-z0-9]){re.escape(trig_norm)}(?:e?s)?(?![a-z0-9])", ing_norm):
         return True
 
     ing_tokens = [_canonical_token(t) for t in ing_norm.split() if t]
     trig_tokens = [_canonical_token(t) for t in trig_norm.split() if t]
     if len(trig_tokens) <= 1 or len(ing_tokens) != len(trig_tokens):
         return False
+    # Reordered only ("tofu, silken"): a plural alone doesn't wake a rule
+    # written for the other spelling ("gyoza wrappers" at 9 g each).
+    return ing_tokens != trig_tokens and sorted(ing_tokens) == sorted(trig_tokens)
+
+
+def _boost_changes_colour(ingredient: str, rule: dict) -> bool:
+    """A rule whose search names another colour than the line: "bell
+    pepper" searches "sweet red pepper", and "yellow bell pepper" came out
+    red (22 Oct 2026). apply_boosts swaps in the line's colour."""
+    said = set(normalise(ingredient).split()) & COLOR_WORDS
+    boost = set(normalise(rule.get("boost", "")).split()) & COLOR_WORDS
+    return bool(said and boost and not said & boost)
+
 
 def apply_boosts(ingredient, boost_rules, category=""):
     """
@@ -1397,8 +1468,14 @@ def apply_boosts(ingredient, boost_rules, category=""):
             continue   # skip comment/metadata objects
         if not _boost_trigger_matches(ingredient, rule["trigger"], rule.get("exact", False)):
             continue
-        if _boost_match_is_too_generic(ingredient, rule["trigger"]):
+        if _boost_match_is_too_generic(ingredient, rule["trigger"], rule):
             continue
+        if _boost_changes_colour(ingredient, rule) and not rule.get("fdc_id"):
+            # The line's colour in the rule's search: "yellow bell pepper"
+            # searches "sweet yellow pepper raw", not red.
+            said = [t for t in normalise(ingredient).split() if t in COLOR_WORDS]
+            rule = {**rule, "boost": " ".join(
+                said[0] if t in COLOR_WORDS else t for t in normalise(rule["boost"]).split())}
         if any(ex.lower() in ing for ex in rule.get("exclude", [])):
             continue
         rule_cat = rule.get("category", "").lower()
@@ -1520,6 +1597,22 @@ _WEIGHT_UNITS = {"g", "gram", "grams", "kg", "oz", "ounce", "ounces", "lb", "lbs
                  "pound", "pounds", "ml", "l"}
 
 
+_BASIS_LABEL_RE = re.compile(r"^\s*(?:100\s*(?:g|grm|grams?)\b.*)?$", re.I)
+
+
+def _is_basis_portion(p: dict) -> bool:
+    """
+    The per-100 g basis row ("100g", portion_idx 0), not a real measure that
+    happens to weigh about 100 g. Every 100 g portion used to be skipped, so
+    FNDDS "Green beans, raw" (1 cup = 100 g) had no cup, and "1 cup green
+    beans" swapped to "Green beans, pickled" for its 145 g cup (22 Oct 2026).
+    """
+    if p.get("portion_idx", 1) == 0:
+        return True
+    return (abs(p.get("gram_weight", 100.0) - 100.0) <= 1.0
+            and bool(_BASIS_LABEL_RE.match(p.get("label") or "")))
+
+
 def _has_unit_portion(food: dict, unit: str) -> bool | None:
     """
     Whether *food* has a portion that can express the recipe *unit*.
@@ -1535,7 +1628,7 @@ def _has_unit_portion(food: dict, unit: str) -> bool | None:
     if not keywords:
         return None
     for p in food.get("portions", []):
-        if abs(p.get("gram_weight", 100.0) - 100.0) <= 1.0:
+        if _is_basis_portion(p):
             continue
         label = p.get("label", "").lower()
         if any(re.search(rf"\b{re.escape(kw)}", label) for kw in keywords):
@@ -1551,6 +1644,16 @@ def _has_unit_portion(food: dict, unit: str) -> bool | None:
 # HEAD_MATCH_SCORE, and any USDA row carrying the ingredient loses points for
 # each qualifier that names a different product than the one asked for.
 HEAD_MATCH_SCORE = 0.95
+# How a head match counts (23 Oct 2026; tier since, see head_scoring_trial.py):
+#   "floor": at least HEAD_MATCH_SCORE; a higher name similarity stands, so
+#            "Peas, edible-podded, raw" (0.85) still beat "Peas, green, raw"
+#            (0.70) though both carry one variant.
+#   "tier":  exactly HEAD_MATCH_SCORE, its qualifiers and variants deciding
+#            among head matches, and ranked HEAD_TIER_RANK above every row
+#            that isn't one, as the app's search does (tier 4).
+# Set with BLOBB_HEAD_SCORING; head_scoring_trial.py compares the two.
+HEAD_SCORING = os.environ.get("BLOBB_HEAD_SCORING", "tier")
+HEAD_TIER_RANK = 10.0
 HEAD_UNKNOWN_PENALTY = 0.08
 HEAD_FOUNDATION_BONUS = 0.03
 VARIANT_PENALTY = 0.25
@@ -1563,62 +1666,202 @@ FOUNDATION_NO_ENERGY_PENALTY = 0.30
 # score, when nothing comparable is there.
 NO_MEASURABLE_PORTION_PENALTY = 0.15
 
+# Per prep word the ingredient names and the food's name repeats. strip_prep
+# drops "diced", "grated", "frozen" before scoring, so "canned diced
+# tomatoes" scored as "canned tomatoes" and "Soup, tomato, canned" (1.10)
+# beat "Diced ripe red tomatoes, canned" (1.047) (22 Oct 2026).
+FORM_WORD_BONUS = 0.12
+# Prep words that say how finely, not which product.
+NOT_FORM_WORDS = {"finely", "roughly", "thinly", "extra"}
+
+# The USDA description rules' word lists, shared with the app's food search
+# (blobb-app lib/data/search_rules.json, a copy of this file) so Add meal and
+# Convert recipe pick the same everyday product. search_rank_cases.json holds
+# the cases both must pass (test_search_rules_shared.py). Their history: the
+# group labels "mollusks", "fish" (22 Oct 2026: "Mollusks, squid, mixed
+# species, raw" lost "squid" to a frozen-tubes row at half its calories), the
+# variant "baby" ("Baby zucchini, raw" won "1 medium zucchini"), and the
+# preparations ("Tofu, fried" for "tofu") from the app's 23 Oct 2026 search
+# eval.
+SEARCH_RULES = json.loads(Path(__file__).with_name("search_rules.json").read_text())
+
 # Leading USDA group labels skipped before looking for the head:
 # "Spices, cinnamon, ground", "Leavening agents, baking powder, …".
-USDA_GROUP_LABELS = {
-    "spices", "leavening agents", "soup", "beverages", "sweeteners",
-    "nuts", "seeds",
-}
+USDA_GROUP_LABELS = set(SEARCH_RULES["group_labels"]["words"])
+# "Soup, …" is a group label only when the line asks for a soup: "Soup,
+# chicken broth" is chicken broth, "Soup, potato" isn't potato.
+SOUP_LABEL = SEARCH_RULES["soup_label"]["label"]
+SOUP_QUERY_WORDS = set(SEARCH_RULES["soup_label"]["query_words"])
+# "Chicken, broilers or fryers, breast, …": skipped to find the cut.
+USDA_KIND_SEGMENTS = set(SEARCH_RULES["kind_segments"]["words"])
 
 # Qualifier words that describe the everyday product or only its labelling.
-STANDARD_QUALIFIER_WORDS = {
-    "whole", "milk", "fluid", "granulated", "all", "purpose", "enriched",
-    "unenriched", "bleached", "unbleached", "raw", "fresh", "ground", "plain",
-    "regular", "cultured", "ripe", "year", "round", "average", "commercially",
-    "prepared", "unprepared", "table", "white", "with", "added", "vitamin",
-    "a", "d", "and", "milkfat", "double", "acting", "flesh", "skin", "salted",
-    "stick", "iodized", "cured",
-}
+STANDARD_QUALIFIER_WORDS = set(SEARCH_RULES["standard_qualifier_words"]["words"])
 
 # Qualifiers that name a different product: lighter versions, other animals
-# and plants, other forms, and USDA's "not (further) specified" rows, which
-# users can't read. Not counted when the ingredient itself says the word
-# ("brown sugar", "nonfat milk").
-VARIANT_QUALIFIER_RE = re.compile(
-    r"\b(light|lite|reduced fat|low fat|lowfat|nonfat|non fat|fat free|"
-    r"part skim|skim|low sodium|reduced sodium|no salt|sheep|goat|buffalo|"
-    r"human|soy|almond|coconut|oat|rice|green|dried|dry|powdered|condensed|"
-    r"evaporated|instant|imitation|substitute|brown|nfs|ns|alaska native)\b"
+# and plants, other forms, preparations that change the food, and USDA's
+# "not (further) specified" rows, which users can't read. Not counted when
+# the ingredient itself says the word ("brown sugar", "nonfat milk").
+VARIANT_QUALIFIER_RE = re.compile(r"\b(" + "|".join(
+    SEARCH_RULES["variant_qualifiers"]["patterns"] + SEARCH_RULES["cooking_words"]["words"]) + r")\b")
+# Cooking words are variants too, in recipes only: a recipe's food is raw
+# ("Turkey, Ground, cooked" isn't "ground turkey", "1 cup quinoa" is
+# uncooked), unless the line is cooked or names a way of cooking it ("baked
+# beans"). The app's search leaves them out (search_rules.json).
+COOKING_WORD_RE = re.compile(r"\b(" + "|".join(SEARCH_RULES["cooking_words"]["words"]) + r")\b")
+
+# Chicken breast means skinless unless the line mentions skin: a skin-on row
+# is one more variant.
+SKINLESS_BY_DEFAULT_CUTS = set(SEARCH_RULES["skin"]["skinless_by_default_cuts"])
+SKIN_ON_RE = re.compile(r"\b(" + SEARCH_RULES["skin"]["skin_on_pattern"] + r")\b")
+
+# A name that uses the line's food only to describe another ("Steak sauce"
+# for "steak") ranks MODIFIER_DESCRIBES_PENALTY lower; one mixing it with
+# another food ("Clam and tomato juice" for "clam juice") or saying it lacks
+# it ("Chili hot dog, no bun") ranks MODIFIER_MIX_PENALTY lower. Rank only,
+# like OTHER_DISH_PENALTY. See _query_modifies.
+MODIFIER_PART_BREAK_RE = re.compile(
+    " (?:" + "|".join(SEARCH_RULES["modifier_rules"]["part_breaks"]) + ") ")
+MODIFIER_MIX_WORDS = set(SEARCH_RULES["modifier_rules"]["mix_words"])
+MODIFIER_LACK_WORDS = set(SEARCH_RULES["modifier_rules"]["lack_words"])
+MODIFIER_DESCRIBES_PENALTY = 0.10
+MODIFIER_MIX_PENALTY = 0.50
+
+
+# USDA rows that are someone's finished dish, not an ingredient: "Mozzarella
+# sticks, Applebee's" tied "fresh mozzarella" at 0.69 and won on search order
+# over "Mozzarella cheese, whole milk"; "Pepperoni pizza, 14\"" outscored
+# "Pepperoni, beef and pork, sliced" for "pepperoni" (22 Oct 2026). They are
+# left out unless the line names the dish: every word of the row's name
+# before its first comma ("pepperoni pizza").
+DISH_ONLY_CATEGORIES = {"restaurant foods", "fast foods"}
+# Pure fat is about 900 kcal per 100 g. "JAPANESE STYLE MAYONNAISE" (branded
+# 2278440) says 2000, and won "Japanese mayonnaise" (22 Oct 2026).
+MAX_KCAL_PER_100G = 905.0
+# Categories of prepared dishes, which lose ties to plain foods.
+DISH_CATEGORY_RE = re.compile(
+    r"restaurant|fast food|meals|entrees|side dishes|mixed dishes|pizza|"
+    r"sandwich|burger|soups?\b|baby food|muffins|quick breads|cakes|pies|"
+    r"cookies|brownies|pastries|doughnuts|desserts",
+    re.IGNORECASE,
 )
+# Ranking penalty for a prepared dish named after another food: "Muffin,
+# zucchini" for "zucchini" (22 Oct 2026). Rank only, like
+# NO_MEASURABLE_PORTION_PENALTY.
+OTHER_DISH_PENALTY = 0.30
+
+
+def _is_other_dish(food: dict, query_tokens: set[str]) -> bool:
+    """A dish-category USDA row whose name starts with a word the line
+    doesn't say ("Muffin, zucchini", "Bread, zucchini")."""
+    if food.get("source") != "usda" or not _is_dish_category(food):
+        return False
+    head = (food.get("display_name") or "").split(",")[0]
+    head_tokens = {_canonical_token(t) for t in normalise(head).split()}
+    return bool(head_tokens) and not head_tokens & query_tokens
+# Tie-break order of USDA datasets: the standard reference rows first.
+DATA_TYPE_RANK = {"foundation": 3, "sr legacy": 3, "survey (fndds)": 2}
+
+
+def _is_unasked_dish(food: dict, query_tokens: set[str]) -> bool:
+    if food.get("source") != "usda":
+        return False
+    if (food.get("category") or "").strip().lower() not in DISH_ONLY_CATEGORIES:
+        return False
+    head = (food.get("display_name") or "").split(",")[0]
+    head_tokens = {_canonical_token(t) for t in normalise(head).split()}
+    return not head_tokens or not head_tokens <= query_tokens
+
+
+# Foods of one community, named for it: "Yellow cornmeal (Navajo)" took
+# "yellow cornmeal" from "Cornmeal, whole-grain, yellow" (22 Oct 2026).
+# Ranked behind unless the line names it.
+SPECIALTY_CATEGORIES = {"american indian/alaska native foods"}
+SPECIALTY_PENALTY = 0.75
+
+
+def _is_specialty_row(food: dict, query_tokens: set[str]) -> bool:
+    if (food.get("category") or "").strip().lower() not in SPECIALTY_CATEGORIES:
+        return False
+    named = re.findall(r"\(([^)]*)\)", f"{food.get('display_name', '')} {food.get('raw_description', '')}")
+    named_tokens = {_canonical_token(t) for n in named for t in normalise(n).split()}
+    return not named_tokens & query_tokens
+
+
+def _is_dish_category(food: dict) -> bool:
+    return bool(DISH_CATEGORY_RE.search(food.get("category") or ""))
+
+
+def _data_type_rank(food: dict) -> int:
+    rank = DATA_TYPE_RANK.get((food.get("data_type") or "").strip().lower(), 1)
+    # A Foundation row without calories is a data gap, not a reference row.
+    if (food.get("data_type") or "").lower() == "foundation" and not food.get("energy_kcal"):
+        return 0
+    return rank
 
 
 def _usda_segments(food: dict) -> list[str]:
-    desc = re.sub(r"\([^)]*\)", "", food.get("raw_description") or "")
+    return _usda_segments_of(food.get("raw_description") or "")
+
+
+def _usda_segments_of(text: str) -> list[str]:
+    # A parenthesis is one more qualifier: "Cornmeal, yellow (Navajo)" is a
+    # variant, and with it dropped the row took "yellow cornmeal" from
+    # "Cornmeal, whole-grain, yellow" (22 Oct 2026). USDA's own notes in
+    # parentheses ("Includes foods for USDA's Food Distribution Program")
+    # stay out.
+    desc = re.sub(r"\((?:includes|formerly|for use|also)[^)]*\)", "", text, flags=re.I)
+    desc = re.sub(r"\(([^)]*)\)", r", \1", desc)
     return [seg.strip() for seg in desc.split(",") if seg.strip()]
 
 
 def _usda_head_qualifiers(search: str, food: dict) -> list[str] | None:
     """
     The qualifier segments of *food*'s USDA description when *search* is its
-    head: the first segment, or the first two in either order ("Cream, sour"
-    for "sour cream"), after any leading group label. None when it isn't.
+    head, or else of its display name: USDA files bacon as "Pork, cured,
+    bacon, cooked, baked", Blobb's name for it is "Bacon, baked". None when
+    neither is.
     """
-    segments = _usda_segments(food)
-    if not segments:
-        return None
-    if normalise(segments[0]) in USDA_GROUP_LABELS and len(segments) > 1:
-        segments = segments[1:]
-    query = sorted(_canonical_token(t) for t in normalise(search).split())
-    if not query:
+    qualifiers = _head_qualifiers_of(search, food.get("raw_description") or "")
+    if qualifiers is None and food.get("display_name"):
+        qualifiers = _head_qualifiers_of(search, food["display_name"])
+    return qualifiers
+
+
+def _head_qualifiers_of(search: str, text: str) -> list[str] | None:
+    """
+    The segments of *text* after its head when *search* is the head: the
+    first segment with the words in order ("Chocolate milk" isn't "milk
+    chocolate"), or the first two in either order ("Cream, sour" for "sour
+    cream"), with or without a leading group label or bird kind ("broiler or
+    fryers"). None when it isn't.
+    """
+    segments = _usda_segments_of(text)
+    query = [_canonical_token(t) for t in normalise(search).split()]
+    if not segments or not query:
         return None
 
     def tokens(segs):
-        return sorted(_canonical_token(t) for seg in segs for t in normalise(seg).split())
+        return [_canonical_token(t) for seg in segs for t in normalise(seg).split()]
 
-    if tokens(segments[:1]) == query:
-        return segments[1:]
-    if len(segments) > 1 and tokens(segments[:2]) == query:
-        return segments[2:]
+    def head_of(segs):
+        if not segs:
+            return None
+        if tokens(segs[:1]) == query:
+            return segs[1:]
+        if len(segs) > 1 and sorted(tokens(segs[:2])) == sorted(query):
+            return segs[2:]
+        return None
+
+    direct = head_of(segments)
+    if direct is not None:
+        return direct
+    label = normalise(segments[0])
+    if len(segments) > 1 and (label in USDA_GROUP_LABELS or (
+            label == SOUP_LABEL and any(t in SOUP_QUERY_WORDS for t in query))):
+        return head_of(segments[1:])
+    if len(segments) > 2 and normalise(segments[1]) in USDA_KIND_SEGMENTS:
+        return head_of([segments[0], *segments[2:]])
     return None
 
 
@@ -1626,7 +1869,7 @@ def _has_measurable_portion(food: dict) -> bool:
     """A portion people can measure with: not USDA's "RACC" or a bare 100 g."""
     for p in food.get("portions", []):
         label = (p.get("label") or "").strip().lower()
-        if label and "racc" not in label and abs(p.get("gram_weight", 100.0) - 100.0) > 1.0:
+        if label and "racc" not in label and not _is_basis_portion(p):
             return True
     return False
 
@@ -1638,16 +1881,71 @@ def _is_unknown_qualifier(segment: str) -> bool:
     return not all(tok in STANDARD_QUALIFIER_WORDS or tok.isdigit() for tok in seg.split())
 
 
-def _usda_variant_penalty(search: str, food: dict) -> float:
+def _usda_variant_penalty(search: str, food: dict, is_cooked: bool = False) -> float:
     """VARIANT_PENALTY per variant word in a USDA row that carries every query word."""
+    return VARIANT_PENALTY * _usda_variant_count(search, food, is_cooked)
+
+
+def _usda_variant_count(search: str, food: dict, is_cooked: bool = False) -> int:
+    """Variant words in *food*'s description that *search* doesn't say, when
+    the description carries every query word; a skin-on row counts one more
+    for a cut that's skinless by default ("chicken breast"). Cooking words
+    don't count for a line read as cooked."""
     desc = normalise(food.get("raw_description") or "")
     query = {_canonical_token(t) for t in normalise(search).split()}
     desc_tokens = {_canonical_token(t) for t in desc.split()}
     if not query or not query <= desc_tokens:
-        return 0.0
+        return 0
     hits = {m.group(0) for m in VARIANT_QUALIFIER_RE.finditer(desc)}
     hits = {h for h in hits if not any(_canonical_token(w) in query for w in h.split())}
-    return VARIANT_PENALTY * len(hits)
+    # A row's cooking state is one variant ("cooked, baked"), and none when
+    # the line names a way of cooking it ("baked potato") or is cooked.
+    cooking = {h for h in hits if COOKING_WORD_RE.fullmatch(h)}
+    says_cooking = any(COOKING_WORD_RE.fullmatch(t) for t in normalise(search).split())
+    hits = (hits - cooking) | ({"cooked"} if cooking and not is_cooked and not says_cooking else set())
+    skin_on = (bool(query & SKINLESS_BY_DEFAULT_CUTS) and "skin" not in query
+               and bool(SKIN_ON_RE.search(desc)))
+    return len(hits) + skin_on
+
+
+def _query_modifies(search: str, name: str) -> str:
+    """
+    How *name* uses the line's food: "none"; "describes" when the food only
+    describes another ("Steak sauce" for "steak", "Cheese ravioli with
+    marinara sauce" for "marinara sauce"); "mix_or_lacks" when it's mixed with
+    a food the line doesn't say ("Clam and tomato juice" for "clam juice") or
+    the name says it lacks it ("Chili hot dog, no bun"). English names put the
+    food last in their first part, before any "with", "in" or "on"; a line of
+    several words found in order there names the dish ("grilled cheese" is
+    "Grilled cheese sandwich"). The app's queryModifies, kept to the same
+    cases (search_rank_cases.json).
+    """
+    wanted = [_canonical_token(t) for t in normalise(search).split()]
+    if not wanted:
+        return "none"
+    last = wanted[-1]
+    plain = re.sub(r"\([^)]*\)", "", name)
+    words = [_canonical_token(t) for t in normalise(plain).split()]
+    if any(w in MODIFIER_LACK_WORDS and nxt in wanted for w, nxt in zip(words, words[1:])):
+        return "mix_or_lacks"
+
+    def tokens(text):
+        return [_canonical_token(t) for t in normalise(text).split()]
+
+    segments = [MODIFIER_PART_BREAK_RE.split(normalise(seg)) for seg in plain.split(",")]
+    head = tokens(segments[0][0])
+    for i in range(1, len(head) - 1):
+        if head[i] in MODIFIER_MIX_WORDS and (head[i - 1] in wanted) != (head[i + 1] in wanted):
+            return "mix_or_lacks"
+    if len(wanted) > 1 and any(head[i:i + len(wanted)] == wanted for i in range(len(head))):
+        return "none"
+    if len(head) >= 2 and last in head and head[-1] != last:
+        return "describes"
+    before = {t for parts in segments for t in tokens(parts[0])}
+    after = {t for parts in segments for part in parts[1:] for t in tokens(part)}
+    if last not in before and last in after:
+        return "describes"
+    return "none"
 
 
 _SERVING_VOLUME_RE = re.compile(r"\b(cups?|tbsp|tablespoons?|tsp|teaspoons?|ml|fl)\b", re.I)
@@ -1687,16 +1985,24 @@ def _typical_branded(group: list[dict], unit: str) -> dict:
     return min(typical, key=lambda f: (abs((f.get("energy_kcal") or 0.0) - median), str(f["fdc_id"])))
 
 
-def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_cooked=False, unit=""):
+def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_cooked=False, unit="",
+                form_words=()):
     """
     Score every food against display_name and alternate names.
     For vegetable entries, also compute a core-stripped score (both sides
     stripped of prep/filler words) and take the max â€” this prevents USDA
     names like "Cucumber, with peel, raw" from scoring low against "cucumbers"
     due to bigram dilution from filler tokens.
+    [form_words] are words the search left out that say which form of the
+    food it is ("diced", "grated", "frozen"): a row naming one scores
+    FORM_WORD_BONUS more.
     Returns (best_food, best_score, matched_alt_name).
     """
     best_food, best_score, best_alt, best_food_is_raw = None, 0.0, None, False
+    form_words = {_canonical_token(w) for w in form_words}
+    # A cooking word the search left out ("baked" of "baked beans") still
+    # says how the line's food is cooked.
+    line_cooked = is_cooked or any(COOKING_WORD_RE.fullmatch(w) for w in form_words)
     best_rank = 0.0
     best_segments = 99
     search_core = _core(search)
@@ -1706,7 +2012,13 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
     raw_rice_request = "rice" in search and any(k in search for k in ("raw", "uncooked", "dry"))
     food_iter = foods.candidates(search) if hasattr(foods, "candidates") else foods
     ranked = []  # (rank, food, score, alt), for the branded tie-break below
+    query_token_set = set(query_tokens)
+    best_plain = (False, False, -99, -99, -99)
     for food in food_iter:
+        if _is_unasked_dish(food, query_token_set):
+            continue
+        if (food.get("energy_kcal") or 0.0) > MAX_KCAL_PER_100G:
+            continue  # a label error: nothing is over 9 kcal a gram
         food_tokens = [_canonical_token(t) for t in normalise(food["display_name"]).split()]
         s_display = bigram_similarity(search, normalise(food["display_name"]))
         s = s_display
@@ -1790,7 +2102,7 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
             qualifiers = _usda_head_qualifiers(search, food)
             if qualifiers is not None:
                 head_won = True
-                if s < HEAD_MATCH_SCORE:
+                if HEAD_SCORING == "tier" or s < HEAD_MATCH_SCORE:
                     s = HEAD_MATCH_SCORE
                     winning_alt = None
                 s -= HEAD_UNKNOWN_PENALTY * sum(_is_unknown_qualifier(q) for q in qualifiers)
@@ -1799,11 +2111,12 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
                 if (food.get("data_type") == "Foundation" and food.get("energy_kcal")
                         and _has_measurable_portion(food)):
                     s += HEAD_FOUNDATION_BONUS
-            s -= _usda_variant_penalty(search, food)
+            s -= _usda_variant_penalty(search, food, line_cooked)
         # For vegetables, rescore using core-stripped names and take the max.
         # Raw/cooked distinction is irrelevant for produce â€” a cucumber is a
         # cucumber regardless of "with peel, raw" in the USDA name.
-        if food.get("category") == VEG_CATEGORY and not is_processed:
+        if food.get("category") == VEG_CATEGORY and not is_processed and not (
+                head_won and HEAD_SCORING == "tier"):
             # Strip size words from the search side only â€” "medium carrots"
             # should match "Carrots, raw" but size must stay in the top-level
             # search string for portion label matching downstream.
@@ -1822,25 +2135,51 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
         # have calories.
         if food.get("data_type") == "Foundation" and not food.get("energy_kcal"):
             s -= FOUNDATION_NO_ENERGY_PENALTY
+        # The boost caps the score at 1.0, which made unlike rows tie ("Beef
+        # broth, ready-to-serve" 1.23 and "..., condensed" 1.09 both 1.0); the
+        # part cut off still ranks them.
+        cap_cut = 0.0
         if boosted and boost_weight:
+            cap_cut = max(0.0, s + boost_weight * 0.15 - 1.0)
             s = min(1.0, s + boost_weight * 0.15)
+        if form_words:
+            named = ({_canonical_token(t) for t in normalise(food["display_name"]).split()}
+                     | {_canonical_token(t) for t in normalise(raw_desc).split()})
+            s += FORM_WORD_BONUS * len(form_words & named)
         if s >= UNIT_PORTION_FLOOR and _has_unit_portion(food, unit):
             s += UNIT_PORTION_BONUS
         # Rows people can't measure rank behind ones they can; s itself is
         # left alone so confidence and thresholds see the real match.
-        rank = s
+        rank = s + cap_cut
+        if head_won and HEAD_SCORING == "tier":
+            rank += HEAD_TIER_RANK
         if food.get("source") == "usda" and not _has_measurable_portion(food):
             rank -= NO_MEASURABLE_PORTION_PENALTY
+        if _is_other_dish(food, query_token_set):
+            rank -= OTHER_DISH_PENALTY
+        if _is_specialty_row(food, query_token_set):
+            rank -= SPECIALTY_PENALTY
+        if not head_won:
+            modifies = _query_modifies(search, food["display_name"])
+            if modifies == "describes":
+                rank -= MODIFIER_DESCRIBES_PENALTY
+            elif modifies == "mix_or_lacks":
+                rank -= MODIFIER_MIX_PENALTY
         # Ties (often two rows at the boosted 1.0 cap) go to a raw row, then
-        # to the plainer description: "Onions, raw" over "Onions, white, raw".
+        # to a plain food over a dish, then to the one with fewer words the
+        # line didn't say ("Green peas, frozen" over "Peas and onions,
+        # frozen"), then to the plainer description ("Onions, raw" over
+        # "Onions, white, raw"), then to a standard
+        # reference row (Foundation, SR Legacy) over FNDDS. Without these,
+        # the row Supabase returned first won.
         segments = len(_usda_segments(food)) if food.get("source") == "usda" else 99
         is_raw = bool(food.get("is_raw"))
+        extra = len(set(food_tokens) - query_token_set)
+        plain = (is_raw, not _is_dish_category(food), -extra, -segments, _data_type_rank(food))
         ranked.append((rank, food, s, winning_alt))
-        if (rank > best_rank
-                or (rank == best_rank and is_raw and not best_food_is_raw)
-                or (rank == best_rank and is_raw == best_food_is_raw and segments < best_segments)):
+        if rank > best_rank or (rank == best_rank and plain > best_plain):
             best_score, best_food, best_alt, best_food_is_raw = s, food, winning_alt, is_raw
-            best_rank, best_segments = rank, segments
+            best_rank, best_segments, best_plain = rank, segments, plain
     if best_food is not None and best_food.get("source") == "branded":
         name = normalise(best_food["display_name"])
         tied = [(f, sc, alt) for r, f, sc, alt in ranked
@@ -1883,7 +2222,7 @@ def _best_volumetric_portion(portions: list[dict], unit: str) -> dict | None:
     best_convertible_diff = None
 
     for p in portions:
-        if abs(p.get("gram_weight", 100.0) - 100.0) <= 1.0:
+        if _is_basis_portion(p):
             continue
         label_unit = _portion_label_unit(p["label"])
         if not label_unit or label_unit not in VOLUME_TO_TSP:
@@ -2077,27 +2416,35 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens,
     """
     For a cup/tbsp/tsp recipe amount, a food with no volume portion can't be
     measured: "1.5 cups" became 1.5 × its "RACC" serving (flour: 45 g, not
-    190 g). Portion picking can't switch foods, so switch here, to a
-    candidate that has a volume portion and whose name carries every
-    ingredient word ("all-purpose" + "flour", so not rice flour): the one
-    sharing the most description words with *food* (its closest sibling,
-    "enriched, bleached" rather than "unenriched"), then the best score.
-    Keeps *food* when no candidate qualifies.
+    190 g). The food stays; its volume comes from a sibling's: a candidate
+    with a plain volume portion whose name carries every ingredient word
+    ("all-purpose" + "flour", so not rice flour), the one sharing the most
+    description words with *food*, then the best score. That portion is
+    added to a copy of *food* ("_density_from" names the sibling).
+
+    It used to return the sibling itself, a different food: "green beans"
+    became "Green beans, pickled" and "heavy cream" (Foundation, 1 RACC
+    only) "Heavy whipping cream" (22 Oct 2026). Keeps *food* unchanged when
+    no candidate qualifies.
     """
     # ml already converts to grams (1 ml ≈ 1 g), so only spoons and cups
-    # depend on the food having a volume portion.
-    if (unit.lower() not in VOLUMETRIC_UNITS or to_grams(1.0, unit, "") is not None
-            or _has_compatible_volumetric_serving(food, unit)):
+    # depend on the food having a volume portion; counts ("1 medium", "2
+    # stalks") on a count portion. Weights convert by grams.
+    if unit.lower() in VOLUMETRIC_UNITS:
+        if to_grams(1.0, unit, "") is not None or _has_compatible_volumetric_serving(food, unit):
+            return food
+    elif _has_unit_portion(food, unit) is not False or _own_count_portion(food, search):
         return food
     food_tokens = set(normalise(food.get("raw_description") or food["display_name"]).split())
-    best, best_key = None, None
+    best, best_key, best_portion = None, None, None
     for cand in foods:
         if cand is food or not cand.get("energy_kcal"):
             continue
-        if not _has_compatible_volumetric_serving(cand, unit):
+        portion = _density_portion(cand, unit, search)
+        if portion is None:
             continue
-        if _usda_variant_penalty(search, cand):
-            continue  # never swap to a lighter or other variant ("Lite" syrup)
+        if _usda_variant_penalty(search, cand) or _is_dish_category(cand):
+            continue  # never borrow from a lighter or other variant ("Lite" syrup)
         label_tokens = (set(normalise(cand["display_name"]).split())
                         | set(normalise(cand.get("raw_description", "")).split()))
         if not all(_token_in_label(tok, label_tokens) for tok in query_tokens):
@@ -2105,8 +2452,100 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens,
         _, score, _ = _score_list(search, [cand], boost_weight, boosted, is_processed, is_cooked, unit)
         overlap = len(food_tokens & set(normalise(cand.get("raw_description") or cand["display_name"]).split()))
         if best is None or (overlap, score) > best_key:
-            best, best_key = cand, (overlap, score)
-    return best or food
+            best, best_key, best_portion = cand, (overlap, score), portion
+    if best is None:
+        best, best_portion = _density_relative(food, foods, unit, search, query_tokens)
+    if best is None:
+        return food
+    borrowed = {**best_portion,
+                "portion_id": f"{food['fdc_id']}-vol-{best['fdc_id']}",
+                "portion_idx": max([p.get("portion_idx", 0) for p in food.get("portions", [])] + [0]) + 1}
+    return {**food, "portions": list(food.get("portions", [])) + [borrowed],
+            "_density_from": best["fdc_id"]}
+
+
+def _density_relative(food, foods, unit, search, query_tokens):
+    """
+    When no candidate carries every ingredient word: a USDA reference row
+    (Foundation, SR Legacy) in *food*'s own category carrying all of them
+    but one, searched for without each word in turn. Foundation "Spinach,
+    baby" has only "1 RACC"; "Spinach, raw" (1 cup, 30 g) measures it, and
+    "Beans, white, canned" measures "Cannellini beans, canned". The
+    calories stay *food*'s. Returns (relative, portion) or (None, None).
+    """
+    category = (food.get("category") or "").strip().lower()
+    tokens = [t for t in query_tokens if t]
+    if not category or len(tokens) < 2:
+        return None, None
+    pool = list(foods)
+    for i in range(len(tokens)):
+        pool.extend(_search_usda_for_ingredient(" ".join(tokens[:i] + tokens[i + 1:])))
+    food_tokens = set(normalise(food.get("raw_description") or food["display_name"]).split())
+    best, best_key, best_portion, seen = None, None, None, set()
+    for cand in pool:
+        if cand["fdc_id"] in seen or cand["fdc_id"] == food["fdc_id"]:
+            continue
+        seen.add(cand["fdc_id"])
+        if (_data_type_rank(cand) < 3 or not cand.get("energy_kcal")
+                or (cand.get("category") or "").strip().lower() != category):
+            continue
+        portion = _density_portion(cand, unit, search)
+        if portion is None or _usda_variant_penalty(search, cand):
+            continue
+        label_tokens = (set(normalise(cand["display_name"]).split())
+                        | set(normalise(cand.get("raw_description", "")).split()))
+        kept = [tok for tok in tokens if _token_in_label(tok, label_tokens)]
+        if len(kept) < len(tokens) - 1:
+            continue
+        # Scored on the words it carries: "spinach" finds "Spinach, raw"
+        # (its head) over "Spinach souffle".
+        reduced = " ".join(kept)
+        _, score, _ = _score_list(reduced, [cand], 0.0, False, unit=unit)
+        is_head = _usda_head_qualifiers(reduced, cand) is not None
+        # Then the same form as *food* ("drained" beans weigh less a cup).
+        overlap = len(food_tokens & set(normalise(cand.get("raw_description") or cand["display_name"]).split()))
+        key = (len(kept), is_head, overlap, round(score, 3))
+        if best is None or key > best_key:
+            best, best_key, best_portion = cand, key, portion
+    return best, best_portion
+
+
+def _density_portion(food: dict, unit: str, line: str) -> dict | None:
+    """
+    *food*'s volume portion to measure [unit] by, for another food: a plain
+    one ("1 cup", "1 tbsp"), in [unit] if there is one, else one whose other
+    words the [line] says ("cup, chopped" for "chopped green beans"). Never
+    one measuring another form ("1 cup, whipped" weighs half a cup of cream).
+    For a count unit, its count portion ("1 medium" first, for pieces).
+    """
+    if unit.lower() not in VOLUMETRIC_UNITS:
+        keywords = PORTION_UNIT_KEYWORDS.get(unit.lower()) or PORTION_UNIT_KEYWORDS["piece"]
+        counted = [(i, p) for p in food.get("portions", []) if p.get("gram_weight")
+                   and not _is_basis_portion(p)
+                   for i, kw in enumerate(keywords)
+                   if re.search(rf"\b{re.escape(kw)}", (p.get("label") or "").lower())]
+        return min(counted, key=lambda x: (x[0], bool(SIZED_LABEL_RE.search(
+            x[1].get("label") or ""))))[1] if counted else None
+    target = _normalise_volume_unit(unit)
+    usable = [p for p in food.get("portions", [])
+              if p.get("gram_weight") and not _is_basis_portion(p)
+              and _portion_label_unit(p.get("label", "")) in VOLUME_TO_TSP
+              and _portion_fit(p["label"], line) < 3]
+    if not usable:
+        return None
+    return min(usable, key=lambda p: (_portion_fit(p["label"], line),
+                                      _portion_label_unit(p["label"]) != target))
+
+
+# A cuisine word leading an ingredient ("Thai basil", "Italian sausage").
+LOCATION_PREFIXES = {
+    "thai", "chinese", "japanese", "korean", "vietnamese", "filipino",
+    "italian", "french", "greek", "mexican", "indian", "spanish",
+    "middle eastern", "persian", "turkish", "lebanese", "moroccan",
+    "indonesian", "malaysian", "taiwanese", "cantonese", "szechuan",
+    "sichuan", "cambodian", "burmese", "dutch", "german", "portuguese",
+    "american", "british", "australian", "african", "caribbean",
+}
 
 
 # Leading words that describe a state, not a food: when "dry white wine" or
@@ -2116,7 +2555,82 @@ FALLBACK_DROP_WORDS = {
     # lists only some shapes (food_aliases), so "uncooked linguine" lands here.
     "dry", "uncooked", "melted", "softened", "cold", "warm", "hot", "chilled", "room",
     "temperature", "fresh", "plain", "regular", "good", "quality",
+    # Forms the parser keeps since 22 Oct 2026 ("dried mung beans": USDA's
+    # dry beans are "mature seeds, raw" and never say dried).
+    "dried", "frozen", "crushed", "grated", "shredded", "diced", "toasted", "roasted",
 }
+
+
+# A word at least this long may be respelled one letter off (_respelled).
+RESPELL_MIN_LETTERS = 5
+# Recipe words that are a cut or state, not a food: "cubed" is one letter
+# from "cubes", "pitted" from "potted".
+NOT_RESPELLED = {
+    "cubed", "pitted", "sweetened", "unsweetened", "unflavored", "shaved",
+    "seeded", "halved", "trimmed", "packed", "boneless", "skinless", "chunks",
+    "strips", "wedge", "wedges", "slice", "slices", "threads", "matchsticks",
+}
+
+
+def _respelled(ingredient: str, boost_rules=None, category: str = "") -> str:
+    """
+    [ingredient] with a word no USDA food carries replaced by the one-letter-
+    off spelling USDA uses: "cremini mushrooms" -> "crimini mushrooms"
+    (USDA "Mushrooms, brown, italian, or crimini, raw"; the line matched
+    branded "STUFFED CREMINI MUSHROOMS", 22 Oct 2026), "mozarella" ->
+    "mozzarella". Only words of RESPELL_MIN_LETTERS or more, so "beer"
+    never becomes "beef" nor "pears" "peas"; candidates come from
+    search_food_names_by_spelling. Unchanged when a boost rule names the
+    line (rules are written for its spelling) or nothing qualifies.
+    """
+    rules = BUILTIN_BOOSTS if boost_rules is None else boost_rules
+    boosted, _, pinned = apply_boosts(ingredient, rules, category)
+    if pinned or boosted.lower() != ingredient.lower():
+        return ingredient
+    query = normalise(strip_prep(ingredient))
+    words = [w for w in query.split()
+             if len(w) >= RESPELL_MIN_LETTERS and w not in GENERIC_QUERY_TOKENS
+             and w not in PREP_WORDS and w not in FALLBACK_DROP_WORDS
+             and w not in NOT_RESPELLED]
+    if not words:
+        return ingredient
+
+    def name_tokens(foods) -> set[str]:
+        tokens = set()
+        for f in foods:
+            for t in normalise(f"{f.get('display_name', '')} {f.get('raw_description') or f.get('description') or ''}").split():
+                tokens.update((t, _canonical_token(t)))
+        return tokens
+
+    known = name_tokens(_search_usda_for_ingredient(query))
+    respelled = ingredient
+    for word in words:
+        if word in known or _canonical_token(word) in known:
+            continue
+        # The line's search can find nothing ("lemon wedge"); the word's own
+        # search says whether USDA has it.
+        own = name_tokens(_search_usda_for_ingredient(word))
+        if word in own or _canonical_token(word) in own:
+            continue
+        rows = supabase_search_food_names_by_spelling(word)
+        found = name_tokens(rows)
+        if word in found or _canonical_token(word) in found:
+            continue  # USDA has the word itself
+        # From a food that also has the line's other words: "crimini" comes
+        # with "mushrooms", but "grass" never with "noodles" ("glass
+        # noodles"), nor "dripping" with "tempura" ("tempura dipping sauce").
+        others = {_canonical_token(w) for w in words if w != word}
+        rows = [row for row in rows if others <= name_tokens([row])]
+        close = Counter(
+            t for row in rows
+            for t in set(normalise(f"{row.get('display_name', '')} {row.get('description') or ''}").split())
+            if len(t) >= RESPELL_MIN_LETTERS
+            and (_one_edit_apart(word, t) or _one_edit_apart(_canonical_token(word), _canonical_token(t)))
+            and _canonical_token(t) != _canonical_token(word))
+        if close:
+            spelling = max(sorted(close), key=lambda t: close[t])
+            respelled = re.sub(rf"(?i)\b{re.escape(word)}\b", spelling, respelled)
+    return respelled
 
 
 def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
@@ -2129,6 +2643,35 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
       2. without leading FALLBACK_DROP_WORDS ("dry white wine" -> "white
          wine").
     """
+    # The parser counts "4 chicken drumstick" in drumsticks, leaving
+    # "chicken" (or "bone-in skin-on chicken", unmatched) to search; the cut
+    # picks the food (23 Oct 2026).
+    if (unit.lower() in CHICKEN_CUT_IDS and re.search(r"(?i)\bchicken\b", ingredient)
+            and unit.lower() not in ingredient.lower()):
+        ingredient = f"{ingredient} {unit.lower()}"
+    # "1 whole chicken" is a whole bird, not one chicken-something: the
+    # parser's "whole" unit left "chicken", roasted breast by the cup.
+    if unit.lower() == "whole" and re.fullmatch(r"(?i)(?:roasting\s+)?(?:chicken|duck|turkey)", ingredient.strip()):
+        ingredient = f"whole {ingredient.strip()}"
+    respelled = _respelled(ingredient, boost_rules, category)
+    if respelled != ingredient:
+        result = match_ingredient(respelled, boost_rules, threshold, category, unit, is_cooked)
+        if result[0] is not None:
+            return ({**result[0], "_respelled": respelled},) + tuple(result[1:])
+    # USDA never says "uncooked": dry rice is "raw", dry noodles and grits
+    # "dry". "uncooked long grain white rice" lost the word and defaulted to
+    # cooked rice, "uncooked egg noodles" and "uncooked grits" found cooked
+    # foods (23 Oct 2026). Other pasta keeps its word: its dry form is the
+    # packaged product, which never says dry (FALLBACK_DROP_WORDS).
+    if re.search(r"(?i)\buncooked\b", ingredient):
+        rest = re.sub(r"(?i)\s*\buncooked\b\s*", " ", ingredient).strip()
+        state = ("raw" if _rice_keyword(rest)
+                 else "dry" if re.search(r"(?i)\b(?:noodles?|grits)\b", rest) else "")
+        if state:
+            retry = match_ingredient(f"{state} {rest}", boost_rules, threshold,
+                                     category, unit, is_cooked)
+            if retry[0] is not None:
+                return retry
     result = _match_ingredient_once(ingredient, boost_rules, threshold,
                                     category, unit, is_cooked)
     if result[0] is not None:
@@ -2257,6 +2800,16 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         _branded_fetched = False
         branded_index = None
         search_query = boosted_query
+    form_query = _form_query(search_source)
+    if form_query and form_query != search_query:
+        usda_foods = _merged_index(usda_foods, _search_usda_for_ingredient(form_query))
+        stripped_branded = _get_branded
+        def _get_branded():
+            nonlocal branded_index, _branded_fetched
+            if not _branded_fetched:
+                branded_index = _merged_index(stripped_branded(),
+                                              _search_branded_for_ingredient(form_query))
+            return branded_index
     cooked_stripped_source = re.sub(r"\s*,\s*cooked\b", "", search_source, flags=re.I)
     cooked_stripped_search = None
     # For volumetric units, keep cooking-state words (they affect density)
@@ -2310,6 +2863,9 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         "broth","stock","bouillon","powder","extract","sauce","sausage",
         "bacon","ham","pepperoni","salami","pastrami","jerky","biltong",
         "liver","kidney","heart","tongue","tripe","fat","skin","bone",
+        # 22 Oct 2026: "pork blood" was logged as cooked pork, 201 kcal/100 g
+        # (blood is 77); it has its own food now (custom 9000000001).
+        "blood",
         # Specific cuts â€” let these fall through to bigram matching
         "thigh","breast","wing","drumstick","leg","loin","chop","rib",
         "belly","shoulder","neck","shank","fillet","tenderloin","cutlet",
@@ -2474,7 +3030,10 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
 
     usda_food, usda_score, usda_alt = None, 0.0, None
     best_any_food, best_any_score, best_any_alt = None, -1.0, None
-    usda_food, usda_score, usda_alt = _score_list(search_match, usda_foods, boost_weight, boosted, is_processed, is_cooked, unit)
+    form_words = {t for t in normalise(search_source).split()
+                  if t in PREP_WORDS and t not in NOT_FORM_WORDS} - set(query_tokens)
+    usda_food, usda_score, usda_alt = _score_list(search_match, usda_foods, boost_weight, boosted,
+                                                  is_processed, is_cooked, unit, form_words)
     if usda_score < threshold and cooked_stripped_source.lower() != search_source.lower():
         cooked_stripped_search = normalise(strip_prep(cooked_stripped_source))
         cooked_stripped_match = _strip_color_words_if_process(
@@ -2533,12 +3092,27 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
             return tagged, usda_score, ("high" if usda_score >= 0.55 else "low"), usda_alt
         return usda_food, usda_score, ("high" if usda_score >= 0.55 else "low"), usda_alt
 
+    # A cuisine word USDA doesn't carry ("Japanese mayonnaise"): the USDA
+    # food named exactly the rest ("Mayonnaise") comes before any branded
+    # product. Only an exact name: without "Italian", "Italian seasoning"
+    # finds "Poultry seasoning", and its branded product is the better match.
+    first_word = ingredient.lower().split()[0] if ingredient.split() else ""
+    if first_word in LOCATION_PREFIXES and len(ingredient.split()) > 1:
+        rest = normalise(strip_prep(" ".join(ingredient.split()[1:])))
+        rest_index = _search_usda_for_ingredient(rest)
+        r_food, r_score, r_alt = _score_list(rest, rest_index, boost_weight, boosted,
+                                             is_processed, is_cooked, unit)
+        if r_food is not None and r_score >= MIN_CONFIDENCE and (
+                normalise(r_food["display_name"]) == rest
+                or _usda_head_qualifiers(rest, r_food) == []):
+            return r_food, r_score, "high", r_alt
+
     # —— USDA Branded pass ——————————————————————————————————
     if _get_branded() and not meat_kw:
         if branded_food is None:
             branded_food, branded_score, _ = _score_list(
                 search_match, _get_branded(), boost_weight, boosted,
-                is_cooked=is_cooked, unit=unit)
+                is_cooked=is_cooked, unit=unit, form_words=form_words)
         if branded_food and branded_score > best_any_score:
             best_any_food, best_any_score, best_any_alt = branded_food, branded_score, None
         branded_token_cover = False
@@ -2580,14 +3154,6 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     # â”€â”€ Location-prefix fallback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Check BEFORE the MIN_CONFIDENCE early exit so "Thai basil leaves" can
     # retry as "basil" rather than returning None from a weak rhubarb match.
-    LOCATION_PREFIXES = {
-        "thai", "chinese", "japanese", "korean", "vietnamese", "filipino",
-        "italian", "french", "greek", "mexican", "indian", "spanish",
-        "middle eastern", "persian", "turkish", "lebanese", "moroccan",
-        "indonesian", "malaysian", "taiwanese", "cantonese", "szechuan",
-        "sichuan", "cambodian", "burmese", "dutch", "german", "portuguese",
-        "american", "british", "australian", "african", "caribbean",
-    }
     first_word = ingredient.lower().split()[0] if ingredient.split() else ""
     if first_word in LOCATION_PREFIXES and (not usda_food or usda_score < MIN_CONFIDENCE):
         stripped_ing = " ".join(ingredient.split()[1:])
@@ -2981,6 +3547,9 @@ def _portion_label_qty(label: str) -> float:
     return 10. For normal labels like "1.0 cup" or "10 strip", return
     the leading number directly.
     """
+    # "1 serving 1/2 cup" (USDA vanilla ice cream) is half a cup; read as
+    # 1, "2 cup vanilla ice cream" logged half the ice cream (23 Oct 2026).
+    label = re.sub(r"(?i)^\s*1\s+serving\s+(?=\d)", "", label)
     m = re.match(r"^([\d.]+)\s+([\d.]+)\s+\S", label.strip())
     if m:
         first, second = float(m.group(1)), float(m.group(2))
@@ -3027,7 +3596,8 @@ SPOON_SWITCH_CUPS = 0.25
 FINE_CUP_WORDS = {
     "cup", "cups", "unsifted", "sifted", "dipped", "spooned", "stirred",
     "packed", "unpacked", "not", "level", "ground", "dry", "granulated",
-    "powdered", "melted", "whipped", "and", "or", "into",
+    # Not "whipped": a cup of whipped cream is half the weight of a cup of cream.
+    "powdered", "melted", "and", "or", "into",
 }
 # Foods measured in pieces; a spoon of them only makes sense when the recipe
 # itself says spoons.
@@ -3042,9 +3612,61 @@ CHUNKY_CATEGORY_RE = re.compile(
 UNMEASURABLE_PORTION_RE = re.compile(r"quantity not specified|\bracc\b", re.IGNORECASE)
 
 
+AERATED_WORDS = {"whipped", "whip", "foam", "frothed", "fluffed", "popped", "puffed"}
+
+
+def _portion_fit(label: str, line: str) -> int:
+    """
+    How well a volume portion's label measures a recipe [line]: 0 its other
+    words are ones the line says ("1 cup, chopped" for "chopped green
+    beans"), 1 a plain volume ("1 cup", "2 tbsp"), 2 other words ("1 tsp,
+    leaves"), 3 an aerated form the line doesn't say ("1 cup, whipped").
+    Heavy cream in cups was measured by "1 cup, whipped", 120 g instead of
+    238 (22 Oct 2026). Ties keep the food's own order.
+    """
+    label = re.sub(r"\([^)]*\)", " ", label.lower())
+    words = [w for w in re.findall(r"[a-z]+", label) if w not in PLAIN_VOLUME_WORDS]
+    said = {_canonical_token(t) for t in normalise(line).split()}
+    if not words:
+        return 1
+    if all(_canonical_token(w) in said or w in ("and", "or") for w in words):
+        return 0
+    return 3 if any(w in AERATED_WORDS and w not in said for w in words) else 2
+
+
 def _is_fine_cup_label(label: str) -> bool:
     words = re.findall(r"[a-z]+", label.lower())
     return all(w in FINE_CUP_WORDS for w in words)
+
+
+# Count labels for an unusual size of the food. Without a size in the line,
+# a plain count beats them: "1 hamburger roll" took "1 miniature/small
+# hamburger bun" (28 g, not 52) and American cheese "1 cracker-size slice"
+# (9 g, not 21) because they came first (23 Oct 2026).
+SIZED_LABEL_RE = re.compile(
+    r"\b(?:miniature|mini|small|bite|cracker|snack|slider|thin|thick|large|"
+    r"jumbo|extra|kids?|junior|half)\b", re.I)
+# Count labels for a part of the food, not one of it ("1 slice" of avocado).
+PART_LABEL_RE = re.compile(
+    r"\b(?:slices?|pieces?|wedges?|strips?|cubes?|rings?|lea(?:f|ves)|sprigs?|"
+    r"florets?|spears?|segments?|sections?|pats?|surface|inch|dash|pinch|"
+    r"drops?|stalks?|sticks?)\b", re.I)
+
+
+def _unsized_whole_portion(food: dict) -> dict | None:
+    """The food's own count portion for one whole item at its usual size:
+    "1 hamburger bun", "1 fruit". None when the food has its own "piece"
+    portion (gyoza, candy), which a piece line keeps."""
+    own = [p for p in food.get("portions", [])
+           if p.get("gram_weight") and "-vol-" not in str(p.get("portion_id", ""))]
+    if any(re.search(r"\bpieces?\b", (p.get("label") or "").lower()) for p in own):
+        return None
+    for p in own:
+        label = re.sub(r"\([^)]*\)", " ", p.get("label") or "")
+        if (_is_counted_portion(label) and not SIZED_LABEL_RE.search(label)
+                and not PART_LABEL_RE.search(label)):
+            return p
+    return None
 
 
 def _is_counted_portion(label: str) -> bool:
@@ -3625,7 +4247,7 @@ def _best_any_volumetric_portion(portions: list[dict], gram_target: float | None
     best = None
     best_diff = None
     for p in portions:
-        if abs(p.get("gram_weight", 100.0) - 100.0) <= 1.0:
+        if _is_basis_portion(p):
             continue
         label_unit = _portion_label_unit(p["label"])
         if not label_unit or label_unit not in VOLUME_TO_TSP:
@@ -3645,6 +4267,20 @@ def _has_compatible_volumetric_serving(food: dict, unit: str) -> bool:
     return _best_volumetric_portion(food.get("portions", []), unit) is not None
 
 
+def _own_count_portion(food: dict, ingredient: str) -> dict | None:
+    """A portion counting one of the food by its own name: "1 anchovy",
+    "1 bean" for green beans. None when there is none, and for a prepared
+    dish, whose "1 lasagna (8\" square)" is the whole pan."""
+    if _is_dish_category(food):
+        return None
+    said = {_canonical_token(t) for t in normalise(ingredient).split()}
+    for p in food.get("portions", []):
+        m = re.match(r"^\s*1\s+([a-z]+)\s*(?:\(|$)", (p.get("label") or "").lower())
+        if m and _canonical_token(m.group(1)) in said and p.get("gram_weight"):
+            return p
+    return None
+
+
 def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="", 
                       boost_rules=None):
     portions = food.get("portions", [])
@@ -3653,7 +4289,7 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
     if food.get("source") == "off":
         serving = next(
             (p for p in portions
-             if p.get("portion_idx", 0) == 1 and abs(p["gram_weight"] - 100.0) > 1.0),
+             if p.get("portion_idx", 0) == 1 and not _is_basis_portion(p)),
             None,
         )
         if serving:
@@ -3669,7 +4305,7 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
     if food.get("source") == "branded":
         real_serving = next(
             (p for p in portions
-             if p.get("portion_idx", 0) == 1 and abs(p["gram_weight"] - 100.0) > 1.0),
+             if p.get("portion_idx", 0) == 1 and not _is_basis_portion(p)),
             None,
         )
         # A boost rule for this recipe unit beats the label serving: a curry
@@ -3693,6 +4329,13 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
         override = get_portion_override(ingredient, boost_rules, unit)
         if override:
             return override
+    # "1 packet onion soup mix" is the food's "1 packet" (39 g), not its
+    # first portion, "1 serving 1 tbsp" (23 Oct 2026).
+    if unit.lower() in PACKET_UNITS:
+        packet = next((p for p in portions if p.get("gram_weight")
+                       and PACKET_LABEL_RE.search(p.get("label") or "")), None)
+        if packet is not None:
+            return packet
     keywords = PORTION_UNIT_KEYWORDS.get(unit.lower(), [])
     # If food was matched via CHICKEN_CUT_IDS, use the cut keyword to find
     # the right portion label (e.g. "1 thigh", "1 drumstick") when unit is blank.
@@ -3737,6 +4380,10 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
             for p in portions:
                 if preferred_slice in p["label"].lower() and "slice" in p["label"].lower():
                     return p
+            if preferred_slice == "medium":
+                for p in portions:
+                    if "slice" in p["label"].lower() and not SIZED_LABEL_RE.search(p["label"]):
+                        return p
             # Fall through to general keyword scan if no size match
         # For unitless/piece ingredients, apply size preference logic:
         # - If the ingredient names a size (large/small/medium), try to match it first.
@@ -3745,8 +4392,12 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
         if is_piece and not food.get("_cut_keyword"):
             ing_lower = ingredient.lower()
             specified_size = next((sz for sz in ("large", "small", "medium") if sz in ing_lower), None)
-            preferred = specified_size or "medium"
-            for p in portions:
+            # FNDDS calls a medium one "regular" ("1 regular" cucumber, 200 g),
+            # and its "1 piece/slice" (10 g) came first.
+            sizes = [specified_size] if specified_size else ["medium"]
+            if sizes == ["medium"]:
+                sizes.append("regular")
+            for preferred, p in ((sz, p) for sz in sizes for p in portions):
                 # Strip parenthetical content before checking â€” prevents "1.0 cup
                 # (4.86 large eggs)" from matching a search for "large".
                 # Use word-boundary match so "large" doesn't match "extra large".
@@ -3756,11 +4407,17 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
                     # like "extra" â€” only accept bare size labels e.g. "1.0 large".
                     if not re.search(r"\b(?:extra|very|super)\s+" + re.escape(preferred), label_no_parens):
                         return p
+            # No portion in the size asked for (or the default medium): one
+            # whole item beats a part ("1 large avocado" took a 30 g piece).
+            whole = _unsized_whole_portion(food)
+            if whole is not None:
+                return whole
         # For cup quantities < 0.25, prefer tbsp/tsp portions when a sane
         # portion_amt results. Bootstrap recipe_grams from the cup portion's
         # gram_weight so this works even when gram_target is None (vol solids).
         if unit.lower() in ("cup", "cups") and qty < 0.25:
-            cup_p = next((p for p in portions if "cup" in p["label"].lower()), None)
+            cup_p = min((p for p in portions if "cup" in p["label"].lower()),
+                        key=lambda p: _portion_fit(p["label"], ingredient), default=None)
             if cup_p:
                 recipe_grams = qty * cup_p["gram_weight"]
                 for sub_kw in (["tablespoon","tbsp"], ["teaspoon","tsp"]):
@@ -3779,9 +4436,18 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
             for p in portions:
                 if target in p["label"].lower():
                     return p
-        for p in portions:
-            if any(kw in p["label"].lower() for kw in keywords):
-                return p
+        labelled = [p for p in portions if any(kw in p["label"].lower() for kw in keywords)]
+        if labelled:
+            if unit.lower() in VOLUMETRIC_UNITS:
+                # A plain "1 cup" before "1 cup, whipped".
+                return min(labelled, key=lambda p: _portion_fit(p["label"], ingredient))
+            return labelled[0]
+    # A count with no portion in its unit: one of the food itself ("1
+    # anchovy" for "5 anchovy fillet", which took "1 can", 45 g).
+    if unit.lower() not in VOLUMETRIC_UNITS and _normalise_weight_unit(unit) is None:
+        own = _own_count_portion(food, ingredient)
+        if own is not None:
+            return own
     # Volumetric units (cup, tbsp, tsp, â€¦) with no matching labelled portion:
     # If the DB has any volumetric serving, prefer it even when the surface
     # unit is different. This lets tsp/tbsp/cup all resolve via conversion.
@@ -3799,7 +4465,7 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
         # BOX, BAR, etc. and would otherwise lose their actual portion label.
         real_serving = next(
             (p for p in portions
-             if p.get("portion_idx", 0) == 1 and abs(p["gram_weight"] - 100.0) > 1.0),
+             if p.get("portion_idx", 0) == 1 and not _is_basis_portion(p)),
             None,
         )
         if real_serving:
@@ -4521,6 +5187,11 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 source_tag += " [ALIAS]"
             if from_cooked:
                 source_tag += " [DRY, from cooked]"
+            if food.get("_respelled"):
+                source_tag += f" [as \"{food['_respelled']}\"]"
+            if food.get("_density_from") and portion is not None and str(
+                    portion.get("portion_id", "")).startswith(f"{food['fdc_id']}-vol-"):
+                source_tag += f" [portion from {food['_density_from']}]"
             yield_tag=f" [yield {yield_factor}]" if yield_factor else ""
             vol_note = "VOL UNIT MISMATCH (3 tsp=1 tbsp, 16 tbsp=1 cup) " if vol_mismatch else ""
             if estimated:
@@ -4528,7 +5199,15 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             elif packet_estimate:
                 vol_note += "PACKET PORTION NOT FOUND, estimated "
                 estimated = True
-            note_text=f"{vol_note}{'LOW CONF ' if confidence=='low' else ''}score {score:.2f}{source_tag}{yield_tag}"
+            # A line the portion doesn't measure is a guess: light red, and
+            # listed at the end of the batch run, so it is fixed (a portion
+            # rule, a pin, a reworded line) before import.
+            unmeasured = _unmeasured_reason(portion, unit, is_countable, vol_mismatch,
+                                            estimated, section)
+            if unmeasured:
+                confidence = "low"
+                vol_note = f"CHECK AMOUNT: {unmeasured}. " + vol_note
+            note_text=f"{vol_note}{'LOW CONF ' if confidence=='low' and not unmeasured else ''}score {score:.2f}{source_tag}{yield_tag}"
 
             output_rows.append({
                 "_type":"data","_confidence":confidence,"_source":source,
@@ -4553,6 +5232,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 "_tsp_qty": portion.get("_tsp_qty", "") if portion is not None else "",
                 "unit_grams": portion["gram_weight"] if portion is not None else 100.0,
                 "fry_type": fry_type or "",
+                "_unmeasured": unmeasured,
             })
             data_row_indices.append(current_excel_row)
             kind = _fried_kind(ingredient)
@@ -4584,6 +5264,36 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
         raise tref.TemplateReferenceError(
             "Base template lines that can't be used:\n  " + "\n  ".join(template_errors))
     return [_with_display_unit(row) for row in output_rows]
+
+
+# Labels that measure a container, not a piece of the food: "1 can" anchovy.
+CONTAINER_LABEL_RE = re.compile(
+    r"\b(?:cans?|jars?|bottles?|box(?:es)?|containers?|cartons?|tubs?|bags?)\b", re.IGNORECASE)
+
+
+def _unmeasured_reason(portion, unit: str, is_countable: bool, vol_mismatch: bool,
+                       estimated: bool, section: str) -> str:
+    """
+    Why a row's amount isn't measured, or "": no volume portion
+    (VOL UNIT MISMATCH), a 1 g/ml or packet estimate, or a count line ("8
+    leaf sage") measured by a volume or a container. 22 Oct 2026: these
+    were only notes, and "5 anchovy fillet" went in as 5 cans.
+    """
+    if section == ABSORBED_OIL_SECTION:
+        return ""
+    if vol_mismatch:
+        return f"no {unit} portion"
+    if estimated:
+        return "no portion in the recipe's unit, estimated"
+    if portion is None:
+        return "" if _unit_kind(unit) else f"no {unit or 'piece'} portion"
+    u = unit.lower()
+    if (is_countable or not u) and u not in PACKET_UNITS and u not in ("serving", "servings") and (
+            _portion_label_unit(portion.get("label", "")) in VOLUME_TO_TSP
+            or CONTAINER_LABEL_RE.search(portion.get("label", ""))
+            or UNMEASURABLE_PORTION_RE.search(portion.get("label", ""))):
+        return f"no {unit} portion, measured by '{portion['label']}'"
+    return ""
 
 
 def _with_display_unit(row: dict) -> dict:
@@ -4677,10 +5387,14 @@ def main():
     brd_hi =[r for r in new_data if r.get("_source")=="branded" and r.get("_confidence")=="high"]
     brd_lo =[r for r in new_data if r.get("_source")=="branded" and r.get("_confidence")=="low"]
     unmatched=[r for r in new_data if r.get("_confidence")=="none"]
+    unmeasured=[r for r in new_data if r.get("_unmeasured")]
     print(f"    This run: {len(new_data)} ingredients  |  "
           f"USDA: {len(usda_hi)} high / {len(usda_lo)} low  |  "
           f"Branded: {len(brd_hi)} high / {len(brd_lo)} low  |  "
-          f"unmatched: {len(unmatched)}")
+          f"unmatched: {len(unmatched)}  |  amount to check: {len(unmeasured)}")
+    for r in unmeasured:
+        print(f"      CHECK {r.get('template_name')}: {r.get('component_label')} -> "
+              f"{r.get('matched_food_name')} ({r['_unmeasured']})")
     print(f"    Total in output: {len(data_rows)} ingredients across all templates.")
 
     print(f"[→] Writing output: {xlsx_path}")
