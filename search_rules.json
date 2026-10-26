@@ -79,6 +79,12 @@
     "words": ["skin", "peel"]
   },
 
+  "with_qualifiers": {
+    "_about": "A head qualifier 'with ...' naming another food makes a mix: 'Chicken, fried, with potatoes, vegetable, frozen meal' isn't fried chicken. One variant unless the query says its words; not when its words are all standard ('with added vitamin D') or in 'ignore' ('with salt').",
+    "lead": "with",
+    "ignore": ["salt"]
+  },
+
   "portion_words": {
     "_about": "Words in a search that name a portion, not the food: 'large banana' is bananas with the '1 large' portion, 'sliced onion' onions with '1 cup, sliced'. Searches take no amounts (26 Oct 2026). Sizes and cuts leave the food's words and pick the portion (the first portion, in USDA's order, whose label says the word; sizes before cuts); fillers just leave. A product cut can also name the food ('mashed potatoes', 'diced tomatoes'): a USDA row headed by the food that says it comes first.",
     "sizes": ["extra large", "large", "medium", "small", "jumbo", "mini"],

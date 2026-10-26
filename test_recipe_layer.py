@@ -1,6 +1,6 @@
 """The recipe layer on the shared name search (26 Oct 2026, stage 2 of
-unifying the app's food search and the matcher; recipe_matcher.NAME_SEARCH
-"shared", _shared_match_once).
+unifying the app's food search and the matcher; recipe_matcher.
+_match_ingredient_once).
 
 Layer 1 (food_name_search, the app's search) ranks the foods; the recipe
 layer re-ranks its best rows and never replaces them: boosts.json pins,
@@ -47,11 +47,10 @@ def shared(monkeypatch):
                     for n, (label, grams) in enumerate(portions.get(i, [("1 cup", 100.0)]), 1)]
                 for i in ids}
 
-    monkeypatch.setattr(matcher, "NAME_SEARCH", "shared")
     monkeypatch.setattr(layer1, "search", search)
     monkeypatch.setattr(matcher, "load_portions_for_food_ids", load_portions)
     monkeypatch.setattr(matcher, "_respelled", lambda ingredient, *a, **k: ingredient)
-    monkeypatch.setattr(matcher, "_SHARED_MATCHES", {})
+    monkeypatch.setattr(matcher, "_MATCH_CACHE", {})
     return results, portions, searched
 
 
@@ -157,7 +156,8 @@ LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
 
 
 # Lines the shared search got wrong with no recipe layer (stage 1), and the
-# food the matcher gives them too.
+# food the old matcher gave them too; then lines the old matcher's shortcuts
+# covered (stage 3, 27 Oct 2026).
 @LIVE
 @pytest.mark.parametrize("line,expected", [
     ("3 cloves garlic", "Garlic, raw"),
@@ -175,10 +175,15 @@ LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
     ("2.5 cup canned kidney beans", "Kidney beans, all types, canned"),
     ("1 cup cooked ziti", "ZITI, ENRICHED MACARONI PRODUCT"),
     ("2 ear sweet corn", "White sweet corn, raw"),
+    ("1 cup fresh diced tomatoes", "Tomatoes, raw"),
+    ("2 red chili", "Red hot chili peppers, raw"),
+    ("1 cup grilled chicken", "Chicken fillet, grilled"),
+    ("1 lb fried chicken", "Chicken, skinless, fried"),
+    ("2 eggs, scrambled", "Egg, whole, raw"),
+    ("1 lb boneless skinless chicken pieces", "Roasting chicken, skinless, raw"),
 ])
-def test_shared_mode_matches_recipe_lines(line, expected, monkeypatch):
-    monkeypatch.setattr(matcher, "NAME_SEARCH", "shared")
-    monkeypatch.setattr(matcher, "_SHARED_MATCHES", {})
+def test_recipe_lines(line, expected, monkeypatch):
+    monkeypatch.setattr(matcher, "_MATCH_CACHE", {})
     row_ = parser.parse_ingredient_line(line)
     rules = matcher.load_boosts(os.path.join(os.path.dirname(__file__), "boosts.json"))
     food = matcher.match_ingredient(row_["ingredient"], rules, 0.45, "American",

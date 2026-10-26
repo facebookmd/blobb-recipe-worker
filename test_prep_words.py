@@ -62,14 +62,6 @@ def test_a_food_fits_a_preparation_it_names_or_a_cooking_word_when_cooked():
     assert not matcher._fits_preparations(_food("Egg, whole, raw, fresh"), {"boiled"})
 
 
-def test_a_word_the_line_said_costs_a_row_nothing():
-    diced = {"raw_description": "Tomatoes, canned, red, ripe, diced"}
-    assert matcher._usda_variant_count("tomatoes", diced) == 1          # canned
-    assert matcher._usda_variant_count("tomatoes", diced, said=frozenset({"canned", "diced"})) == 0
-    assert matcher._is_unknown_qualifier("diced")
-    assert not matcher._is_unknown_qualifier("diced", frozenset({"diced"}))
-
-
 # ── Live matches ───────────────────────────────────────────────────────────
 
 LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
@@ -88,15 +80,16 @@ def _match(line):
 @LIVE
 @pytest.mark.parametrize("line,expected", [
     ("1 can diced tomatoes", "Diced ripe red tomatoes, canned"),
-    ("2 cup mashed potatoes", "Potato, mashed"),
+    # Not a restaurant's ("Potato, mashed, from restaurant"; 27 Oct 2026).
+    ("2 cup mashed potatoes", "Potato, mashed, ready-to-heat"),
     ("4 hard boiled egg", "Hard-boiled egg"),
-    ("2 cup fried rice", "Rice, fried, with chicken"),
+    ("2 cup fried rice", "Rice, fried, meatless"),
     ("1 lb fried chicken", "Chicken, skinless, fried"),
     ("2 deviled eggs", "Egg, deviled"),
     ("1 fried egg", "Fried egg"),           # the "egg" boost rewrote it raw
     # Unchanged: no preparation, or one the food already has.
-    ("2 eggs, scrambled", "Whole egg, raw"),
-    ("1 cup grilled chicken", "Chicken breast, skinless, roasted"),
+    ("2 eggs, scrambled", "Egg, whole, raw"),
+    ("1 cup grilled chicken", "Chicken fillet, grilled"),
     ("2 potatoes", "White potatoes, flesh and skin, raw"),
     ("2 cup fresh diced tomatoes", "Tomatoes, raw"),   # diced tomatoes are canned
 ])

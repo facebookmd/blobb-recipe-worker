@@ -40,17 +40,6 @@
     "weight": 0.95
   },
   {
-    "_comment": "Raw shiitake with a 1 piece portion (19 g); the Foundation row 1999628 has only an 85 g RACC."
-  },
-  {
-    "trigger": "shiitake mushroom",
-    "fdc_id": "169242",
-    "weight": 0.95,
-    "exclude": [
-      "dried"
-    ]
-  },
-  {
     "trigger": "black cod",
     "fdc_id": "175134",
     "weight": 0.95
@@ -335,16 +324,6 @@
     "_comment": "═══ DAIRY & COCONUT ══════════════════════════════════════════════════"
   },
   {
-    "trigger": "coconut cream",
-    "boost": "coconut cream unsweetened",
-    "weight": 0.75
-  },
-  {
-    "trigger": "heavy cream",
-    "boost": "cream heavy whipping",
-    "weight": 0.8
-  },
-  {
     "trigger": "heavy whipping",
     "boost": "cream heavy whipping",
     "weight": 0.8
@@ -524,14 +503,6 @@
   {
     "trigger": "calamansi juice",
     "fdc_id": "168156",
-    "weight": 0.95
-  },
-  {
-    "_comment": "22 Oct 2026: sinigang packets. Matched on its own at 0.46, just over the threshold; its label gives the 40 g packet."
-  },
-  {
-    "trigger": "tamarind soup mix",
-    "fdc_id": "B_2116522",
     "weight": 0.95
   },
   {
@@ -883,19 +854,9 @@
     "weight": 0.9
   },
   {
-    "trigger": "bonito flakes",
-    "fdc_id": "B_2025412",
-    "weight": 0.9
-  },
-  {
     "trigger": "katsuobushi",
     "boost": "bonito flakes",
     "fdc_id": "B_2025412",
-    "weight": 0.9
-  },
-  {
-    "trigger": "kamaboko",
-    "fdc_id": "B_1924084",
     "weight": 0.9
   },
   {
@@ -934,11 +895,6 @@
   {
     "trigger": "gobo",
     "boost": "burdock root",
-    "weight": 0.9
-  },
-  {
-    "trigger": "gyoza wrapper",
-    "fdc_id": "B_2029974",
     "weight": 0.9
   },
   {
@@ -981,11 +937,6 @@
   },
   {
     "_comment": "Tonkotsu broth: Pacific Foods Organic Pork Tonkotsu Ramen Broth, the only plain tonkotsu broth in the data (USDA has no pork broth). Label 1 cup (240 ml); FDC's household text is only 'Amount per serving'. Lighter than restaurant tonkotsu."
-  },
-  {
-    "trigger": "tonkotsu broth",
-    "fdc_id": "B_2754660",
-    "weight": 0.95
   },
   {
     "trigger": "tonkotsu broth",
@@ -1071,11 +1022,6 @@
     "portion_unit": "block"
   },
   {
-    "trigger": "soba noodles",
-    "fdc_id": "168907",
-    "weight": 0.95
-  },
-  {
     "trigger": "somen noodles",
     "fdc_id": "168909",
     "weight": 0.95
@@ -1085,19 +1031,6 @@
   },
   {
     "trigger": "japanese short grain rice",
-    "fdc_id": "168881",
-    "weight": 0.95,
-    "exclude": [
-      "cooked",
-      "steamed",
-      "boiled",
-      "plain",
-      "day-old",
-      "leftover"
-    ]
-  },
-  {
-    "trigger": "short grain white rice",
     "fdc_id": "168881",
     "weight": 0.95,
     "exclude": [
@@ -1130,11 +1063,6 @@
   {
     "trigger": "cooked short-grain white rice",
     "fdc_id": "168882",
-    "weight": 0.98
-  },
-  {
-    "trigger": "cooked long grain white rice",
-    "fdc_id": "168878",
     "weight": 0.98
   },
   {
@@ -1206,16 +1134,6 @@
   },
   {
     "_comment": "cooked USDA entry. These rules cover UNCOOKED rice only."
-  },
-  {
-    "trigger": "cooked rice",
-    "fdc_id": "168878",
-    "weight": 0.98,
-    "exclude": [
-      "raw",
-      "uncooked",
-      "dry"
-    ]
   },
   {
     "trigger": "cooked white rice",
@@ -1478,11 +1396,6 @@
     "_comment": "═══ JAPANESE-SPECIFIC VEGETABLES ════════════════════════════════════"
   },
   {
-    "trigger": "burdock root",
-    "weight": 0.95,
-    "fdc_id": "169974"
-  },
-  {
     "trigger": "gobo",
     "weight": 0.9,
     "fdc_id": "169974"
@@ -1503,11 +1416,6 @@
     "trigger": "chrysanthemum greens",
     "fdc_id": "169995",
     "weight": 0.9
-  },
-  {
-    "trigger": "enoki mushroom",
-    "fdc_id": "169382",
-    "weight": 0.95
   },
   {
     "trigger": "enoki",
@@ -1740,11 +1648,6 @@
     "weight": 0.9
   },
   {
-    "trigger": "bonito flakes",
-    "boost": "bonito flakes",
-    "weight": 0.95
-  },
-  {
     "trigger": "dried bonito",
     "boost": "bonito flakes",
     "weight": 0.9
@@ -1967,12 +1870,6 @@
     "weight": 0.95
   },
   {
-    "trigger": "pork belly",
-    "boost": "pork belly raw",
-    "fdc_id": "167812",
-    "weight": 0.9
-  },
-  {
     "trigger": "pork loin",
     "boost": "whole pork loin raw",
     "fdc_id": "167818",
@@ -2180,72 +2077,12 @@
     ]
   },
   {
-    "_comment": "23 Oct 2026: US recipe conventions. 'diced tomatoes' and 'crushed tomatoes' are the canned products unless the line says fresh (the American chili template's '2.75 cup diced tomatoes' was raw tomatoes); 'pickles' are dill; 'grilled cheese' is the sandwich, American cheese on white bread (it was cream cheese). The app's search already ranks these."
-  },
-  {
-    "trigger": "diced tomatoes",
-    "fdc_id": "333281",
-    "weight": 0.95,
-    "exclude": [
-      "fresh",
-      "cherry",
-      "grape",
-      "roma",
-      "plum",
-      "heirloom"
-    ]
-  },
-  {
-    "trigger": "crushed tomatoes",
-    "fdc_id": "170501",
-    "weight": 0.95,
-    "exclude": [
-      "fresh"
-    ]
-  },
-  {
-    "trigger": "pickles",
-    "fdc_id": "2710078",
-    "weight": 0.9,
-    "exclude": [
-      "sweet",
-      "bread and butter",
-      "sour",
-      "relish",
-      "juice"
-    ]
-  },
-  {
-    "trigger": "pickle",
-    "fdc_id": "2710078",
-    "weight": 0.9,
-    "exclude": [
-      "sweet",
-      "bread and butter",
-      "sour",
-      "relish",
-      "juice"
-    ]
+    "_comment": "23 Oct 2026: US recipe convention: 'grilled cheese' is the sandwich, American cheese on white bread (it was cream cheese; the shared search alone finds cheddar on wheat). 27 Oct 2026: the diced/crushed tomatoes, pickles, peas and sugar rules went; the shared search ranks those names right itself."
   },
   {
     "trigger": "grilled cheese",
     "fdc_id": "2705802",
     "weight": 0.95
-  },
-  {
-    "_comment": "Plain 'sugar' is granulated and plain 'peas' are green peas, as plain milk is whole milk: on their own they found maple sugar and snow peas (23 Oct 2026)."
-  },
-  {
-    "trigger": "sugar",
-    "fdc_id": "746784",
-    "weight": 0.9,
-    "exact": true
-  },
-  {
-    "trigger": "peas",
-    "fdc_id": "170419",
-    "weight": 0.9,
-    "exact": true
   },
   {
     "_comment": "26 Oct 2026: a recipe's mackerel is the raw fish. The shared search ranks 'Fish, mackerel, salted' (305 kcal) first, since 'salted' is a standard word (salted butter); the matcher's shortcut took the cooked fillet."

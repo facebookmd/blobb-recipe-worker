@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import pytest
 
+import food_name_search as layer1
 import parse_recipe as parser
 import recipe_matcher as matcher
 
@@ -29,8 +30,7 @@ def usda(fdc_id, name, desc=None, category="Dairy and Egg Products",
     }
 
 
-def best(search, foods, unit="", form_words=()):
-    return matcher._score_list(search, foods, 0.0, False, unit=unit, form_words=form_words)[0]
+from recipe_layer_stub import best  # the recipe layer on just these foods
 
 
 # ── 1. Source filter ────────────────────────────────────────────────────────
@@ -69,8 +69,6 @@ def test_a_tie_goes_to_the_row_with_fewer_unsaid_words():
     peas = usda(170016, "Green peas, frozen, unprepared",
                 "Peas, green, frozen, unprepared (Includes foods for USDA's Food Distribution Program)",
                 category="Vegetables and Vegetable Products", portions=[("1 cup", 134.0)], raw=True)
-    assert matcher._score_list("frozen peas", [mix, peas], 0.0, False, unit="cup")[1] == \
-        matcher._score_list("frozen peas", [peas], 0.0, False, unit="cup")[1]
     assert best("frozen peas", [mix, peas], "cup") is peas
 
 
@@ -79,8 +77,7 @@ def test_a_boost_capped_at_one_still_ranks_the_closer_row():
                  category="Soups, Sauces, and Gravies", portions=[("1 cup", 240.0)])
     condensed = usda(171548, "Beef broth, bouillon, and consommé, canned, condensed",
                      category="Soups, Sauces, and Gravies", portions=[("0.5 cup", 124.0)])
-    food = matcher._score_list("beef broth canned", [condensed, ready], 0.6, True, unit="cup")[0]
-    assert food is ready
+    assert best("beef broth canned", [condensed, ready], "cup") is ready
 
 
 def test_a_label_error_over_nine_kcal_a_gram_is_skipped():
@@ -97,12 +94,7 @@ def test_a_form_word_the_food_names_scores_it_higher():
                 portions=[("1 cup", 245.0)])
     diced = usda(333281, "Diced ripe red tomatoes, canned", category="Vegetables and Vegetable Products",
                  data_type="Foundation", portions=[("1 cup", 245.0)])
-    assert best("canned tomatoes", [soup, diced], "cup", form_words={"diced"}) is diced
-
-
-def test_the_form_query_keeps_form_words():
-    assert matcher._form_query("finely grated parmesan") == "grated parmesan"
-    assert matcher._form_query("canned crushed tomatoes") == "canned crushed tomatoes"
+    assert best("canned diced tomatoes", [soup, diced], "cup") is diced
 
 
 @pytest.mark.parametrize("line, name", [
@@ -125,6 +117,7 @@ def test_a_kept_form_word_is_dropped_when_nothing_matches(monkeypatch):
         return ({"fdc_id": "1"}, 1.0, "high", None) if ingredient == "mung beans" else (None, 0.0, "none", None)
 
     monkeypatch.setattr(matcher, "_match_ingredient_once", once)
+    monkeypatch.setattr(matcher, "_respelled", lambda ingredient, *a, **k: ingredient)
     assert matcher.match_ingredient("dried mung beans", [])[0] == {"fdc_id": "1"}
     assert calls == ["dried mung beans", "mung beans"]
 
@@ -151,7 +144,7 @@ WHIPPING = usda(170859, "Heavy whipping cream", "Cream, fluid, heavy whipping", 
 
 def test_the_volume_fallback_keeps_the_food():
     food = matcher._volume_unit_fallback(HEAVY, [HEAVY, WHIPPING], "cup", "heavy cream",
-                                         ["heavy", "cream"], 0.0, False, False, False)
+                                         ["heavy", "cream"])
     assert food["fdc_id"] == HEAVY["fdc_id"]
     assert food["_density_from"] == WHIPPING["fdc_id"]
     borrowed = food["portions"][-1]
@@ -170,7 +163,7 @@ def test_a_relative_in_the_same_category_measures_a_racc_only_food(monkeypatch):
                    portions=[("1 cup", 136.0)])
     monkeypatch.setattr(matcher, "_search_usda_for_ingredient", lambda q: [souffle, raw])
     food = matcher._volume_unit_fallback(baby, [baby], "cup", "baby spinach",
-                                         ["baby", "spinach"], 0.0, False, False, False)
+                                         ["baby", "spinach"])
     assert food["_density_from"] == raw["fdc_id"]
     assert food["portions"][-1]["gram_weight"] == 30.0
 
@@ -237,7 +230,9 @@ def test_a_baby_variant_loses_to_the_plain_vegetable():
 def test_squid_heads_its_mollusk_row():
     squid = usda(174223, "Squid, mixed species, raw", "Mollusks, squid, mixed species, raw",
                  category="Finfish and Shellfish Products", portions=[("3 oz", 85.0)], raw=True)
-    assert matcher._usda_head_qualifiers("squid", squid) == ["mixed species", "raw"]
+    assert layer1.usda_row_head_qualifiers(layer1.Query.parse("squid"), squid["raw_description"],
+                                           squid["display_name"]) == ["mixed species", "raw"]
+    assert best("squid", [squid]) is squid
 
 
 # ── 7. Boost triggers ───────────────────────────────────────────────────────

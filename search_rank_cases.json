@@ -28,6 +28,7 @@
     {"query": "bacon", "description": "Bacon or side pork, fresh, cooked", "expect": null},
     {"query": "frozen peas", "description": "Peas, green, frozen, unprepared", "expect": ["green", "unprepared"]},
     {"query": "frozen peas", "description": "Peas, green, raw", "expect": null},
+    {"query": "fresh tomatoes", "description": "Tomatoes, red, ripe, raw, year round average", "expect": ["red", "ripe", "year round average"]},
     {"query": "smoked salmon", "description": "Fish, salmon, chinook, smoked", "expect": ["chinook"]}
   ],
 

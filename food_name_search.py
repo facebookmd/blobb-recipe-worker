@@ -46,6 +46,9 @@ PORTION_CUTS = set(RULES["portion_words"]["cuts"])
 PRODUCT_CUTS = set(RULES["portion_words"]["product_cuts"])
 PORTION_FILLERS = set(RULES["portion_words"]["fillers"])
 STATE_WORDS = set(_words("state_words"))
+FRESH_IS_RAW = {"fresh", "raw"}
+WITH_LEAD = RULES["with_qualifiers"]["lead"]
+WITH_IGNORED = set(RULES["with_qualifiers"]["ignore"])
 PART_SEGMENTS = set(_words("part_segments"))
 
 NOT_SPECIFIED_RE = re.compile(r"\b(nfs|ns as to)\b")
@@ -508,9 +511,15 @@ def usda_head_qualifiers(query: Query, description: str) -> list[str] | None:
     if not state or not rest:
         return None
     found = _head_qualifiers(rest, segs)
-    if found is None or not state <= {canonical(t) for q in found for t in tokens(q)}:
+    if found is None:
         return None
-    return [q for q in found if not {canonical(t) for t in tokens(q)} <= state]
+    # Fresh is raw: "fresh tomatoes" is "Tomatoes, red, ripe, raw".
+    said = state | (FRESH_IS_RAW if state & FRESH_IS_RAW else set())
+    if not state - FRESH_IS_RAW <= {canonical(t) for q in found for t in tokens(q)}:
+        return None
+    if state & FRESH_IS_RAW and not FRESH_IS_RAW & {canonical(t) for q in found for t in tokens(q)}:
+        return None
+    return [q for q in found if not {canonical(t) for t in tokens(q)} <= said]
 
 
 def _or_head(segment: str) -> list[str] | None:
@@ -576,6 +585,23 @@ def part_segment_count(query: Query, qualifiers: list[str]) -> int:
                if normalize(q) in PART_SEGMENTS and canonical(normalize(q)) not in said)
 
 
+def with_food_count(query: Query, qualifiers: list[str]) -> int:
+    """Head qualifiers "with ..." naming another food the query doesn't say
+    (search_rules.json with_qualifiers): "with potatoes" of "Chicken, fried,
+    with potatoes, vegetable, frozen meal"."""
+    said = {canonical(t) for t in query.tokens}
+    count = 0
+    for q in qualifiers:
+        words = tokens(q)
+        if len(words) < 2 or words[0] != WITH_LEAD:
+            continue
+        other = [w for w in words[1:] if w not in STANDARD_WORDS and w not in WITH_IGNORED
+                 and not w.isdigit()]
+        if other and not any(canonical(w) in said for w in other):
+            count += 1
+    return count
+
+
 def is_unknown_qualifier(segment: str) -> bool:
     n = normalize(segment)
     if not n or VARIANT_RE.search(n):
@@ -628,7 +654,7 @@ def rank_usda_row(query: Query, display_rank: Rank, description: str, display_na
         unknown = sum(is_unknown_qualifier(q) for q in quals)
         rank = _build_rank(4, 1000 - unknown * UNKNOWN_QUALIFIER_PENALTY, len(query.tokens),
                            len(query.tokens), 0, 0, 0, 3, tokens(_strip_parentheses(description)))
-        penalty += part_segment_count(query, quals) * VARIANT_PENALTY
+        penalty += (part_segment_count(query, quals) + with_food_count(query, quals)) * VARIANT_PENALTY
     if is_foundation and not has_calories:
         penalty += NO_ENERGY_PENALTY
     return rank.penalized(penalty)
@@ -751,6 +777,11 @@ def fetch_rows(food_words: str, limit: int = 60, alias_text: str | None = None) 
     n = q.normalized
     head_or = [f'description.ilike."{n},*"', f'description.ilike."{n}"',
                f'display_name.ilike."{n},*"', f'display_name.ilike."{n}"']
+    # Rows headed by the food without its state words: full text needs
+    # "fresh", which "Tomatoes, red, ripe, raw" never says.
+    rest = " ".join(t for t in q.tokens if t not in STATE_WORDS)
+    if rest and rest != n:
+        head_or += [f'description.ilike."{rest},*"', f'display_name.ilike."{rest},*"']
     if " " in n:
         head_or.append(f'display_name.ilike."*{n}*"')
     reqs = [

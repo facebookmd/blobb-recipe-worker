@@ -7,6 +7,9 @@ inside words, so "boneless skinless chicken pieces" missed it and became
 breaded fried pieces. The cooked-rice default made "brown rice" white rice,
 and "skim milk" found "Yogurt, plain, skim milk": USDA calls it nonfat.
 
+The shortcuts are gone since 27 Oct 2026 (the shared search names the food,
+the recipe layer reads the line); these lines keep checking what they fixed.
+
 Run: .venv/bin/python -m pytest -q
 """
 
@@ -20,35 +23,22 @@ import parse_recipe as parser
 import recipe_matcher as matcher
 
 
-@pytest.mark.parametrize("ingredient,meat,only", [
-    ("chicken", "chicken", True),
-    ("shredded cooked chicken", "chicken", True),
-    ("boneless skinless chicken pieces", "chicken", True),
-    ("grilled chicken", "chicken", True),
-    ("chicken nuggets", "chicken", False),
-    ("chicken salad", "chicken", False),
-    ("chicken noodle soup", "chicken", False),
-    ("rotisserie chicken", "chicken", False),
-])
-def test_the_generic_meat_shortcut_is_for_the_meat_alone(ingredient, meat, only):
-    assert matcher._only_the_meat(ingredient, meat) is only
-
-
 LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
                           reason="needs SUPABASE_ANON_KEY (live Supabase)")
 
 
 @LIVE
 @pytest.mark.parametrize("line,expected", [
-    ("1 lb chicken nuggets", "Chicken nuggets, from restaurant"),
+    ("1 lb chicken nuggets", "Chicken nuggets, from other sources"),  # not a restaurant's
     ("2 cup chicken salad", "Chicken salad spread"),
     ("1 can chicken noodle soup", "Soup, chicken noodle, canned"),
     ("1 cup brown rice", "Brown rice, long-grain, cooked"),
     ("2 cup cooked brown rice", "Brown rice, long-grain, cooked"),
     ("1 cup skim milk", "Nonfat milk, vitamins A and D added"),
-    ("1 lb boneless skinless chicken pieces", "Chicken breast, skinless, roasted"),
+    # A recipe's chicken is raw (27 Oct 2026; it was roasted breast).
+    ("1 lb boneless skinless chicken pieces", "Roasting chicken, skinless, raw"),
     # Unchanged.
-    ("1 lb chicken", "Chicken breast, skinless, roasted"),
+    ("1 lb chicken", "Roasting chicken, skinless, raw"),
     ("1 lb chicken thighs", "Chicken thigh, with skin, raw"),
     ("2 cup cooked rice", "White rice, long-grain, cooked, enriched"),
 ])

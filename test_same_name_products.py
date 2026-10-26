@@ -41,13 +41,3 @@ def test_a_cup_line_takes_a_product_labelled_in_cups():
 def test_with_no_label_in_that_kind_of_unit_all_of_them_count():
     # Counts: no label is a count, so the most common serving (56 g) wins.
     assert matcher._typical_branded(ALL, "") is DRY
-
-
-def test_the_first_fetched_no_longer_wins_a_tie():
-    food, _, _ = matcher._score_list("linguine", ALL, 0.0, False, unit="oz")
-    assert food is DRY
-
-
-def test_one_product_is_left_alone():
-    food, _, _ = matcher._score_list("linguine", [FRESH], 0.0, False, unit="oz")
-    assert food is FRESH

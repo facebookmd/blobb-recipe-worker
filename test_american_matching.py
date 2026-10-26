@@ -75,10 +75,6 @@ def test_a_plural_meets_its_singular(plural, singular):
     assert matcher._canonical_token(plural) == matcher._canonical_token(singular)
 
 
-def test_dill_pickle_is_an_exact_label_for_pickles_dill():
-    assert matcher._exact_label_bonus("dill pickle", "Pickles, dill") > 0
-
-
 # ── Portions ────────────────────────────────────────────────────────────────
 
 BUN = usda(2707657, "Roll, white, hamburger bun", [
@@ -177,7 +173,7 @@ LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
     ("2 pie crust", "Pie crust, refrigerated, unbaked"),
     ("4 bone-in skin-on chicken drumstick", "Chicken drumstick, with skin, raw"),
     ("1 whole chicken", "Roasting chicken, with skin, giblets, and neck, raw"),
-    ("12 oz pork breakfast sausage", "Pork sausage"),
+    ("12 oz pork breakfast sausage", "Pork sausage, link/patty, unprepared"),  # raw
     ("3 cup clam juice", "CLAM JUICE BROTH"),
     ("3/4 cup uncooked grits", "Quick white corn grits, enriched, dry"),
     ("8 slice dill pickle", "Pickles, dill"),

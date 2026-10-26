@@ -1,15 +1,14 @@
 """
-Runs every recipe line in recipes/*.txt through the matcher twice, with its
-own name search and with the shared one (BLOBB_NAME_SEARCH, see
-recipe_matcher.NAME_SEARCH), and prints only the lines whose food changes,
-with calories per 100 g and per serving each way.
-
-Each run is its own process, since the setting is read at import.
+Runs every recipe line in recipes/*.txt through the matcher and saves each
+line's food, or prints the lines whose food changed since a saved run, with
+calories per 100 g and per serving each way. Run it before and after a
+search or recipe-layer change.
 
 Needs SUPABASE_ANON_KEY (USDA project); APP_SUPABASE_KEY too, for lines
 that use published templates.
 
-Run: .venv/bin/python compare_name_search.py [--json out.json]
+Run: .venv/bin/python compare_recipe_runs.py --save before.json
+     .venv/bin/python compare_recipe_runs.py --against before.json [--json changed.json]
 """
 
 from __future__ import annotations
@@ -18,7 +17,6 @@ import argparse
 import glob
 import json
 import os
-import subprocess
 import sys
 import tempfile
 from collections import defaultdict
@@ -26,9 +24,8 @@ from collections import defaultdict
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
-def run(mode: str, out: str) -> None:
-    """One mode's output rows, as {template_id, section, line, food, ...}."""
-    os.environ["BLOBB_NAME_SEARCH"] = mode
+def run(out: str) -> None:
+    """Every recipe line's food, as {template_id, section, line, food, ...}."""
     sys.path.insert(0, HERE)
     import parse_recipe
     import recipe_matcher as matcher
@@ -75,39 +72,38 @@ def compare(a_path: str, b_path: str) -> list[dict]:
     for k in a:
         if k in b and a[k]["food_id"] != b[k]["food_id"]:
             ca, cb = _num(a[k]["cal_tot"]), _num(b[k]["cal_tot"])
-            changed.append({"key": k, "category": a[k]["category"], "matcher": a[k], "shared": b[k],
+            changed.append({"key": k, "category": a[k]["category"], "before": a[k], "after": b[k],
                             "d_serving": None if ca is None or cb is None else cb - ca})
     return changed
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--run", nargs=2, metavar=("MODE", "OUT"), help=argparse.SUPPRESS)
+    ap.add_argument("--save", help="write this run's foods here")
+    ap.add_argument("--against", help="a saved run to compare this one with")
     ap.add_argument("--json", help="write the changed lines here")
     args = ap.parse_args()
-    if args.run:
-        run(*args.run)
-        return
+    if not args.save and not args.against:
+        ap.error("--save or --against")
 
     with tempfile.TemporaryDirectory() as tmp:
-        outs = {}
-        for mode in ("matcher", "shared"):
-            outs[mode] = os.path.join(tmp, f"{mode}.json")
-            subprocess.run([sys.executable, __file__, "--run", mode, outs[mode]], check=True,
-                           stderr=subprocess.DEVNULL)
-        total = len(json.load(open(outs["matcher"])))
-        changed = compare(outs["matcher"], outs["shared"])
+        now = args.save or os.path.join(tmp, "now.json")
+        run(now)
+        if not args.against:
+            return
+        total = len(json.load(open(args.against)))
+        changed = compare(args.against, now)
 
     print(f"{len(changed)} of {total} recipe lines change food\n")
     for c in sorted(changed, key=lambda c: -abs(c["d_serving"] or 0)):
-        m, s = c["matcher"], c["shared"]
+        before, after = c["before"], c["after"]
 
         def kcal(x):
             return f"{x['kcal_100g']:.0f}" if x["kcal_100g"] is not None else "?"
         d = f"{c['d_serving']:+.0f}" if c["d_serving"] is not None else "?"
         print(f"[{c['category']}] {c['key'][0]}: {c['key'][2]}   (per serving {d} kcal)")
-        print(f"  matcher: {m['food']} ({kcal(m)} kcal/100 g)")
-        print(f"  shared:  {s['food']} ({kcal(s)} kcal/100 g)")
+        print(f"  before: {before['food']} ({kcal(before)} kcal/100 g)")
+        print(f"  after:  {after['food']} ({kcal(after)} kcal/100 g)")
     if args.json:
         json.dump(changed, open(args.json, "w"), indent=1)
 

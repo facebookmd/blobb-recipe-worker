@@ -1,26 +1,21 @@
 """
-Compares the two ways a USDA head match can count (HEAD_SCORING in
-recipe_matcher.py) on recipe lines whose food someone has already chosen:
-the published templates' components, paired in order with their parsed
-lines in recipes.csv. Sections a published template copied in from another
-(its "Dashi Stock") have no lines of their own and are left out.
+How often the matcher picks the food someone already chose: the published
+templates' components, paired in order with their parsed lines in
+recipes.csv. Sections a published template copied in from another (its
+"Dashi Stock") have no lines of their own and are left out.
 
 About 30% of templates (chosen by id, so the split never moves) are held
-out: tune rules on the rest and judge on those. Prints how often each mode
-picks the published food, then only the lines whose food changes between
-the modes, with kcal per 100 g.
+out: tune rules on the rest and judge on those. Prints the share each way,
+then every line whose pick isn't the published food, with kcal per 100 g.
 
-The published foods were picked with the floor mode's matcher and then
-reviewed, so where a line's published food is the floor's pick that may be
-the review agreeing or only the old matcher's habit: judge the changed
-lines by eye, not by the count alone.
+The published foods were picked with the old matcher (before 27 Oct 2026)
+and then reviewed, so a line whose published food differs may be the
+review's choice or only the old matcher's habit: judge the lines by eye,
+not by the count alone.
 
 Needs SUPABASE_ANON_KEY (USDA project) and APP_SUPABASE_KEY (app project).
 
-With --name-search it compares the two name searches instead (matcher and
-shared, recipe_matcher.NAME_SEARCH), both with tier head scoring.
-
-Run: .venv/bin/python head_scoring_trial.py [--name-search] [--json out.json]
+Run: .venv/bin/python published_foods_trial.py [--json out.json]
 """
 
 from __future__ import annotations
@@ -86,16 +81,6 @@ def pick(line: dict, boosts: list) -> dict | None:
                                     line["unit"], is_cooked=is_cooked)[0]
 
 
-def run(mode: str, lines: list[dict], boosts: list) -> list[dict | None]:
-    if mode in ("matcher", "shared"):
-        matcher.NAME_SEARCH = mode
-    else:
-        matcher.HEAD_SCORING = mode
-    matcher._MATCH_CACHE.clear()
-    matcher._SHARED_MATCHES.clear()
-    return [pick(line, boosts) for line in lines]
-
-
 def fdc(food: dict | None) -> str:
     return str(food["fdc_id"]).removeprefix("B_") if food else ""
 
@@ -109,39 +94,29 @@ def describe(food: dict | None) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--json", help="write every line's picks here")
-    ap.add_argument("--name-search", action="store_true",
-                    help="compare the name searches (matcher, shared; see "
-                         "recipe_matcher.NAME_SEARCH) instead, both with tier head scoring")
+    ap.add_argument("--json", help="write every line's pick here")
     args = ap.parse_args()
 
     boosts = matcher.load_boosts("boosts.json")
     lines = labeled_lines()
-    a, b = ("matcher", "shared") if args.name_search else ("floor", "tier")
-    picks = {mode: run(mode, lines, boosts) for mode in (a, b)}
+    picks = [pick(line, boosts) for line in lines]
 
     for part, wanted in (("dev", False), ("held out", True)):
         idx = [i for i, line in enumerate(lines) if line["held_out"] == wanted]
-        agree = {m: sum(fdc(picks[m][i]) == lines[i]["truth_fdc"] for i in idx) for m in picks}
-        print(f"{part:9} {len(idx):4} lines   published food picked: "
-              f"{a} {agree[a]}, {b} {agree[b]}")
+        agree = sum(fdc(picks[i]) == lines[i]["truth_fdc"] for i in idx)
+        print(f"{part:9} {len(idx):4} lines   published food picked: {agree}")
 
-    changed = [i for i in range(len(lines)) if fdc(picks[a][i]) != fdc(picks[b][i])]
-    print(f"\n{len(changed)} lines change food:")
-    for i in changed:
-        line, one, two = lines[i], picks[a][i], picks[b][i]
-        mark = {fdc(one): a, fdc(two): b}.get(line["truth_fdc"], "neither")
-        kcal = ((two or {}).get("energy_kcal") or 0) - ((one or {}).get("energy_kcal") or 0)
+    other = [i for i in range(len(lines)) if fdc(picks[i]) != lines[i]["truth_fdc"]]
+    print(f"\n{len(other)} lines pick another food:")
+    for i in other:
+        line = lines[i]
         print(f"\n{'[held out] ' if line['held_out'] else ''}{line['template_id']}: "
-              f"{line['qty']} {line['unit']} {line['ingredient']}   "
-              f"(published matches {mark}; {b} - {a} = {kcal:+.0f} kcal/100 g)")
-        print(f"  {a + ':':10} {describe(one)}")
-        print(f"  {b + ':':10} {describe(two)}")
+              f"{line['qty']} {line['unit']} {line['ingredient']}")
+        print(f"  picked:    {describe(picks[i])}")
         print(f"  published: {line['truth_name']}")
 
     if args.json:
-        json.dump([{**line, a: describe(picks[a][i]), f"{a}_fdc": fdc(picks[a][i]),
-                    b: describe(picks[b][i]), f"{b}_fdc": fdc(picks[b][i])}
+        json.dump([{**line, "picked": describe(picks[i]), "picked_fdc": fdc(picks[i])}
                    for i, line in enumerate(lines)], open(args.json, "w"), indent=1)
 
 
