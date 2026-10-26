@@ -53,6 +53,31 @@
     {"query": "milk chocolate", "name": "Chocolate milk, whole", "expect": "describes"}
   ],
 
+  "portion_split": [
+    {"query": "large banana", "food": "banana", "portion_words": ["large"]},
+    {"query": "extra large egg", "food": "egg", "portion_words": ["extra large"]},
+    {"query": "sliced onion", "food": "onion", "portion_words": ["sliced"]},
+    {"query": "finely chopped onion", "food": "onion", "portion_words": ["chopped"]},
+    {"query": "diced tomatoes", "food": "tomatoes", "portion_words": ["diced"]},
+    {"query": "mashed potatoes", "food": "potatoes", "portion_words": ["mashed"]},
+    {"query": "mashed", "food": "mashed", "portion_words": []},
+    {"query": "milk", "food": "milk", "portion_words": []}
+  ],
+
+  "preferred_portion": [
+    {"labels": ["1 cup, mashed", "1 extra large (9\" or longer)", "1 large (8\" to 8-7/8\" long)", "1 medium (7\" to 7-7/8\" long)"], "words": ["large"], "expect": "1 large (8\" to 8-7/8\" long)"},
+    {"labels": ["1 cup, chopped", "1 cup, sliced", "1 medium (2-1/2\" dia)"], "words": ["sliced"], "expect": "1 cup, sliced"},
+    {"labels": ["1 cup, chopped", "1 medium (2-1/2\" dia)"], "words": ["diced"], "expect": null},
+    {"labels": ["1 cup, sliced", "1 large"], "words": ["sliced", "large"], "expect": "1 large"}
+  ],
+
+  "product_cut": [
+    {"food": "potatoes", "description": "Potatoes, mashed, home-prepared, whole milk added", "cuts": ["mashed"], "expect": true},
+    {"food": "tomatoes", "description": "Tomatoes, canned, red, ripe, diced", "display_name": "Diced ripe red tomatoes, canned", "cuts": ["diced"], "expect": true},
+    {"food": "tomatoes", "description": "Tomatoes, red, ripe, raw", "cuts": ["diced"], "expect": false},
+    {"food": "rice", "description": "Spanish rice mix, dry mix, prepared (with diced tomatoes)", "cuts": ["diced"], "expect": false}
+  ],
+
   "rank": [
     {"query": "milk", "first": "Milk, whole, 3.25% milkfat, with added vitamin D", "candidates": [
       {"description": "Milk, sheep, fluid", "display_name": "Sheep milk"},

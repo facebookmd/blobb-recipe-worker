@@ -24,6 +24,7 @@ import time
 from pathlib import Path
 from collections import Counter, defaultdict
 
+import food_name_search
 import template_refs as tref
 
 from supabase_food_source import (
@@ -2721,6 +2722,43 @@ def _respelled(ingredient: str, boost_rules=None, category: str = "") -> str:
     return respelled
 
 
+# Which search names the food (26 Oct 2026, stage 1 of unifying the two):
+#   "matcher": this module's own search and scoring, with its boosts and
+#              shortcuts.
+#   "shared":  food_name_search, the port of the app's food search (layer
+#              1), and nothing else: no boosts, shortcuts or cooked/raw
+#              rules yet. compare_name_search.py runs every recipe line
+#              both ways.
+NAME_SEARCH = os.environ.get("BLOBB_NAME_SEARCH", "matcher")
+_SHARED_MATCHES: dict[str, tuple] = {}
+# A score for match_ingredient's callers by layer 1's rank tier: a USDA
+# head match (4), a display-name match (3, 2), words only (1), or a name
+# that only describes another food (demoted below 1).
+_SHARED_TIER_SCORE = {4: 0.95, 3: 0.9, 2: 0.75, 1: 0.5}
+
+
+def _shared_name_match(ingredient: str):
+    """match_ingredient's result from layer 1: its best row, built as this
+    module builds foods, with its portions."""
+    key = ingredient.strip().lower()
+    if key in _SHARED_MATCHES:
+        return _SHARED_MATCHES[key]
+    rows, split = food_name_search.search(ingredient, limit=60)
+    result = (None, 0.0, "none", None)
+    if rows:
+        row = rows[0]
+        portions = load_portions_for_food_ids([int(row["id"])])
+        branded = food_name_search.is_branded_row(row)
+        build = _build_supabase_branded_food if branded else _build_supabase_usda_food
+        food = build(row, 0, portions)
+        if food is not None:
+            rank = food_name_search.score_row(food_name_search.Query.parse(split.food), row)
+            score = _SHARED_TIER_SCORE.get(rank.tier, 0.3) if rank.bucket > 0 else 0.3
+            result = (food, score, "high" if score >= 0.55 else "low", None)
+    _SHARED_MATCHES[key] = result
+    return result
+
+
 def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
                      category="", unit="", is_cooked=False):
     """
@@ -2741,6 +2779,8 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
     # parser's "whole" unit left "chicken", roasted breast by the cup.
     if unit.lower() == "whole" and re.fullmatch(r"(?i)(?:roasting\s+)?(?:chicken|duck|turkey)", ingredient.strip()):
         ingredient = f"whole {ingredient.strip()}"
+    if NAME_SEARCH == "shared":
+        return _shared_name_match(ingredient)
     respelled = _respelled(ingredient, boost_rules, category)
     if respelled != ingredient:
         result = match_ingredient(respelled, boost_rules, threshold, category, unit, is_cooked)

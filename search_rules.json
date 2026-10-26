@@ -66,6 +66,14 @@
     "skin_on_pattern": "meat and skin|skin eaten|skin coating eaten"
   },
 
+  "portion_words": {
+    "_about": "Words in a search that name a portion, not the food: 'large banana' is bananas with the '1 large' portion, 'sliced onion' onions with '1 cup, sliced'. Searches take no amounts (26 Oct 2026). Sizes and cuts leave the food's words and pick the portion (the first portion, in USDA's order, whose label says the word; sizes before cuts); fillers just leave. A product cut can also name the food ('mashed potatoes', 'diced tomatoes'): a USDA row headed by the food that says it comes first.",
+    "sizes": ["extra large", "large", "medium", "small", "jumbo", "mini"],
+    "cuts": ["sliced", "chopped", "minced", "julienned", "halved", "quartered", "cubed", "torn", "diced", "grated", "shredded", "crushed", "mashed", "crumbled"],
+    "product_cuts": ["diced", "grated", "shredded", "crushed", "mashed", "crumbled"],
+    "fillers": ["finely", "thinly", "roughly", "coarsely", "freshly"]
+  },
+
   "modifier_rules": {
     "_about": "A name that uses the query's food only to describe another ('Steak sauce' for 'steak') ranks lower; one that mixes it with a food the query doesn't say ('Clam and tomato juice') or says it lacks it ('Chili hot dog, no bun') ranks below every plain match. The food is the last word of a name's first part, before any of these words. 'or' isn't a mix word: 'Beef broth or bouillon' names alternatives.",
     "part_breaks": ["with", "in", "on"],
