@@ -13,6 +13,7 @@ Usage:
 """
 
 import argparse
+import dataclasses
 import statistics
 import csv
 import json
@@ -147,7 +148,9 @@ BUILTIN_BOOSTS = [
      "exclude": ["smoked","canned","oil","sauce","burger","cake","loaf","cream"]},
     {"trigger": "large egg",     "boost": "whole egg large",             "weight": 0.9},
     {"trigger": "egg yolk",      "boost": "egg yolk large",              "weight": 0.9},
-    {"trigger": "egg",           "boost": "egg raw fresh",               "weight": 0.9,
+    # "whole": the shared search ranks "Egg, white, raw, fresh" level with
+    # the whole egg for "egg raw fresh" (26 Oct 2026).
+    {"trigger": "egg",           "boost": "egg whole raw fresh",         "weight": 0.9,
      "exclude": ["yolk", "white", "noodle", "pasta", "roll", "mayo", "mayonnaise",
                  "eggplant", "custard", "tofu", "sponge", "waffle", "roe"]},
     # Japanese cooking essentials — short names with no USDA standard entry;
@@ -1765,6 +1768,13 @@ COOKING_WORD_RE = re.compile(r"\b(" + "|".join(SEARCH_RULES["cooking_words"]["wo
 SKINLESS_BY_DEFAULT_CUTS = set(SEARCH_RULES["skin"]["skinless_by_default_cuts"])
 SKIN_ON_RE = re.compile(r"\b(" + SEARCH_RULES["skin"]["skin_on_pattern"] + r")\b")
 
+# Words a line puts before the food that USDA puts in a qualifier, and head
+# qualifiers that leave only a part of the food (search_rules.json
+# state_words, part_segments): "frozen peas" is "Peas, green, frozen", and
+# "Potatoes, raw, skin" isn't "potato".
+STATE_WORDS = set(SEARCH_RULES["state_words"]["words"])
+PART_SEGMENTS = set(SEARCH_RULES["part_segments"]["words"])
+
 # A name that uses the line's food only to describe another ("Steak sauce"
 # for "steak") ranks MODIFIER_DESCRIBES_PENALTY lower; one mixing it with
 # another food ("Clam and tomato juice" for "clam juice") or saying it lacks
@@ -1882,22 +1892,42 @@ def _head_qualifiers_of(search: str, text: str) -> list[str] | None:
     """
     The segments of *text* after its head when *search* is the head: the
     first segment with the words in order ("Chocolate milk" isn't "milk
-    chocolate"), or the first two in either order ("Cream, sour" for "sour
-    cream"), with or without a leading group label or bird kind ("broiler or
-    fryers"). None when it isn't.
+    chocolate"), or its words before a one-word alternative ("Beef broth or
+    bouillon"), or the first two in either order ("Cream, sour" for "sour cream"), with
+    or without a leading group label or bird kind ("broiler or fryers").
+    None when it isn't.
     """
     segments = _usda_segments_of(text)
-    query = [_canonical_token(t) for t in normalise(search).split()]
-    if not segments or not query:
+    words = normalise(search).split()
+    if not segments or not words:
         return None
+    found = _head_qualifiers_in([_canonical_token(t) for t in words], segments)
+    if found is not None:
+        return found
+    # A state word before the food, in a qualifier (search_rules.json
+    # state_words): "frozen peas" is "Peas, green, frozen, unprepared".
+    state = {_canonical_token(t) for t in words if t in STATE_WORDS}
+    rest = [_canonical_token(t) for t in words if t not in STATE_WORDS]
+    if not state or not rest:
+        return None
+    found = _head_qualifiers_in(rest, segments)
+    if found is None or not state <= {_canonical_token(t) for q in found for t in normalise(q).split()}:
+        return None
+    return [q for q in found if not {_canonical_token(t) for t in normalise(q).split()} <= state]
 
+
+def _head_qualifiers_in(query: list[str], segments: list[str]) -> list[str] | None:
     def tokens(segs):
         return [_canonical_token(t) for seg in segs for t in normalise(seg).split()]
 
     def head_of(segs):
         if not segs:
             return None
-        if tokens(segs[:1]) == query:
+        # The head before a one-word alternative name: "Beef broth or
+        # bouillon" is beef broth. Not another food: "Bacon or side pork".
+        alts = normalise(segs[0]).split(" or ")
+        if tokens(segs[:1]) == query or (len(alts) == 2 and len(alts[1].split()) == 1
+                                          and tokens(alts[:1]) == query):
             return segs[1:]
         if len(segs) > 1 and sorted(tokens(segs[:2])) == sorted(query):
             return segs[2:]
@@ -2185,6 +2215,9 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
                 if prep_head and not _is_dish_category(food):
                     s += PREP_HEAD_BONUS
                 s -= HEAD_UNKNOWN_PENALTY * sum(_is_unknown_qualifier(q, said) for q in qualifiers)
+                s -= VARIANT_PENALTY * sum(
+                    1 for q in qualifiers if normalise(q) in PART_SEGMENTS
+                    and _canonical_token(normalise(q)) not in set(query_tokens))
                 # Curated Foundation rows break ties, but only with calories
                 # and a unit people can use; many carry only "1 RACC".
                 if (food.get("data_type") == "Foundation" and food.get("energy_kcal")
@@ -2334,9 +2367,12 @@ MEAT_FALLBACK_THRESHOLD = 0.50  # Below this, prefer generic meat entry
 # Ingredients containing these trigger strings get remapped to a cleaner
 # search term before matching. Applied after boost rules.
 INGREDIENT_REMAP = {
-    "peppercorn":        "black pepper ground",
-    "peppercorns":       "black pepper ground",
-    "whole pepper":      "black pepper ground",
+    # Not "black pepper ground": the matcher drops "ground" anyway, and the
+    # shared search found a branded "BLACK PEPPER GROUND" over "Spices,
+    # pepper, black" (26 Oct 2026).
+    "peppercorn":        "black pepper",
+    "peppercorns":       "black pepper",
+    "whole pepper":      "black pepper",
     "rice wine vinegar": "rice vinegar",
     "soybean powder":     "soy flour",
     "soy bean powder":    "soy flour",
@@ -2722,40 +2758,313 @@ def _respelled(ingredient: str, boost_rules=None, category: str = "") -> str:
     return respelled
 
 
-# Which search names the food (26 Oct 2026, stage 1 of unifying the two):
+# Which search names the food (26 Oct 2026, unifying the two):
 #   "matcher": this module's own search and scoring, with its boosts and
 #              shortcuts.
 #   "shared":  food_name_search, the port of the app's food search (layer
-#              1), and nothing else: no boosts, shortcuts or cooked/raw
-#              rules yet. compare_name_search.py runs every recipe line
-#              both ways.
+#              1), with the recipe layer on top (layer 2, _shared_match_once):
+#              boosts.json, recipe words, cooked or raw, the line's unit.
+#              compare_name_search.py runs every recipe line both ways.
 NAME_SEARCH = os.environ.get("BLOBB_NAME_SEARCH", "matcher")
-_SHARED_MATCHES: dict[str, tuple] = {}
+_SHARED_MATCHES: dict[tuple, tuple] = {}
 # A score for match_ingredient's callers by layer 1's rank tier: a USDA
 # head match (4), a display-name match (3, 2), words only (1), or a name
 # that only describes another food (demoted below 1).
 _SHARED_TIER_SCORE = {4: 0.95, 3: 0.9, 2: 0.75, 1: 0.5}
+# Layer 1's best rows the recipe layer re-ranks; it never reaches further.
+SHARED_RERANK_LIMIT = 30
+# Words a line says about the food's state or quality, not which food:
+# searched without when layer 1's best row doesn't carry one ("cooked
+# linguine" found "SEAFOOD LINGUINE"). "hot" stays ("hot dog", "hot green
+# chili").
+RECIPE_STATE_WORDS = (PREP_WORDS | FALLBACK_DROP_WORDS | set(SEARCH_RULES["cooking_words"]["words"])
+                      | {"uncooked", "dry", "organic", "large", "small", "medium"}) - {"hot"}
+# Of those, the ones that never name a product: searched without too when
+# that puts layer 1's best row in a higher tier and the line isn't a head
+# match ("fresh ginger" found a vinaigrette, "Ginger root, raw" doesn't say
+# fresh). Not "toasted", "dried" or "frozen": "TOASTED COCONUT" is the
+# product, and layer 1 reads them in a qualifier (state_words).
+RECIPE_QUALITY_WORDS = (RECIPE_STATE_WORDS - PRODUCT_PREP_WORDS
+                        - (food_name_search.STATE_WORDS - {"fresh", "raw"})
+                        - {"ground", "dry", "unripe", "seasoned", "blanched"})
+# A line asking for the food uncooked: USDA says "raw", or "uncooked", or
+# "dry" (pasta, noodles, grits).
+RAW_LINE_RE = re.compile(r"(?i)\b(?:raw|uncooked|dry)\b")
+# How a cut's bone and skin are said in a line. USDA never says "bone-in"
+# or "skin-on", so no row carries every word of "bone-in beef shank": the
+# search goes without them. For a chicken cut, _chicken_cut reads all of
+# these and the search goes without each ("boneless skin-on chicken thigh"
+# found boneless skinless thighs, the only rows saying boneless).
+BONE_IN_SKIN_ON_RE = re.compile(r"(?i)\b(?:bone[- ]?in|skin[- ]?on)\b")
+CUT_BONE_SKIN_RE = re.compile(
+    r"(?i)\b(?:bone[- ]?in|boneless|skin[- ]?on|skin[- ]?off|skinless|with(?:out)? skin|no skin)\b")
+_SKIN_ROW_RE = re.compile(r"\b(?:meat and skin|with skin|skin eaten|skin coating eaten)\b")
+_SKINLESS_ROW_RE = re.compile(r"\b(?:skinless|meat only|skin not eaten)\b")
 
 
-def _shared_name_match(ingredient: str):
-    """match_ingredient's result from layer 1: its best row, built as this
-    module builds foods, with its portions."""
-    key = ingredient.strip().lower()
-    if key in _SHARED_MATCHES:
-        return _SHARED_MATCHES[key]
-    rows, split = food_name_search.search(ingredient, limit=60)
-    result = (None, 0.0, "none", None)
-    if rows:
-        row = rows[0]
-        portions = load_portions_for_food_ids([int(row["id"])])
-        branded = food_name_search.is_branded_row(row)
-        build = _build_supabase_branded_food if branded else _build_supabase_usda_food
-        food = build(row, 0, portions)
-        if food is not None:
-            rank = food_name_search.score_row(food_name_search.Query.parse(split.food), row)
-            score = _SHARED_TIER_SCORE.get(rank.tier, 0.3) if rank.bucket > 0 else 0.3
-            result = (food, score, "high" if score >= 0.55 else "low", None)
-    _SHARED_MATCHES[key] = result
+def _layer1(text: str) -> tuple[list[dict], food_name_search.SplitQuery, food_name_search.Query]:
+    rows, split = food_name_search.search(text, limit=60)
+    return rows, split, food_name_search.Query.parse(split.food)
+
+
+def _top_rank(found) -> food_name_search.Rank:
+    rows, _, query = found
+    return food_name_search.score_row(query, rows[0]) if rows else food_name_search.NONE
+
+
+def _row_words(row: dict) -> set[str]:
+    return {_canonical_token(t) for t in
+            normalise(f"{row.get('display_name') or ''} {row.get('description') or ''}").split()}
+
+
+def _shared_rows(text: str):
+    """
+    Layer 1's rows for a recipe line's name: with RECIPE_STATE_WORDS the best
+    row doesn't carry left out; with RECIPE_QUALITY_WORDS left out too when
+    that puts the best row in a higher tier than a search short of a head
+    match; and without a leading cuisine word USDA doesn't carry when the
+    rest is a USDA food with nothing added ("Japanese mayonnaise" is
+    "Mayonnaise, regular", not "JAPANESE SPICY MAYO"). Returns (rows, split,
+    query).
+    """
+    found = _layer1(text)
+    rows, _, query = found
+    if not rows:
+        return found
+    words = query.normalized.split()
+    top = _top_rank(found)
+    carried = _row_words(rows[0])
+    missing = [w for w in words if w in RECIPE_STATE_WORDS and _canonical_token(w) not in carried]
+    if missing and len(missing) < len(words):
+        retry = _layer1(" ".join(w for w in words if w not in missing))
+        if retry[0] and _top_rank(retry).tier >= top.tier:
+            found = retry
+            words = found[2].normalized.split()
+            top = _top_rank(found)
+    quality = [w for w in words if w in RECIPE_QUALITY_WORDS]
+    if top.tier < 4 and quality and len(quality) < len(words):
+        retry = _layer1(" ".join(w for w in words if w not in quality))
+        if retry[0] and _top_rank(retry).tier > top.tier:
+            found = retry
+            words = found[2].normalized.split()
+            top = _top_rank(found)
+    if len(words) > 1 and words[0] in LOCATION_PREFIXES and (top.tier < 4 or top.bucket < 1000):
+        retry = _layer1(" ".join(words[1:]))
+        best = _top_rank(retry)
+        if retry[0] and best.tier == 4 and best.bucket >= 1000:
+            found = retry
+    return found
+
+
+def _chicken_cut(line: str) -> tuple[str | None, bool | None]:
+    """The chicken cut a line names and whether it's skinless, as the
+    matcher's cut shortcut reads them (CHICKEN_CUT_*): breast is skinless
+    unless the line says skin, other cuts keep it unless it says skinless."""
+    low = line.lower()
+    if not re.search(r"\bchicken\b", low) or any(ex in low for ex in CHICKEN_CUT_EXCLUDES):
+        return None, None
+    cut = next((c for c in CHICKEN_CUT_IDS if re.search(rf"\b{c}s?\b", low)), None)
+    if cut is None:
+        return None, None
+    skinless = any(t in low for t in CHICKEN_CUT_SKINLESS_TRIGGERS) or (
+        cut in CHICKEN_CUT_SKINLESS_BY_DEFAULT and not any(t in low for t in CHICKEN_CUT_SKIN_ON_TRIGGERS))
+    return cut, skinless
+
+
+def _recipe_variant_delta(query, row: dict, line_cooked: bool, skinless: bool | None,
+                          raw_known: bool = False) -> int:
+    """Variants the recipe counts that layer 1 doesn't, less any it counts
+    that the recipe asked for: a row's cooking state (one variant, however
+    many cooking words; none for a cooked line, see COOKING_WORD_RE), and
+    the skin of a chicken cut (_chicken_cut). FNDDS foods are as eaten, so
+    one that doesn't say raw is cooked when another row says raw
+    (*raw_known*): "Pork, ground" (299 kcal) isn't "Pork, fresh, ground,
+    raw" (263)."""
+    if food_name_search.is_branded_row(row):
+        return 0
+    desc = normalise(row.get("description") or "")
+    wanted = {_canonical_token(t) for t in query.tokens}
+    if not wanted or not wanted <= {_canonical_token(t) for t in desc.split()}:
+        return 0
+    delta = 0
+    cooked = any(not ({_canonical_token(w) for w in m.group(0).split()} & wanted)
+                 for m in COOKING_WORD_RE.finditer(desc))
+    as_eaten = (raw_known and "survey" in (row.get("data_type") or "").lower()
+                and not _says_raw(query, row))
+    if not line_cooked and (cooked or as_eaten):
+        delta += 1
+    if skinless is not None:
+        has_skin = bool(_SKIN_ROW_RE.search(desc))
+        counted = (bool(wanted & SKINLESS_BY_DEFAULT_CUTS) and "skin" not in wanted
+                   and bool(SKIN_ON_RE.search(desc)))
+        if skinless and has_skin and not counted:
+            delta += 1
+        elif not skinless:
+            delta += bool(_SKINLESS_ROW_RE.search(desc)) - counted
+    return delta
+
+
+# Words two USDA rows of one food can differ by: "Egg, whole, raw" (FNDDS)
+# and "Egg, whole, raw, fresh" (SR Legacy), "Chicken, thigh, meat and skin,
+# raw" (Foundation) and "Chicken, broilers or fryers, thigh, ..." (SR).
+SAME_FOOD_IGNORED = {"raw", "fresh", "broiler", "broilers", "or", "fryer", "fryers"}
+
+
+def _same_food(row: dict, rank) -> tuple:
+    """Rows layer 1 ranks alike that are one food in several datasets: the
+    same tier and bucket, and the same description but for
+    SAME_FOOD_IGNORED (USDA's notes left out). A branded product is its
+    name."""
+    if food_name_search.is_branded_row(row):
+        words = normalise(row.get("display_name") or "")
+    else:
+        words = frozenset(_canonical_token(t)
+                          for seg in food_name_search.usda_segments(row.get("description") or "")
+                          for t in normalise(seg).split()) - SAME_FOOD_IGNORED
+    return rank.tier, rank.bucket, words
+
+
+def _says_raw(query, row: dict) -> bool:
+    """A USDA row carrying the line's words that says it's uncooked."""
+    if food_name_search.is_branded_row(row):
+        return False
+    words = _row_words(row)
+    return ({_canonical_token(t) for t in query.tokens} <= words
+            and bool(words & {"raw", "uncooked", "dry"}))
+
+
+def _shared_match_once(ingredient, boost_rules=None, threshold=0.45,
+                       category="", unit="", is_cooked=False):
+    """
+    _match_ingredient_once in "shared" mode: layer 2, the recipe layer, on
+    layer 1 (food_name_search). The line's recipe conventions first
+    (_recipe_remap; boosts.json through _line_boost, whose pins win when
+    their food fits the line's preparations and isn't cooked for an
+    uncooked line); then layer 1's best rows, re-ranked, never replaced:
+    for an uncooked line a row saying so, variants only a recipe counts
+    (_recipe_variant_delta), and among rows layer 1 ranks alike, one with a
+    portion in the line's unit ("3 cloves garlic": SR "Garlic, raw" has a
+    clove, Foundation's doesn't) and one people can measure, then a
+    standard reference row (SR Legacy, Foundation) over FNDDS, as the
+    matcher breaks ties (_same_food). A boost that only rewrites the search ("ginger" ->
+    "ginger root": alone, layer 1 says ground ginger) is used when its best
+    row ranks in a tier no lower than the line's own, or names all its
+    words while the line's best has a variant ("chili pepper" -> "hot green
+    chili pepper": "Green chili peppers, canned" is a head match, canned).
+    A rewrite ranking lower was written for the matcher's own scoring
+    ("coconut cream unsweetened" found a coconut drink). Same result shape
+    as _match_ingredient_once.
+    """
+    rules = BUILTIN_BOOSTS if boost_rules is None else boost_rules
+    cache_key = (ingredient.lower(), category.lower(), unit.lower(), bool(is_cooked), bool(rules))
+    if cache_key in _SHARED_MATCHES:
+        return _SHARED_MATCHES[cache_key]
+    preparations = _line_preparations(ingredient)
+    line_raw = bool(RAW_LINE_RE.search(ingredient))
+    remapped, is_cooked = _recipe_remap(ingredient, category, unit, is_cooked)
+    boosted_text, _, pinned_fdc_id = _line_boost(remapped, rules, category, preparations,
+                                                  _fetch_food_by_fdc_id)
+    # Rules are written for the line's words; a cut or size word layer 1
+    # takes out ("cubed kabocha squash") mustn't hide one.
+    split_food = food_name_search.split_portion_words(remapped).food
+    if not pinned_fdc_id and boosted_text.lower() == remapped.lower() and split_food != normalise(remapped):
+        boosted_text, _, pinned_fdc_id = _line_boost(split_food, rules, category, preparations,
+                                                      _fetch_food_by_fdc_id)
+        if boosted_text.lower() == split_food.lower() and not pinned_fdc_id:
+            boosted_text = remapped
+    if pinned_fdc_id:
+        food = _fetch_food_by_fdc_id(pinned_fdc_id)
+        if (food is not None and _fits_preparations(food, preparations)
+                and not (line_raw and _is_cooked_food(food))):
+            _SHARED_MATCHES[cache_key] = (dict(food), 0.95, "high", None)
+            return _SHARED_MATCHES[cache_key]
+        boosted_text = remapped
+
+    cut, skinless = _chicken_cut(ingredient)
+
+    def search_text(text):
+        text = (CUT_BONE_SKIN_RE if cut else BONE_IN_SKIN_ON_RE).sub(" ", text)
+        if "fillet" in ingredient.lower() and _is_fish_or_seafood_name(ingredient.lower()):
+            text = re.sub(r"(?i)\bfillets?\b", " ", text)
+        return " ".join(text.split())
+
+    found = _shared_rows(search_text(remapped))
+    if boosted_text.lower() != remapped.lower():
+        line_top = _top_rank(found)
+        rewritten = _shared_rows(search_text(boosted_text))
+        best = _top_rank(rewritten)
+        if rewritten[0] and (best.tier >= line_top.tier
+                             or (best.tier >= 2 and line_top.bucket < 1000)):
+            found = rewritten
+    rows, split, query = found
+    line_words = normalise(ingredient).split()
+    line_cooked = is_cooked or any(COOKING_WORD_RE.fullmatch(w) or w in PRODUCT_PREP_WORDS
+                                   for w in line_words)
+    query_tokens = {_canonical_token(t) for t in query.tokens}
+
+    top = rows[:SHARED_RERANK_LIMIT]
+    portions = load_portions_for_food_ids([int(r["id"]) for r in top]) if top else {}
+    raw_known = any(_says_raw(query, r) for r in top)
+    ranked, first_of_food = [], {}
+    for i, row in enumerate(top):
+        build = (_build_supabase_branded_food if food_name_search.is_branded_row(row)
+                 else _build_supabase_usda_food)
+        food = build(row, i, portions)
+        if food is None or (food.get("energy_kcal") or 0.0) > MAX_KCAL_PER_100G:
+            continue
+        if _is_unasked_dish(food, query_tokens):
+            continue
+        rank = food_name_search.score_row(query, row)
+        delta = _recipe_variant_delta(query, row, line_cooked and not line_raw, skinless, raw_known)
+        if delta and rank.is_match:
+            rank = dataclasses.replace(rank, bucket=rank.bucket - delta * food_name_search.VARIANT_PENALTY)
+        has_unit = _has_unit_portion(food, unit)
+        measurable = food.get("source") != "usda" or _has_measurable_portion(food)
+        says_raw = _says_raw(query, row)
+        first = first_of_food.setdefault(_same_food(row, rank), i)
+        key = (line_raw and says_raw,
+               # Layer 1's own order before its rank: a row naming the
+               # line's product cut ("Cheese, parmesan, grated").
+               food_name_search.names_product_cut(query, row, split.product_cuts),
+               not _is_specialty_row(food, query_tokens),
+               rank.tier, rank.bucket,
+               # In a tier and bucket, an uncooked line's food raw: "Italian
+               # sausage, pork, mild, raw" over "Sweet Italian sausage
+               # links"; then layer 1's order of foods.
+               not line_cooked and says_raw, -first,
+               # Among one food's rows: a portion in the line's unit, one
+               # people can measure, a standard reference row.
+               has_unit is not False, measurable, _data_type_rank(food), -i)
+        ranked.append((key, food, rank))
+    if not ranked:
+        result = (None, 0.0, "none", None)
+        _SHARED_MATCHES[cache_key] = result
+        return result
+    ranked.sort(key=lambda x: x[0], reverse=True)
+    best_key, food, rank = ranked[0]
+    if food.get("source") == "branded":
+        name = normalise(food["display_name"])
+        same = [f for k, f, _ in ranked if k[:6] == best_key[:6] and f.get("source") == "branded"
+                and normalise(f["display_name"]) == name]
+        if len(same) > 1:
+            # Cooked pasta is measured as the dry pasta it was cooked from
+            # (build_output_rows), so it's the product labelled by weight.
+            cooked_pasta = _pasta_keyword(ingredient) and re.match(r"(?i)cooked\s+", ingredient)
+            food = _typical_branded(same, "oz" if cooked_pasta else unit)
+    # A volume is borrowed from a USDA row only, as the matcher does.
+    foods = [f for _, f, _ in ranked if f.get("source") == "usda"]
+    food = _volume_unit_fallback(food, foods, unit, query.normalized, list(query.tokens),
+                                 0.0, False, bool(PROCESSED_MARKERS_RE.search(ingredient)), line_cooked)
+    food = dict(food)
+    if cut:
+        food["_cut_keyword"] = cut  # used by pick_best_portion
+    meat_kw = _meat_keyword(remapped)
+    if meat_kw and not food.get("is_raw", False):
+        food["_yield_factor"] = None if is_cooked else MEAT_GENERIC_IDS.get(meat_kw, (None, 1.0))[1]
+        food["_meat_keyword"] = meat_kw
+    score = _SHARED_TIER_SCORE.get(rank.tier, 0.3) if rank.bucket > 0 else 0.3
+    result = (food, score, "high" if score >= 0.55 else "low", None)
+    _SHARED_MATCHES[cache_key] = result
     return result
 
 
@@ -2779,8 +3088,6 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
     # parser's "whole" unit left "chicken", roasted breast by the cup.
     if unit.lower() == "whole" and re.fullmatch(r"(?i)(?:roasting\s+)?(?:chicken|duck|turkey)", ingredient.strip()):
         ingredient = f"whole {ingredient.strip()}"
-    if NAME_SEARCH == "shared":
-        return _shared_name_match(ingredient)
     respelled = _respelled(ingredient, boost_rules, category)
     if respelled != ingredient:
         result = match_ingredient(respelled, boost_rules, threshold, category, unit, is_cooked)
@@ -2822,77 +3129,21 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
     return result
 
 
-def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
-                           category="", unit="", is_cooked=False):
+def _recipe_remap(ingredient: str, category: str, unit: str, is_cooked: bool) -> tuple[str, bool]:
     """
-    Returns (food, score, confidence, matched_alt).
-    matched_alt is the alternate name string that won the match, or None
-    if the display_name won. The app should display matched_alt when set.
-
-    Queries Supabase per-ingredient (FTS + ilike) — no bulk download.
+    The name a recipe line means, and whether it's cooked: plain rice is
+    cooked rice of its grain or colour (read as cooked), INGREDIENT_REMAP's
+    names, "chili" by the cup the dish. Both name searches start from it.
     """
-    if boost_rules is None:
-        boost_rules = BUILTIN_BOOSTS
-
-    cache_key = (
-        ingredient.lower(),
-        category.lower(),
-        unit.lower(),
-        bool(is_cooked),
-        float(threshold),
-    )
-    cached = _MATCH_CACHE.get(cache_key)
-    if cached is not None:
-        return cached
-
-    # Build per-ingredient indexes from Supabase search
-    search_query = normalise(strip_prep(ingredient))
-    usda_foods = _search_usda_for_ingredient(search_query)
-    # Branded is lazy — only fetched when USDA doesn't meet threshold
-    branded_index = None
-    _branded_fetched = False
-
-    def _get_branded():
-        nonlocal branded_index, _branded_fetched
-        if not _branded_fetched:
-            branded_index = _search_branded_for_ingredient(search_query)
-            _branded_fetched = True
-        return branded_index
     ing_lower = ingredient.lower()
-    category_lower = category.lower()
-    is_japanese_category = "japanese" in category_lower
+    is_japanese_category = "japanese" in category.lower()
     rice_default_cooked = False
-    preparations = _line_preparations(ingredient)
     if (_rice_keyword(ingredient) and not any(raw_kw in ing_lower for raw_kw in ("raw", "uncooked", "dry"))
-            and not preparations - {"cooked"}):
+            and not _line_preparations(ingredient) - {"cooked"}):
         rice_default_cooked = True
         is_cooked = True
 
-    # â”€â”€ Ground/powdered spices â€” direct FDC ID lookup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    # Same strip_prep problem: "ground ginger" â†’ "ginger" â†’ matches Ginger ale.
-    if "ground" in ing_lower or "powder" in ing_lower:
-        for kw, fdc_id in SPICE_GROUND_IDS.items():
-            if kw in ing_lower:
-                food = usda_foods.get(fdc_id)
-                if food:
-                    return dict(food), 0.95, "high", None
-
-    # â”€â”€ Specific chicken cuts â€” direct FDC ID lookup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    if "chicken" in ing_lower and not any(ex in ing_lower for ex in CHICKEN_CUT_EXCLUDES):
-        for cut_kw, (skin_on_id, skinless_id) in CHICKEN_CUT_IDS.items():
-            if cut_kw in ing_lower:
-                is_skinless = any(t in ing_lower for t in CHICKEN_CUT_SKINLESS_TRIGGERS) or (
-                    cut_kw in CHICKEN_CUT_SKINLESS_BY_DEFAULT
-                    and not any(t in ing_lower for t in CHICKEN_CUT_SKIN_ON_TRIGGERS))
-                fdc_id = skinless_id if is_skinless else skin_on_id
-                food = usda_foods.get(fdc_id)
-                if food and _fits_preparations(food, preparations):
-                    tagged = dict(food)
-                    tagged["_cut_keyword"] = cut_kw  # used by pick_best_portion
-                    return tagged, 0.95, "high", None
-                break
-
-    # Apply ingredient remaps first (e.g. peppercorns â†’ black pepper ground)
+    # Ingredient remaps (e.g. peppercorns -> black pepper ground)
     remapped = ingredient
     if rice_default_cooked:
         if any(kw in ing_lower for kw in ("short grain", "short-grain")):
@@ -2922,21 +3173,100 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     if (normalise(ingredient) in ("chili", "chilli")
             and unit.strip().lower() in ("cup", "cups", "can", "cans", "bowl", "bowls", "qt", "quart")):
         remapped = "chili con carne with beans"
+    return remapped, is_cooked
 
+
+def _line_boost(remapped: str, boost_rules, category: str, preparations: set[str],
+                find_pinned) -> tuple[str, float, str | None]:
+    """
+    apply_boosts for a recipe line. A boost that loses the line's preparation
+    stands aside, rewritten search and all: the potato pin took "mashed
+    potatoes" to raw potatoes, the "egg" rule rewrote "fried egg" as "egg raw
+    fresh". One that keeps it, in its search or its pinned food (looked up
+    with *find_pinned*), stays.
+    """
     boosted_text, boost_weight, pinned_fdc_id = apply_boosts(remapped, boost_rules, category)
-    # A boost that loses the line's preparation stands aside, rewritten search
-    # and all: the potato pin took "mashed potatoes" to raw potatoes, the
-    # "egg" rule rewrote "fried egg" as "egg raw fresh". One that keeps it,
-    # in its search or its pinned food, stays.
     if preparations and boosted_text.lower() != remapped.lower():
         keeps = preparations <= set(normalise(boosted_text).split())
         if pinned_fdc_id:
-            pinned = (usda_foods.get(pinned_fdc_id) or _get_branded().get(pinned_fdc_id)
-                      if pinned_fdc_id.startswith("B_") and _get_branded()
-                      else usda_foods.get(pinned_fdc_id) or _fetch_food_by_fdc_id(pinned_fdc_id))
+            pinned = find_pinned(pinned_fdc_id)
             keeps = keeps or (pinned is not None and _fits_preparations(pinned, preparations))
         if not keeps:
-            boosted_text, boost_weight, pinned_fdc_id = remapped, 0.0, None
+            return remapped, 0.0, None
+    return boosted_text, boost_weight, pinned_fdc_id
+
+
+def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
+                           category="", unit="", is_cooked=False):
+    """
+    Returns (food, score, confidence, matched_alt).
+    matched_alt is the alternate name string that won the match, or None
+    if the display_name won. The app should display matched_alt when set.
+
+    Queries Supabase per-ingredient (FTS + ilike) — no bulk download.
+    """
+    if NAME_SEARCH == "shared":
+        return _shared_match_once(ingredient, boost_rules, threshold, category, unit, is_cooked)
+    if boost_rules is None:
+        boost_rules = BUILTIN_BOOSTS
+
+    cache_key = (
+        ingredient.lower(),
+        category.lower(),
+        unit.lower(),
+        bool(is_cooked),
+        float(threshold),
+    )
+    cached = _MATCH_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
+
+    # Build per-ingredient indexes from Supabase search
+    search_query = normalise(strip_prep(ingredient))
+    usda_foods = _search_usda_for_ingredient(search_query)
+    # Branded is lazy — only fetched when USDA doesn't meet threshold
+    branded_index = None
+    _branded_fetched = False
+
+    def _get_branded():
+        nonlocal branded_index, _branded_fetched
+        if not _branded_fetched:
+            branded_index = _search_branded_for_ingredient(search_query)
+            _branded_fetched = True
+        return branded_index
+    ing_lower = ingredient.lower()
+    preparations = _line_preparations(ingredient)
+    remapped, is_cooked = _recipe_remap(ingredient, category, unit, is_cooked)
+
+    # â”€â”€ Ground/powdered spices â€” direct FDC ID lookup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # Same strip_prep problem: "ground ginger" â†’ "ginger" â†’ matches Ginger ale.
+    if "ground" in ing_lower or "powder" in ing_lower:
+        for kw, fdc_id in SPICE_GROUND_IDS.items():
+            if kw in ing_lower:
+                food = usda_foods.get(fdc_id)
+                if food:
+                    return dict(food), 0.95, "high", None
+
+    # â”€â”€ Specific chicken cuts â€” direct FDC ID lookup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    if "chicken" in ing_lower and not any(ex in ing_lower for ex in CHICKEN_CUT_EXCLUDES):
+        for cut_kw, (skin_on_id, skinless_id) in CHICKEN_CUT_IDS.items():
+            if cut_kw in ing_lower:
+                is_skinless = any(t in ing_lower for t in CHICKEN_CUT_SKINLESS_TRIGGERS) or (
+                    cut_kw in CHICKEN_CUT_SKINLESS_BY_DEFAULT
+                    and not any(t in ing_lower for t in CHICKEN_CUT_SKIN_ON_TRIGGERS))
+                fdc_id = skinless_id if is_skinless else skin_on_id
+                food = usda_foods.get(fdc_id)
+                if food and _fits_preparations(food, preparations):
+                    tagged = dict(food)
+                    tagged["_cut_keyword"] = cut_kw  # used by pick_best_portion
+                    return tagged, 0.95, "high", None
+                break
+
+    boosted_text, boost_weight, pinned_fdc_id = _line_boost(
+        remapped, boost_rules, category, preparations,
+        lambda fdc_id: (usda_foods.get(fdc_id) or _get_branded().get(fdc_id)
+                        if fdc_id.startswith("B_") and _get_branded()
+                        else usda_foods.get(fdc_id) or _fetch_food_by_fdc_id(fdc_id)))
     boosted = boosted_text.lower() != remapped.lower()
     search_source = boosted_text
     if "fillet" in ing_lower and _is_fish_or_seafood_name(ing_lower):

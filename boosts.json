@@ -708,7 +708,7 @@
   },
   {
     "trigger": "egg beaten",
-    "boost": "egg raw fresh",
+    "boost": "egg whole raw fresh",
     "weight": 0.85
   },
   {
@@ -2245,6 +2245,15 @@
     "trigger": "peas",
     "fdc_id": "170419",
     "weight": 0.9,
+    "exact": true
+  },
+  {
+    "_comment": "26 Oct 2026: a recipe's mackerel is the raw fish. The shared search ranks 'Fish, mackerel, salted' (305 kcal) first, since 'salted' is a standard word (salted butter); the matcher's shortcut took the cooked fillet."
+  },
+  {
+    "trigger": "mackerel",
+    "fdc_id": "175119",
+    "weight": 0.95,
     "exact": true
   },
   {

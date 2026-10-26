@@ -34,14 +34,14 @@
   },
 
   "variant_qualifiers": {
-    "_about": "Regex alternatives (joined as \\b(a|b|...)\\b over the normalized description) naming a different product: lighter versions, other animals and plants, other forms, preparations that change the food, unenriched grains (US flour, rice and pasta are enriched), and USDA's 'not (further) specified' rows. Not counted when the query says one of its words ('brown sugar', 'fried chicken').",
+    "_about": "Regex alternatives (joined as \\b(a|b|...)\\b over the normalized description) naming a different product: lighter versions, other animals and plants, other forms, preparations that change the food, unenriched grains (US flour, rice and pasta are enriched), glutinous (sticky) rice, and USDA's 'not (further) specified' rows. Not counted when the query says one of its words ('brown sugar', 'fried chicken').",
     "patterns": [
       "light", "lite", "reduced fat", "low fat", "lowfat", "nonfat", "non fat",
       "fat free", "part skim", "skim", "low sodium", "reduced sodium", "no salt",
       "sheep", "goat", "buffalo", "turkey", "human", "soy", "almond", "coconut",
       "oat", "rice", "green", "dried", "dry", "powdered", "powder", "drink mix",
       "condensed", "evaporated", "instant", "imitation", "substitute", "brown",
-      "black", "baby", "unenriched", "nfs", "ns", "alaska native",
+      "black", "baby", "unenriched", "glutinous", "nfs", "ns", "alaska native",
       "fried", "breaded", "battered", "glazed", "candied", "honey roasted",
       "stuffed", "meatless", "pickled", "fermented", "sprouted", "edible podded",
       "coated", "caramel", "chocolate", "flavored", "canned", "gluten free",
@@ -64,6 +64,19 @@
     "_about": "Chicken breast means skinless unless the query mentions skin; other cuts keep their skin. A skin-on row is one more variant for a skinless-by-default cut.",
     "skinless_by_default_cuts": ["breast"],
     "skin_on_pattern": "meat and skin|skin eaten|skin coating eaten"
+  },
+
+  "state_words": {
+    "_about": "Words a search puts before the food that USDA puts in a qualifier: 'frozen peas' is 'Peas, green, frozen, unprepared', 'smoked salmon' 'Fish, salmon, ..., smoked'. A row headed by the rest of the search is a head match when it says each of them, and their qualifier costs nothing. Without this, 'frozen peas' found 'Blackeyed peas, from frozen' (26 Oct 2026).",
+    "words": [
+      "frozen", "canned", "dried", "dry", "fresh", "raw", "smoked", "salted",
+      "unsalted", "sweetened", "unsweetened", "roasted", "toasted", "cooked"
+    ]
+  },
+
+  "part_segments": {
+    "_about": "Head qualifiers that leave only a part of the food: 'Potatoes, raw, skin' is the skin alone, 'Potatoes, flesh and skin, raw' the potato. One variant unless the search says the word; 'potato' found the skin (26 Oct 2026).",
+    "words": ["skin", "peel"]
   },
 
   "portion_words": {

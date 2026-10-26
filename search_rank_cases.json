@@ -22,10 +22,17 @@
     {"query": "jalapeno", "description": "Peppers, jalapenos", "expect": []},
     {"query": "latte", "description": "Coffee, Latte", "expect": []},
     {"query": "yellow cornmeal", "description": "Cornmeal, yellow (Navajo)", "expect": ["Navajo"]},
-    {"query": "brown rice", "description": "Rice, brown, long-grain, raw (Includes foods for USDA's Food Distribution Program)", "expect": ["long-grain", "raw"]}
+    {"query": "brown rice", "description": "Rice, brown, long-grain, raw (Includes foods for USDA's Food Distribution Program)", "expect": ["long-grain", "raw"]},
+    {"query": "beef broth", "description": "Beef broth or bouillon, canned, ready-to-serve", "expect": ["canned", "ready-to-serve"]},
+    {"query": "beef broth canned", "description": "Beef broth or bouillon, canned, ready-to-serve", "expect": ["ready-to-serve"]},
+    {"query": "bacon", "description": "Bacon or side pork, fresh, cooked", "expect": null},
+    {"query": "frozen peas", "description": "Peas, green, frozen, unprepared", "expect": ["green", "unprepared"]},
+    {"query": "frozen peas", "description": "Peas, green, raw", "expect": null},
+    {"query": "smoked salmon", "description": "Fish, salmon, chinook, smoked", "expect": ["chinook"]}
   ],
 
   "variant_count": [
+    {"query": "rice flour", "description": "Flour, rice, glutinous", "expect": 1},
     {"query": "milk", "description": "Milk, sheep, fluid", "expect": 1},
     {"query": "milk", "description": "Milk, whole, 3.25% milkfat", "expect": 0},
     {"query": "tofu", "description": "Tofu, fried", "expect": 1},
@@ -101,6 +108,7 @@
     ]},
     {"query": "potato", "first": "Potatoes, flesh and skin, raw", "candidates": [
       {"description": "Soup, potato", "kcal": 90},
+      {"description": "Potatoes, raw, skin", "display_name": "Raw potatoes, skin", "kcal": 58},
       {"description": "Potatoes, flesh and skin, raw", "kcal": 77}
     ]},
     {"query": "chicken broth", "first": "Soup, chicken broth, ready-to-serve", "candidates": [
@@ -128,6 +136,16 @@
     {"query": "steak", "first": "Beef, tenderloin steak, raw", "candidates": [
       {"description": "Steak sauce", "kcal": 95},
       {"description": "Beef, tenderloin steak, raw", "display_name": "Beef tenderloin steak, raw", "kcal": 149}
+    ]},
+    {"query": "frozen peas", "first": "Peas, green, frozen, unprepared", "candidates": [
+      {"description": "Blackeyed peas, from frozen", "data_type": "Survey (FNDDS)", "kcal": 151},
+      {"description": "Cowpeas (blackeyes), immature seeds, frozen, unprepared", "display_name": "Young black-eyed peas, frozen, unprepared", "kcal": 139},
+      {"description": "Peas, edible-podded, frozen, unprepared", "display_name": "Edible-pod peas, frozen, unprepared", "kcal": 42},
+      {"description": "Peas, green, frozen, unprepared", "display_name": "Green peas, frozen, unprepared", "kcal": 77}
+    ]},
+    {"query": "potato starch", "first": "POTATO STARCH", "candidates": [
+      {"description": "Bread, gluten-free, white, made with potato extract, rice starch, and rice flour", "display_name": "Gluten-free white bread with potato extract, rice starch, and rice flour", "kcal": 320},
+      {"description": "POTATO STARCH", "branded": true, "kcal": 333}
     ]}
   ]
 }

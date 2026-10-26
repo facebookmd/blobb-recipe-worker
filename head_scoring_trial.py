@@ -17,7 +17,10 @@ lines by eye, not by the count alone.
 
 Needs SUPABASE_ANON_KEY (USDA project) and APP_SUPABASE_KEY (app project).
 
-Run: .venv/bin/python head_scoring_trial.py [--json out.json]
+With --name-search it compares the two name searches instead (matcher and
+shared, recipe_matcher.NAME_SEARCH), both with tier head scoring.
+
+Run: .venv/bin/python head_scoring_trial.py [--name-search] [--json out.json]
 """
 
 from __future__ import annotations
@@ -84,8 +87,12 @@ def pick(line: dict, boosts: list) -> dict | None:
 
 
 def run(mode: str, lines: list[dict], boosts: list) -> list[dict | None]:
-    matcher.HEAD_SCORING = mode
+    if mode in ("matcher", "shared"):
+        matcher.NAME_SEARCH = mode
+    else:
+        matcher.HEAD_SCORING = mode
     matcher._MATCH_CACHE.clear()
+    matcher._SHARED_MATCHES.clear()
     return [pick(line, boosts) for line in lines]
 
 
@@ -103,34 +110,38 @@ def describe(food: dict | None) -> str:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", help="write every line's picks here")
+    ap.add_argument("--name-search", action="store_true",
+                    help="compare the name searches (matcher, shared; see "
+                         "recipe_matcher.NAME_SEARCH) instead, both with tier head scoring")
     args = ap.parse_args()
 
     boosts = matcher.load_boosts("boosts.json")
     lines = labeled_lines()
-    picks = {mode: run(mode, lines, boosts) for mode in ("floor", "tier")}
+    a, b = ("matcher", "shared") if args.name_search else ("floor", "tier")
+    picks = {mode: run(mode, lines, boosts) for mode in (a, b)}
 
     for part, wanted in (("dev", False), ("held out", True)):
         idx = [i for i, line in enumerate(lines) if line["held_out"] == wanted]
         agree = {m: sum(fdc(picks[m][i]) == lines[i]["truth_fdc"] for i in idx) for m in picks}
         print(f"{part:9} {len(idx):4} lines   published food picked: "
-              f"floor {agree['floor']}, tier {agree['tier']}")
+              f"{a} {agree[a]}, {b} {agree[b]}")
 
-    changed = [i for i in range(len(lines)) if fdc(picks["floor"][i]) != fdc(picks["tier"][i])]
+    changed = [i for i in range(len(lines)) if fdc(picks[a][i]) != fdc(picks[b][i])]
     print(f"\n{len(changed)} lines change food:")
     for i in changed:
-        line, floor, tier = lines[i], picks["floor"][i], picks["tier"][i]
-        mark = {fdc(floor): "floor", fdc(tier): "tier"}.get(line["truth_fdc"], "neither")
-        kcal = ((tier or {}).get("energy_kcal") or 0) - ((floor or {}).get("energy_kcal") or 0)
+        line, one, two = lines[i], picks[a][i], picks[b][i]
+        mark = {fdc(one): a, fdc(two): b}.get(line["truth_fdc"], "neither")
+        kcal = ((two or {}).get("energy_kcal") or 0) - ((one or {}).get("energy_kcal") or 0)
         print(f"\n{'[held out] ' if line['held_out'] else ''}{line['template_id']}: "
               f"{line['qty']} {line['unit']} {line['ingredient']}   "
-              f"(published matches {mark}; tier - floor = {kcal:+.0f} kcal/100 g)")
-        print(f"  floor:     {describe(floor)}")
-        print(f"  tier:      {describe(tier)}")
+              f"(published matches {mark}; {b} - {a} = {kcal:+.0f} kcal/100 g)")
+        print(f"  {a + ':':10} {describe(one)}")
+        print(f"  {b + ':':10} {describe(two)}")
         print(f"  published: {line['truth_name']}")
 
     if args.json:
-        json.dump([{**line, "floor": describe(picks["floor"][i]), "floor_fdc": fdc(picks["floor"][i]),
-                    "tier": describe(picks["tier"][i]), "tier_fdc": fdc(picks["tier"][i])}
+        json.dump([{**line, a: describe(picks[a][i]), f"{a}_fdc": fdc(picks[a][i]),
+                    b: describe(picks[b][i]), f"{b}_fdc": fdc(picks[b][i])}
                    for i, line in enumerate(lines)], open(args.json, "w"), indent=1)
 
 

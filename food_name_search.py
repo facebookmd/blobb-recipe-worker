@@ -45,6 +45,8 @@ PORTION_SIZES = RULES["portion_words"]["sizes"]
 PORTION_CUTS = set(RULES["portion_words"]["cuts"])
 PRODUCT_CUTS = set(RULES["portion_words"]["product_cuts"])
 PORTION_FILLERS = set(RULES["portion_words"]["fillers"])
+STATE_WORDS = set(_words("state_words"))
+PART_SEGMENTS = set(_words("part_segments"))
 
 NOT_SPECIFIED_RE = re.compile(r"\b(nfs|ns as to)\b")
 
@@ -52,6 +54,10 @@ UNKNOWN_QUALIFIER_PENALTY = 80
 VARIANT_PENALTY = 250
 DESCRIBES_PENALTY = 60
 NO_ENERGY_PENALTY = 300
+# A match on a row's category, brand owner, scientific name or barcode only
+# ranks this much below one on its name: brand "Star Anise Foods" put
+# "BROWN RICE NOODLES" above "STAR ANISE" (26 Oct 2026).
+OTHER_FIELD_PENALTY = 100
 
 USDA_CANDIDATE_LIMIT = 500
 HEAD_CANDIDATE_LIMIT = 100
@@ -353,6 +359,14 @@ def _structured_tier2(q_tokens, parts: _Parts, order_insensitive: bool) -> Rank:
     return _structured_rank(2, 700, s, parts.full_tokens)
 
 
+def _food_before_break(q_tokens, name: str) -> bool:
+    """Whether the query's food (its last word) is in *name* before any
+    "with", "in" or "on": "Gluten-free white bread with potato extract, rice
+    starch" isn't potato starch."""
+    before = tokens(PART_BREAK_RE.split(normalize(name), 1)[0])
+    return _match_tokens(list(q_tokens[-1:]), before, len(before), True).matched > 0
+
+
 def _edit_distance(a: str, b: str, max_d: int) -> int:
     if abs(len(a) - len(b)) > max_d:
         return max_d + 1
@@ -447,6 +461,8 @@ def rank_usda_display_name(query: Query, name: str, branded=False) -> Rank:
         r = _structured_tier1(list(query.tokens), parts, True)
         if not r.is_match:
             r = _structured_tier2(list(query.tokens), parts, True)
+            if r.is_match and not _food_before_break(query.tokens, cleaned):
+                r = NONE
         if r.is_match:
             return r
     return _general_rank(query, cleaned, allow_plural=not branded)
@@ -482,13 +498,38 @@ def usda_head_qualifiers(query: Query, description: str) -> list[str] | None:
     segs = usda_segments(description)
     if not segs or query.empty:
         return None
-    wanted_order = [canonical(t) for t in query.tokens]
+    found = _head_qualifiers(list(query.tokens), segs)
+    if found is not None:
+        return found
+    # A state word before the food, in a qualifier (search_rules.json
+    # state_words): "frozen peas" is "Peas, green, frozen, unprepared".
+    state = {canonical(t) for t in query.tokens if t in STATE_WORDS}
+    rest = [t for t in query.tokens if t not in STATE_WORDS]
+    if not state or not rest:
+        return None
+    found = _head_qualifiers(rest, segs)
+    if found is None or not state <= {canonical(t) for q in found for t in tokens(q)}:
+        return None
+    return [q for q in found if not {canonical(t) for t in tokens(q)} <= state]
+
+
+def _or_head(segment: str) -> list[str] | None:
+    """The head before a one-word alternative name: "Beef broth or
+    bouillon" is beef broth. Not another food: "Bacon or side pork"."""
+    parts = normalize(segment).split(" or ")
+    if len(parts) == 2 and len(parts[1].split()) == 1:
+        return [canonical(t) for t in parts[0].split()]
+    return None
+
+
+def _head_qualifiers(query_tokens: list[str], segs: list[str]) -> list[str] | None:
+    wanted_order = [canonical(t) for t in query_tokens]
     wanted_sorted = sorted(wanted_order)
 
     def head_of(s):
         if not s:
             return None
-        if [canonical(t) for t in tokens(s[0])] == wanted_order:
+        if [canonical(t) for t in tokens(s[0])] == wanted_order or _or_head(s[0]) == wanted_order:
             return s[1:]
         if len(s) > 1 and sorted(canonical(t) for t in tokens(f"{s[0]} {s[1]}")) == wanted_sorted:
             return s[2:]
@@ -525,6 +566,14 @@ def usda_variant_count(query: Query, description: str) -> int:
     hits = {h for h in hits if not any(canonical(w) in wanted for w in h.split(" "))}
     skin_on = bool(wanted & SKINLESS_CUTS) and "skin" not in wanted and bool(SKIN_ON_RE.search(n))
     return len(hits) + skin_on
+
+
+def part_segment_count(query: Query, qualifiers: list[str]) -> int:
+    """Head qualifiers naming only a part of the food that the query doesn't
+    say (search_rules.json part_segments): "skin" of "Potatoes, raw, skin"."""
+    said = {canonical(t) for t in query.tokens}
+    return sum(1 for q in qualifiers
+               if normalize(q) in PART_SEGMENTS and canonical(normalize(q)) not in said)
 
 
 def is_unknown_qualifier(segment: str) -> bool:
@@ -574,11 +623,12 @@ def rank_usda_row(query: Query, display_rank: Rank, description: str, display_na
         return display_rank
     rank = display_rank
     quals = usda_row_head_qualifiers(query, description, display_name)
+    penalty = usda_variant_count(query, description) * VARIANT_PENALTY
     if quals is not None:
         unknown = sum(is_unknown_qualifier(q) for q in quals)
         rank = _build_rank(4, 1000 - unknown * UNKNOWN_QUALIFIER_PENALTY, len(query.tokens),
                            len(query.tokens), 0, 0, 0, 3, tokens(_strip_parentheses(description)))
-    penalty = usda_variant_count(query, description) * VARIANT_PENALTY
+        penalty += part_segment_count(query, quals) * VARIANT_PENALTY
     if is_foundation and not has_calories:
         penalty += NO_ENERGY_PENALTY
     return rank.penalized(penalty)
@@ -610,11 +660,19 @@ def score_row(query: Query, row: dict) -> Rank:
     display = _text(row.get("display_name"))
     display_rank = (rank_usda_display_name(query, display, branded=True) if branded
                     else rank_usda_display_name(query, display))
-    secondary = [_text(row.get(k)) for k in ("description", "category", "brand_owner",
-                                             "scientific_name", "gtin_upc")]
-    rank = display_rank if display_rank.is_match else (
-        rank_general_fields(query, secondary, allow_plural=False) if branded
-        else rank_fields(query, secondary))
+    rank = display_rank
+    if not rank.is_match:
+        # The description is a name too; the other fields only say who
+        # makes it or where it's filed (OTHER_FIELD_PENALTY).
+        def fields_rank(fields):
+            return (rank_general_fields(query, fields, allow_plural=False) if branded
+                    else rank_fields(query, fields))
+        rank = fields_rank([_text(row.get("description"))])
+        other = fields_rank([_text(row.get(k)) for k in ("category", "brand_owner",
+                                                         "scientific_name", "gtin_upc")])
+        other = other.penalized(OTHER_FIELD_PENALTY)
+        if other.key() > rank.key():
+            rank = other
     if not branded:
         cal = row.get("calories_100g")
         rank = rank_usda_row(query, rank, _text(row.get("description")), display,
@@ -682,8 +740,9 @@ def _food_aliases() -> dict[str, int]:
 def fetch_rows(food_words: str, limit: int = 60, alias_text: str | None = None) -> tuple[list[dict], int | None]:
     """The rows the app's search fetches for *food_words*, and the row id its
     alias names (None): full text over all sources and over USDA rows alone,
-    USDA rows named the query outright, and a substring pass when full text
-    came back short."""
+    USDA rows named the query outright (and branded ones named with it, for
+    a query of several words), and a substring pass when full text came back
+    short."""
     q = Query.parse(food_words)
     if q.empty:
         return [], None
@@ -704,8 +763,20 @@ def fetch_rows(food_words: str, limit: int = 60, alias_text: str | None = None) 
                                     f"&source_set=neq.branded&calories_100g=not.is.null"
                                     f"&limit={HEAD_CANDIDATE_LIMIT}")),
     ]
-    all_rows, usda_rows, head_rows = source._request_all(reqs)
-    by_id = {r["id"]: r for r in [*all_rows, *usda_rows, *head_rows]}
+    if " " in n:
+        # Branded products named with the search ("SMOKED PAPRIKA", "TASTY
+        # JOY, SUGAR PALM FRUIT"): full text over every source fills its
+        # rows with products that only list them as ingredients. Narrowed by
+        # full text: a name pattern alone times out over the branded rows.
+        # Named exactly apart: hundreds of products contain "white vinegar",
+        # and the plain "WHITE VINEGAR" fell outside those fetched.
+        for what, pattern in (("branded exact name search", n), ("branded name search", f"*{n}*")):
+            reqs.append((what, _rest(
+                f"foods?select={_SELECT}&search_vector=fts(english).{quote(' & '.join(q.tokens))}"
+                f"&display_name=ilike.{quote(pattern)}&source_set=eq.branded"
+                f"&calories_100g=not.is.null&limit={HEAD_CANDIDATE_LIMIT}")))
+    all_rows, usda_rows, head_rows, *branded_named = source._request_all(reqs)
+    by_id = {r["id"]: r for r in [*all_rows, *usda_rows, *head_rows, *(r for rows in branded_named for r in rows)]}
     if len(all_rows) < candidate_limit:
         pattern = "*" + n.replace("%", "").replace("*", "") + "*"
         fb = source._request_all([("substring search", _rest(
