@@ -2503,6 +2503,8 @@ PASTA_YIELD_FACTOR = 2.0
 # 2 oz dry, and cooked weight is about 2.35 x dry.
 DRY_PASTA_OZ_PER_COOKED_CUP = 2.0
 DRY_PASTA_COOKED_WEIGHT_RATIO = 2.35
+# Below this a branded pasta isn't the dry product.
+DRY_PASTA_MIN_KCAL = 300.0
 
 
 def _is_cooked_food(food: dict) -> bool:
@@ -2889,8 +2891,12 @@ def _recipe_variant_delta(query, row: dict, line_cooked: bool, skinless: bool | 
     delta = 0
     cooked = any(not ({_canonical_token(w) for w in m.group(0).split()} & wanted)
                  for m in COOKING_WORD_RE.finditer(desc))
-    as_eaten = (raw_known and "survey" in (row.get("data_type") or "").lower()
-                and not _says_raw(query, row))
+    fndds = "survey" in (row.get("data_type") or "").lower()
+    # FNDDS's "from canned", "from frozen", "from dried" are cooked dishes:
+    # "Kidney beans, from canned, no added fat" is 135 kcal, the canned
+    # beans 84 (27 Oct 2026).
+    as_eaten = fndds and ((raw_known and not _says_raw(query, row))
+                          or bool(FNDDS_FROM_RE.search(desc)))
     if not line_cooked and (cooked or as_eaten):
         delta += 1
     if skinless is not None:
@@ -2922,6 +2928,9 @@ def _same_food(row: dict, rank) -> tuple:
                           for seg in food_name_search.usda_segments(row.get("description") or "")
                           for t in normalise(seg).split()) - SAME_FOOD_IGNORED
     return rank.tier, rank.bucket, words
+
+
+FNDDS_FROM_RE = re.compile(r"\bfrom (?:canned|frozen|dried|dry|fresh|raw)\b")
 
 
 def _says_raw(query, row: dict) -> bool:
@@ -3041,15 +3050,26 @@ def _shared_match_once(ingredient, boost_rules=None, threshold=0.45,
         _SHARED_MATCHES[cache_key] = result
         return result
     ranked.sort(key=lambda x: x[0], reverse=True)
+    cooked_pasta = _pasta_keyword(ingredient) and re.match(r"(?i)cooked\s+", ingredient)
+    if cooked_pasta and not _is_cooked_food(ranked[0][1]):
+        # Cooked pasta is measured as the dry pasta it was cooked from
+        # (build_output_rows), so it's a product near 350 kcal/100 g: both
+        # "ZITI" products are meals (235, 143), "ZITI, ENRICHED MACARONI
+        # PRODUCT" is the pasta (27 Oct 2026).
+        dry = [x for x in ranked if x[1].get("source") == "branded"
+               and (x[1].get("energy_kcal") or 0) >= DRY_PASTA_MIN_KCAL]
+        if dry and (ranked[0][1].get("energy_kcal") or 0) < DRY_PASTA_MIN_KCAL:
+            ranked.remove(dry[0])
+            ranked.insert(0, dry[0])
     best_key, food, rank = ranked[0]
     if food.get("source") == "branded":
         name = normalise(food["display_name"])
         same = [f for k, f, _ in ranked if k[:6] == best_key[:6] and f.get("source") == "branded"
                 and normalise(f["display_name"]) == name]
         if len(same) > 1:
-            # Cooked pasta is measured as the dry pasta it was cooked from
-            # (build_output_rows), so it's the product labelled by weight.
-            cooked_pasta = _pasta_keyword(ingredient) and re.match(r"(?i)cooked\s+", ingredient)
+            # Cooked pasta: the dry product, labelled by weight.
+            if cooked_pasta:
+                same = [f for f in same if (f.get("energy_kcal") or 0) >= DRY_PASTA_MIN_KCAL] or same
             food = _typical_branded(same, "oz" if cooked_pasta else unit)
     # A volume is borrowed from a USDA row only, as the matcher does.
     foods = [f for _, f, _ in ranked if f.get("source") == "usda"]

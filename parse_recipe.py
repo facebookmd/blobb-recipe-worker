@@ -82,6 +82,9 @@ UNIT_MAP = {
     "pinch":"pinch","pinches":"pinch",
     "handful":"handful","handfuls":"handful",
     "sheet":"sheet","sheets":"sheet",
+    # "1 ear sweet corn" left "ear" in the name, and the search found
+    # EARTHBOUND FARM corn (27 Oct 2026).
+    "ear":"ear","ears":"ear",
 }
 
 _UNIT_PATTERN = "|".join(re.escape(k) for k in sorted(UNIT_MAP, key=len, reverse=True))

@@ -100,6 +100,9 @@ def rows_for(tmp_path, monkeypatch, lines):
         food = next(f for key, f in FOODS.items() if key in ingredient)
         return food, 1.0, "high", None
     monkeypatch.setattr(matcher, "match_ingredient", match)
+    # The live food_aliases name "vegetable oil" (26 Oct 2026); these foods
+    # are FOODS'.
+    monkeypatch.setattr(matcher, "_alias_match", lambda *a, **k: None)
     monkeypatch.setattr(matcher, "_search_and_build_index", lambda *a, **k: None)
     meta, ings = parse_recipe.parse_single_block(lines, name_hint="recipe")
     csv = tmp_path / "r.csv"

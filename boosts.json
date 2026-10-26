@@ -2269,5 +2269,17 @@
       "butter",
       "yellow"
     ]
-  }
+  },
+  {
+    "_comment": "27 Oct 2026, stage 2 leftovers. A recipe's anchovies are canned fillets in oil (the shared search found raw European anchovy, 131 kcal, not 210). Baking chocolate is the squares, not the liquid (642 vs 472). Coconut gel (nata de coco) is the TASTY JOY product, not a gelatin dessert. Silken tofu is soft unless the line says firm. Ice is water: 0 kcal (both searches found ice pops or Italian ice)."
+  },
+  {"trigger": "anchovy", "fdc_id": "174183", "weight": 0.95, "exact": true},
+  {"trigger": "anchovies", "fdc_id": "174183", "weight": 0.95, "exact": true},
+  {"trigger": "anchovy fillet", "fdc_id": "174183", "weight": 0.95},
+  {"trigger": "unsweetened baking chocolate", "fdc_id": "167568", "weight": 0.95, "exclude": ["liquid"]},
+  {"trigger": "coconut gel", "fdc_id": "B_2028742", "weight": 0.95},
+  {"trigger": "silken tofu", "fdc_id": "174292", "weight": 0.95, "exclude": ["firm"]},
+  {"trigger": "ice", "fdc_id": "173647", "weight": 0.95, "exact": true},
+  {"trigger": "crushed ice", "fdc_id": "173647", "weight": 0.95, "exact": true},
+  {"trigger": "shaved ice", "fdc_id": "173647", "weight": 0.95, "exact": true}
 ]

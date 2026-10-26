@@ -120,6 +120,27 @@ def test_cooked_pasta_is_the_dry_product_by_weight(shared):
     assert match("cooked linguine", "cup")["energy_kcal"] == 357
 
 
+def test_fndds_from_canned_is_a_cooked_dish(shared):
+    results, _, _ = shared
+    results["canned kidney beans"] = [
+        row(1, "Kidney beans, from canned, no added fat", data_type="Survey (FNDDS)", kcal=135),
+        row(2, "Beans, kidney, all types, mature seeds, canned", "Kidney beans, all types, canned", kcal=84)]
+    assert match("canned kidney beans", "cup")["fdc_id"] == "2"
+
+
+def test_cooked_pasta_skips_a_pasta_meal(shared):
+    results, _, _ = shared
+    meal = row(1, "ZITI", branded=True, kcal=235)
+    dry = row(2, "ZITI, ENRICHED MACARONI PRODUCT", branded=True, kcal=357)
+    results["cooked ziti"] = [meal, dry]
+    assert match("cooked ziti", "cup")["energy_kcal"] == 357
+
+
+def test_ear_is_a_unit():
+    row_ = parser.parse_ingredient_line("2 ears sweet corn")
+    assert (row_["qty"], row_["unit"], row_["ingredient"]) == ("2.0", "ear", "sweet corn")
+
+
 def test_a_boost_pin_wins_when_its_food_fits_the_preparation(shared, monkeypatch):
     results, _, _ = shared
     pinned = matcher._build_supabase_usda_food(row(9, "Roasting chicken, with skin, raw"), 0, {})
@@ -147,6 +168,13 @@ LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
     ("1 cup frozen peas", "Green peas, frozen, unprepared"),
     ("1 tbsp fresh ginger, grated", "Ginger root, raw"),
     ("2 tbsp vegetable oil", "Soybean oil, salad or cooking"),
+    # 27 Oct 2026 pins and rules.
+    ("5 anchovy fillets", "European anchovy, canned in oil, drained"),
+    ("3 oz unsweetened baking chocolate", "Unsweetened baking chocolate squares"),
+    ("2 cup crushed ice", "Tap water, drinking"),
+    ("2.5 cup canned kidney beans", "Kidney beans, all types, canned"),
+    ("1 cup cooked ziti", "ZITI, ENRICHED MACARONI PRODUCT"),
+    ("2 ear sweet corn", "White sweet corn, raw"),
 ])
 def test_shared_mode_matches_recipe_lines(line, expected, monkeypatch):
     monkeypatch.setattr(matcher, "NAME_SEARCH", "shared")
