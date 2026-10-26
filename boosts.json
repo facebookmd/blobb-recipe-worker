@@ -2180,6 +2180,74 @@
     ]
   },
   {
+    "_comment": "23 Oct 2026: US recipe conventions. 'diced tomatoes' and 'crushed tomatoes' are the canned products unless the line says fresh (the American chili template's '2.75 cup diced tomatoes' was raw tomatoes); 'pickles' are dill; 'grilled cheese' is the sandwich, American cheese on white bread (it was cream cheese). The app's search already ranks these."
+  },
+  {
+    "trigger": "diced tomatoes",
+    "fdc_id": "333281",
+    "weight": 0.95,
+    "exclude": [
+      "fresh",
+      "cherry",
+      "grape",
+      "roma",
+      "plum",
+      "heirloom"
+    ]
+  },
+  {
+    "trigger": "crushed tomatoes",
+    "fdc_id": "170501",
+    "weight": 0.95,
+    "exclude": [
+      "fresh"
+    ]
+  },
+  {
+    "trigger": "pickles",
+    "fdc_id": "2710078",
+    "weight": 0.9,
+    "exclude": [
+      "sweet",
+      "bread and butter",
+      "sour",
+      "relish",
+      "juice"
+    ]
+  },
+  {
+    "trigger": "pickle",
+    "fdc_id": "2710078",
+    "weight": 0.9,
+    "exclude": [
+      "sweet",
+      "bread and butter",
+      "sour",
+      "relish",
+      "juice"
+    ]
+  },
+  {
+    "trigger": "grilled cheese",
+    "fdc_id": "2705802",
+    "weight": 0.95
+  },
+  {
+    "_comment": "Plain 'sugar' is granulated and plain 'peas' are green peas, as plain milk is whole milk: on their own they found maple sugar and snow peas (23 Oct 2026)."
+  },
+  {
+    "trigger": "sugar",
+    "fdc_id": "746784",
+    "weight": 0.9,
+    "exact": true
+  },
+  {
+    "trigger": "peas",
+    "fdc_id": "170419",
+    "weight": 0.9,
+    "exact": true
+  },
+  {
     "_comment": "'dry grits' (from 'uncooked grits') found flavored instant packets."
   },
   {

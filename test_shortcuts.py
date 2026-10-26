@@ -59,3 +59,34 @@ def test_a_shortcut_no_longer_takes_another_food(line, expected):
     food = matcher.match_ingredient(row["ingredient"], rules, 0.45, "American",
                                     row["unit"], row["is_cooked"])[0]
     assert food is not None and food["display_name"] == expected
+
+
+# ── The last misses on common names (23 Oct 2026) ──────────────────────────
+
+@LIVE
+@pytest.mark.parametrize("ingredient,unit,expected", [
+    # No unit counts as pieces, unless the line names a preparation: the
+    # raw food's count portions won "dried cranberries".
+    ("dried cranberries", "", "Cranberries, dried"),
+    ("milk", "", "Whole milk, 3.25%, vitamin D-fortified"),
+    # Plain sugar is granulated, plain peas green peas (exact boosts).
+    ("sugar", "", "Granulated sugar"),
+    ("brown sugar", "cup", "Brown sugar"),
+    ("peas", "", "Green peas, raw"),
+    ("snow peas", "cup", "SNOW PEAS"),
+    # US recipe conventions (boosts.json).
+    ("diced tomatoes", "cup", "Diced ripe red tomatoes, canned"),
+    ("fresh diced tomatoes", "cup", "Tomatoes, raw"),
+    ("crushed tomatoes", "cup", "Crushed tomatoes, canned"),
+    ("pickles", "piece", "Pickles, dill"),
+    ("sweet pickles", "cup", "Pickles, sweet"),
+    ("grilled cheese", "piece", "Grilled cheese sandwich, American cheese, on white bread"),
+    # Chili by the cup is the dish, by count the pepper.
+    ("chili", "cup", "Chili con carne with beans, canned"),
+    ("chili", "piece", "Red hot chili peppers, raw"),
+])
+def test_the_last_common_names(ingredient, unit, expected):
+    rules = matcher.load_boosts(os.path.join(os.path.dirname(__file__), "boosts.json"))
+    matcher._MATCH_CACHE.clear()
+    food = matcher.match_ingredient(ingredient, rules, 0.45, "American", unit, False)[0]
+    assert food is not None and food["display_name"] == expected

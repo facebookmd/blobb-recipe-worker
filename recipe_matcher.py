@@ -2224,7 +2224,12 @@ def _score_list(search, foods, boost_weight, boosted, is_processed=False, is_coo
             named = ({_canonical_token(t) for t in normalise(food["display_name"]).split()}
                      | {_canonical_token(t) for t in normalise(raw_desc).split()})
             s += FORM_WORD_BONUS * len(form_words & named)
-        if s >= UNIT_PORTION_FLOOR and _has_unit_portion(food, unit):
+        # A line with no unit counts as pieces, which favours the everyday
+        # item ("milk", "tomato"), unless it names a preparation: "mashed
+        # potatoes" and "dried cranberries" went to the raw food, which has
+        # count portions (23 Oct 2026).
+        if (s >= UNIT_PORTION_FLOOR and (unit.strip() or not form_words)
+                and _has_unit_portion(food, unit)):
             s += UNIT_PORTION_BONUS
         # Rows people can't measure rank behind ones they can; s itself is
         # left alone so confidence and thresholds see the real match.
@@ -2872,6 +2877,11 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         if trigger in ingredient.lower():
             remapped = replacement
             break
+    # "chili" by the cup or can is the dish; by count it's the pepper ("2
+    # red chili"). It was always the pepper (23 Oct 2026).
+    if (normalise(ingredient) in ("chili", "chilli")
+            and unit.strip().lower() in ("cup", "cups", "can", "cans", "bowl", "bowls", "qt", "quart")):
+        remapped = "chili con carne with beans"
 
     boosted_text, boost_weight, pinned_fdc_id = apply_boosts(remapped, boost_rules, category)
     # A boost that loses the line's preparation stands aside, rewritten search

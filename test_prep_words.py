@@ -98,7 +98,7 @@ def _match(line):
     ("2 eggs, scrambled", "Whole egg, raw"),
     ("1 cup grilled chicken", "Chicken breast, skinless, roasted"),
     ("2 potatoes", "White potatoes, flesh and skin, raw"),
-    ("2 cup diced tomatoes", "Tomatoes, raw"),
+    ("2 cup fresh diced tomatoes", "Tomatoes, raw"),   # diced tomatoes are canned
 ])
 def test_a_preparation_that_makes_the_product_finds_it(line, expected):
     food = _match(line)[2]
