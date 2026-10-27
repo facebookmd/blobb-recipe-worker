@@ -11,6 +11,7 @@ Run: .venv/bin/python -m pytest -q
 from __future__ import annotations
 
 import os
+import re
 
 import pytest
 
@@ -220,27 +221,27 @@ def test_live_gyoza_sauce(tmp_path):
     assert row["cal_tot"] == pytest.approx(39.9, abs=1)
 
 
-# ── Estimated portions (1 g/ml) ───────────────────────────────────────────
+# ── No volume portion: the food's own serving, at 1 g/ml ─────────────────
 
 NO_SERVING = branded_row(9, 200, None, "g", "")
 SALT_ONLY = branded_row(9, 200, 4.0, "g", "4 GRM")
 
 
 @pytest.mark.parametrize("food_row", [NO_SERVING, SALT_ONLY])
-@pytest.mark.parametrize("line, label, amount", [
-    ("2 tbsp mystery sauce", "1 tbsp (15 g)", 2.0),
-    ("1 tsp mystery sauce", "1 tsp (5 g)", 1.0),
-    ("1/4 cup mystery sauce", "1 cup (236.6 g)", 0.25),  # a cup at 1 g/ml
+@pytest.mark.parametrize("line, ml", [
+    ("2 tbsp mystery sauce", 2 * 14.787),
+    ("1 tsp mystery sauce", 4.929),
+    ("1/4 cup mystery sauce", 59.147),
 ])
-def test_a_spoon_line_with_no_volume_portion_is_estimated(
-        tmp_path, monkeypatch, food_row, line, label, amount):
+def test_a_spoon_line_with_no_volume_portion_keeps_the_foods_serving(
+        tmp_path, monkeypatch, food_row, line, ml):
+    # Never a made-up "1 tbsp" (Arianna, 27 Oct 2026): the serving the food
+    # has, or grams when it has none, with the line's grams at 1 g/ml.
     [row] = rows_for(tmp_path, monkeypatch, line, build(food_row))
     assert row["estimated"] is True
-    assert row["portion_description"] == label
-    assert row["portion_amt"] == pytest.approx(amount)
-    grams = amount * matcher._volume_to_ml(1.0, label.split()[1])
-    assert row["cal_tot"] == pytest.approx(grams / 100 * 200, abs=0.2)
-    assert "PORTION NOT FOUND" in row["notes"]
+    assert not re.search(r"\b(?:tbsp|tsp|cup)\b", row["portion_description"])
+    assert row["cal_tot"] == pytest.approx(ml / 100 * 200, abs=0.3)
+    assert "NO VOLUME PORTION" in row["notes"]
 
 
 @pytest.mark.parametrize("line", [
@@ -335,7 +336,9 @@ def test_only_measuring_cups_stay_cups(row, label):
 
 
 def test_a_container_cup_is_never_converted(tmp_path, monkeypatch):
-    # 2 tbsp is not worked out from the 108 ml cup it's sold in.
+    # 2 tbsp is not worked out from the 108 ml cup it's sold in: it is the
+    # food's own serving, the container, at 1 g/ml (30 g of 108 g).
     [row] = rows_for(tmp_path, monkeypatch, "2 tbsp dole whip", build(DOLE_WHIP))
     assert row["estimated"]
-    assert "container" not in row["portion_description"]
+    assert float(row["unit_grams"]) * float(row["portion_amt"]) == pytest.approx(
+        2 * matcher._volume_to_ml(1.0, "tbsp"), abs=0.1)

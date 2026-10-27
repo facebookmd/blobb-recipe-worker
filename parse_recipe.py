@@ -62,7 +62,8 @@ UNIT_MAP = {
     "quart":"quart","quarts":"quart","qt":"quart",
     "gallon":"gallon","gallons":"gallon","gal":"gallon",
     "piece":"piece","pieces":"piece","pc":"piece","pcs":"piece",
-    "cube":"piece","cubes":"piece",
+    # A bouillon cube is counted in cubes ("1 cube", 3.6 g), not pieces.
+    "cube":"cube","cubes":"cube",
     "wrapper":"piece","wrappers":"piece",
     "serving":"serving","servings":"serving",
     "clove":"clove","cloves":"clove",
@@ -538,6 +539,15 @@ def parse_ingredient_line(raw: str) -> dict | None:
     if (_cut_m and unit_val in (None, "piece", "")
             and _cut_m.group(0).strip().lower() in _TRAILING_UNITS
             and len(ing_name.split()) > 1):
+        _cut_m = None
+    # "1 beef bouillon cube" counts cubes of a food named for them: the unit
+    # is the cube and the word stays ("beef bouillon" found prepared broth,
+    # 1 can, 27 Oct 2026). "1 lb pork cube" is still a cut.
+    if (_cut_m and unit_val in (None, "piece", "")
+            and _cut_m.group(0).strip().lower() in ("cube", "cubes")
+            and len(ing_name.split()) > 1):
+        unit_val = "cube"
+        ing_name = _CUT_HINT_RE.sub("cube", ing_name).strip(" ,;:")
         _cut_m = None
     if _cut_m:
         cut_hint = _cut_m.group(0).strip().lower()

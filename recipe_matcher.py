@@ -192,6 +192,7 @@ PORTION_UNIT_KEYWORDS = {
     "sheets":["sheet","piece","square","rectangular"],
     "link":["link"],
     "links":["link"],
+    "cube":["cube"],
     "steak":["steak"],
     "patty":["patty"],
     "chop":["chop"],
@@ -1496,8 +1497,11 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens):
 
     It used to return the sibling itself, a different food: "green beans"
     became "Green beans, pickled" and "heavy cream" (Foundation, 1 RACC
-    only) "Heavy whipping cream" (22 Oct 2026). Keeps *food* unchanged when
-    no candidate qualifies.
+    only) "Heavy whipping cream" (22 Oct 2026). Now only the same food is
+    returned (_same_usda_food): Foundation all-purpose flour (1 RACC) is
+    SR Legacy's, with its "1 cup" (Arianna, 27 Oct 2026). A volume line
+    takes another food's cup as a density only. Keeps *food* unchanged
+    when no candidate qualifies.
     """
     # ml already converts to grams (1 ml ≈ 1 g), so only spoons and cups
     # depend on the food having a volume portion; counts ("1 medium", "2
@@ -1507,6 +1511,12 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens):
             return food
     elif _has_unit_portion(food, unit) is not False or _own_count_portion(food, search):
         return food
+    # The same food in another USDA dataset, with the portion: match it.
+    if unit.lower() in VOLUMETRIC_UNITS:
+        same = [c for c in foods if c is not food and _same_usda_food(food, c)
+                and not _names_other_variant(search, c) and _density_portion(c, unit, search)]
+        if same:
+            return {**max(same, key=lambda c: _layer1_rank(search, c)), "_same_food_as": food["fdc_id"]}
     food_tokens = set(normalise(food.get("raw_description") or food["display_name"]).split())
     best, best_key, best_portion = None, None, None
     for cand in foods:
@@ -1527,13 +1537,140 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens):
             best, best_key, best_portion = cand, key, portion
     if best is None:
         best, best_portion = _density_relative(food, foods, unit, search, query_tokens)
+    if best is None and unit.lower() in VOLUMETRIC_UNITS:
+        best, best_portion = _density_from_head_food(food, unit, search)
     if best is None:
         return food
+    # A volume line keeps the food's own servings (Arianna, 27 Oct 2026):
+    # the borrowed cup only says how many grams the line is
+    # (_own_serving_for_volume), it is never shown as the food's portion.
+    if unit.lower() in VOLUMETRIC_UNITS:
+        qty, label_unit = _portion_label_volume_qty(best_portion["label"])
+        ml = _volume_to_ml(qty, label_unit or _portion_label_unit(best_portion["label"]) or "")
+        if not ml:
+            return food
+        return {**food, "_g_per_ml": best_portion["gram_weight"] / ml,
+                "_density_from": best["fdc_id"]}
     borrowed = {**best_portion,
                 "portion_id": f"{food['fdc_id']}-vol-{best['fdc_id']}",
                 "portion_idx": max([p.get("portion_idx", 0) for p in food.get("portions", [])] + [0]) + 1}
     return {**food, "portions": list(food.get("portions", [])) + [borrowed],
             "_density_from": best["fdc_id"]}
+
+
+# How far apart two rows of the same food's calories may be: USDA's
+# datasets differ by method (Atwater factors, sampling), not by food.
+SAME_FOOD_KCAL_TOLERANCE = 0.2
+
+
+def _same_usda_food(food: dict, cand: dict) -> bool:
+    """Whether *cand* is *food* in another USDA dataset: a USDA row whose
+    words are *food*'s, give or take USDA's standard and state words
+    ("Wheat flour, white, all-purpose, enriched, bleached" for Foundation
+    "Flour, wheat, all-purpose, enriched, bleached"; "Nuts, almonds" for
+    almonds), with about the same calories. Not "Green beans, pickled" for
+    green beans."""
+    if cand.get("source") != "usda" or food.get("source") not in ("usda", None):
+        return False
+    a, b = food.get("energy_kcal") or 0, cand.get("energy_kcal") or 0
+    if not a or not b or abs(a - b) / max(a, b) > SAME_FOOD_KCAL_TOLERANCE:
+        return False
+    def words(f):
+        # A leading USDA group label isn't a word about the food: "Nuts,
+        # almonds" is almonds.
+        segs = (f.get("raw_description") or "").split(",")
+        if len(segs) > 1 and normalise(segs[0]) in food_name_search.GROUP_LABELS:
+            segs = segs[1:]
+        text = f"{','.join(segs)} {f.get('display_name') or ''}"
+        return {_canonical_token(w) for w in normalise(text).split()
+                if w not in food_name_search.STANDARD_WORDS and w not in food_name_search.STATE_WORDS}
+    return words(cand) <= words(food)
+
+
+def _mismatch_amount(qty: float, unit: str, portion: dict,
+                     g_per_ml: float | None = None) -> tuple[float, bool]:
+    """How many [portion]s a volume line is when the portion isn't a
+    volume: its grams at [g_per_ml] (a relative's cup, _volume_unit_fallback)
+    or 1 g/ml, never [qty] of them ("1 tsp sweetened plantain" was 1 whole
+    plantain, 220 kcal, 27 Oct 2026). (qty, False) when the line isn't a
+    volume either."""
+    ml = _volume_to_ml(qty, unit)
+    if ml is None or not portion.get("gram_weight"):
+        return qty, False
+    return ml * (g_per_ml or 1.0) / portion["gram_weight"], True
+
+
+def _own_serving_for_volume(food: dict) -> dict | None:
+    """
+    For a cup or spoon line on a food with no volume portion, the serving
+    it does have (Arianna, 27 Oct 2026): a count or household one first
+    ("1 olive", "1 serving", "1 medium"; a package last), then a weight
+    ("1 oz"). Never a
+    made-up "1 tbsp", a relative's cup, the 100 g basis or a RACC. None
+    when it has nothing else: the line is then in grams.
+    """
+    own = [p for p in food.get("portions", [])
+           if p.get("gram_weight") and not _is_basis_portion(p)
+           and not UNMEASURABLE_PORTION_RE.search(p.get("label") or "")
+           and not re.search(r"-(?:vol|est)-", str(p.get("portion_id", "")))]
+    # A package ("1 container") after a serving of the food itself.
+    counted = sorted((p for p in own if not WEIGHT_PORTION_LABEL_RE.match(p.get("label") or "")),
+                     key=lambda p: _is_package_label(p.get("label") or ""))
+    return (counted or own or [None])[0]
+
+
+HEAD_BORROW_SHAPED = {"pasta", "noodle", "macaroni"}
+
+
+def _food_head_word(food: dict) -> str:
+    """The food a name is of: the last word of its first part ("YUKON GOLD
+    POTATOES" potatoes, "ACINI DI PEPE PASTA" pasta, "Plantains, raw"
+    plantains)."""
+    name = food.get("raw_description") or food.get("display_name") or ""
+    words = normalise(name.split(",")[0]).split()
+    return words[-1] if words else ""
+
+
+def _density_from_head_food(food, unit, search):
+    """
+    The last try for a volume: a USDA row headed by the food *food* is of
+    (_food_head_word), in the same raw or cooked state, with a plain volume
+    portion. "Yukon gold potato" (a branded bag, no cup) is measured by
+    "Potatoes, raw" (1 cup diced, 150 g), not 1 g/ml (236 g); "sweetened
+    plantain" by plantains. The row says little else: at most one word
+    past its head and USDA's standard words ("Plantains, yellow, raw", not
+    "Noodles, chow mein"). Not pasta or noodles, whose cups are by shape:
+    a cup of spaghetti is 91 g, of acini di pepe nearer 180. The calories
+    stay *food*'s. Returns (row, portion) or (None, None).
+    """
+    head = _food_head_word(food)
+    if not head or _canonical_token(head) in HEAD_BORROW_SHAPED:
+        return None, None
+    cooked = _is_cooked_food(food)
+    food_tokens = set(normalise(food.get("raw_description") or food["display_name"]).split())
+    best, best_key, best_portion = None, None, None
+    for cand in _search_usda_for_ingredient(head):
+        if cand["fdc_id"] == food["fdc_id"] or not cand.get("energy_kcal"):
+            continue
+        if _canonical_token(_food_head_word(cand)) != _canonical_token(head):
+            continue
+        extra = {w for w in normalise(cand.get("raw_description") or cand["display_name"]).split()
+                 if _canonical_token(w) != _canonical_token(head) and w not in food_tokens
+                 and w not in food_name_search.STANDARD_WORDS and w not in food_name_search.STATE_WORDS}
+        if len(extra) > 1:
+            continue
+        if (_is_cooked_food(cand) != cooked or _is_dish_category(cand)
+                or _names_other_variant(search, cand)):
+            continue
+        portion = _density_portion(cand, unit, search)
+        # "1 cup, cooked" measures cooked pasta, whatever the row is named.
+        if portion is None or bool(re.search(r"\bcooked\b", portion["label"], re.I)) != cooked:
+            continue
+        overlap = len(food_tokens & set(normalise(cand.get("raw_description") or cand["display_name"]).split()))
+        key = (_layer1_rank(head, cand)[0] == 4, overlap, _layer1_rank(head, cand))
+        if best is None or key > best_key:
+            best, best_key, best_portion = cand, key, portion
+    return best, best_portion
 
 
 def _density_relative(food, foods, unit, search, query_tokens):
@@ -1987,6 +2124,12 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         if boosted_text.lower() == remapped.lower():
             boosted_text = f"canned {boosted_text}"
         remapped = f"canned {remapped}"
+    # By the cube, the cubes: "2 cubes chicken bouillon" is bouillon cubes,
+    # not the broth (parse_recipe keeps "cube" in "1 beef bouillon cube").
+    if unit.strip().lower() == "cube" and not re.search(r"\bcubes?\b", remapped, re.I):
+        if boosted_text.lower() == remapped.lower():
+            boosted_text = f"{boosted_text} cube"
+        remapped = f"{remapped} cube"
     found = _recipe_rows(search_text(remapped))
     if boosted_text.lower() != remapped.lower():
         line_top = _top_rank(found)
@@ -2579,7 +2722,8 @@ def _portion_label_unit(label: str) -> str | None:
         return "tsp"
     if re.search(r"\bcup\b", low):
         return "cup"
-    if "fl oz" in low or "fluid ounce" in low:
+    # "OZA" is FoodData Central's fluid ounce ("8 OZA" clam juice).
+    if "fl oz" in low or "fluid ounce" in low or re.search(r"\boza\b", low):
         return "fl oz"
     if "cubic inch" in low or re.search(r"\bcu\.?\s*in\b", low) or re.search(r"\bin\^?3\b", low):
         return "cubic inch"
@@ -3267,35 +3411,6 @@ PACKET_LABEL_RE = re.compile(r"\b(?:packets?|packs?|sachets?|packages?|envelopes
                              re.IGNORECASE)
 
 
-def _estimated_spoon_portion(food: dict, portion: dict | None,
-                             unit: str) -> dict | None:
-    """
-    The last resort for a branded spoon or cup line: no volume portion, no
-    override, and only a weight serving ("0.28 oz") or none. "1 tbsp" at
-    1 g/ml, in the recipe's spoon (cups as tbsp, which _branded_spoon_portion
-    turns into a cup from SPOON_SWITCH_CUPS up),
-    instead of 2 tbsp coming out as 2 x 100 g or 2 x the weight serving.
-    The row is flagged so the app can say the portion was estimated. None
-    when the chosen portion can already measure the line.
-    """
-    recipe_unit = _normalise_volume_unit(unit)
-    if not recipe_unit or recipe_unit in ("ml", "l"):
-        return None  # ml converts to grams already
-    if portion is not None and (portion.get("gram_col") == "override"
-                                or _portion_label_unit(portion["label"]) in VOLUME_TO_TSP):
-        return None
-    target = recipe_unit if recipe_unit in SPOON_UNITS else "tbsp"
-    return {
-        "portion_id": f"{food['fdc_id']}-est-{target}",
-        "label": f"1 {target}",
-        "gram_weight": _volume_to_ml(1.0, target),
-        "gram_col": "",
-        "portion_idx": 1,
-        "_derived_spoon": True,
-        "_estimated": True,
-    }
-
-
 def _best_any_volumetric_portion(portions: list[dict], gram_target: float | None) -> dict | None:
     """
     Find the best real serving portion whose label is volumetric, regardless
@@ -3538,18 +3653,8 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
             override = get_portion_override(ingredient, boost_rules, unit)
             if override:
                 return override
-        # If the food has a genuine serving size but no volumetric serving,
-        # prefer the real serving over collapsing to the 100g basis. This is
-        # especially useful for packaged foods that expose servings as PACK,
-        # BOX, BAR, etc. and would otherwise lose their actual portion label.
-        real_serving = next(
-            (p for p in portions
-             if p.get("portion_idx", 0) == 1 and not _is_basis_portion(p)),
-            None,
-        )
-        if real_serving:
-            return real_serving
-        return None
+        # No volume portion: a serving the food has, never a borrowed cup.
+        return _own_serving_for_volume(food)
     # For gram-based and other non-volumetric requests, still prefer a true
     # volumetric serving when it exists and the implied amount is reasonable.
     # This keeps labels like "1 cup" ahead of weight-style servings such as
@@ -4061,7 +4166,8 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                             ingredient, boost_rules, threshold, category, unit,
                             is_cooked=is_cooked)
                     fitted = match_cache[match_key][0]
-                    if fitted is not None and str(fitted["fdc_id"]) == str(food["fdc_id"]):
+                    if fitted is not None and str(food["fdc_id"]) in (
+                            str(fitted["fdc_id"]), str(fitted.get("_same_food_as"))):
                         food = fitted
             elif match_key in match_cache:
                 food, score, confidence, matched_alt = match_cache[match_key]
@@ -4141,10 +4247,6 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                            "gram_weight": food["package_grams"], "gram_col": "",
                            "portion_idx": 1}
                 packet_estimate = False
-            if source == "branded" and effective_gram_target is None:
-                estimate = _estimated_spoon_portion(food, portion, unit)
-                if estimate:
-                    portion, estimated = estimate, True
 
             u_low=unit.lower()
             is_countable=u_low in ("piece","pieces","clove","cloves","unit","units","item","serving","servings","sheet","sheets","leaf","leaves","stalk","stalks","slice","slices","strip","strips","spear","spears","head","heads","ear","ears","fillet","fillets","steak","steaks","patty","patties","chop","chops","drumstick","drumsticks","knob","knobs","cube","cubes","block","blocks","stick","sticks","wrapper","wrappers","whole","pack","sachet","sprig","sprigs","bunch","bunches")
@@ -4156,6 +4258,10 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 portion_desc="100g"
                 # cal_formula is per-100g; portion_amt must be in 100g units.
                 portion_amt=effective_gram_target / 100 if effective_gram_target is not None else qty
+                # A volume line on a food with no serving at all: its grams.
+                if effective_gram_target is None and _volume_to_ml(qty, unit) is not None:
+                    portion_amt = _volume_to_ml(qty, unit) * (food.get("_g_per_ml") or 1.0) / 100
+                    estimated = True
                 cal_formula=round(food.get("energy_kcal", 0.0), 1)
             else:
                 portion_id=portion["portion_id"]
@@ -4205,8 +4311,8 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                         if recipe_tsp is not None and serving_tsp is not None and serving_tsp > 0:
                             portion_amt = recipe_tsp / serving_tsp
                         else:
-                            portion_amt = qty
-                            vol_mismatch = True
+                            portion_amt, estimated = _mismatch_amount(qty, unit, portion, food.get("_g_per_ml"))
+                            vol_mismatch = not estimated
                 elif effective_gram_target is not None:
                     # Weight/ml input â€” always reliable to divide by gram_weight.
                     portion_amt = effective_gram_target / portion["gram_weight"]
@@ -4228,8 +4334,8 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                             portion_amt = recipe_tsp / serving_tsp
                         else:
                             # Unit mismatch â€” flag
-                            portion_amt = qty
-                            vol_mismatch = True
+                            portion_amt, estimated = _mismatch_amount(qty, unit, portion, food.get("_g_per_ml"))
+                            vol_mismatch = not estimated
 
             # Spoons for fine foods that only have a cup portion.
             if (portion is not None and source == "usda" and not is_countable
@@ -4365,10 +4471,14 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             if food.get("_density_from") and portion is not None and str(
                     portion.get("portion_id", "")).startswith(f"{food['fdc_id']}-vol-"):
                 source_tag += f" [portion from {food['_density_from']}]"
+            if estimated and food.get("_g_per_ml"):
+                source_tag += f" [{food['_g_per_ml']:.2f} g/ml from {food['_density_from']}]"
             yield_tag=(f" [yield {yield_factor}]" if yield_factor else "") + bone_tag
             vol_note = "VOL UNIT MISMATCH (3 tsp=1 tbsp, 16 tbsp=1 cup) " if vol_mismatch else ""
-            if estimated:
-                vol_note += "PORTION NOT FOUND, estimated at 1 g/ml "
+            if estimated and food.get("_g_per_ml"):
+                vol_note += "NO VOLUME PORTION, its own serving by a relative's density "
+            elif estimated:
+                vol_note += "NO VOLUME PORTION, its own serving at 1 g/ml "
             elif packet_estimate:
                 vol_note += "PACKET PORTION NOT FOUND, estimated "
                 estimated = True

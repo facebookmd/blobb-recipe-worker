@@ -147,9 +147,9 @@ def test_the_volume_fallback_keeps_the_food():
                                          ["heavy", "cream"])
     assert food["fdc_id"] == HEAVY["fdc_id"]
     assert food["_density_from"] == WHIPPING["fdc_id"]
-    borrowed = food["portions"][-1]
-    assert borrowed["label"] == "1 cup, fluid (yields 2 cups whipped)"
-    assert borrowed["gram_weight"] == 238.0
+    # Its density only ("1 cup, fluid", 238 g); the portions stay its own.
+    assert food["_g_per_ml"] == pytest.approx(238.0 / matcher._volume_to_ml(1.0, "cup"))
+    assert food["portions"] == HEAVY["portions"]
     assert HEAVY["portions"] == [{"portion_id": "2346386-1", "label": "1 RACC", "gram_weight": 15.0,
                                   "gram_col": "", "portion_idx": 1}]
 
@@ -165,7 +165,7 @@ def test_a_relative_in_the_same_category_measures_a_racc_only_food(monkeypatch):
     food = matcher._volume_unit_fallback(baby, [baby], "cup", "baby spinach",
                                          ["baby", "spinach"])
     assert food["_density_from"] == raw["fdc_id"]
-    assert food["portions"][-1]["gram_weight"] == 30.0
+    assert food["_g_per_ml"] == pytest.approx(30.0 / matcher._volume_to_ml(1.0, "cup"))
 
 
 def test_a_cup_weighing_100_g_is_a_real_cup():
