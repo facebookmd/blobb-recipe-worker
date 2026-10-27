@@ -2118,5 +2118,14 @@
   {"trigger": "silken tofu", "fdc_id": "174292", "weight": 0.95, "exclude": ["firm"]},
   {"trigger": "ice", "fdc_id": "173647", "weight": 0.95, "exact": true},
   {"trigger": "crushed ice", "fdc_id": "173647", "weight": 0.95, "exact": true},
-  {"trigger": "shaved ice", "fdc_id": "173647", "weight": 0.95, "exact": true}
+  {"trigger": "shaved ice", "fdc_id": "173647", "weight": 0.95, "exact": true},
+  {
+    "_comment": "27 Oct 2026, from checking every template's calories (recipe conventions, not search fixes): a baguette slice is thin, USDA's 'small or thin/very thin slice' of French bread, 32 g (the regular slice is 64 g; bruschetta was 197 kcal a piece) (Arianna). An aburage pouch is half the label serving: 1 serving (56.7 g) is 2 pouches (Arianna)."
+  },
+  {"trigger": "baguette", "portion_gram_weight": 32, "portion_label": "1 small or thin/very thin slice", "portion_unit": "slice"},
+  {"trigger": "fried tofu pouch", "portion_gram_weight": 28.35, "portion_label": "1 pouch", "portion_unit": "piece"},
+  {
+    "_comment": "27 Oct 2026 (Arianna): young coconut (buko) in a recipe is the meat, YOUNG THAI COCONUT MEAT (90 kcal/100 g, label 0.5 cup = 100 g). The search alone finds young coconut juice; USDA has only mature coconut meat (354 kcal/100 g)."
+  },
+  {"trigger": "young coconut", "fdc_id": "B_2288946", "weight": 0.95, "exclude": ["juice", "water", "milk", "drink", "cream"]}
 ]

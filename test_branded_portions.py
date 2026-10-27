@@ -51,6 +51,9 @@ def test_the_label_serving_becomes_a_portion():
     (TAMARIND, "1 serving"),
     (branded_row(1, 250, 40.0, "g", "1 BAR"), "1 bar"),
     (branded_row(1, 250, 40.0, "g", ""), "1 serving"),
+    # 100 g, but the label says what it measures (27 Oct 2026: young
+    # coconut meat's "0.5 cup" was dropped as the basis).
+    (branded_row(1, 250, 100.0, "g", "1 cup"), "1 cup"),
 ])
 def test_serving_labels(row, label):
     assert build(row)["portions"][1]["label"] == label
@@ -59,7 +62,7 @@ def test_serving_labels(row, label):
 @pytest.mark.parametrize("row", [
     branded_row(1, 250, None, "g", "2 Tbsp"),
     branded_row(1, 250, 2.0, "oz", "2 oz"),
-    branded_row(1, 250, 100.0, "g", "1 cup"),  # the 100 g basis already covers it
+    branded_row(1, 250, 100.0, "g", "100 GRM"),  # the 100 g basis already covers it
 ])
 def test_no_serving_when_the_row_has_no_usable_one(row):
     assert len(build(row)["portions"]) == 1

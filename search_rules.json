@@ -34,7 +34,7 @@
   },
 
   "variant_qualifiers": {
-    "_about": "Regex alternatives (joined as \\b(a|b|...)\\b over the normalized description) naming a different product: lighter versions, other animals and plants, other forms, preparations that change the food, unenriched grains (US flour, rice and pasta are enriched), glutinous (sticky) rice, and USDA's 'not (further) specified' rows. Not counted when the query says one of its words ('brown sugar', 'fried chicken').",
+    "_about": "Regex alternatives (joined as \\b(a|b|...)\\b over the normalized description) naming a different product: lighter versions, other animals and plants, other forms, trimmed meat ('separable lean only'), preparations that change the food, unenriched grains (US flour, rice and pasta are enriched), glutinous (sticky) rice, and USDA's 'not (further) specified' rows. Not counted when the query says one of its words ('brown sugar', 'fried chicken').",
     "patterns": [
       "light", "lite", "reduced fat", "low fat", "lowfat", "nonfat", "non fat",
       "fat free", "part skim", "skim", "low sodium", "reduced sodium", "no salt",
@@ -45,7 +45,7 @@
       "fried", "breaded", "battered", "glazed", "candied", "honey roasted",
       "stuffed", "meatless", "pickled", "fermented", "sprouted", "edible podded",
       "coated", "caramel", "chocolate", "flavored", "canned", "gluten free",
-      "skin only",
+      "skin only", "lean only",
       "skin and breading from all pieces", "with cheese", "with milk",
       "fat added", "for use", "[a-z]+ style"
     ]
@@ -88,7 +88,7 @@
   "portion_words": {
     "_about": "Words in a search that name a portion, not the food: 'large banana' is bananas with the '1 large' portion, 'sliced onion' onions with '1 cup, sliced'. Searches take no amounts (26 Oct 2026). Sizes and cuts leave the food's words and pick the portion (the first portion, in USDA's order, whose label says the word; sizes before cuts); fillers just leave. A product cut can also name the food ('mashed potatoes', 'diced tomatoes'): a USDA row headed by the food that says it comes first.",
     "sizes": ["extra large", "large", "medium", "small", "jumbo", "mini"],
-    "cuts": ["sliced", "chopped", "minced", "julienned", "halved", "quartered", "cubed", "torn", "diced", "grated", "shredded", "crushed", "mashed", "crumbled"],
+    "cuts": ["sliced", "chopped", "minced", "julienned", "halved", "quartered", "cubed", "chunks", "torn", "diced", "grated", "shredded", "crushed", "mashed", "crumbled"],
     "product_cuts": ["diced", "grated", "shredded", "crushed", "mashed", "crumbled"],
     "fillers": ["finely", "thinly", "roughly", "coarsely", "freshly"]
   },

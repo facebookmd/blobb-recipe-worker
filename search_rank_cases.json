@@ -69,6 +69,7 @@
     {"query": "diced tomatoes", "food": "tomatoes", "portion_words": ["diced"]},
     {"query": "mashed potatoes", "food": "potatoes", "portion_words": ["mashed"]},
     {"query": "mashed", "food": "mashed", "portion_words": []},
+    {"query": "green papaya chunks", "food": "green papaya", "portion_words": ["chunks"]},
     {"query": "milk", "food": "milk", "portion_words": []}
   ],
 
@@ -143,6 +144,18 @@
       {"description": "Cowpeas (blackeyes), immature seeds, frozen, unprepared", "display_name": "Young black-eyed peas, frozen, unprepared", "kcal": 139},
       {"description": "Peas, edible-podded, frozen, unprepared", "display_name": "Edible-pod peas, frozen, unprepared", "kcal": 42},
       {"description": "Peas, green, frozen, unprepared", "display_name": "Green peas, frozen, unprepared", "kcal": 77}
+    ]},
+    {"query": "beef ribeye", "first": "Beef, rib eye steak/roast, boneless, lip-on, separable lean and fat, trimmed to 1/8\" fat, all grades, raw", "candidates": [
+      {"description": "Beef, rib eye steak/roast, boneless, lip-on, separable lean only, trimmed to 1/8\" fat, all grades, raw", "display_name": "Beef ribeye, boneless, lean only, 1/8\" fat, raw", "kcal": 156},
+      {"description": "Beef, rib eye steak/roast, boneless, lip-on, separable lean and fat, trimmed to 1/8\" fat, all grades, raw", "display_name": "Beef ribeye, boneless, 1/8\" fat, raw", "kcal": 244}
+    ]},
+    {"query": "tofu", "first": "TOFU, ORGANIC", "candidates": [
+      {"description": "TOFU, FRIED", "branded": true, "kcal": 270},
+      {"description": "TOFU, ORGANIC", "branded": true, "kcal": 76}
+    ]},
+    {"query": "beef brisket", "first": "Beef, brisket, whole, separable lean and fat, trimmed to 1/8\" fat, all grades, raw", "candidates": [
+      {"description": "Beef, brisket, whole, separable lean only, trimmed to 1/8\" fat, all grades, raw", "display_name": "Beef brisket, whole, lean only, raw", "kcal": 157},
+      {"description": "Beef, brisket, whole, separable lean and fat, trimmed to 1/8\" fat, all grades, raw", "display_name": "Beef brisket, whole, 1/8\" fat, raw", "kcal": 253}
     ]},
     {"query": "potato starch", "first": "POTATO STARCH", "candidates": [
       {"description": "Bread, gluten-free, white, made with potato extract, rice starch, and rice flour", "display_name": "Gluten-free white bread with potato extract, rice starch, and rice flour", "kcal": 320},

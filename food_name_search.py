@@ -649,7 +649,11 @@ def rank_usda_row(query: Query, display_rank: Rank, description: str, display_na
         return display_rank
     rank = display_rank
     quals = usda_row_head_qualifiers(query, description, display_name)
-    penalty = usda_variant_count(query, description) * VARIANT_PENALTY
+    # Variants in whichever name carries the search's words: "Beef ribeye,
+    # boneless, lean only" heads ribeye by its display name, its
+    # description says "rib eye" (27 Oct 2026).
+    penalty = max(usda_variant_count(query, description),
+                  usda_variant_count(query, display_name)) * VARIANT_PENALTY
     if quals is not None:
         unknown = sum(is_unknown_qualifier(q) for q in quals)
         rank = _build_rank(4, 1000 - unknown * UNKNOWN_QUALIFIER_PENALTY, len(query.tokens),
@@ -704,6 +708,10 @@ def score_row(query: Query, row: dict) -> Rank:
         rank = rank_usda_row(query, rank, _text(row.get("description")), display,
                              _text(row.get("data_type")).lower() == "foundation",
                              isinstance(cal, (int, float)) and cal > 0)
+    else:
+        # A product's name says its variants as USDA's do: "TOFU, FRIED"
+        # isn't plain tofu, "BROWN RICE NOODLES" rice noodles (27 Oct 2026).
+        rank = rank.penalized(usda_variant_count(query, display) * VARIANT_PENALTY)
     return demote_modifier_match(query, rank, display)
 
 

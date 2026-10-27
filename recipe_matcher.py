@@ -165,14 +165,14 @@ PORTION_UNIT_KEYWORDS = {
     # Weight
     "oz":["ounce","oz"],"lb":["pound","lb"],"g":["gram","100g","100 g"],
     # Countable â€” generic
-    "piece":["medium","large","small","piece","unit","wrapper","wrappers","whole"],
+    "piece":["medium","large","small","piece","unit","each","item","wrapper","wrappers","whole"],
     "clove":["clove"],
     "bunch":["bunch"],
     # A stalk is one whole stalk: green onion's portions are "1 medium",
     # "1 large", "1 small" and "1 cup, chopped", and with no keyword the
     # first one, the cup, was used (6x a stalk). "whole" means the same.
-    "stalk":["stalk","medium","large","small","whole","piece"],
-    "stalks":["stalk","medium","large","small","whole","piece"],
+    "stalk":["stalk","rib","medium","large","small","whole","piece"],
+    "stalks":["stalk","rib","medium","large","small","whole","piece"],
     "whole":["medium","large","small","whole","piece"],
     "sprig":["sprig"],
     "sprigs":["sprig"],
@@ -184,8 +184,13 @@ PORTION_UNIT_KEYWORDS = {
     "leaf":["leaf","leaves"],
     "spear":["spear"],
     "head":["head"],
-    "ear":["ear"],
-    "fillet":["fillet"],
+    "ear":["ear","cob"],
+    "fillet":["fillet","filet"],
+    # A sheet of crackers is USDA's "1 large rectangular piece or 2 squares".
+    "sheet":["sheet","piece","square","rectangular"],
+    "sheets":["sheet","piece","square","rectangular"],
+    "link":["link"],
+    "links":["link"],
     "steak":["steak"],
     "patty":["patty"],
     "chop":["chop"],
@@ -609,10 +614,16 @@ def _branded_label_serving(row: dict, fdc_id: str) -> dict | None:
         grams = float(row.get("serving_size") or 0.0)
     except (TypeError, ValueError):
         return None
-    if unit not in BRANDED_SERVING_UNITS or grams <= 0 or abs(grams - 100.0) < 0.001:
+    if unit not in BRANDED_SERVING_UNITS or grams <= 0:
         return None
     household = " ".join(_row_text(row, "household_serving_full_text").lower().split())
-    if not household or not re.match(r"^\d", household) or WEIGHT_LABEL_RE.search(household):
+    names_measure = bool(household and re.match(r"^\d", household) and not WEIGHT_LABEL_RE.search(household))
+    # A 100 g serving is the per-100 g basis again, unless the label says
+    # what it measures: "0.5 cup" (100 g) of young coconut was dropped, and
+    # a cup of it estimated at 240 g (27 Oct 2026).
+    if abs(grams - 100.0) < 0.001 and not names_measure:
+        return None
+    if not names_measure:
         household = "1 serving"
     elif _is_container_cup(household, grams, unit):
         household = "1 container"
@@ -1703,6 +1714,7 @@ _MATCH_CACHE: dict[tuple, tuple] = {}
 # head match (4), a display-name match (3, 2), words only (1), or a name
 # that only describes another food (demoted below 1).
 _TIER_SCORE = {4: 0.95, 3: 0.9, 2: 0.75, 1: 0.5}
+NAMED_PRODUCT_SCORE = 0.85
 # Layer 1's best rows the recipe layer re-ranks; it never reaches further.
 RERANK_LIMIT = 30
 # Words a line says about the food's state or quality, not which food:
@@ -1764,9 +1776,16 @@ def _recipe_rows(text: str):
     """
     found = _layer1(text)
     rows, _, query = found
-    if not rows:
-        return found
     words = query.normalized.split()
+    if not rows:
+        # No row has every word: without the state words and "cut" ("cut
+        # yardlong beans" is "Yardlong bean, raw"). Not a cooking word: dry
+        # glass noodles by the cooked cup tripled sotanghon soup.
+        kept = [w for w in words if (w not in RECIPE_STATE_WORDS or COOKING_WORD_RE.fullmatch(w))
+                and w != "cut"]
+        if kept and len(kept) < len(words):
+            return _layer1(" ".join(kept))
+        return found
     top = _top_rank(found)
     carried = _row_words(rows[0])
     missing = [w for w in words if w in RECIPE_STATE_WORDS and _canonical_token(w) not in carried]
@@ -1983,6 +2002,8 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
 
     top = rows[:RERANK_LIMIT]
     portions = load_portions_for_food_ids([int(r["id"]) for r in top]) if top else {}
+    aliases = food_name_search._food_aliases()
+    alias_ids = {aliases.get(food_name_search.alias_key(t)) for t in (remapped, split.food)} - {None}
     raw_known = any(_says_raw(query, r) for r in top)
     by_can = unit.strip().lower() in ("can", "cans")
     ranked, first_of_food = [], {}
@@ -2002,7 +2023,8 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         measurable = food.get("source") != "usda" or _has_measurable_portion(food)
         says_raw = _says_raw(query, row)
         first = first_of_food.setdefault(_same_food(row, rank), i)
-        key = (line_raw and says_raw,
+        key = (row.get("id") in alias_ids,  # an alias names the food, as in the app
+               line_raw and says_raw,
                # A restaurant or fast-food dish, or a mix ("Chicken, fried,
                # with potatoes, vegetable, frozen meal"), is never a recipe's
                # ingredient unless nothing else is: "grilled chicken" found a
@@ -2043,7 +2065,7 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     best_key, food, rank = ranked[0]
     if food.get("source") == "branded":
         name = normalise(food["display_name"])
-        same = [f for k, f, _ in ranked if k[:8] == best_key[:8] and f.get("source") == "branded"
+        same = [f for k, f, _ in ranked if k[:9] == best_key[:9] and f.get("source") == "branded"
                 and normalise(f["display_name"]) == name]
         if len(same) > 1:
             # Cooked pasta: the dry product, labelled by weight.
@@ -2061,6 +2083,10 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         food["_yield_factor"] = None if is_cooked else MEAT_YIELDS.get(meat_kw, 1.0)
         food["_meat_keyword"] = meat_kw
     score = _TIER_SCORE.get(rank.tier, 0.3) if rank.bucket > 0 else 0.3
+    # A product named with every word of the line ("MIRIN SWEET COOKING RICE
+    # WINE" for mirin) is a sure match, though branded rows rank in tier 1.
+    if rank.tier == 1 and rank.bucket > 0 and rank.exact == len(query.tokens) > 0:
+        score = max(score, NAMED_PRODUCT_SCORE)
     result = (food, score, "high" if score >= 0.55 else "low", None)
     _MATCH_CACHE[cache_key] = result
     return result
@@ -3306,6 +3332,16 @@ def _own_count_portion(food: dict, ingredient: str) -> dict | None:
     return None
 
 
+# Portion labels for a package of the food, not one of it.
+PACKAGE_LABEL_RE = re.compile(
+    r"\b(?:cans?|jars?|bottles?|box(?:es)?|containers?|cartons?|tubs?|bags?|"
+    r"packages?|pkgs?|packets?|pouch(?:es)?|envelopes?|sachets?)\b", re.I)
+
+
+def _is_package_label(label: str) -> bool:
+    return bool(PACKAGE_LABEL_RE.search(label))
+
+
 def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="", 
                       boost_rules=None):
     portions = food.get("portions", [])
@@ -3391,6 +3427,11 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
     is_slice = unit.lower() in ("slice", "slices")
     if is_unitless:
         keywords = PORTION_UNIT_KEYWORDS.get("piece", [])
+    # A package is never one of a count: "1 small or medium single serving
+    # bag" (45 g) was a graham cracker, its "medium" taken for a size
+    # (27 Oct 2026). Unless the line counts packages ("1 can").
+    if keywords and not CONTAINER_LABEL_RE.search(unit) and unit.lower() not in PACKET_UNITS:
+        portions = [p for p in portions if not _is_package_label(p.get("label") or "")] or portions
     if keywords:
         # For slice ingredients (e.g. bread), apply size preference:
         # default to "medium or regular" unless ingredient specifies thick/large/thin/small.
@@ -3518,6 +3559,66 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # Core pipeline
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# Raw bone-in cuts, by the USDA row they match: (description pattern, share
+# of the as-bought weight that is bone or other refuse, SR28 record). USDA's
+# nutrients are per 100 g of the edible part, but its count portions for
+# these parts are whole pieces as bought ("1 wing" 107 g with 38% bone; "1
+# leg" 344 g, the sum of drumstick, thigh and back), so a count or a
+# bone-in weight counted the bone as meat (27 Oct 2026). From SR28's refuse
+# fields (FOOD_DES), checked by hand: the drumstick's "bone and cartilage
+# 33%, bone and connective tissue 33%" lists the bone twice, the raw thigh
+# has none (the roasted thigh, 05094, does: 17%). Weights USDA gives
+# without the bone say so ("breast, bone removed", "rib without refuse")
+# and are left alone, as is a line that says boneless.
+BONE_SHARE = (
+    (r"chicken roasting meat and skin and giblets", 0.27, "05109"),
+    (r"chicken broilers or fryers meat and skin and giblets", 0.31, "05001"),
+    (r"chicken\b.*\bthigh\b", 0.17, "05094"),
+    (r"chicken\b.*\bdrumstick\b", 0.33, "05066"),
+    (r"chicken\b.*\bwing\b", 0.38, "05100"),
+    (r"chicken\b.*\bleg\b", 0.27, "05075"),
+    (r"chicken\b.*\bbreast\b", 0.20, "05057"),
+    (r"\bbackribs\b|\bback ribs\b", 0.37, "10192"),
+    (r"\bspareribs\b", 0.30, "10088"),
+    (r"\bshank crosscuts\b", 0.40, "13227"),
+    (r"\bveal shank fore and hind\b", 0.29, "17276"),
+    (r"\bveal shank separable\b", 0.49, "17435"),
+)
+# Cuts that come with their bone unless the line says boneless; a thigh or
+# breast only when the line says bone-in.
+# Units that count pieces of a cut ("2 chicken thigh" is two thighs).
+CUT_COUNT_UNITS = {"thigh", "thighs", "wing", "wings", "leg", "legs", "breast", "breasts",
+                   "drumstick", "drumsticks", "quarter", "quarters"}
+ALWAYS_BONE_IN = ("05109", "05001", "05066", "05100", "05075", "10192", "10088", "13227",
+                  "17276", "17435")
+BONELESS_LABEL_RE = re.compile(r"(?i)\b(?:bone removed|boneless|without refuse|bone and skin removed)\b")
+COUNTED_PART_RE = re.compile(r"(?i)\b(?:thigh|drumstick|wing|piece|leg|chicken|breast)\b")
+
+
+def _edible_share(food: dict, ingredient: str, portion: dict | None, counted: bool):
+    """(edible share, SR record) for a raw bone-in cut weighed or counted as
+    bought (BONE_SHARE), else None."""
+    if food.get("source") != "usda" or portion is None:
+        return None
+    desc = " ".join(normalise(food.get("raw_description") or food.get("display_name") or "").split())
+    if not re.search(r"\braw\b", desc) or "boneless" in desc.split():
+        return None
+    line = ingredient.lower()
+    if re.search(r"\bboneless\b", line):
+        return None
+    for pattern, refuse, ndb in BONE_SHARE:
+        if not re.search(pattern, desc):
+            continue
+        if counted:
+            label = portion.get("label") or ""
+            if BONELESS_LABEL_RE.search(label) or not COUNTED_PART_RE.search(label):
+                return None
+        elif ndb not in ALWAYS_BONE_IN and not re.search(r"\bbone[- ]?in\b", line):
+            return None
+        return 1.0 - refuse, ndb
+    return None
+
+
 def _warm_match_cache(rows_by_template, boost_rules, threshold,
                       template_index_skip=lambda row: False) -> None:
     """
@@ -4206,6 +4307,27 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                         portion_desc = f"{portion['label']} ({portion['gram_weight']:.1f} g)"
                         cal_formula = _unit_calories(portion, food)
 
+            # A bone-in cut weighed or counted as bought: only its edible
+            # share is meat (BONE_SHARE).
+            bone_tag = ""
+            edible_share = None
+            counted = is_countable or not unit or u_low in CUT_COUNT_UNITS
+            edible = _edible_share(food, ingredient, portion, counted)
+            if edible is not None and section != ABSORBED_OIL_SECTION:
+                share, ndb = edible
+                edible_share = share
+                if counted:
+                    portion = {**portion, "portion_id": f"{portion_id}-edible",
+                               "label": f"{portion['label']}, bone removed",
+                               "gram_weight": round(portion["gram_weight"] * share, 1),
+                               "gram_col": "override"}
+                    portion_id = portion["portion_id"]
+                    portion_desc = f"{portion['label']} ({portion['gram_weight']:.0f} g)"
+                    cal_formula = _unit_calories(portion, food)
+                else:
+                    portion_amt *= share
+                bone_tag = f" [bone {1 - share:.0%} left out, SR {ndb}]"
+
             cal_tot_formula=round(cal_formula * portion_amt, 1) if isinstance(cal_formula, float) else ""
             source_tag=" [BRANDED]" if source=="branded" else ""
             if alias is not None:
@@ -4217,7 +4339,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             if food.get("_density_from") and portion is not None and str(
                     portion.get("portion_id", "")).startswith(f"{food['fdc_id']}-vol-"):
                 source_tag += f" [portion from {food['_density_from']}]"
-            yield_tag=f" [yield {yield_factor}]" if yield_factor else ""
+            yield_tag=(f" [yield {yield_factor}]" if yield_factor else "") + bone_tag
             vol_note = "VOL UNIT MISMATCH (3 tsp=1 tbsp, 16 tbsp=1 cup) " if vol_mismatch else ""
             if estimated:
                 vol_note += "PORTION NOT FOUND, estimated at 1 g/ml "
@@ -4264,8 +4386,10 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             if kind:
                 row = output_rows[-1]
                 row["_fried_kind"] = kind
+                # The oil rates are a share of the fried food as bought, bone
+                # and all (FRY_TYPE_RATES), not of its edible part.
                 row["_fried_grams"] = portion_amt * (
-                    portion["gram_weight"] if portion is not None else 100.0)
+                    portion["gram_weight"] if portion is not None else 100.0) / (edible_share or 1.0)
                 fried.append(row)
 
         first = ing_rows[0]
