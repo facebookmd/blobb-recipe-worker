@@ -86,11 +86,12 @@
   },
 
   "portion_words": {
-    "_about": "Words in a search that name a portion, not the food: 'large banana' is bananas with the '1 large' portion, 'sliced onion' onions with '1 cup, sliced'. Searches take no amounts (26 Oct 2026). Sizes and cuts leave the food's words and pick the portion (the first portion, in USDA's order, whose label says the word; sizes before cuts); fillers just leave. A product cut can also name the food ('mashed potatoes', 'diced tomatoes'): a USDA row headed by the food that says it comes first.",
+    "_about": "Words in a search that name a portion, not the food: 'large banana' is bananas with the '1 large' portion, 'sliced onion' onions with '1 cup, sliced'. Searches take no amounts (26 Oct 2026). Sizes and cuts leave the food's words and pick the portion (the first portion, in USDA's order, whose label says the word; sizes before cuts); fillers just leave. A product cut can also name the food ('mashed potatoes', 'diced tomatoes'): a USDA row headed by the food that says it comes first. A cut USDA labels another way picks its portion by the label's word (cut_labels: 'carrot matchsticks' is '1 cup strips or slices').",
     "sizes": ["extra large", "large", "medium", "small", "jumbo", "mini"],
-    "cuts": ["sliced", "chopped", "minced", "julienned", "halved", "quartered", "cubed", "chunks", "torn", "diced", "grated", "shredded", "crushed", "mashed", "crumbled"],
+    "cuts": ["sliced", "chopped", "minced", "julienned", "halved", "quartered", "cubed", "chunks", "matchsticks", "matchstick", "torn", "diced", "grated", "shredded", "crushed", "mashed", "crumbled"],
     "product_cuts": ["diced", "grated", "shredded", "crushed", "mashed", "crumbled"],
-    "fillers": ["finely", "thinly", "roughly", "coarsely", "freshly"]
+    "fillers": ["finely", "thinly", "roughly", "coarsely", "freshly", "pitted"],
+    "cut_labels": {"matchsticks": "strips", "matchstick": "strips", "julienned": "strips"}
   },
 
   "modifier_rules": {

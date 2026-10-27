@@ -128,7 +128,7 @@ def test_count_words_and_leaves(line, qty, unit, ingredient):
     ("10 curry leaves", True), ("4 kaffir lime leaves", True),
     ("3 makrut lime leaves", True), ("2 pandan leaves", True),
     ("1 banana leaf", True), ("2 lime leaves", True),
-    ("2 bay leaves", False), ("1 tbsp lime juice", False),
+    ("2 bay leaves", True), ("1 tsp ground bay leaf", False), ("1 tbsp lime juice", False),
     ("1 banana", False), ("1 cup curry sauce", False),
 ])
 def test_aromatic_leaves_are_notes(tmp_path, monkeypatch, line, note):

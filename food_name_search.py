@@ -45,6 +45,7 @@ PORTION_SIZES = RULES["portion_words"]["sizes"]
 PORTION_CUTS = set(RULES["portion_words"]["cuts"])
 PRODUCT_CUTS = set(RULES["portion_words"]["product_cuts"])
 PORTION_FILLERS = set(RULES["portion_words"]["fillers"])
+CUT_LABELS = dict(RULES["portion_words"]["cut_labels"])
 STATE_WORDS = set(_words("state_words"))
 FRESH_IS_RAW = {"fresh", "raw"}
 WITH_LEAD = RULES["with_qualifiers"]["lead"]
@@ -167,10 +168,12 @@ def split_portion_words(text: str) -> SplitQuery:
 def preferred_portion(labels: list[str], portion_words: tuple[str, ...]) -> int | None:
     """The index of the first portion (in USDA's order) whose label names a
     portion word: "1 large (8\" to 8-7/8\" long)" for "large", "1 cup,
-    sliced" for "sliced". Sizes before cuts. None when none does."""
+    sliced" for "sliced", "1 cup strips or slices" for "matchsticks"
+    (CUT_LABELS). Sizes before cuts. None when none does."""
     for word in sorted(portion_words, key=lambda w: w not in PORTION_SIZES):
+        said = CUT_LABELS.get(word, word)
         for i, label in enumerate(labels):
-            if re.search(rf"\b{re.escape(word)}\b", normalize(label)):
+            if re.search(rf"\b{re.escape(said)}\b", normalize(label)):
                 # "large" isn't "extra large".
                 if word == "large" and re.search(r"\bextra large\b", normalize(label)):
                     continue

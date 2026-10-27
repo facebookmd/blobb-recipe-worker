@@ -70,6 +70,8 @@
     {"query": "mashed potatoes", "food": "potatoes", "portion_words": ["mashed"]},
     {"query": "mashed", "food": "mashed", "portion_words": []},
     {"query": "green papaya chunks", "food": "green papaya", "portion_words": ["chunks"]},
+    {"query": "carrot matchsticks", "food": "carrot", "portion_words": ["matchsticks"]},
+    {"query": "pitted black olives", "food": "black olives", "portion_words": []},
     {"query": "milk", "food": "milk", "portion_words": []}
   ],
 
@@ -77,7 +79,8 @@
     {"labels": ["1 cup, mashed", "1 extra large (9\" or longer)", "1 large (8\" to 8-7/8\" long)", "1 medium (7\" to 7-7/8\" long)"], "words": ["large"], "expect": "1 large (8\" to 8-7/8\" long)"},
     {"labels": ["1 cup, chopped", "1 cup, sliced", "1 medium (2-1/2\" dia)"], "words": ["sliced"], "expect": "1 cup, sliced"},
     {"labels": ["1 cup, chopped", "1 medium (2-1/2\" dia)"], "words": ["diced"], "expect": null},
-    {"labels": ["1 cup, sliced", "1 large"], "words": ["sliced", "large"], "expect": "1 large"}
+    {"labels": ["1 cup, sliced", "1 large"], "words": ["sliced", "large"], "expect": "1 large"},
+    {"labels": ["1 cup, chopped", "1 cup, grated", "1 cup strips or slices", "1 medium"], "words": ["matchsticks"], "expect": "1 cup strips or slices"}
   ],
 
   "product_cut": [

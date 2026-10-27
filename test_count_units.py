@@ -30,6 +30,14 @@ CELERY = {"source": "usda", "display_name": "Celery, raw",
                        portion(4, '1 stalk, small (5" long)', 17.0)]}
 SHIITAKE = {"source": "usda", "display_name": "Shiitake mushrooms, raw",
             "portions": [portion(1, "1 piece whole", 19.0)]}
+MANGO = {"source": "usda", "display_name": "Mangos, raw",
+         "portions": [portion(1, "1 cup pieces", 165.0),
+                      portion(2, "1 fruit without refuse", 336.0)]}
+CARROT = {"source": "usda", "display_name": "Carrots, raw",
+          "portions": [portion(1, "1 cup chopped", 128.0),
+                       portion(2, "1 cup grated", 110.0),
+                       portion(3, "1 cup strips or slices", 122.0),
+                       portion(4, "1 medium", 61.0)]}
 PARSLEY = {"source": "usda", "display_name": "Parsley, fresh",
            "portions": [portion(1, "1 cup chopped", 60.0),
                         portion(2, "10 sprigs", 10.0)]}
@@ -46,6 +54,9 @@ def picked(food, unit, ingredient):
     (GREEN_ONION, "whole", "green onion", '1 medium (4-1/8" long)'),
     (SHIITAKE, "whole", "shiitake mushroom", "1 piece whole"),
     (PARSLEY, "sprig", "parsley", "10 sprigs"),
+    # "piece" is in "1 cup pieces": a count is never a volume.
+    (MANGO, "whole", "mango", "1 fruit without refuse"),
+    (MANGO, "", "mango", "1 fruit without refuse"),
 ])
 def test_count_unit_picks_a_whole_item(food, unit, ingredient, label):
     assert picked(food, unit, ingredient) == label
@@ -58,3 +69,9 @@ def test_a_named_size_still_wins():
 def test_a_sprig_counts_against_the_label_number():
     # "10 sprigs" is ten sprigs, so one sprig is a tenth of that portion.
     assert matcher._portion_label_qty("10 sprigs") == 10.0
+
+
+def test_a_cup_of_a_cut_usda_labels_another_way():
+    # Matchsticks are USDA's strips (search_rules.json cut_labels).
+    assert picked(CARROT, "cup", "carrot matchsticks") == "1 cup strips or slices"
+    assert picked(CARROT, "cup", "carrot") == "1 cup chopped"

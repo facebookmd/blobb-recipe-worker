@@ -165,7 +165,8 @@ PORTION_UNIT_KEYWORDS = {
     # Weight
     "oz":["ounce","oz"],"lb":["pound","lb"],"g":["gram","100g","100 g"],
     # Countable â€” generic
-    "piece":["medium","large","small","piece","unit","each","item","wrapper","wrappers","whole"],
+    # "1 fruit without refuse" is one mango (336 g).
+    "piece":["medium","large","small","piece","unit","each","item","wrapper","wrappers","whole","fruit"],
     "clove":["clove"],
     "bunch":["bunch"],
     # A stalk is one whole stalk: green onion's portions are "1 medium",
@@ -173,7 +174,7 @@ PORTION_UNIT_KEYWORDS = {
     # first one, the cup, was used (6x a stalk). "whole" means the same.
     "stalk":["stalk","rib","medium","large","small","whole","piece"],
     "stalks":["stalk","rib","medium","large","small","whole","piece"],
-    "whole":["medium","large","small","whole","piece"],
+    "whole":["medium","large","small","whole","piece","fruit"],
     "sprig":["sprig"],
     "sprigs":["sprig"],
     "slice":["slice"],
@@ -2670,16 +2671,23 @@ def _portion_fit(label: str, line: str) -> int:
     """
     How well a volume portion's label measures a recipe [line]: 0 its other
     words are ones the line says ("1 cup, chopped" for "chopped green
-    beans"), 1 a plain volume ("1 cup", "2 tbsp"), 2 other words ("1 tsp,
-    leaves"), 3 an aerated form the line doesn't say ("1 cup, whipped").
+    beans", "1 cup strips or slices" for carrot matchsticks, a cut USDA
+    labels another way), 1 a plain volume ("1 cup", "2 tbsp"), 2 other words
+    ("1 tsp, leaves"), 3 an aerated form the line doesn't say ("1 cup,
+    whipped").
     Heavy cream in cups was measured by "1 cup, whipped", 120 g instead of
     238 (22 Oct 2026). Ties keep the food's own order.
     """
     label = re.sub(r"\([^)]*\)", " ", label.lower())
     words = [w for w in re.findall(r"[a-z]+", label) if w not in PLAIN_VOLUME_WORDS]
-    said = {_canonical_token(t) for t in normalise(line).split()}
+    said = {_canonical_token(food_name_search.CUT_LABELS.get(t, t)) for t in normalise(line).split()}
+    said |= {_canonical_token(t) for t in normalise(line).split()}
     if not words:
         return 1
+    # Alternatives: "strips or slices" is said when either one is.
+    for i, w in enumerate(words[1:-1], 1):
+        if w == "or" and {_canonical_token(words[i - 1]), _canonical_token(words[i + 1])} & said:
+            said |= {_canonical_token(words[i - 1]), _canonical_token(words[i + 1])}
     if all(_canonical_token(w) in said or w in ("and", "or") for w in words):
         return 0
     return 3 if any(w in AERATED_WORDS and w not in said for w in words) else 2
@@ -3503,6 +3511,11 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
                 if target in p["label"].lower():
                     return p
         labelled = [p for p in portions if any(kw in p["label"].lower() for kw in keywords)]
+        # A count is never a volume: "piece" is in "1 cup pieces", which
+        # measured 4.5 whole mangoes as cups (27 Oct 2026).
+        if unit.lower() not in VOLUMETRIC_UNITS:
+            labelled = [p for p in labelled
+                        if _portion_label_unit(p["label"]) not in VOLUME_TO_TSP] or labelled
         if labelled:
             if unit.lower() in VOLUMETRIC_UNITS:
                 # A plain "1 cup" before "1 cup, whipped".
@@ -3704,9 +3717,11 @@ def _template_refs(rows_by_template, existing_rows, published_templates):
 # food of their own in the data: "10 curry leaves" matched a coconut curry
 # (2199 kcal), kaffir lime leaves limes, banana leaf a banana. They are about
 # 0 kcal, so they become note rows, like "to taste": no search, no calories,
-# and left out of the saved template (templates have no notes).
+# and left out of the saved template (templates have no notes). Whole bay
+# leaves too, though the data has them: they are taken out before eating
+# (27 Oct 2026). Ground bay leaf is eaten.
 AROMATIC_LEAVES_RE = re.compile(
-    r"\b(?:curry|(?:kaffir|makrut)\s+lime|lime|pandan|banana)\s+lea(?:f|ves)\b", re.I)
+    r"(?<!ground )\b(?:curry|(?:kaffir|makrut)\s+lime|lime|pandan|banana|bay)\s+lea(?:f|ves)\b", re.I)
 AROMATIC_NOTE = "aromatic leaf, not eaten - no calories logged"
 
 
@@ -4037,6 +4052,17 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             if alias is not None:
                 food, alias_portion = alias
                 score, confidence, matched_alt = 1.0, "high", None
+                # The recipe layer keeps the alias's food first and fits it
+                # to the line: a volume borrowed for "1/2 cup green olives"
+                # (USDA has only "1 olive", 0.2 g), the cut word's portion.
+                if alias_portion is None:
+                    if match_key not in match_cache:
+                        match_cache[match_key] = match_ingredient(
+                            ingredient, boost_rules, threshold, category, unit,
+                            is_cooked=is_cooked)
+                    fitted = match_cache[match_key][0]
+                    if fitted is not None and str(fitted["fdc_id"]) == str(food["fdc_id"]):
+                        food = fitted
             elif match_key in match_cache:
                 food, score, confidence, matched_alt = match_cache[match_key]
             else:
