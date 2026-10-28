@@ -28,6 +28,8 @@ from pathlib import Path
 from collections import Counter, defaultdict
 
 import food_name_search
+import fry_rates
+import parse_recipe
 import template_refs as tref
 
 from supabase_food_source import (
@@ -1409,11 +1411,51 @@ CHICKEN_CUT_EXCLUDES = {
 MEAT_YIELDS = {"pork": 0.73, "beef": 0.70, "lamb": 0.70, "veal": 0.74}
 
 
+# Meat sold raw by weight: with MEAT_YIELDS' words, the line's meat is raw
+# ("2 lb oxtail", "1.5 lb pork shoulder"), so a raw row comes first.
+RAW_MEAT_WORDS = set(MEAT_YIELDS) | {"chicken", "turkey", "duck", "goat", "oxtail", "oxtails"}
+# USDA's own raw-to-cooked weight for a food listed cooked ("1 oz yields",
+# 16 g of cooked oxtail meat, bone out, from 1 oz raw as bought).
+OZ_YIELDS_RE = re.compile(r"^\s*1\s+oz\s+yields\b", re.I)
+
+
+def _row_words_text(row: dict) -> str:
+    return f"{row.get('description') or ''} {row.get('display_name') or ''}".lower()
+
+
+def _is_raw_meat_weight_line(ingredient: str, unit: str, line_cooked: bool) -> bool:
+    return (not line_cooked and _normalise_weight_unit(unit) is not None
+            and bool(RAW_MEAT_WORDS & set(normalise(ingredient).split())))
+
+
+def _cooked_meat_yield(food: dict, meat_kw: str | None) -> float | None:
+    """
+    The weight a raw recipe amount has as *food*, when *food* is the meat
+    cooked: USDA's own "1 oz yields" portion (oxtail: 16 g, 0.56, bone and
+    cooking loss), else MEAT_YIELDS for the meat. None when *food* isn't
+    cooked: a raw row, or a branded product, whose label is as sold (pork
+    tocino was 0.73 of its raw weight, 27 Oct 2026). Cooked by its words,
+    not is_raw: "Pork, fresh, shoulder, ..., cooked, braised" says "fresh",
+    which is_raw reads as raw (28 Oct 2026).
+    """
+    if food.get("source") != "usda":
+        return None
+    text = f"{food.get('raw_description') or ''} {food.get('display_name') or ''}".lower()
+    fndds = "fndds" in str(food.get("data_type") or "").lower()
+    if not (COOKING_WORD_RE.search(text) or (fndds and not food.get("is_raw"))):
+        return None
+    for p in food.get("portions", []):
+        if OZ_YIELDS_RE.match(p.get("label") or "") and p.get("gram_weight"):
+            return p["gram_weight"] / WEIGHT_TO_G["oz"]
+    return MEAT_YIELDS.get(meat_kw) if meat_kw else None
+
+
 def _meat_keyword(ingredient: str) -> str | None:
-    """Return the first meat keyword found in the ingredient name, or None."""
+    """Return the first meat keyword in the ingredient name, as a word
+    ("beefsteak tomato" names no beef), or None."""
     ing = ingredient.lower()
     for kw in MEAT_YIELDS:
-        if kw in ing:
+        if re.search(rf"\b{kw}\b", ing):
             return kw
     return None
 
@@ -1619,7 +1661,10 @@ def _own_serving_for_volume(food: dict) -> dict | None:
     return (counted or own or [None])[0]
 
 
-HEAD_BORROW_SHAPED = {"pasta", "noodle", "macaroni"}
+# How far a head-food relative may differ from the food in calories, and
+# its rows from each other in grams per ml, to lend its cup: dry pasta's
+# cups by shape differ 1.9x (USDA, 27 Oct 2026), raw potatoes' 1.0x.
+HEAD_BORROW_SPREAD = 1.5
 
 
 def _food_head_word(food: dict) -> str:
@@ -1636,19 +1681,24 @@ def _density_from_head_food(food, unit, search):
     The last try for a volume: a USDA row headed by the food *food* is of
     (_food_head_word), in the same raw or cooked state, with a plain volume
     portion. "Yukon gold potato" (a branded bag, no cup) is measured by
-    "Potatoes, raw" (1 cup diced, 150 g), not 1 g/ml (236 g); "sweetened
-    plantain" by plantains. The row says little else: at most one word
-    past its head and USDA's standard words ("Plantains, yellow, raw", not
-    "Noodles, chow mein"). Not pasta or noodles, whose cups are by shape:
-    a cup of spaghetti is 91 g, of acini di pepe nearer 180. The calories
-    stay *food*'s. Returns (row, portion) or (None, None).
+    "Potatoes, raw" (1 cup diced, 150 g), not 1 g/ml (236 g); USDA's
+    "Plantain, raw" by "Plantains, yellow, raw" (a sweetened plantain
+    product, about 200 kcal to 122, is too far off). The row says little
+    else: at most one word past its head and USDA's standard words ("Plantains, yellow, raw", not
+    "Noodles, chow mein"), and its calories are within HEAD_BORROW_SPREAD
+    of *food*'s (konjac noodles, about 10 kcal, aren't dry egg noodles,
+    384). None when the rows that qualify disagree on the density by more
+    than HEAD_BORROW_SPREAD: a food measured by its shape (dry pasta, 0.27
+    g/ml shells to 0.52 elbows) can't borrow a cup. The calories stay
+    *food*'s. Returns (row, portion) or (None, None).
     """
     head = _food_head_word(food)
-    if not head or _canonical_token(head) in HEAD_BORROW_SHAPED:
+    if not head:
         return None, None
     cooked = _is_cooked_food(food)
     food_tokens = set(normalise(food.get("raw_description") or food["display_name"]).split())
     best, best_key, best_portion = None, None, None
+    densities = []
     for cand in _search_usda_for_ingredient(head):
         if cand["fdc_id"] == food["fdc_id"] or not cand.get("energy_kcal"):
             continue
@@ -1662,15 +1712,39 @@ def _density_from_head_food(food, unit, search):
         if (_is_cooked_food(cand) != cooked or _is_dish_category(cand)
                 or _names_other_variant(search, cand)):
             continue
-        portion = _density_portion(cand, unit, search)
+        if food.get("energy_kcal") and not _within(cand["energy_kcal"], food["energy_kcal"],
+                                                   HEAD_BORROW_SPREAD):
+            continue
         # "1 cup, cooked" measures cooked pasta, whatever the row is named.
+        for portion in _volume_portions(cand):
+            if bool(re.search(r"\bcooked\b", portion["label"], re.I)) == cooked:
+                densities.append(_grams_per_ml(portion))
+        portion = _density_portion(cand, unit, search)
         if portion is None or bool(re.search(r"\bcooked\b", portion["label"], re.I)) != cooked:
             continue
         overlap = len(food_tokens & set(normalise(cand.get("raw_description") or cand["display_name"]).split()))
         key = (_layer1_rank(head, cand)[0] == 4, overlap, _layer1_rank(head, cand))
         if best is None or key > best_key:
             best, best_key, best_portion = cand, key, portion
+    densities = [d for d in densities if d]
+    if densities and not _within(max(densities), min(densities), HEAD_BORROW_SPREAD):
+        return None, None
     return best, best_portion
+
+
+def _within(a: float, b: float, ratio: float) -> bool:
+    return a > 0 and b > 0 and max(a, b) / min(a, b) <= ratio
+
+
+def _volume_portions(food: dict) -> list[dict]:
+    return [p for p in food.get("portions", [])
+            if p.get("gram_weight") and _portion_label_unit(p.get("label") or "") in VOLUME_TO_TSP]
+
+
+def _grams_per_ml(portion: dict) -> float | None:
+    qty, unit = _portion_label_volume_qty(portion["label"])
+    ml = _volume_to_ml(qty, unit or _portion_label_unit(portion["label"]) or "")
+    return portion["gram_weight"] / ml if ml else None
 
 
 def _density_relative(food, foods, unit, search, query_tokens):
@@ -1877,7 +1951,8 @@ RAW_LINE_RE = re.compile(r"(?i)\b(?:raw|uncooked|dry)\b")
 # search goes without them. For a chicken cut, _chicken_cut reads all of
 # these and the search goes without each ("boneless skin-on chicken thigh"
 # found boneless skinless thighs, the only rows saying boneless).
-BONE_IN_SKIN_ON_RE = re.compile(r"(?i)\b(?:bone[- ]?in|skin[- ]?on)\b")
+BONE_IN_SKIN_ON_RE = re.compile(
+    r"(?i)\b(?:bone[- ]?in|skin[- ]?on|heads?[- ]?on|shells?[- ]?on|unpeeled|in (?:the )?shells?)\b")
 CUT_BONE_SKIN_RE = re.compile(
     r"(?i)\b(?:bone[- ]?in|boneless|skin[- ]?on|skin[- ]?off|skinless|with(?:out)? skin|no skin)\b")
 # How a meat line counts its meat, which no USDA meat says: "1 lb boneless
@@ -2149,6 +2224,7 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     aliases = food_name_search._food_aliases()
     alias_ids = {aliases.get(food_name_search.alias_key(t)) for t in (remapped, split.food)} - {None}
     raw_known = any(_says_raw(query, r) for r in top)
+    raw_meat_line = _is_raw_meat_weight_line(ingredient, unit, line_cooked)
     by_can = unit.strip().lower() in ("can", "cans")
     ranked, first_of_food = [], {}
     for i, row in enumerate(top):
@@ -2178,7 +2254,13 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
                # line's product cut ("Cheese, parmesan, grated").
                food_name_search.names_product_cut(query, row, split.product_cuts),
                not _is_specialty_row(food, query_tokens),
-               rank.tier, rank.bucket,
+               rank.tier,
+               # Meat bought by weight is raw: an uncooked row before a cooked
+               # one measured by a generic yield ("pork shoulder" found a
+               # broiled petite tender, 27 Oct 2026). Uncooked, not "says
+               # raw": "Pork sausage, link/patty, unprepared" is raw too.
+               not (raw_meat_line and COOKING_WORD_RE.search(_row_words_text(row))),
+               rank.bucket,
                # In a tier and bucket, an uncooked line's food raw: "Italian
                # sausage, pork, mild, raw" over "Sweet Italian sausage
                # links"; then layer 1's order of foods.
@@ -2222,10 +2304,17 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     food = dict(food)
     if cut:
         food["_cut_keyword"] = cut  # used by pick_best_portion
-    meat_kw = _meat_keyword(remapped)
-    if meat_kw and not food.get("is_raw", False):
-        food["_yield_factor"] = None if is_cooked else MEAT_YIELDS.get(meat_kw, 1.0)
-        food["_meat_keyword"] = meat_kw
+    # The food's meat when the line names one the yields don't ("oxtail" is
+    # "Beef, oxtails"); not for a line that isn't meat ("hot dog" found
+    # "Hot dog, beef", 28 Oct 2026).
+    meat_line = _is_raw_meat_weight_line(remapped, unit, False)
+    meat_kw = _meat_keyword(remapped) or (
+        _meat_keyword(food.get("raw_description") or "") if meat_line else None)
+    if not is_cooked and (meat_kw or meat_line):
+        meat_yield = _cooked_meat_yield(food, meat_kw)
+        if meat_yield:
+            food["_yield_factor"] = meat_yield
+            food["_meat_keyword"] = meat_kw
     score = _TIER_SCORE.get(rank.tier, 0.3) if rank.bucket > 0 else 0.3
     # A product named with every word of the line ("MIRIN SWEET COOKING RICE
     # WINE" for mirin) is a sure match, though branded rows rank in tier 1.
@@ -3677,63 +3766,60 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # Core pipeline
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-# Raw bone-in cuts, by the USDA row they match: (description pattern, share
-# of the as-bought weight that is bone or other refuse, SR28 record). USDA's
-# nutrients are per 100 g of the edible part, but its count portions for
-# these parts are whole pieces as bought ("1 wing" 107 g with 38% bone; "1
-# leg" 344 g, the sum of drumstick, thigh and back), so a count or a
-# bone-in weight counted the bone as meat (27 Oct 2026). From SR28's refuse
-# fields (FOOD_DES), checked by hand: the drumstick's "bone and cartilage
-# 33%, bone and connective tissue 33%" lists the bone twice, the raw thigh
-# has none (the roasted thigh, 05094, does: 17%). Weights USDA gives
-# without the bone say so ("breast, bone removed", "rib without refuse")
-# and are left alone, as is a line that says boneless.
-BONE_SHARE = (
-    (r"chicken roasting meat and skin and giblets", 0.27, "05109"),
-    (r"chicken broilers or fryers meat and skin and giblets", 0.31, "05001"),
-    (r"chicken\b.*\bthigh\b", 0.17, "05094"),
-    (r"chicken\b.*\bdrumstick\b", 0.33, "05066"),
-    (r"chicken\b.*\bwing\b", 0.38, "05100"),
-    (r"chicken\b.*\bleg\b", 0.27, "05075"),
-    (r"chicken\b.*\bbreast\b", 0.20, "05057"),
-    (r"\bbackribs\b|\bback ribs\b", 0.37, "10192"),
-    (r"\bspareribs\b", 0.30, "10088"),
-    (r"\bshank crosscuts\b", 0.40, "13227"),
-    (r"\bveal shank fore and hind\b", 0.29, "17276"),
-    (r"\bveal shank separable\b", 0.49, "17435"),
+# The edible share of a weight bought with bone, head or shell, by how the
+# line says it was bought (parse_recipe.as_bought) and the USDA food it
+# matched: (as bought, food pattern on the normalised description, edible
+# share of the as-bought weight, what is left out, source). By the food, not
+# the line's words: "lamb shanks" or "turkey wings" aren't beef's or
+# chicken's, and "wing sauce" has no bone (28 Oct 2026). USDA's nutrients
+# are per 100 g of the edible part, and so are its portion weights
+# ("Weights are given for edible material without refuse ... a chicken leg
+# without the bone", SR28 documentation): a count needs no share, only a
+# recipe's own weight as bought does (SR28's formula: edible = as purchased
+# x (100 - refuse) / 100). Checked against SR28's meat-only records: its
+# "1 leg" (344 g) is meat and skin, no bone.
+# Shares from SR28's refuse fields, as-purchased basis (27 Oct 2026):
+# - the raw thigh (05091) gives no refuse; the roasted thigh (05094) is 17%
+#   bone by cooked weight, and raw meat weighs more, so a raw thigh is at
+#   most 17%. Not the raw leg's 27% (05075): its back is bonier;
+# - the drumstick's "bone and cartilage 33%, bone and connective tissue
+#   33%" (05066) lists the bone twice: 33%;
+# - a Boston butt steak "with refuse, weighing 380 g" yields 288 g (10080).
+# Shrimp from USDA AH-102 (1975), p. 105: head-on to headless 57%, headless
+# in shell to peeled 81%. Whole milkfish is about 60% flesh in published
+# yield studies; there is no USDA figure (Arianna). Not FNRI's figures:
+# FNRI declined reuse. Pork hock has no public figure, so none.
+EDIBLE_SHARE = (
+    ("bone-in", r"\bveal shank separable\b", 0.51, "bone", "SR 17435"),
+    ("bone-in", r"\bveal shank fore and hind\b", 0.71, "bone", "SR 17276"),
+    ("bone-in", r"\bbeef shank crosscuts\b", 0.60, "bone", "SR 13227"),
+    ("bone-in", r"\bpork\b.*\bbackribs\b", 0.63, "bone", "SR 10192"),
+    ("bone-in", r"\bpork\b.*\bspareribs\b", 0.70, "bone", "SR 10088"),
+    ("bone-in", r"\bpork\b.*\bshoulder\b", 0.76, "bone", "SR 10080"),
+    ("bone-in", r"\bchicken\b.*\bdrumstick\b", 0.67, "bone", "SR 05066"),
+    ("bone-in", r"\bchicken\b.*\bwing\b", 0.62, "bone", "SR 05100"),
+    ("bone-in", r"\bchicken\b.*\bbreast\b", 0.80, "bone", "SR 05057"),
+    ("bone-in", r"\bchicken\b.*\bthigh\b", 0.83, "bone", "SR 05094"),
+    ("bone-in", r"\bchicken\b.*\bleg\b", 0.73, "bone", "SR 05075"),
+    ("bone-in", r"\bchicken broilers or fryers meat and skin and giblets\b", 0.69, "bone", "SR 05001"),
+    ("bone-in", r"\bchicken roasting meat and skin and giblets\b", 0.73, "bone", "SR 05109"),
+    ("head-on", r"\bshrimp\b", 0.57 * 0.81, "head and shell", "USDA AH-102"),
+    ("shell-on", r"\bshrimp\b", 0.81, "shell", "USDA AH-102"),
+    ("whole", r"\bmilkfish\b", 0.60, "head, bones and fins", "published yields"),
 )
-# Cuts that come with their bone unless the line says boneless; a thigh or
-# breast only when the line says bone-in.
-# Units that count pieces of a cut ("2 chicken thigh" is two thighs).
-CUT_COUNT_UNITS = {"thigh", "thighs", "wing", "wings", "leg", "legs", "breast", "breasts",
-                   "drumstick", "drumsticks", "quarter", "quarters"}
-ALWAYS_BONE_IN = ("05109", "05001", "05066", "05100", "05075", "10192", "10088", "13227",
-                  "17276", "17435")
-BONELESS_LABEL_RE = re.compile(r"(?i)\b(?:bone removed|boneless|without refuse|bone and skin removed)\b")
-COUNTED_PART_RE = re.compile(r"(?i)\b(?:thigh|drumstick|wing|piece|leg|chicken|breast)\b")
 
 
-def _edible_share(food: dict, ingredient: str, portion: dict | None, counted: bool):
-    """(edible share, SR record) for a raw bone-in cut weighed or counted as
-    bought (BONE_SHARE), else None."""
-    if food.get("source") != "usda" or portion is None:
+def _edible_share(food: dict, as_bought: str):
+    """(edible share, what is left out, source) of a weight line bought
+    with bone, head or shell, by the food it matched (EDIBLE_SHARE), else
+    None. A USDA food only: a branded label's serving is as the brand weighs
+    it."""
+    if not as_bought or food.get("source") != "usda":
         return None
     desc = " ".join(normalise(food.get("raw_description") or food.get("display_name") or "").split())
-    if not re.search(r"\braw\b", desc) or "boneless" in desc.split():
-        return None
-    line = ingredient.lower()
-    if re.search(r"\bboneless\b", line):
-        return None
-    for pattern, refuse, ndb in BONE_SHARE:
-        if not re.search(pattern, desc):
-            continue
-        if counted:
-            label = portion.get("label") or ""
-            if BONELESS_LABEL_RE.search(label) or not COUNTED_PART_RE.search(label):
-                return None
-        elif ndb not in ALWAYS_BONE_IN and not re.search(r"\bbone[- ]?in\b", line):
-            return None
-        return 1.0 - refuse, ndb
+    for bought, pattern, share, what, source in EDIBLE_SHARE:
+        if bought == as_bought and re.search(pattern, desc):
+            return share, what, source
     return None
 
 
@@ -3837,21 +3923,10 @@ def _is_aromatic_leaf(ingredient: str) -> bool:
 # Frying oil ("3 cups oil for frying", parse_recipe.FRYING_OIL_UNIT) is the
 # pot, not what the food keeps: "3 cups" logged 1,445 kcal a serving of
 # karaage. It becomes the absorbed share instead, a percent of the fried
-# food's raw weight by coating (RECIPE_RULES.md, "Absorbed amounts"), in tbsp
-# in an "Absorbed oil" section. The rows it is a share of are marked "fried".
-# The app shows the fry type on that section and lets the user change it and
-# the fried rows, recomputing the oil from them, so these names and rates are
-# the app's too (lib/utils/fry_types.dart).
-# Sources for each rate: ABSORPTION_SOURCES.md.
-FRY_TYPE_RATES = {
-    "breaded": 0.12,
-    "battered": 0.15,
-    "starch-dusted": 0.08,
-    "unbreaded": 0.05,
-    "unbreaded veg": 0.10,
-    "thick-cut": 0.05,
-    "thin-sliced": 0.13,
-}
+# food's raw edible weight by coating, in tbsp in an "Absorbed oil" section.
+# The rows it is a share of are marked "fried". The rates are the app
+# project's fry_types table (fry_rates.py), which app.py sends to the editor
+# so it can recompute the oil when the user changes the type or the rows.
 ABSORBED_OIL_SECTION = "Absorbed oil"
 # The unit parse_recipe gives a frying-oil line.
 FRYING_OIL_UNIT = "frying oil"
@@ -3939,7 +4014,10 @@ def _absorbed_oil(ingredients: list[str], fried: list[dict]):
                     fry_type = unbreaded_type
                 break
     grams = sum(r["_fried_grams"] for r in rows)
-    return fry_type, grams * FRY_TYPE_RATES[fry_type] / OIL_GRAMS_PER_TBSP, rows
+    rates = fry_rates.rates()
+    if fry_type not in rates:
+        raise fry_rates.FryTypesUnavailable(f"No frying rate for {fry_type!r} in fry_types.")
+    return fry_type, grams * rates[fry_type] / OIL_GRAMS_PER_TBSP, rows
 
 
 # Messages from the last build_output_rows: lines that name no template but
@@ -4063,6 +4141,10 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 qty_raw, unit, section = f"{tbsp:.4f}", "tbsp", ABSORBED_OIL_SECTION
             size_hint=ing_row.get("size_hint","").strip()
             is_cooked = ing_row.get("is_cooked","").strip().lower() in ("true","1","yes")
+            # How the weight was bought (parse_recipe.as_bought); worked out
+            # again for a CSV written before the column.
+            as_bought = (ing_row["as_bought"].strip() if "as_bought" in ing_row
+                         else parse_recipe.as_bought(unit, ingredient))
             # ingredient_for_portion: bare name + size hint so pick_best_portion
             # can prefer "medium piece", "large whole", etc. without the size
             # word polluting the fuzzy search match.
@@ -4439,26 +4521,14 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                         portion_desc = f"{portion['label']} ({portion['gram_weight']:.1f} g)"
                         cal_formula = _unit_calories(portion, food)
 
-            # A bone-in cut weighed or counted as bought: only its edible
-            # share is meat (BONE_SHARE).
+            # A weight bought with bone, head or shell: only its edible
+            # share is food (EDIBLE_SHARE). Counts are edible already.
             bone_tag = ""
-            edible_share = None
-            counted = is_countable or not unit or u_low in CUT_COUNT_UNITS
-            edible = _edible_share(food, ingredient, portion, counted)
+            edible = _edible_share(food, as_bought)
             if edible is not None and section != ABSORBED_OIL_SECTION:
-                share, ndb = edible
-                edible_share = share
-                if counted:
-                    portion = {**portion, "portion_id": f"{portion_id}-edible",
-                               "label": f"{portion['label']}, bone removed",
-                               "gram_weight": round(portion["gram_weight"] * share, 1),
-                               "gram_col": "override"}
-                    portion_id = portion["portion_id"]
-                    portion_desc = f"{portion['label']} ({portion['gram_weight']:.0f} g)"
-                    cal_formula = _unit_calories(portion, food)
-                else:
-                    portion_amt *= share
-                bone_tag = f" [bone {1 - share:.0%} left out, SR {ndb}]"
+                share, what, source = edible
+                portion_amt *= share
+                bone_tag = f" [{what} {1 - share:.0%} left out, {source}]"
 
             cal_tot_formula=round(cal_formula * portion_amt, 1) if isinstance(cal_formula, float) else ""
             source_tag=" [BRANDED]" if source=="branded" else ""
@@ -4522,10 +4592,11 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             if kind:
                 row = output_rows[-1]
                 row["_fried_kind"] = kind
-                # The oil rates are a share of the fried food as bought, bone
-                # and all (FRY_TYPE_RATES), not of its edible part.
+                # The oil rates are a share of the fried food's edible weight,
+                # as its calories are: per 100 g of raw food (fry_types,
+                # ABSORPTION_SOURCES.md), never the bone (28 Oct 2026).
                 row["_fried_grams"] = portion_amt * (
-                    portion["gram_weight"] if portion is not None else 100.0) / (edible_share or 1.0)
+                    portion["gram_weight"] if portion is not None else 100.0)
                 fried.append(row)
 
         first = ing_rows[0]

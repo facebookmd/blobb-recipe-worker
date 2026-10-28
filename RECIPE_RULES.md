@@ -76,6 +76,10 @@ Format: `qty unit ingredient` (`1 cup glutinous rice flour`, `3 tbsp soy sauce`,
 * **English names**, not local-language names (`green onion` not `negi`, `kelp` not `kombu`, `soy sauce` not `shoyu`, `rice wine` not `sake`). Local names go in the recipe's AKA line.
 * **Specific cuts and forms** where it matters for nutrition (`chicken thigh` not `chicken`, `firm tofu` not `tofu`).
 * **Bone and skin**: always state them for cuts sold both ways (`bone-in skin-on chicken thigh`, `boneless skinless chicken breast`).
+* **As bought, by weight**: a weight is what the cook buys, and only its edible part is counted (`parse_recipe.as_bought`, `recipe_matcher.EDIBLE_SHARE`, by the USDA food matched). Counts need nothing: USDA's "1 thigh" or "1 large" shrimp is already the edible weight.
+  * Say `bone-in` for a cut sold both ways (`4 oz bone-in skin-on chicken thigh`, `2 lb bone-in pork shoulder`). Ribs, shanks, oxtail, hocks, pata, knuckles, wings, drumsticks, leg quarters, whole chickens and whole ducks are bone-in unless the line says `boneless`. A sauce, seasoning, marinade, rub, glaze, broth, stock or bouillon named after a cut (`buffalo wing sauce`) is not the cut.
+  * Shrimp: plain `shrimp` is peeled. Say `head-on shrimp` or `shell-on shrimp` (also read: `heads on`, `unpeeled`, `in the shell`) when the source buys them so (sinigang na hipon is head-on): 46% and 81% is meat (USDA AH-102).
+  * Fish by weight (milkfish, tilapia, pompano, snapper, grouper, mackerel, sardines, catfish, carp, trout, sea bass, mullet, galunggong) is the whole fish unless the line says `boneless`, `deboned`, `fillet`, `belly`, `steak`, `flakes`, `canned`, `smoked`, `dried`, `ground`, `minced` or `sashimi` (`1.5 lb milkfish` is about 60% flesh). Only milkfish has a share so far.
 * **Raw vs cooked**: ingredients are raw by default. Anything added already cooked says `cooked` (`cooked spaghetti`, `cooked chicken breast`). The matcher uses that word to pick cooked entries. Exception: bare `rice` is read as cooked, so always say which (`1 cup uncooked short grain white rice`, `2 cups cooked rice`).
 * **Never "to taste".** Write a fixed amount: the median of the sources; if none gives one, a standard amount (salt: 1/2 tsp per 4 servings; pepper: 1/4 tsp per 4 servings).
 * **Zero-calorie lines stay** (water, ice). They show users how much food there is.
@@ -173,28 +177,32 @@ Write it as a **normal ingredient line**, by its exact name or an AKA, in the sa
 
 ## Absorbed amounts
 
-For anything cooked in a liquid or fat that is mostly discarded, list only what stays in the food. Basis is **percent of the raw food's weight**: estimate the food's weight, apply the percentage, then write the result in tbsp/tsp.
+For anything cooked in a liquid or fat that is mostly discarded, list only what stays in the food. Basis is **percent of the raw food's edible weight**: estimate the food's weight without bone, head or shell (a bone-in thigh counts its meat and skin, as its calories do), apply the percentage, then write the result in tbsp/tsp.
 
 ### Frying oil (`--Absorbed oil`)
 
-| Method and food | Absorbed oil (% of raw food weight) |
+<!-- fry_types:start (sync_fry_rates.py writes this table) -->
+| Method and food | Absorbed oil (% of the raw food's edible weight) |
 |---|---|
-| Deep-fried, breaded (panko, breadcrumbs) | 12% |
-| Deep-fried, wet-battered (tempura, kwek-kwek) | 15% |
-| Deep-fried, dry starch-dusted (karaage, tatsuta-age) | 8% |
-| Deep-fried, wrapper-enclosed (spring rolls, turon, fried gyoza) | 12% |
-| Deep-fried, unbreaded lean meat, fish, tofu | 5% |
-| Deep-fried, unbreaded vegetables (su-age eggplant, shishito, mushrooms) | 10% |
+| Fatty cuts, unbreaded, deep- or pan-fried (pork belly, pata, skin-on cuts; they lose fat) | 0% |
 | Deep-fried, thick starchy pieces (whole plantain, thick-cut potato) | 5% |
-| Deep-fried, thin starchy slices (chips) | 13% |
+| Deep-fried, unbreaded lean meat, fish, tofu | 5% |
+| Deep-fried, dry starch-dusted (karaage, tatsuta-age) | 8% |
 | Pan-fried fish, unbreaded | 8% |
-| Fatty cuts, unbreaded, deep- or pan-fried (pork belly, pata, skin-on cuts) | 0% (they lose fat) |
+| Deep-fried, unbreaded vegetables (su-age eggplant, shishito, mushrooms) | 10% |
+| Deep-fried, breaded (panko, breadcrumbs) | 12% |
+| Deep-fried, wrapper-enclosed (spring rolls, turon, fried gyoza) | 12% |
+| Deep-fried, thin starchy slices (chips) | 13% |
+| Deep-fried, wet-battered (tempura, kwek-kwek) | 15% |
+<!-- fry_types:end -->
 
 Sautés, stir-fries, stews and braises: list **all** the oil — it stays in the dish.
 
-These rates are fixed. Use them as they are; never change a rate or add a row while writing recipes (the absorbed-oil work has its own owner).
+These rates are fixed. Use them as they are; never change a rate or add a row while writing recipes. Changing one is Arianna's call.
 
-Convert recipe applies these rates to "oil for frying" lines as fry types: breaded, battered, starch-dusted, unbreaded (lean meat, fish, tofu), unbreaded veg, thick-cut and thin-sliced (starchy pieces and slices). The user can change the type and the rows it is a share of in the app. The rates live in `FRY_TYPE_RATES` in `recipe_matcher.py` and `lib/utils/fry_types.dart` in the app; change all three together. Sources for every rate: `ABSORPTION_SOURCES.md`.
+The rates have one copy: the app project's `fry_types` table (blobbapp migration `20261028120000_create_fry_types.sql`). The table above is written from it by `sync_fry_rates.py`, never by hand; the worker reads it (`fry_rates.py`) and sends it to the app's editor, and blobb.app/sources is built from it. To change a rate, change the table, then run `sync_fry_rates.py` and rebuild the site. Sources for every rate: `ABSORPTION_SOURCES.md`.
+
+Convert recipe applies these rates to "oil for frying" lines as fry types: breaded, battered, starch-dusted, unbreaded (lean meat, fish, tofu), unbreaded veg, thick-cut and thin-sliced (starchy pieces and slices), on the fried food's edible weight. It doesn't pick wrapped or pan-fried fish yet; unbreaded fatty or skin-on cuts start at no oil. The user can change the type (any of the table's) and the rows it is a share of in the app.
 
 ### Marinades (`--Absorbed marinade`)
 

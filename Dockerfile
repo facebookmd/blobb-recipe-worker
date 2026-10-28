@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Only what the server imports. Data files (branded.db, food_db.csv) stay
 # out: food data comes from Supabase at request time.
-COPY app.py auth.py parse_recipe.py recipe_matcher.py food_name_search.py supabase_food_source.py template_refs.py boosts.json search_rules.json ./
+COPY app.py auth.py parse_recipe.py recipe_matcher.py food_name_search.py supabase_food_source.py template_refs.py fry_rates.py boosts.json search_rules.json ./
 
 # Cloud Run sets PORT; 8080 is the local default.
 CMD ["sh", "-c", "exec uvicorn app:app --host 0.0.0.0 --port ${PORT:-8080}"]

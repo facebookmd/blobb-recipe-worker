@@ -207,31 +207,67 @@ def test_recipe_lines(line, expected, monkeypatch):
 
 
 # ── Bone-in cuts (27 Oct 2026) ──────────────────────────────────────────────
-# USDA's count portions for chicken parts are whole pieces as bought, its
-# nutrients per 100 g of the edible part: only the edible share counts.
+# USDA's portion weights are edible already (SR28 documentation: "a chicken
+# leg without the bone"): a count takes no share. A recipe's own weight as
+# bought does (parse_recipe.as_bought), by the USDA food it matched.
 
-@pytest.mark.parametrize("ingredient,unit,label,grams,share", [
-    ("bone-in skin-on chicken thigh", "thigh", "thigh with skin", 193.0, 0.83),
-    ("chicken wings", "", "piece", 107.0, 0.62),
-    ("chicken", "whole", "chicken", 1509.0, 0.73),
+def sr(desc):
+    return {"source": "usda", "raw_description": desc}
+
+
+CHICKEN_THIGH = sr("Chicken, broilers or fryers, thigh, meat and skin, raw")
+
+
+@pytest.mark.parametrize("line, desc, share", [
+    ("1 lb bone-in skin-on chicken thigh", CHICKEN_THIGH["raw_description"], 0.83),  # SR 05094
+    ("1 lb chicken leg quarters", "Chicken, broilers or fryers, leg, meat and skin, raw", 0.73),
+    ("2 lb chicken wings", "Chicken, broilers or fryers, wing, meat and skin, raw", 0.62),
+    ("1 lb bone-in beef shank",
+     "Beef, shank crosscuts, separable lean only, trimmed to 1/4\" fat, choice, raw", 0.60),
+    ("2 lb veal shank", "Veal, shank, separable lean and fat, raw", 0.51),
+    ("2 lb veal shank", "Veal, shank (fore and hind), separable lean and fat, raw", 0.71),
+    ("2 lb pork baby back ribs", "Pork, fresh, backribs, separable lean and fat, raw", 0.63),
+    ("4 lb whole chicken", "Chicken, broilers or fryers, meat and skin and giblets and neck, raw", 0.69),
+    # Bone share of the raw weight, and the matcher's yield for the cooked row.
+    ("3 lb bone-in pork shoulder",
+     "Pork, fresh, shoulder, (Boston butt), blade (steaks), separable lean and fat, cooked, braised", 0.76),
 ])
-def test_a_counted_bone_in_piece_is_its_edible_part(ingredient, unit, label, grams, share):
-    desc = {"bone-in skin-on chicken thigh": "Chicken, broilers or fryers, thigh, meat and skin, raw",
-            "chicken wings": "Chicken, broilers or fryers, wing, meat and skin, raw",
-            "chicken": "Chicken, roasting, meat and skin and giblets and neck, raw"}[ingredient]
-    food = {"source": "usda", "raw_description": desc, "display_name": desc}
-    got = matcher._edible_share(food, ingredient, {"label": label, "gram_weight": grams}, True)
+def test_a_weight_bought_with_bone_counts_its_food_s_edible_share(line, desc, share):
+    parsed = parser.parse_ingredient_line(line)
+    got = matcher._edible_share(sr(desc), parsed["as_bought"])
     assert got is not None and got[0] == pytest.approx(share)
 
 
-def test_boneless_lines_and_bone_removed_weights_are_left_alone():
-    food = {"source": "usda", "raw_description": "Chicken, broilers or fryers, thigh, meat and skin, raw"}
-    assert matcher._edible_share(food, "boneless chicken thigh", {"label": "thigh with skin"}, True) is None
-    breast = {"source": "usda", "raw_description": "Chicken, broilers or fryers, breast, meat and skin, raw"}
-    assert matcher._edible_share(breast, "chicken breast", {"label": "breast, bone removed"}, True) is None
-    # By weight, a thigh counts its bone only when the line says bone-in.
-    assert matcher._edible_share(food, "chicken thigh", {"label": "oz"}, False) is None
-    assert matcher._edible_share(food, "bone-in chicken thigh", {"label": "oz"}, False)[0] == pytest.approx(0.83)
+@pytest.mark.parametrize("line, desc", [
+    # Another animal's cut: no share borrowed from beef, chicken or pork.
+    ("2 lb lamb shanks", "Lamb, domestic, foreshank, separable lean and fat, raw"),
+    ("2 lb turkey wings", "Turkey, wing, meat and skin, raw"),
+    ("2 lb beef back ribs", "Beef, rib, back ribs, bone-in, separable lean and fat, raw"),
+    # Named after a cut, not the cut.
+    ("4 oz buffalo wing sauce", "Sauce, hot chile, sriracha"),
+])
+def test_no_share_from_another_food(line, desc):
+    parsed = parser.parse_ingredient_line(line)
+    assert matcher._edible_share(sr(desc), parsed["as_bought"]) is None
+
+
+def test_a_sauce_named_after_a_cut_is_not_bought_with_bone():
+    assert parser.parse_ingredient_line("4 oz buffalo wing sauce")["as_bought"] == ""
+
+
+@pytest.mark.parametrize("line", [
+    "2 bone-in skin-on chicken thigh",   # a count: USDA's "1 thigh" has no bone
+    "4 oz boneless chicken thigh",
+    "4 oz chicken thigh",                # a thigh is bone-in only when it says so
+])
+def test_counts_and_boneless_weights_take_no_share(line):
+    parsed = parser.parse_ingredient_line(line)
+    assert matcher._edible_share(CHICKEN_THIGH, parsed["as_bought"]) is None
+
+
+def test_a_branded_label_takes_no_share():
+    branded = {**CHICKEN_THIGH, "source": "branded"}
+    assert matcher._edible_share(branded, "bone-in") is None
 
 
 def test_a_100_g_label_serving_that_names_a_measure_is_kept():

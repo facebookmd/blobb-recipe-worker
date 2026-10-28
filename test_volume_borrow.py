@@ -45,13 +45,36 @@ def test_a_branded_variety_borrows_its_head_foods_cup():
     assert row is POTATOES and cup["gram_weight"] == 75.0
 
 
-@pytest.mark.parametrize("name, line", [
-    # Noodles and pasta are measured by shape.
-    ("ORGANIC KONJAC NOODLES, LINGUINE", "konjac"),
-    ("ACINI DI PEPE PASTA", "uncooked acini di pepe"),
-])
-def test_shaped_foods_borrow_nothing(name, line):
-    assert borrow(name, line, [CHOW_MEIN, NOODLES]) == (None, None)
+def test_a_food_far_off_in_calories_borrows_nothing():
+    # Konjac noodles (70 kcal here) aren't dry egg noodles (384).
+    assert borrow("ORGANIC KONJAC NOODLES, LINGUINE", "konjac", [CHOW_MEIN, NOODLES]) == (None, None)
+
+
+def pasta(fid, name, label, grams):
+    return {**usda(fid, name, [portion(1, label, grams)], 371.0), "category": "Cereal Grains and Pasta"}
+
+
+SHELLS = pasta("1", "Pasta, dry, enriched", "1 cup small shells", 64.0)
+
+
+def borrow_pasta(pool):
+    food = {"fdc_id": "B_1", "source": "branded", "display_name": "ACINI DI PEPE PASTA",
+            "raw_description": "ACINI DI PEPE PASTA", "energy_kcal": 371.0}
+    with mock.patch.object(matcher, "_search_usda_for_ingredient", lambda q: pool):
+        return matcher._density_from_head_food(food, "cup", "uncooked acini di pepe")
+
+
+def test_a_food_measured_by_its_shape_borrows_nothing():
+    # Dry pasta's cups by shape differ 1.9x (64 g shells, 123 g elbows).
+    elbows = pasta("2", "Pasta, dry, unenriched", "1 cup elbow shaped", 123.0)
+    assert borrow_pasta([SHELLS, elbows]) == (None, None)
+
+
+def test_rows_that_agree_on_the_density_lend_their_cup():
+    # The same pool within HEAD_BORROW_SPREAD: the spread is what said no.
+    close = pasta("2", "Pasta, dry, unenriched", "1 cup elbow shaped", 70.0)
+    row, cup = borrow_pasta([SHELLS, close])
+    assert row is SHELLS and cup["gram_weight"] == 64.0
 
 
 def test_a_spoon_against_a_count_is_1_g_per_ml_not_one_item():

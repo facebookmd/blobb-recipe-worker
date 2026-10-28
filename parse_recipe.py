@@ -675,8 +675,55 @@ def parse_ingredient_line(raw: str) -> dict | None:
         "size_hint":  size_hint,
         "to_taste":   False,
         "is_cooked":  is_cooked,
+        "as_bought":  as_bought(unit_val or "", ing_name),
         "raw":        raw.strip(),
     }
+
+
+# ── How a weight was bought ───────────────────────────────────────────────────
+# A recipe's weight is what the cook buys. When that includes bone, head or
+# shell, only part of it is food, so the line says how it was bought and the
+# matcher counts the edible share (recipe_matcher.EDIBLE_SHARE). Counts never
+# need it: USDA's count portions ("1 thigh", "1 large" shrimp) are edible
+# weights already (SR28 documentation, "Weights and Measures").
+WEIGHT_UNITS = {"g", "kg", "oz", "lb"}
+AS_BOUGHT_SAID = (
+    ("bone-in", re.compile(r"(?i)\bbone[- ]?in\b")),
+    ("head-on", re.compile(r"(?i)\bheads?[- ]?on\b")),
+    ("shell-on", re.compile(r"(?i)\b(?:shells?[- ]?on|unpeeled|in (?:the )?shells?)\b")),
+)
+# Lines named after a cut that aren't the cut ("buffalo wing sauce").
+NOT_THE_CUT_RE = re.compile(
+    r"(?i)\b(?:sauce|seasoning|marinade|rub|glaze|broth|stock|bouillon)\b")
+# Cuts sold with their bone whatever the line says.
+ALWAYS_BONE_IN_RE = re.compile(
+    r"(?i)\b(?:(?:baby )?back ribs|spare ?ribs|short ribs|ribs|shanks?|oxtails?|hocks?|"
+    r"pata|knuckles?|wings?|drumsticks?|leg quarters?|whole chickens?|whole ducks?)\b")
+# Fish bought by weight are the whole fish, unless the line says it's flesh.
+WHOLE_FISH_RE = re.compile(
+    r"(?i)\b(?:milkfish|bangus|tilapia|pompano|snapper|grouper|mackerel|sardines?|"
+    r"catfish|carp|trout|sea bass|mullet|galunggong|scad)\b")
+FISH_FLESH_RE = re.compile(
+    r"(?i)\b(?:boneless|deboned|fillets?|belly|steaks?|flakes?|canned|smoked|dried|ground|"
+    r"minced|sashimi)\b")
+
+
+def as_bought(unit: str, ingredient: str) -> str:
+    """How a weight line's food was bought when it isn't all food:
+    "bone-in", "head-on", "shell-on" or "whole" (fish); "" for anything
+    else, and for counts and volumes."""
+    if unit not in WEIGHT_UNITS:
+        return ""
+    if re.search(r"(?i)\bboneless\b", ingredient) or NOT_THE_CUT_RE.search(ingredient):
+        return ""
+    for label, pattern in AS_BOUGHT_SAID:
+        if pattern.search(ingredient):
+            return label
+    if WHOLE_FISH_RE.search(ingredient) and not FISH_FLESH_RE.search(ingredient):
+        return "whole"
+    if ALWAYS_BONE_IN_RE.search(ingredient):
+        return "bone-in"
+    return ""
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1066,7 +1113,7 @@ def preview(meta: dict, ingredients: list[dict]) -> list[dict] | None:
 
 FIELDNAMES = ["template_id","template_name","other_names","category","servings",
               "serving_qty","serving_unit","section","qty","unit","ingredient",
-              "size_hint","is_cooked"]
+              "size_hint","is_cooked","as_bought"]
 
 def write_recipes_csv(recipes: list[tuple[dict, list[dict]]], path: str, append: bool):
     """
@@ -1098,6 +1145,7 @@ def write_recipes_csv(recipes: list[tuple[dict, list[dict]]], path: str, append:
                     "ingredient":    ing["ingredient"],
                     "size_hint":     ing.get("size_hint", ""),
                     "is_cooked":     ing.get("is_cooked", False),
+                    "as_bought":     ing.get("as_bought", ""),
                 })
                 total += 1
 

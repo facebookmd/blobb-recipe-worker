@@ -1,8 +1,11 @@
 # Where the absorbed amounts come from
 
-Sources behind the "Absorbed amounts" tables in `RECIPE_RULES.md`. The same
-frying rates are used by Convert recipe (`FRY_TYPE_RATES` in
-`recipe_matcher.py`, `lib/utils/fry_types.dart` in the app).
+Sources behind the "Absorbed amounts" tables in `RECIPE_RULES.md`. This
+file is the research record: why each rate is what it is. The frying rates
+themselves have one working copy, the app project's `fry_types` table
+(blobbapp migration `20261028120000_create_fry_types.sql`, 28 Oct 2026),
+which the worker, the app's editor, blobb.app/sources and RECIPE_RULES.md's
+table all read.
 
 The table came over from the old generation prompt on 28 Sep 2026 with no
 sources. Only the karaage/tempura split (16 Oct) was researched at the
@@ -68,3 +71,13 @@ worker's `FRY_TYPE_RATES` and the app's `fry_types.dart` now use:
    has no meat, fish, tofu or starchy food to fry, only vegetables.
 
 All other rows match the sources.
+
+## One copy of the rates (28 Oct 2026)
+
+The worker's `FRY_TYPE_RATES`, the app's `fry_types.dart` rates, the
+Sources page's rows and RECIPE_RULES.md's table were four copies kept in
+step by hand. They now all come from the `fry_types` table, which also has
+the three rows Convert recipe never had: wrapped (12%), pan-fried fish (8%)
+and fatty cut (0%). The rates are a share of the fried food's **edible**
+weight, as its calories are: the 27 Oct "bone and all" division in the
+matcher had no source behind it and was dropped.

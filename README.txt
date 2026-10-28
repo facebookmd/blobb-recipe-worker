@@ -23,6 +23,9 @@ FILES
   recipe_matcher.py        Matches ingredients to foods, picks portions and
                            amounts, writes templates_output.xlsx and .csv.
   template_refs.py         Base templates used by name inside other recipes.
+  fry_rates.py             Frying-oil rates, read from the app project's
+                           fry_types table (the one copy).
+  sync_fry_rates.py        Writes RECIPE_RULES.md's frying table from it.
   supabase_food_source.py  Reads foods and portions from the USDA Supabase
                            project (cached on disk).
   boosts.json              Hand-written matching rules (see FIXING A MATCH).
@@ -42,8 +45,11 @@ SETUP
 
 The server also reads, on Cloud Run:
   APP_SUPABASE_KEY       The app project's publishable key, so pasted recipes
-                         can use published base templates. Without it, a line
-                         naming one is matched as a food.
+                         can use published base templates and count frying
+                         oil (fry_types). Without it, a line naming a
+                         template is matched as a food, and a recipe with
+                         frying oil fails (503) rather than guess a rate.
+                         Batch runs with frying oil need it too.
   APP_SUPABASE_URL       Optional; defaults to the app project.
 
 

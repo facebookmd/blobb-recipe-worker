@@ -17,13 +17,16 @@ same foods, portions and amounts as the spreadsheet. Needs SUPABASE_ANON_KEY.
 A line naming a curated published template ("1.5 cup dashi stock") gets that
 template's ingredients as their own section (template_refs.py). Reading them
 needs APP_SUPABASE_KEY, the app project's publishable key (and optionally
-APP_SUPABASE_URL); without it those lines are matched as foods.
+APP_SUPABASE_URL); without it those lines are matched as foods, and a
+recipe with frying oil fails, since its rates are the app project's
+fry_types table (fry_rates.py).
 """
 
 from __future__ import annotations
 
 import os
 import re
+import sys
 import tempfile
 import uuid
 from pathlib import Path
@@ -34,6 +37,7 @@ from pydantic import BaseModel, Field
 
 from auth import AuthError, Caller, RateLimiter, TokenVerifier
 
+import fry_rates
 import parse_recipe as recipe_parser
 import recipe_matcher as matcher
 import template_refs
@@ -60,6 +64,10 @@ class ParseResponse(BaseModel):
     # Frying-oil lines, each counted as the share its fried food absorbs:
     # {"fry_type": "starch-dusted"}, so the app can say so.
     frying_oil: list[dict[str, str]] = Field(default_factory=list)
+    # With frying oil, every fry type, lightest first, so the editor can
+    # recompute the oil (the app project's fry_types table, fry_rates.py):
+    # {"key": "starch-dusted", "label": "...", "rate": 0.08}.
+    fry_types: list[dict[str, Any]] = Field(default_factory=list)
 
 
 app = FastAPI(title="Blobb Recipe Parser", version="2.1.0")
@@ -277,11 +285,18 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
     with tempfile.TemporaryDirectory() as tmp:
         recipes_csv = os.path.join(tmp, "recipes.csv")
         recipe_parser.write_recipes_csv([(meta, ingredients)], recipes_csv, append=False)
-        rows = matcher.build_output_rows(
-            recipes_csv, BOOST_RULES, threshold,
-            published_templates=template_refs.load_published_templates(),
-            strict_templates=False,
-        )
+        try:
+            rows = matcher.build_output_rows(
+                recipes_csv, BOOST_RULES, threshold,
+                published_templates=template_refs.load_published_templates(),
+                strict_templates=False,
+            )
+        except fry_rates.FryTypesUnavailable as e:
+            print(f"[!] {e}", file=sys.stderr)
+            raise HTTPException(
+                status_code=503,
+                detail="Frying oil can't be counted right now. Try again in a minute.",
+            )
 
     sections: dict[str, list[dict[str, Any]]] = {}
     matched_count = 0
@@ -347,6 +362,8 @@ def _match_recipe(text: str, threshold: float, category: str) -> ParseResponse:
         unmatched=[name for name in unmatched if name],
         estimated=estimated,
         frying_oil=frying_oil,
+        fry_types=[{"key": t["key"], "label": t["label"], "rate": t["rate"]}
+                   for t in fry_rates.load_fry_types()] if frying_oil else [],
     )
 
 

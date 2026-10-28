@@ -3,7 +3,8 @@
 "3 cups vegetable oil for frying" in a karaage logged 3/4 cup of oil a
 serving (1,445 kcal). The parser marks frying-oil lines; the matcher swaps
 each for the absorbed share: a percent of the fried food's raw weight by
-coating (RECIPE_RULES.md, "Absorbed amounts"), in tbsp, in an "Absorbed
+coating (the app project's fry_types table, fry_rates.py; the tests use
+conftest.py's), in tbsp, in an "Absorbed
 oil" section tagged with the fry type; the rows it is a share of are marked
 "fried", so the app can let the user change both.
 
@@ -12,8 +13,11 @@ Run: .venv/bin/python -m pytest -q
 
 from __future__ import annotations
 
+import os
+
 import pytest
 
+import fry_rates
 import parse_recipe
 import recipe_matcher as matcher
 
@@ -203,11 +207,78 @@ def test_meat_is_fried_before_vegetables(tmp_path, monkeypatch):
     assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(194 * 0.05, rel=0.01)
 
 
-@pytest.mark.parametrize("fry_type, rate", [
-    ("breaded", 0.12), ("battered", 0.15), ("starch-dusted", 0.08),
-    ("unbreaded", 0.05), ("unbreaded veg", 0.10), ("thick-cut", 0.05),
-    ("thin-sliced", 0.13),
-])
-def test_rates_match_the_sources(fry_type, rate):
-    # ABSORPTION_SOURCES.md; lib/utils/fry_types.dart has the same numbers.
-    assert matcher.FRY_TYPE_RATES[fry_type] == rate
+def test_a_bone_in_weight_fries_its_edible_part(tmp_path, monkeypatch):
+    # The rates are per 100 g of edible food, like its calories: the oil
+    # follows the thigh's edible weight, not the bone (28 Oct 2026).
+    rows = rows_for(tmp_path, monkeypatch, [
+        "Karaage", "Servings: 4",
+        "1 lb bone-in skin-on chicken thigh",
+        "1/4 cup potato starch",
+        "3 cups vegetable oil for frying",
+    ])
+    [chicken] = [r for r in rows if "chicken" in r["component_label"]]
+    assert "bone 17% left out" in chicken["notes"]
+    chicken_grams = chicken["portion_amt"] * chicken["unit_grams"]
+    oil = oil_row(rows)
+    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(chicken_grams * 0.08, rel=0.01)
+
+
+def test_no_rates_means_no_guess(tmp_path, monkeypatch):
+    def unavailable():
+        raise fry_rates.FryTypesUnavailable("fry_types unreadable")
+    monkeypatch.setattr(fry_rates, "load_fry_types", unavailable)
+    with pytest.raises(fry_rates.FryTypesUnavailable):
+        rows_for(tmp_path, monkeypatch, [
+            "Karaage", "Servings: 4",
+            "2 bone-in skin-on chicken thigh",
+            "1/4 cup potato starch",
+            "3 cups vegetable oil for frying",
+        ])
+
+
+@pytest.mark.live_fry_types
+@pytest.mark.skipif(not os.environ.get("APP_SUPABASE_KEY"),
+                    reason="needs APP_SUPABASE_KEY (the app project's fry_types)")
+def test_live_fry_types_table():
+    try:
+        types = fry_rates.load_fry_types(force=True)
+    except fry_rates.FryTypesUnavailable as e:
+        if "fry_types" in str(e) and ("PGRST205" in str(e) or "404" in str(e)):
+            pytest.skip("fry_types isn't created yet (blobbapp migration 20261028120000)")
+        raise
+    # Every type the matcher can pick, each a share of the food's weight.
+    keys = {t["key"] for t in types}
+    assert {"breaded", "battered", "starch-dusted", "unbreaded", "unbreaded veg",
+            "thick-cut", "thin-sliced"} <= keys
+    assert all(0 <= t["rate"] < 1 for t in types)
+    assert [t["sort_order"] for t in types] == sorted(t["sort_order"] for t in types)
+
+
+# ── RECIPE_RULES.md's table is written from fry_types ───────────────────────
+
+def test_the_rules_table_is_written_between_its_markers():
+    import sync_fry_rates
+    from conftest import FRY_TYPES
+    doc = sync_fry_rates.RULES.read_text(encoding="utf-8")
+    once = sync_fry_rates.synced(doc, FRY_TYPES)
+    assert sync_fry_rates.synced(once, FRY_TYPES) == once
+    assert "| starch-dusted | 8% |" in once and "| fatty cut | 0% |" in once
+    # Only the table changes.
+    start = doc.index(sync_fry_rates.START)
+    assert once[:start] == doc[:start]
+    assert once[once.index(sync_fry_rates.END):] == doc[doc.index(sync_fry_rates.END):]
+
+
+@pytest.mark.live_fry_types
+@pytest.mark.skipif(not os.environ.get("APP_SUPABASE_KEY"),
+                    reason="needs APP_SUPABASE_KEY (the app project's fry_types)")
+def test_live_rules_table_matches_fry_types():
+    import sync_fry_rates
+    try:
+        types = fry_rates.load_fry_types(force=True)
+    except fry_rates.FryTypesUnavailable as e:
+        if "PGRST205" in str(e) or "404" in str(e):
+            pytest.skip("fry_types isn't created yet (blobbapp migration 20261028120000)")
+        raise
+    doc = sync_fry_rates.RULES.read_text(encoding="utf-8")
+    assert sync_fry_rates.synced(doc, types) == doc, "run sync_fry_rates.py"
