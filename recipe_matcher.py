@@ -1414,8 +1414,13 @@ MEAT_YIELDS = {"pork": 0.73, "beef": 0.70, "lamb": 0.70, "veal": 0.74}
 # Meat sold raw by weight: with MEAT_YIELDS' words, the line's meat is raw
 # ("2 lb oxtail", "1.5 lb pork shoulder"), so a raw row comes first.
 RAW_MEAT_WORDS = set(MEAT_YIELDS) | {"chicken", "turkey", "duck", "goat", "oxtail", "oxtails"}
-# USDA's own raw-to-cooked weight for a food listed cooked ("1 oz yields",
-# 16 g of cooked oxtail meat, bone out, from 1 oz raw as bought).
+# USDA's own raw-to-cooked weight for a food listed cooked: FNDDS's "1 oz
+# yields" portion (portion code 40016). For "Beef, oxtails" (FNDDS 2705843)
+# it is 16 g of cooked meat from 1 oz raw, so 16 / 28.35 = 0.56. Read as 1
+# oz bought, bone in, like FNDDS's other "yields" portions ("1 lemon
+# yields" 48 g of juice); FNDDS's documentation doesn't say, so this is a
+# reading, not a stated figure (Arianna kept it, 28 Oct 2026). It is
+# USDA's number, not FNRI's.
 OZ_YIELDS_RE = re.compile(r"^\s*1\s+oz\s+yields\b", re.I)
 
 
@@ -3778,17 +3783,23 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
 # recipe's own weight as bought does (SR28's formula: edible = as purchased
 # x (100 - refuse) / 100). Checked against SR28's meat-only records: its
 # "1 leg" (344 g) is meat and skin, no bone.
-# Shares from SR28's refuse fields, as-purchased basis (27 Oct 2026):
-# - the raw thigh (05091) gives no refuse; the roasted thigh (05094) is 17%
-#   bone by cooked weight, and raw meat weighs more, so a raw thigh is at
-#   most 17%. Not the raw leg's 27% (05075): its back is bonier;
+# Shares from SR28's refuse fields (FOOD_DES, sr28asc.zip), as-purchased
+# basis, each checked against the file on 28 Oct 2026:
+# - the raw thigh (05091) gives no refuse; the roasted thigh (05094) says
+#   "bone and cartilage 17%, bone and connective tissue 16%", the bone
+#   listed twice as the drumstick's is: 17% by cooked weight, and raw meat
+#   weighs more, so a raw thigh is at most 17%. Not the raw leg's 27%
+#   (05075): its back is bonier;
 # - the drumstick's "bone and cartilage 33%, bone and connective tissue
 #   33%" (05066) lists the bone twice: 33%;
-# - a Boston butt steak "with refuse, weighing 380 g" yields 288 g (10080).
+# - Boston butt (10080): bone 9%, connective tissue 15%;
+# - pork hock (pata) has no record of its own; it is matched to the fresh
+#   leg's shank half (10016: connective tissue 9%, bone 13%, skin 6%), the
+#   nearest cut. A hock is bonier, so this counts a little more meat.
 # Shrimp from USDA AH-102 (1975), p. 105: head-on to headless 57%, headless
 # in shell to peeled 81%. Whole milkfish is about 60% flesh in published
 # yield studies; there is no USDA figure (Arianna). Not FNRI's figures:
-# FNRI declined reuse. Pork hock has no public figure, so none.
+# FNRI declined reuse.
 EDIBLE_SHARE = (
     ("bone-in", r"\bveal shank separable\b", 0.51, "bone", "SR 17435"),
     ("bone-in", r"\bveal shank fore and hind\b", 0.71, "bone", "SR 17276"),
@@ -3796,6 +3807,8 @@ EDIBLE_SHARE = (
     ("bone-in", r"\bpork\b.*\bbackribs\b", 0.63, "bone", "SR 10192"),
     ("bone-in", r"\bpork\b.*\bspareribs\b", 0.70, "bone", "SR 10088"),
     ("bone-in", r"\bpork\b.*\bshoulder\b", 0.76, "bone", "SR 10080"),
+    ("bone-in", r"\bpork fresh leg ham shank half\b", 0.72, "bone, connective tissue and skin",
+     "SR 10016"),
     ("bone-in", r"\bchicken\b.*\bdrumstick\b", 0.67, "bone", "SR 05066"),
     ("bone-in", r"\bchicken\b.*\bwing\b", 0.62, "bone", "SR 05100"),
     ("bone-in", r"\bchicken\b.*\bbreast\b", 0.80, "bone", "SR 05057"),
@@ -3920,7 +3933,8 @@ def _is_aromatic_leaf(ingredient: str) -> bool:
     return bool(AROMATIC_LEAVES_RE.search(ingredient or ""))
 
 
-# Frying oil ("3 cups oil for frying", parse_recipe.FRYING_OIL_UNIT) is the
+# Frying oil ("3 cups oil for frying", parse_recipe.FRYING_OIL_UNIT, or
+# PAN_FRYING_OIL_UNIT for oil "for pan-frying") is the
 # pot, not what the food keeps: "3 cups" logged 1,445 kcal a serving of
 # karaage. It becomes the absorbed share instead, a percent of the fried
 # food's raw edible weight by coating, in tbsp in an "Absorbed oil" section.
@@ -3930,7 +3944,17 @@ def _is_aromatic_leaf(ingredient: str) -> bool:
 ABSORBED_OIL_SECTION = "Absorbed oil"
 # The unit parse_recipe gives a frying-oil line.
 FRYING_OIL_UNIT = "frying oil"
+PAN_FRYING_OIL_UNIT = "pan-frying oil"
 OIL_GRAMS_PER_TBSP = 13.6
+# A wrapper: the whole roll, wrapper and filling, keeps the oil (wrapped).
+_WRAPPER_RE = re.compile(
+    r"\b(?:wrappers?|(?:lumpia|spring\s+roll|egg\s+roll|wonton|gyoza|dumpling|potsticker)"
+    r"\s+(?:skins?|sheets?|pastry))\b|\brice\s+paper\b", re.I)
+# Fish, for pan-fried fish.
+_FISH_RE = re.compile(
+    r"\b(fish|salmon|cod|tilapia|catfish|haddock|pollock|hake|mackerel|sardines?|"
+    r"tuna|snapper|bass|trout|halibut|flounder|sole|milkfish|bangus|pompano|"
+    r"galunggong|scad|mullet|grouper)\b", re.I)
 _BREADED_RE = re.compile(
     r"\b(panko|bread\s*crumbs?|breadcrumbs?|cracker\s*crumbs|crushed\s+crackers|"
     r"corn\s*flakes|cornflakes)\b", re.I)
@@ -3951,9 +3975,11 @@ _FRIED_FOOD_RE = re.compile(
 _NOT_FRIED_FOOD_RE = re.compile(
     r"\b(stock|broth|bouillon|powder|sauce|fat|seasoning|cubes?|granules|starch|flour)\b",
     re.I)
-# With no meat, fish or tofu, the starchy food is what's fried (fries).
+# With no meat, fish or tofu, the starchy food is what's fried (fries,
+# banana cue).
 _STARCHY_FRIED_RE = re.compile(
-    r"\b(potato(?:es)?|sweet\s+potato(?:es)?|plantains?|cassava|yuca|taro)\b", re.I)
+    r"\b(potato(?:es)?|sweet\s+potato(?:es)?|plantains?|bananas?|saba|cassava|yuca|taro)\b",
+    re.I)
 # Failing those, the vegetables are (vegetable tempura, su-age eggplant).
 # Watery vegetables keep about twice the oil lean meat does unbreaded.
 _VEGETABLE_FRIED_RE = re.compile(
@@ -3969,6 +3995,8 @@ _FATTY_CUT_RE = re.compile(
 def _fry_type(ingredients: list[str]) -> str:
     """The coating the recipe's ingredients add up to."""
     text = " | ".join(ingredients)
+    if _WRAPPER_RE.search(text):
+        return "wrapped"
     if _BREADED_RE.search(text):
         return "breaded"
     if _BATTER_RE.search(text) or (_COATING_RE.search(text) and _EGG_RE.search(text)):
@@ -3979,10 +4007,12 @@ def _fry_type(ingredients: list[str]) -> str:
 
 
 def _fried_kind(ingredient: str) -> str | None:
-    """"protein", "starchy" or "vegetable" for what may go in the fryer,
-    else None."""
+    """"protein", "starchy", "vegetable" or "wrapper" for what may go in
+    the fryer, else None."""
     if _NOT_FRIED_FOOD_RE.search(ingredient):
         return None
+    if _WRAPPER_RE.search(ingredient):
+        return "wrapper"
     if _FRIED_FOOD_RE.search(ingredient):
         return "protein"
     if _STARCHY_FRIED_RE.search(ingredient):
@@ -3992,17 +4022,23 @@ def _fried_kind(ingredient: str) -> str | None:
     return None
 
 
-def _absorbed_oil(ingredients: list[str], fried: list[dict]):
+def _absorbed_oil(ingredients: list[str], fried: list[dict], pan_fried: bool = False):
     """(fry type, tbsp per serving, the rows it is a share of) for a recipe's
     frying oil. [fried] holds the recipe's possible fried rows so far, each
-    with "_fried_kind" and "_fried_grams". Meat, fish and tofu are what's
+    with "_fried_kind" and "_fried_grams". A wrapped recipe fries the whole
+    roll, wrapper and filling. Otherwise meat, fish and tofu are what's
     fried; failing those, the starchy food; failing that, the vegetables.
+    Unbreaded fish in oil for pan-frying ([pan_fried]) is pan-fried fish.
     None found, or unbreaded fatty cuts (they lose fat), gives 0 tbsp and no
     rows: the user picks in the app."""
     fry_type = _fry_type(ingredients)
-    rows = [r for r in fried if r["_fried_kind"] == "protein"]
-    if rows:
-        if fry_type == "unbreaded" and all(
+    if fry_type == "wrapped":
+        rows = list(fried)
+    elif rows := [r for r in fried if r["_fried_kind"] == "protein"]:
+        if (fry_type == "unbreaded" and pan_fried
+                and all(_FISH_RE.search(r["component_label"]) for r in rows)):
+            fry_type = "pan-fried fish"
+        elif fry_type == "unbreaded" and all(
                 _FATTY_CUT_RE.search(r["component_label"]) for r in rows):
             rows = []
     else:
@@ -4123,7 +4159,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
         fried: list[tuple[str, float]] = []
 
         def _is_frying_oil(r) -> bool:
-            return r.get("unit", "").strip().lower() == FRYING_OIL_UNIT
+            return r.get("unit", "").strip().lower() in (FRYING_OIL_UNIT, PAN_FRYING_OIL_UNIT)
 
         # Frying oil last, once the fried food's weight is known.
         for ing_row in sorted(ing_rows, key=_is_frying_oil):
@@ -4135,7 +4171,8 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             if _is_frying_oil(ing_row):
                 fry_type, tbsp, fried_rows = _absorbed_oil(
                     [r.get("ingredient", "") for r in ing_rows
-                     if not _is_frying_oil(r)], fried)
+                     if not _is_frying_oil(r)], fried,
+                    pan_fried=unit.lower() == PAN_FRYING_OIL_UNIT)
                 for r in fried_rows:
                     r["fried"] = True
                 qty_raw, unit, section = f"{tbsp:.4f}", "tbsp", ABSORBED_OIL_SECTION

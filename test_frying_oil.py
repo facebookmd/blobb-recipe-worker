@@ -30,13 +30,21 @@ import recipe_matcher as matcher
     ("1 quart peanut oil, for frying", "peanut oil"),
     ("oil for frying, as needed", "vegetable oil"),
     ("canola oil, for the fryer", "canola oil"),
-    ("1/2 cup oil for pan-frying", "vegetable oil"),
     ("2 cups shortening, for deep frying", "shortening"),
 ])
 def test_frying_oil_lines(line, name):
     parsed = parse_recipe.parse_ingredient_line(line)
     assert parsed["unit"] == parse_recipe.FRYING_OIL_UNIT
     assert parsed["ingredient"] == name
+
+
+@pytest.mark.parametrize("line", [
+    "1/2 cup oil for pan-frying",
+    "1/2 cup vegetable oil for pan-frying",
+    "1 cup oil, for shallow frying",
+])
+def test_pan_frying_oil_lines(line):
+    assert parse_recipe.parse_ingredient_line(line)["unit"] == parse_recipe.PAN_FRYING_OIL_UNIT
 
 
 @pytest.mark.parametrize("line, qty, unit, name", [
@@ -95,8 +103,23 @@ EGGPLANT = matcher._build_supabase_usda_food(
      "description": "Eggplant, raw", "display_name": "Eggplant, raw",
      "calories_100g": 25},
     0, {5: [{"label": "eggplant, unpeeled", "grams": 458.0, "sequence_number": 1}]})
+WRAPPER = matcher._build_supabase_usda_food(
+    {"id": 6, "fdc_id": 2000002, "source_set": "sr_legacy",
+     "description": "Spring roll wrapper", "display_name": "Spring roll wrapper",
+     "calories_100g": 290},
+    0, {6: [{"label": "wrapper", "grams": 12.0, "sequence_number": 1}]})
+PORK = matcher._build_supabase_usda_food(
+    {"id": 7, "fdc_id": 2000003, "source_set": "sr_legacy",
+     "description": "Pork, ground, raw", "display_name": "Ground pork, raw",
+     "calories_100g": 263},
+    0, {7: [{"label": "oz", "grams": 28.35, "sequence_number": 1}]})
+TILAPIA = matcher._build_supabase_usda_food(
+    {"id": 8, "fdc_id": 2000004, "source_set": "sr_legacy",
+     "description": "Fish, tilapia, raw", "display_name": "Tilapia, raw",
+     "calories_100g": 96},
+    0, {8: [{"label": "fillet", "grams": 116.0, "sequence_number": 1}]})
 FOODS = {"chicken": CHICKEN, "starch": STARCH, "oil": OIL, "potato": POTATO,
-         "eggplant": EGGPLANT}
+         "eggplant": EGGPLANT, "wrapper": WRAPPER, "pork": PORK, "tilapia": TILAPIA}
 
 
 def rows_for(tmp_path, monkeypatch, lines):
@@ -282,3 +305,45 @@ def test_live_rules_table_matches_fry_types():
         raise
     doc = sync_fry_rates.RULES.read_text(encoding="utf-8")
     assert sync_fry_rates.synced(doc, types) == doc, "run sync_fry_rates.py"
+
+
+# ── Wrapped and pan-fried fish (28 Oct 2026) ────────────────────────────────
+
+def test_a_wrapper_fries_the_whole_roll(tmp_path, monkeypatch):
+    rows = rows_for(tmp_path, monkeypatch, [
+        "Lumpia", "Servings: 2",
+        "8 oz ground pork",
+        "1 eggplant",
+        "10 spring roll wrapper",
+        "3 cups oil for frying",
+    ])
+    oil = oil_row(rows)
+    fried = [r for r in rows if r.get("fried")]
+    # Wrapper and filling: 12% of all of it.
+    assert oil["fry_type"] == "wrapped"
+    assert {r["component_label"] for r in fried} == {"ground pork", "eggplant", "spring roll wrapper"}
+    grams = sum(r["portion_amt"] * r["unit_grams"] for r in fried)
+    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(grams * 0.12, rel=0.01)
+
+
+def test_unbreaded_fish_in_oil_for_pan_frying_is_pan_fried_fish(tmp_path, monkeypatch):
+    rows = rows_for(tmp_path, monkeypatch, [
+        "Pan-fried tilapia", "Servings: 2",
+        "2 tilapia fillet",
+        "1/2 cup vegetable oil for pan-frying",
+    ])
+    oil = oil_row(rows)
+    # One fillet (116 g) a serving; 8%.
+    assert oil["fry_type"] == "pan-fried fish"
+    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(116 * 0.08, rel=0.01)
+
+
+def test_deep_fried_fish_stays_unbreaded(tmp_path, monkeypatch):
+    rows = rows_for(tmp_path, monkeypatch, [
+        "Fried tilapia", "Servings: 2",
+        "2 tilapia fillet",
+        "3 cups vegetable oil for deep frying",
+    ])
+    oil = oil_row(rows)
+    assert oil["fry_type"] == "unbreaded"
+    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(116 * 0.05, rel=0.01)

@@ -103,10 +103,14 @@ def test_milkfish_by_weight_is_the_whole_fish(line, share):
     assert (got and got[0]) == (pytest.approx(share) if share else None)
 
 
-def test_no_share_without_a_public_source():
-    # FNRI declined reuse: pork hock has none yet.
+def test_pork_hock_takes_the_fresh_shank_half_s_share():
+    # The alias is the fresh leg's shank half (SR 10016, 28% refuse); the
+    # cured FNDDS ham hock has no SR refuse, so no share (28 Oct 2026).
     parsed = parser.parse_ingredient_line("3 lb pork hock")
     assert parsed["as_bought"] == "bone-in"
+    shank = usda("168226", "Pork, fresh, leg (ham), shank half, separable lean and fat, raw",
+                 kcal=193.0, raw=True)
+    assert matcher._edible_share(shank, parsed["as_bought"])[0] == pytest.approx(0.72)
     assert matcher._edible_share(HAM_HOCKS, parsed["as_bought"]) is None
 
 

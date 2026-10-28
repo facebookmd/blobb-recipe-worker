@@ -202,7 +202,7 @@ These rates are fixed. Use them as they are; never change a rate or add a row wh
 
 The rates have one copy: the app project's `fry_types` table (blobbapp migration `20261028120000_create_fry_types.sql`). The table above is written from it by `sync_fry_rates.py`, never by hand; the worker reads it (`fry_rates.py`) and sends it to the app's editor, and blobb.app/sources is built from it. To change a rate, change the table, then run `sync_fry_rates.py` and rebuild the site. Sources for every rate: `ABSORPTION_SOURCES.md`.
 
-Convert recipe applies these rates to "oil for frying" lines as fry types: breaded, battered, starch-dusted, unbreaded (lean meat, fish, tofu), unbreaded veg, thick-cut and thin-sliced (starchy pieces and slices), on the fried food's edible weight. It doesn't pick wrapped or pan-fried fish yet; unbreaded fatty or skin-on cuts start at no oil. The user can change the type (any of the table's) and the rows it is a share of in the app.
+Convert recipe applies these rates to "oil for frying" lines as fry types, on the fried food's edible weight: wrapped when there's a wrapper (lumpia, spring roll, egg roll, wonton, gyoza; the whole roll, wrapper and filling), then breaded, battered, starch-dusted, else unbreaded (lean meat, fish, tofu), unbreaded veg, or thick-cut (starchy pieces, bananas). Unbreaded fish in oil "for pan-frying" or "shallow frying" is pan-fried fish; unbreaded fatty or skin-on cuts start at no oil. Thin-sliced and fatty cut are picked by the user. The user can change the type (any of the table's) and the rows it is a share of in the app.
 
 ### Marinades (`--Absorbed marinade`)
 

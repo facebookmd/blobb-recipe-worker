@@ -104,6 +104,10 @@ FAT_RE = re.compile(r"\b(oil|lard|shortening|tallow|dripping)s?\b", re.I)
 GENERIC_OIL_RE = re.compile(
     r"^(?:neutral|cooking|frying|plain|light|flavorless|flavourless)?\s*oil$", re.I)
 FRYING_OIL_UNIT = "frying oil"
+# Oil "for pan-frying" or "shallow frying": the matcher counts unbreaded
+# fish fried in it as pan-fried fish (8%), not deep-fried (5%).
+PAN_FRYING_OIL_UNIT = "pan-frying oil"
+PAN_FRYING_RE = re.compile(r"\b(?:pan|shallow)[\s-]*fr(?:y|ying|ied)\b", re.I)
 # Up to 3 tbsp of oil "for frying" (an egg, a pan of cutlets) mostly stays
 # in the dish, so it is counted in full like any sauté oil.
 FRYING_OIL_MAX_KEPT_TBSP = 3.0
@@ -369,7 +373,8 @@ def parse_ingredient_line(raw: str) -> dict | None:
             name = "vegetable oil"
         tbsp = (qty or 0) * _TBSP_PER_UNIT.get(unit or "", 0)
         if not 0 < tbsp <= FRYING_OIL_MAX_KEPT_TBSP:
-            return {"qty": "", "unit": FRYING_OIL_UNIT, "ingredient": name,
+            unit = PAN_FRYING_OIL_UNIT if PAN_FRYING_RE.search(raw) else FRYING_OIL_UNIT
+            return {"qty": "", "unit": unit, "ingredient": name,
                     "size_hint": "", "is_cooked": False, "to_taste": False,
                     "raw": raw.strip()}
         # Kept in full: "1 tbsp oil for pan-frying" is 1 tbsp vegetable oil.
