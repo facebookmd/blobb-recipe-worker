@@ -65,3 +65,12 @@ def test_no_rule_repeats_an_earlier_trigger():
             repeated.append((seen[key], rule))
         seen.setdefault(key, rule)
     assert repeated == []
+
+
+def test_kinako_is_roasted_soy_flour_however_it_is_named():
+    # Kinako is roasted soy flour: "soy flour kinako" pointed at raw soy
+    # flour (174273) while "kinako" pointed at roasted (3 Nov 2026).
+    rules = matcher.load_boosts(os.path.join(os.path.dirname(__file__), "boosts.json"))
+    pins = {r["trigger"]: r["fdc_id"] for r in rules
+            if r.get("fdc_id") and "kinako" in r.get("trigger", "")}
+    assert pins and set(pins.values()) == {"174274"}
