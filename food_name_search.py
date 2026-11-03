@@ -245,11 +245,20 @@ def _split_display_parts(text: str, comma_head: bool) -> _Parts:
 
 
 def _is_plural_variant(q: str, c: str) -> bool:
-    if not q or not c:
+    """One word, singular and plural, either way round: "wrapper" finds
+    "WRAPPERS", and "wrappers" finds "WRAPPER" ("lumpia wrappers" found a
+    finished lumpia before the wrapper, which matched only "lumpia", 3 Nov
+    2026). The app's _isPluralVariant is the same."""
+    return _is_plural_of(q, c) or _is_plural_of(c, q)
+
+
+def _is_plural_of(singular: str, plural: str) -> bool:
+    if not singular or not plural:
         return False
-    if c == q + "s":
+    if plural == singular + "s":
         return True
-    if len(q) > 1 and q.endswith("y") and q[-2] not in "aeiou" and c == q[:-1] + "ies":
+    if (len(singular) > 1 and singular.endswith("y") and singular[-2] not in "aeiou"
+            and plural == singular[:-1] + "ies"):
         return True
     return False
 
@@ -471,7 +480,9 @@ def rank_usda_display_name(query: Query, name: str, branded=False) -> Rank:
                 r = NONE
         if r.is_match:
             return r
-    return _general_rank(query, cleaned, allow_plural=not branded)
+    # A product's name matches plurals too: "lumpia wrappers" is "SPRING
+    # ROLL PASTRY LUMPIA WRAPPER" (3 Nov 2026).
+    return _general_rank(query, cleaned)
 
 
 def rank_fields(query: Query, candidates) -> Rank:

@@ -163,6 +163,10 @@
     {"query": "potato starch", "first": "POTATO STARCH", "candidates": [
       {"description": "Bread, gluten-free, white, made with potato extract, rice starch, and rice flour", "display_name": "Gluten-free white bread with potato extract, rice starch, and rice flour", "kcal": 320},
       {"description": "POTATO STARCH", "branded": true, "kcal": 333}
+    ]},
+    {"query": "lumpia wrappers", "first": "SPRING ROLL PASTRY LUMPIA WRAPPER", "candidates": [
+      {"description": "LUMPIA SHANGHAI SPRING ROLL, CHICKEN", "branded": true, "kcal": 200},
+      {"description": "SPRING ROLL PASTRY LUMPIA WRAPPER", "branded": true, "kcal": 280}
     ]}
   ]
 }
