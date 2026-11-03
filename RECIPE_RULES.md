@@ -123,6 +123,7 @@ These are matched straight to one known-good food in the database. Write them as
 * sesame sauce
 * tonkotsu broth
 * red bean paste — write `red bean paste`, not `anko`; also use it for sweetened red beans (e.g. in halo-halo)
+* saba banana — the Filipino cooking banana (banana cue, turon, nilaga): write `saba banana` by count (`12 saba banana`), not `plantain`; it is USDA's extra-small banana (81 g), the closest whole-fruit portion USDA has; plantain's smallest whole is 180 g. Diced or by the cup it stays `diced plantain`.
 * dashi powder — instant dashi powder, matched to FDC 2381716 (Traditional Umami Dashi Soup Base & Seasoning). Its label: 8 g powder per 2 cups water, so **1 tsp (4 g) per 1 cup water**. Write it as `dashi powder` (not hondashi or granules), and only inside the Dashi Stock block; dishes use `dashi stock`.
 
 ## Store-bought ingredients

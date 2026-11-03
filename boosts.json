@@ -1634,6 +1634,9 @@
     "_comment": "â•â•â• CORN KERNELS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•"
   },
   {
+    "_comment": "3 Nov 2026: saba (Filipino cooking banana; banana cue, turon, nilaga) uses USDA's own extra-small banana (under 6 in, 81 g), the closest whole-fruit portion USDA has (Arianna). Saba weighs about 70-75 g each (a Philippine thesis, a Golden Saba label), but USDA has no portion that small, and plantain's smallest whole is 180 g. Dessert-banana calories (89/100 g) run a little under a starchy plantain's (122). Not FNRI's figures."
+  },
+  {
     "trigger": "saba banana",
     "fdc_id": "173944",
     "weight": 0.95
