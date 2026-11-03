@@ -95,3 +95,75 @@ def test_the_batch_stops_without_writing_output(monkeypatch, tmp_path, capsys):
     assert not output.exists()
     assert not output.with_suffix(".csv").exists()
     assert "output files were not changed" in capsys.readouterr().err
+
+
+# ── Retries under load (28 Oct 2026) ────────────────────────────────────────
+# One retry after 1 s still lost ~20 searches a full run to statement
+# timeouts, so a run's matches changed from run to run.
+
+def _http_error(code, body):
+    import gzip
+    import io
+    from urllib.error import HTTPError
+    return HTTPError("https://example.supabase.co/rest/v1/foods", code, "error", {},
+                     io.BytesIO(gzip.compress(body)))
+
+
+@pytest.fixture
+def no_wait(monkeypatch):
+    monkeypatch.setattr(source.time, "sleep", lambda s: None)
+    monkeypatch.setattr(source, "_supabase_key", lambda: "key")
+
+
+def test_a_gzipped_statement_timeout_is_read_and_retried(monkeypatch, no_wait):
+    calls = []
+
+    def busy(req, timeout):
+        calls.append(req)
+        if len(calls) < 4:
+            raise _http_error(500, b'{"code":"57014","message":"canceling statement due to statement timeout"}')
+        return _Response()
+
+    monkeypatch.setattr(source, "urlopen", busy)
+    assert source._request_json("https://example.supabase.co/rest/v1/foods") == [{"id": 1}]
+    assert len(calls) == 4
+
+
+def test_a_lasting_error_gives_up_with_its_reason(monkeypatch, no_wait):
+    calls = []
+
+    def down(req, timeout):
+        calls.append(req)
+        raise _http_error(500, b'{"code":"57014","message":"canceling statement due to statement timeout"}')
+
+    monkeypatch.setattr(source, "urlopen", down)
+    with pytest.raises(RuntimeError, match="statement timeout"):
+        source._request_json("https://example.supabase.co/rest/v1/foods")
+    assert len(calls) == len(source._RETRY_DELAYS) + 1
+
+
+def test_a_timed_out_read_is_retried(monkeypatch, no_wait):
+    calls = []
+
+    def slow(req, timeout):
+        calls.append(req)
+        if len(calls) == 1:
+            raise TimeoutError("The read operation timed out")
+        return _Response()
+
+    monkeypatch.setattr(source, "urlopen", slow)
+    assert source._request_json("https://example.supabase.co/rest/v1/foods") == [{"id": 1}]
+    assert len(calls) == 2
+
+
+def test_a_bad_request_is_not_retried(monkeypatch, no_wait):
+    calls = []
+
+    def bad(req, timeout):
+        calls.append(req)
+        raise _http_error(400, b'{"code":"PGRST100","message":"failed to parse"}')
+
+    monkeypatch.setattr(source, "urlopen", bad)
+    with pytest.raises(RuntimeError, match="failed to parse"):
+        source._request_json("https://example.supabase.co/rest/v1/foods")
+    assert len(calls) == 1

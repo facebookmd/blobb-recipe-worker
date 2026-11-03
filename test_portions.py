@@ -96,3 +96,31 @@ def test_a_teaspoon_portion_scales_by_48():
     tsp = portion("t-1", "1 teaspoon", 5.0)
     cup = cup_for({"portions": [tsp]}, tsp, 0.5, "cup")
     assert cup["gram_weight"] == pytest.approx(240.0)
+
+
+# ── A whole item, not another variety (28 Oct 2026) ─────────────────────────
+# FNDDS "Tomatoes, raw" lists "1 grape tomato" (8 g) before "1 whole" (125
+# g); "1/2 medium tomato" was 4 g.
+
+FNDDS_TOMATOES = {
+    "fdc_id": "2709719", "source": "usda", "display_name": "Tomatoes, raw",
+    "raw_description": "Tomatoes, raw", "energy_kcal": 18.0,
+    "portions": [
+        {"portion_id": f"p{i}", "label": label, "gram_weight": grams, "gram_col": "", "portion_idx": i}
+        for i, (label, grams) in enumerate([
+            ("1 slice", 20.0), ("1 grape tomato", 8.0), ("1 cherry", 17.0),
+            ("1 Italian tomato", 60.0), ("1 plum tomato", 60.0), ("1 whole", 125.0),
+            ("1 cup", 180.0), ("Quantity not specified", 90.0)])
+    ],
+}
+
+
+@pytest.mark.parametrize("line, label", [
+    ("medium tomato", "1 whole"),
+    ("tomato", "1 whole"),
+    ("large tomato", "1 whole"),        # no large portion: the whole one
+    ("cherry tomato", "1 cherry"),      # the line names the variety
+])
+def test_a_counted_tomato_is_a_whole_one(line, label):
+    portion = matcher.pick_best_portion(FNDDS_TOMATOES, "piece", None, 0.5, line)
+    assert portion["label"] == label

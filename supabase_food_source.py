@@ -15,6 +15,7 @@ import hashlib
 import json
 import os
 import pickle
+import random
 import re
 import sys
 import threading
@@ -111,12 +112,13 @@ def _request_json(path: str) -> list[dict]:
         },
     )
 
-    # One retry for a statement timeout (Postgres 57014): under the batch's
-    # parallel pre-fetch a common word ("water", "butter") can occasionally
-    # cross the anon role's 3 s limit on a cold cache, then succeed at once.
-    # Also one for a server error or a dropped connection (a 500 and a DNS
-    # failure in one 21 Oct batch run), which are just as passing.
-    for attempt in range(2):
+    # Retried with growing pauses: a statement timeout (Postgres 57014),
+    # which a common word's search ("sugar", "white") hits under the batch's
+    # parallel load and not alone, a server error, and a dropped or timed-out
+    # connection. One retry after 1 s still lost ~20 searches a full run,
+    # each counted as no rows, so a run's matches changed from one run to the
+    # next ("sugar" became cinnamon sugar, 28 Oct 2026).
+    for attempt in range(len(_RETRY_DELAYS) + 1):
         try:
             with _REQUEST_SLOTS, urlopen(req, timeout=120) as resp:
                 body = resp.read()
@@ -125,23 +127,46 @@ def _request_json(path: str) -> list[dict]:
                 payload = body.decode("utf-8")
             break
         except HTTPError as e:
-            detail = e.read().decode("utf-8", errors="ignore") if e.fp else ""
-            if attempt == 0 and ('"57014"' in detail or e.code >= 500):
-                time.sleep(1)
+            detail = _error_detail(e)
+            if attempt < len(_RETRY_DELAYS) and ('"57014"' in detail or e.code >= 500):
+                _pause(attempt)
                 continue
             raise RuntimeError(
                 f"Supabase request failed ({e.code}) for {path}: {detail or e.reason}"
             ) from e
-        except URLError as e:
-            if attempt == 0:
-                time.sleep(1)
+        except OSError as e:  # URLError, a timed-out read, a reset connection
+            if attempt < len(_RETRY_DELAYS):
+                _pause(attempt)
                 continue
-            raise RuntimeError(f"Supabase request failed for {path}: {e.reason}") from e
+            reason = getattr(e, "reason", None) or e
+            raise RuntimeError(f"Supabase request failed for {path}: {reason}") from e
 
     data = json.loads(payload)
     if not isinstance(data, list):
         raise RuntimeError(f"Unexpected Supabase response for {path}: {type(data)!r}")
     return data
+
+
+_RETRY_DELAYS = (1.0, 2.0, 4.0, 8.0)
+
+
+def _pause(attempt: int) -> None:
+    """Wait before retry [attempt] + 1, spread a little so the requests
+    that failed together don't all come back at once."""
+    time.sleep(_RETRY_DELAYS[attempt] * (1 + random.random() / 2))
+
+
+def _error_detail(error: HTTPError) -> str:
+    """An error response's body as text. It comes gzipped like any other
+    (Accept-Encoding), and read raw it hid the 57014 code and printed as
+    noise."""
+    body = error.read() if error.fp else b""
+    if body[:2] == b"\x1f\x8b":
+        try:
+            body = gzip.decompress(body)
+        except OSError:
+            pass
+    return body.decode("utf-8", errors="ignore")
 
 
 def _warn_failed(what: str, error: RuntimeError) -> None:

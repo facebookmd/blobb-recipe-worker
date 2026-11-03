@@ -35,7 +35,7 @@ HAM_HOCKS = usda("2705900", "Pork, ham hocks", [portion(1, "1 ham hock", 85.0)],
 BROILED = usda("169189", "Pork, shoulder, petite tender, boneless, separable lean and fat, cooked, broiled")
 RAW_BUTT = usda("167849", "Pork, fresh, shoulder, (Boston butt), blade (steaks), separable lean and fat, raw",
                 raw=True, kcal=186.0)
-# is_raw reads "fresh" as raw; the row is cooked.
+# Flagged raw on purpose: the yield goes by the row's cooking words.
 BRAISED_BUTT = usda("167850", "Pork, fresh, shoulder, (Boston butt), blade (steaks), separable lean and fat, "
                     "cooked, braised", raw=True, kcal=267.0)
 TOCINO = {**usda("B_2068779", "PORK TOCINO", kcal=165.0), "source": "branded"}
@@ -142,3 +142,21 @@ def test_live_pork_shoulder_by_weight_lands_near_raw(line, unit, monkeypatch):
     assert "braised" in food["raw_description"].lower()
     assert food["_yield_factor"] == pytest.approx(0.73)
     assert food["energy_kcal"] * food["_yield_factor"] == pytest.approx(186.0, rel=0.06)
+
+
+@pytest.mark.parametrize("description, category, raw", [
+    # "fresh" names the pork, not its state (28 Oct 2026).
+    ("Pork, fresh, shoulder, (Boston butt), blade (steaks), separable lean and fat, cooked, braised",
+     "Pork Products", False),
+    ("Pork, fresh, shoulder, (Boston butt), blade (steaks), separable lean and fat, raw",
+     "Pork Products", True),
+    ("Peppers, sweet, red, fresh", "Vegetables", True),
+    ("Broccoli, cooked, boiled", "Vegetables", False),
+    # The row's name, not its category: raw dough among "Baked Products".
+    ("Cookies, chocolate chip, refrigerated dough, unprepared", "Baked Products", True),
+])
+def test_a_row_named_cooked_is_not_raw(description, category, raw):
+    food = matcher._build_supabase_usda_food(
+        {"id": 1, "fdc_id": 1, "source_set": "sr_legacy", "description": description,
+         "display_name": description, "category": category, "calories_100g": 100}, 0, {})
+    assert food["is_raw"] is raw

@@ -542,10 +542,13 @@ def _build_supabase_usda_food(row: dict, row_index: int, portions_by_food_id: di
             _row_text(row, "ingredients"),
         ) if part
     ).lower()
-    is_raw = any(
-        token in raw_hint
-        for token in (" raw", " uncooked", " unprepared", " fresh", " fresh ")
-    ) or raw_hint.startswith("raw ")
+    # A row whose name says it's cooked isn't raw, whatever else it says:
+    # "Pork, fresh, shoulder, ..., cooked, braised" is fresh pork, cooked
+    # (28 Oct 2026). Its name, not its category: "Baked Products" holds raw
+    # cookie dough.
+    named = f"{display_name} {_row_text(row, 'description')}".lower()
+    is_raw = (any(token in raw_hint for token in (" raw", " uncooked", " unprepared", " fresh"))
+              or raw_hint.startswith("raw ")) and not COOKING_WORD_RE.search(named)
 
     # The raw USDA description ("Salt, table, iodized"), which the search's
     # head rules read; display_name may reorder it ("Iodized salt").
@@ -1439,9 +1442,8 @@ def _cooked_meat_yield(food: dict, meat_kw: str | None) -> float | None:
     cooked: USDA's own "1 oz yields" portion (oxtail: 16 g, 0.56, bone and
     cooking loss), else MEAT_YIELDS for the meat. None when *food* isn't
     cooked: a raw row, or a branded product, whose label is as sold (pork
-    tocino was 0.73 of its raw weight, 27 Oct 2026). Cooked by its words,
-    not is_raw: "Pork, fresh, shoulder, ..., cooked, braised" says "fresh",
-    which is_raw reads as raw (28 Oct 2026).
+    tocino was 0.73 of its raw weight, 27 Oct 2026). Cooked by its words
+    ("Pork, fresh, shoulder, ..., cooked, braised"), or FNDDS and not raw.
     """
     if food.get("source") != "usda":
         return None
@@ -2950,20 +2952,33 @@ PART_LABEL_RE = re.compile(
     r"drops?|stalks?|sticks?)\b", re.I)
 
 
-def _unsized_whole_portion(food: dict) -> dict | None:
+# Count words that name no variety: "1 whole" is the food itself.
+PLAIN_COUNT_WORDS = {"whole", "each", "item", "unit", "regular", "fruit"}
+
+
+def _unsized_whole_portion(food: dict, line: str = "") -> dict | None:
     """The food's own count portion for one whole item at its usual size:
-    "1 hamburger bun", "1 fruit". None when the food has its own "piece"
-    portion (gyoza, candy), which a piece line keeps."""
+    "1 hamburger bun", "1 fruit". One naming nothing but the food, the line
+    and plain count words first: "medium tomato" is FNDDS tomatoes' "1
+    whole" (125 g), not its "1 grape tomato" (8 g), listed first (28 Oct
+    2026). None when the food has its own "piece" portion (gyoza, candy),
+    which a piece line keeps."""
     own = [p for p in food.get("portions", [])
            if p.get("gram_weight") and "-vol-" not in str(p.get("portion_id", ""))]
     if any(re.search(r"\bpieces?\b", (p.get("label") or "").lower()) for p in own):
         return None
+    counted = []
     for p in own:
         label = re.sub(r"\([^)]*\)", " ", p.get("label") or "")
         if (_is_counted_portion(label) and not SIZED_LABEL_RE.search(label)
                 and not PART_LABEL_RE.search(label)):
-            return p
-    return None
+            counted.append((p, label))
+    known = {_canonical_token(w) for w in normalise(
+        f"{food.get('raw_description') or ''} {food.get('display_name') or ''} {line}").split()}
+    plain = [p for p, label in counted
+             if {_canonical_token(w) for w in normalise(label).split() if not w.isdigit()}
+             <= known | PLAIN_COUNT_WORDS]
+    return (plain or [p for p, _ in counted] or [None])[0]
 
 
 def _is_counted_portion(label: str) -> bool:
@@ -3692,7 +3707,7 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
                         return p
             # No portion in the size asked for (or the default medium): one
             # whole item beats a part ("1 large avocado" took a 30 g piece).
-            whole = _unsized_whole_portion(food)
+            whole = _unsized_whole_portion(food, ingredient)
             if whole is not None:
                 return whole
         # For cup quantities < 0.25, prefer tbsp/tsp portions when a sane
