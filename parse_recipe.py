@@ -1207,9 +1207,10 @@ examples:
             print(f"Error: file not found: {f}", file=sys.stderr)
         sys.exit(1)
 
-    # Auto-enable append when multiple files are given
-    if len(args.inputs) > 1:
-        args.append = True
+    # Several files are parsed together and written to recipes.csv at once,
+    # so they never need appending. Appending without --append kept every
+    # earlier run's rows: a four-file --forceall run listed the 52 Japanese
+    # recipes twice (3 Nov 2026).
 
     # ── parse all files ───────────────────────────────────────────────────────
     all_parsed: list[tuple[dict, list[dict]]] = []  # (meta, ingredients)
