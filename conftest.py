@@ -14,8 +14,8 @@ FRY_TYPES = [
      "sort_order": i * 10, "sources_summary": ""}
     for i, (key, rate) in enumerate([
         ("fatty cut", 0.0), ("thick-cut", 0.05), ("unbreaded", 0.05),
-        ("starch-dusted", 0.08), ("pan-fried fish", 0.08), ("unbreaded veg", 0.10),
-        ("breaded", 0.12), ("wrapped", 0.12), ("thin-sliced", 0.13), ("battered", 0.15),
+        ("starch-dusted", 0.08), ("pan-fried fish", 0.08), ("wrapped", 0.08),
+        ("unbreaded veg", 0.10), ("breaded", 0.12), ("thin-sliced", 0.13), ("battered", 0.15),
     ], start=1)
 ]
 

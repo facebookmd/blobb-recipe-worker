@@ -35,7 +35,7 @@ ingredients.
 | Breaded (panko, breadcrumbs) | 12% (was 20%) | Kyotango フライ 10–20%; TMD 15–20%; Basic Data fish fry 10%; Kumitasu 10% (15% thick coating); Bognár breaded meat, poultry, fish and seafood, deep-fried: 4–6 g (Tables 5, 7, 13, 17, 21, 23, 25) | **20% is the top of the range.** Japanese sources centre on 10–15%, and the European tables are lower. A median-based figure would be about **12%**. |
 | Wet-battered (tempura, kwek-kwek) | 15% | Basic Data tempura 15%; TMD 15–20%; Kyotango 15–25%; Kumitasu 10% (15% thick batter) | **Supported.** |
 | Dry starch-dusted (karaage) | 8% | Basic Data karaage (potato starch) 8%; Kyotango 6–8% (flour absorbs more than starch); TMD 5–7%; Kumitasu 10%; Bognár breaded chicken, deep-fried, 4 g | **Supported** (researched 16 Oct). |
-| Wrapper-enclosed (spring rolls, gyoza) | 12% | [FYTTE](https://fytte.jp/news/diet/191507/) (dietitian-reviewed) 春巻き 12%, no source given; [オリーブオイルをひとまわし](https://www.olive-hitomawashi.com/column/2019/04/post-4570.html) uses 10%, based on the 2020 food composition tables | **Weakly supported.** Two secondary sources give 10–12%; no primary data found. |
+| Wrapper-enclosed (spring rolls, lumpia, gyoza) | 8% (was 12%) | **USDA FNDDS** fried egg rolls ([2708702](https://fdc.nal.usda.gov/food-details/2708702/nutrients) with pork, 2708701 with shrimp, 2708700 meatless) are each 100 g of prepared frozen egg roll + 8 g vegetable oil; SR Legacy's lab-analysed restaurant egg rolls ([167667](https://fdc.nal.usda.gov/food-details/167667/nutrients)) have 11.9 g fat per 100 g in all, filling included. [FYTTE](https://fytte.jp/news/diet/191507/) (dietitian-reviewed) 春巻き 12%, no source given; [オリーブオイルをひとまわし](https://www.olive-hitomawashi.com/column/2019/04/post-4570.html) uses 10%. No study measures spring rolls themselves | **USDA's figure, 8%** (3 Nov 2026). The two dietitian figures have no data behind them. |
 | Unbreaded lean meat, fish, tofu, vegetables | 5% meat, fish, tofu; 10% vegetables (was 7% for all) | Basic Data plain-fried chicken 5%; Kyotango 素揚げ 3–8%; Wikipedia 2–15%; Bognár unbreaded meat and poultry 0 g, low-fat fish 1 g, crustaceans 1 g; TMD high-water vegetables: eggplant ~14%, shishito ~10%, mushrooms ~20% | **One rate doesn't fit both.** Lean meat and fish keep little (0–5%); watery vegetables keep a lot (10–20%). A split would be more accurate: **meat, fish, tofu ≈ 5%; vegetables ≈ 10%**. |
 | Thick starchy pieces (fries, plantain) | 5% | Bognár French fries, deep-fried: 5 g (Table 31); Basic Data potato wedges 2%, sticks (1 cm) 4% | **Supported.** |
 | Thin starchy slices (chips) | 13% (was 30%) | Basic Data potato slices (1.5 mm) 15%. USDA mass balance: 100 g raw potato has 20.7 g of solids; chips are 64.1% non-fat solids, so it makes about 32 g of chips holding about 11 g of oil (34%). That's **≈11% of the raw weight** | **30% is about 2–3× too high.** Both sources give 11–15%, so **≈12–15%**. (30% looks like the oil content *of the chip*, about 34%, mistaken for the share of the raw potato.) |
@@ -77,7 +77,16 @@ All other rows match the sources.
 The worker's `FRY_TYPE_RATES`, the app's `fry_types.dart` rates, the
 Sources page's rows and RECIPE_RULES.md's table were four copies kept in
 step by hand. They now all come from the `fry_types` table, which also has
-the three rows Convert recipe never had: wrapped (12%), pan-fried fish (8%)
+the three rows Convert recipe never had: wrapped (12% then, 8% since 3 Nov), pan-fried fish (8%)
 and fatty cut (0%). The rates are a share of the fried food's **edible**
 weight, as its calories are: the 27 Oct "bone and all" division in the
 matcher had no source behind it and was dropped.
+
+## Wrapped: 12% to 8% (3 Nov 2026)
+
+A converted lumpia (1 lb pork for 12 rolls) came out at 204 kcal a roll,
+a third of it oil, with about twice the fat per gram of USDA's egg rolls.
+USDA FNDDS builds its fried egg rolls with 8 g of oil per 100 g of roll,
+the only figure found with data behind it; Arianna approved 8%. The rolls'
+remaining extra fat is their filling: lumpia shanghai is mostly ground
+pork (21% fat raw), egg rolls mostly cabbage.

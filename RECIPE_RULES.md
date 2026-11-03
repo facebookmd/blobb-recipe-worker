@@ -189,9 +189,9 @@ For anything cooked in a liquid or fat that is mostly discarded, list only what 
 | Deep-fried, unbreaded lean meat, fish, tofu | 5% |
 | Deep-fried, dry starch-dusted (karaage, tatsuta-age) | 8% |
 | Pan-fried fish, unbreaded | 8% |
+| Deep-fried, wrapper-enclosed (spring rolls, turon, fried gyoza) | 8% |
 | Deep-fried, unbreaded vegetables (su-age eggplant, shishito, mushrooms) | 10% |
 | Deep-fried, breaded (panko, breadcrumbs) | 12% |
-| Deep-fried, wrapper-enclosed (spring rolls, turon, fried gyoza) | 12% |
 | Deep-fried, thin starchy slices (chips) | 13% |
 | Deep-fried, wet-battered (tempura, kwek-kwek) | 15% |
 <!-- fry_types:end -->

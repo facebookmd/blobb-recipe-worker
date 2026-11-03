@@ -319,11 +319,11 @@ def test_a_wrapper_fries_the_whole_roll(tmp_path, monkeypatch):
     ])
     oil = oil_row(rows)
     fried = [r for r in rows if r.get("fried")]
-    # Wrapper and filling: 12% of all of it.
+    # Wrapper and filling: 8% of all of it (USDA FNDDS egg rolls).
     assert oil["fry_type"] == "wrapped"
     assert {r["component_label"] for r in fried} == {"ground pork", "eggplant", "spring roll wrapper"}
     grams = sum(r["portion_amt"] * r["unit_grams"] for r in fried)
-    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(grams * 0.12, rel=0.01)
+    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(grams * 0.08, rel=0.01)
 
 
 def test_unbreaded_fish_in_oil_for_pan_frying_is_pan_fried_fish(tmp_path, monkeypatch):
