@@ -1475,8 +1475,11 @@
     ]
   },
   {
+    "_comment": "No hojicha powder in USDA or branded (only brewed tea and tea bags, 0 kcal). Stand-in: Publix organic matcha, 250 kcal/100 g, 1 tbsp = 6 g, so 1 tsp = 2 g (Sugimoto hojicha powder: 1 tsp = 2 g). Close to MEXT 2020 tea leaf: sencha 229, matcha 237 kcal/100 g. The APAX matcha label (400 kcal/100 g, 3 g tsp) reads high."
+  },
+  {
     "trigger": "hojicha",
-    "fdc_id": "B_2340442",
+    "fdc_id": "B_2398187",
     "weight": 0.95
   },
   {
