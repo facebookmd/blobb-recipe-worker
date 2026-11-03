@@ -142,7 +142,9 @@ WHIPPING = usda(170859, "Heavy whipping cream", "Cream, fluid, heavy whipping", 
                           ("1 tbsp", 15.0)])
 
 
-def test_the_volume_fallback_keeps_the_food():
+def test_the_volume_fallback_keeps_the_food(monkeypatch):
+    # Only these rows: the live search finds FNDDS "Cream, heavy" (1 cup).
+    monkeypatch.setattr(matcher, "_search_usda_for_ingredient", lambda q: [])
     food = matcher._volume_unit_fallback(HEAVY, [HEAVY, WHIPPING], "cup", "heavy cream",
                                          ["heavy", "cream"])
     assert food["fdc_id"] == HEAVY["fdc_id"]
@@ -157,8 +159,9 @@ def test_the_volume_fallback_keeps_the_food():
 def test_a_relative_in_the_same_category_measures_a_racc_only_food(monkeypatch):
     baby = usda(1999632, "Spinach, baby", data_type="Foundation",
                 category="Vegetables and Vegetable Products", portions=[("1 RACC", 85.0)])
+    # Calories far off, so not the same food (_same_usda_food): a density only.
     raw = usda(168462, "Spinach, raw", category="Vegetables and Vegetable Products",
-               portions=[("1 cup", 30.0)], raw=True)
+               kcal=150.0, portions=[("1 cup", 30.0)], raw=True)
     souffle = usda(170494, "Spinach souffle", category="Vegetables and Vegetable Products",
                    portions=[("1 cup", 136.0)])
     monkeypatch.setattr(matcher, "_search_usda_for_ingredient", lambda q: [souffle, raw])

@@ -45,6 +45,35 @@
     "weight": 0.95
   },
   {
+    "_comment": "3 Nov 2026: cremini (respelled crimini) is SR Legacy's 'Mushrooms, brown, italian, or crimini, raw' (1 cup sliced, 72 g). The search took Foundation 'Mushroom, crimini' (1 RACC only), and 'brown' in the SR name reads as a variant, so its cup was never used and the line came out in grams."
+  },
+  {
+    "trigger": "crimini mushroom",
+    "fdc_id": "168434",
+    "weight": 0.95
+  },
+  {
+    "_comment": "3 Nov 2026: canned whole tomatoes are SR Legacy's 'Tomatoes, red, ripe, canned, packed in tomato juice' (salted; 1 cup 240 g, 1 medium 111 g). The search took Foundation 'Tomatoes, whole, canned, solids and liquids, with salt added' (1 RACC only), so the line came out in grams."
+  },
+  {
+    "trigger": "canned whole tomato",
+    "fdc_id": "170051",
+    "weight": 0.95,
+    "exclude": ["no salt", "unsalted", "low sodium", "reduced sodium"]
+  },
+  {
+    "trigger": "whole canned tomato",
+    "fdc_id": "170051",
+    "weight": 0.95,
+    "exclude": ["no salt", "unsalted", "low sodium", "reduced sodium"]
+  },
+  {
+    "trigger": "whole peeled tomato",
+    "fdc_id": "170051",
+    "weight": 0.95,
+    "exclude": ["no salt", "unsalted", "low sodium", "reduced sodium"]
+  },
+  {
     "_disabled": true,
     "_comment": "Disabled OFF rule pending branded replacement",
     "original_trigger": "silken tofu",

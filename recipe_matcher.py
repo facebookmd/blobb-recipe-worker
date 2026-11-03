@@ -1562,7 +1562,8 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens):
         return food
     # The same food in another USDA dataset, with the portion: match it.
     if unit.lower() in VOLUMETRIC_UNITS:
-        same = [c for c in foods if c is not food and _same_usda_food(food, c)
+        same = [c for c in _same_food_pool(food, foods, query_tokens)
+                if _same_usda_food(food, c)
                 and not _names_other_variant(search, c) and _density_portion(c, unit, search)]
         if same:
             return {**max(same, key=lambda c: _layer1_rank(search, c)), "_same_food_as": food["fdc_id"]}
@@ -1607,9 +1608,35 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens):
             "_density_from": best["fdc_id"]}
 
 
+def _same_food_pool(food: dict, foods: list[dict], query_tokens) -> list[dict]:
+    """Where *food*'s row in another dataset may be: the line's search,
+    then the searches a relative or head-food density would make
+    (_density_relative, _density_from_head_food). The line's search often
+    finds only the Foundation row: "baby spinach" found "Spinach, baby"
+    (1 RACC) alone, and "Spinach, raw" (1 cup) lent it a density only, so
+    the line came out in grams; so did semolina, almonds and peanuts
+    (3 Nov 2026)."""
+    tokens = [t for t in query_tokens if t]
+    searches = ([" ".join(tokens[:i] + tokens[i + 1:]) for i in range(len(tokens))]
+                if len(tokens) > 1 else [])
+    head = _food_head_word(food)
+    if head:
+        searches.append(head)
+    pool, seen = [], {food["fdc_id"]}
+    for cand in [*foods, *(c for s in searches for c in _search_usda_for_ingredient(s))]:
+        if cand["fdc_id"] not in seen:
+            seen.add(cand["fdc_id"])
+            pool.append(cand)
+    return pool
+
+
 # How far apart two rows of the same food's calories may be: USDA's
 # datasets differ by method (Atwater factors, sampling), not by food.
 SAME_FOOD_KCAL_TOLERANCE = 0.2
+
+# USDA's word for every variety of a food: "Peanuts, all types, raw" is
+# Foundation's "Peanuts, raw".
+ALL_TYPES_RE = re.compile(r"\ball types\b")
 
 
 def _same_usda_food(food: dict, cand: dict) -> bool:
@@ -1630,10 +1657,15 @@ def _same_usda_food(food: dict, cand: dict) -> bool:
         segs = (f.get("raw_description") or "").split(",")
         if len(segs) > 1 and normalise(segs[0]) in food_name_search.GROUP_LABELS:
             segs = segs[1:]
-        text = f"{','.join(segs)} {f.get('display_name') or ''}"
-        return {_canonical_token(w) for w in normalise(text).split()
+        return ALL_TYPES_RE.sub(" ", normalise(f"{','.join(segs)} {f.get('display_name') or ''}")).split()
+    def kind(f):
+        return {_canonical_token(w) for w in words(f)
                 if w not in food_name_search.STANDARD_WORDS and w not in food_name_search.STATE_WORDS}
-    return words(cand) <= words(food)
+    # The same state too, raw or unsaid alike: "Tomatoes, raw" isn't
+    # "Whole tomatoes, canned" (3 Nov 2026).
+    def state(f):
+        return {w for w in words(f) if w in food_name_search.STATE_WORDS} - food_name_search.FRESH_IS_RAW
+    return kind(cand) <= kind(food) and state(cand) == state(food)
 
 
 def _mismatch_amount(qty: float, unit: str, portion: dict,
