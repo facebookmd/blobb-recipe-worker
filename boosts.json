@@ -229,17 +229,6 @@
     ]
   },
   {
-    "trigger": "chicken broth",
-    "fdc_id": "172884",
-    "weight": 0.9,
-    "exclude": [
-      "powder",
-      "cube",
-      "bouillon",
-      "condensed"
-    ]
-  },
-  {
     "trigger": "littleneck clam",
     "fdc_id": "174214",
     "weight": 0.95
@@ -386,11 +375,6 @@
     "weight": 0.95
   },
   {
-    "trigger": "dou-ban-jiang",
-    "fdc_id": "B_1662091",
-    "weight": 0.95
-  },
-  {
     "trigger": "pixian douban",
     "fdc_id": "B_1662091",
     "weight": 0.95
@@ -512,11 +496,6 @@
     "original_trigger": "atsuete",
     "off_only": true,
     "weight": 0.9
-  },
-  {
-    "trigger": "liver spread",
-    "boost": "liverwurst spread",
-    "weight": 0.8
   },
   {
     "_comment": "22 Oct 2026: lechon sauce is Mang Tomas, whose FDC row is named only ALL PURPOSE SAUCE (brand MANG TOMAS). Searching 'lechon sauce' found a Spanish lechonera marinade."
@@ -772,11 +751,6 @@
     "portion_label": "1 sheet"
   },
   {
-    "trigger": "nori",
-    "boost": "seaweed nori",
-    "weight": 0.9
-  },
-  {
     "_comment": "═══ NOODLES ═════════════════════════════════════════════════════════"
   },
   {
@@ -883,12 +857,6 @@
     "weight": 0.9
   },
   {
-    "trigger": "katsuobushi",
-    "boost": "bonito flakes",
-    "fdc_id": "B_2025412",
-    "weight": 0.9
-  },
-  {
     "_comment": "A kamaboko slice is 13 g: eiyoukeisan.com 13 g per 11 mm slice, Calorie Slism 9 g (4 x 1 cm), Chisou 15 g (dietitian-checked). The label serving is a 2 oz piece."
   },
   {
@@ -940,12 +908,6 @@
     "trigger": "kinako",
     "boost": "soy flour roasted",
     "fdc_id": "174274",
-    "weight": 0.9
-  },
-  {
-    "trigger": "kombu",
-    "boost": "kelp",
-    "fdc_id": "168457",
     "weight": 0.9
   },
   {
@@ -1007,11 +969,6 @@
     "exclude": [
       "sauce"
     ]
-  },
-  {
-    "trigger": "white miso",
-    "boost": "miso paste",
-    "weight": 0.9
   },
   {
     "trigger": "white sesame paste",
@@ -1090,22 +1047,12 @@
     "weight": 0.98
   },
   {
-    "trigger": "cooked short-grain white rice",
-    "fdc_id": "168882",
-    "weight": 0.98
-  },
-  {
     "trigger": "cooked long-grain white rice",
     "fdc_id": "168878",
     "weight": 0.98
   },
   {
     "trigger": "cooked medium grain white rice",
-    "fdc_id": "168880",
-    "weight": 0.98
-  },
-  {
-    "trigger": "cooked medium-grain white rice",
     "fdc_id": "168880",
     "weight": 0.98
   },
@@ -1273,18 +1220,6 @@
     ]
   },
   {
-    "trigger": "long-grain rice",
-    "fdc_id": "168878",
-    "weight": 0.85,
-    "exclude": [
-      "cooked",
-      "steamed",
-      "boiled",
-      "leftover",
-      "day-old"
-    ]
-  },
-  {
     "trigger": "katakuriko",
     "fdc_id": "169698",
     "weight": 0.9
@@ -1341,11 +1276,6 @@
   },
   {
     "trigger": "aburaage",
-    "fdc_id": "172451",
-    "weight": 0.95
-  },
-  {
-    "trigger": "aburaage",
     "portion_gram_weight": 13.0,
     "portion_label": "1 piece",
     "portion_unit": "piece"
@@ -1357,16 +1287,6 @@
   },
   {
     "_comment": "═══ GLUTINOUS RICE FLOUR / MOCHI ═════════════════════════════════════"
-  },
-  {
-    "trigger": "glutinous rice flour",
-    "fdc_id": "1104867",
-    "weight": 0.95
-  },
-  {
-    "trigger": "shiratamako",
-    "fdc_id": "1104867",
-    "weight": 0.95
   },
   {
     "trigger": "warabi mochiko",
@@ -1423,11 +1343,6 @@
   },
   {
     "_comment": "═══ JAPANESE-SPECIFIC VEGETABLES ════════════════════════════════════"
-  },
-  {
-    "trigger": "gobo",
-    "weight": 0.9,
-    "fdc_id": "169974"
   },
   {
     "_disabled": true,
@@ -1518,11 +1433,6 @@
     "trigger": "soy flour kinako",
     "fdc_id": "174273",
     "weight": 0.95
-  },
-  {
-    "trigger": "kinako",
-    "fdc_id": "174273",
-    "weight": 0.9
   },
   {
     "trigger": "kinako",
@@ -1630,11 +1540,6 @@
     "weight": 0.9
   },
   {
-    "trigger": "matcha powder",
-    "boost": "matcha powder",
-    "weight": 0.9
-  },
-  {
     "_comment": "═══ LEAVENING ════════════════════════════════════════════════════════"
   },
   {
@@ -1649,35 +1554,10 @@
     "_comment": "═══ LEGUMES (additions) ══════════════════════════════════════════════"
   },
   {
-    "trigger": "soy flour kinako",
-    "fdc_id": "174274",
-    "weight": 0.95
-  },
-  {
-    "trigger": "kinako",
-    "fdc_id": "174274",
-    "weight": 0.9
-  },
-  {
     "_comment": "═══ SEAWEED (additions) ══════════════════════════════════════════════"
   },
   {
-    "trigger": "agar agar powder",
-    "fdc_id": "170090",
-    "weight": 0.95
-  },
-  {
-    "trigger": "agar agar",
-    "fdc_id": "170090",
-    "weight": 0.9
-  },
-  {
     "_comment": "═══ KATSUOBUSHI / BONITO FLAKES ══════════════════════════════════════"
-  },
-  {
-    "trigger": "katsuobushi",
-    "boost": "bonito flakes",
-    "weight": 0.9
   },
   {
     "trigger": "dried bonito",
@@ -1719,11 +1599,6 @@
   },
   {
     "trigger": "sashimi-grade tuna",
-    "fdc_id": "175159",
-    "weight": 0.95
-  },
-  {
-    "trigger": "sashimi grade tuna",
     "fdc_id": "175159",
     "weight": 0.95
   },
@@ -1815,14 +1690,6 @@
     "trigger": "yuzu juice",
     "boost": "yuzu juice",
     "weight": 0.9,
-    "exclude": [
-      "ponzu"
-    ]
-  },
-  {
-    "trigger": "yuzu juice",
-    "boost": "yuzu juice, yuzu",
-    "weight": 0.98,
     "exclude": [
       "ponzu"
     ]

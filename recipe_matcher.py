@@ -89,9 +89,7 @@ BUILTIN_BOOSTS = [
      "exclude": ["butter","flour","sauce","oil"]},
     {"trigger": "unsalted butter","boost": "butter unsalted",            "weight": 0.9},
     {"trigger": "whole-egg mayo", "boost": "mayonnaise",                 "weight": 0.9},
-    {"trigger": "whole egg mayo", "boost": "mayonnaise",                 "weight": 0.9},
     {"trigger": "whole-egg mayonnaise","boost": "mayonnaise",            "weight": 0.9},
-    {"trigger": "whole egg mayonnaise","boost": "mayonnaise",            "weight": 0.9},
     {"trigger": "butter",        "boost": "butter salted", "fdc_id": "173410", "weight": 0.7,
      "exclude": ["unsalted","peanut","almond","cashew","sunflower","cocoa","shea",
                  "buttermilk","butternut","butterscotch","butterhead","butter bean"]},
@@ -984,9 +982,19 @@ def _boost_changes_colour(ingredient: str, rule: dict) -> bool:
     return bool(said and boost and not said & boost)
 
 
+def _boost_specificity(rule: dict) -> tuple[int, int]:
+    """How much of a line a rule's trigger names: its words, then letters."""
+    words = normalise(rule["trigger"]).split()
+    return len(words), sum(map(len, words))
+
+
 def apply_boosts(ingredient, boost_rules, category=""):
     """
-    Apply the first matching boost rule to ingredient.
+    Apply the most specific matching boost rule to ingredient: the trigger
+    with the most words, then letters; equal ones go in list order. The
+    first match used to win, so built-in "miso" took "white miso" before
+    boosts.json's pin, and "adzuki" (raw) took "adzuki beans" before its
+    boiled pin (3 Nov 2026).
 
     Rule fields:
       trigger              : substring to match in ingredient name (required)
@@ -1002,13 +1010,11 @@ def apply_boosts(ingredient, boost_rules, category=""):
     """
     ing = ingredient.lower()
     cat = category.lower()
-    for rule in boost_rules:
-        if rule.get("_disabled"):
-            continue
-        if "trigger" not in rule:
-            continue   # skip comment/metadata objects
-        if not _boost_trigger_matches(ingredient, rule["trigger"], rule.get("exact", False)):
-            continue
+    matching = [rule for rule in boost_rules
+                if "trigger" in rule   # skip comment/metadata objects
+                and not rule.get("_disabled")
+                and _boost_trigger_matches(ingredient, rule["trigger"], rule.get("exact", False))]
+    for rule in sorted(matching, key=_boost_specificity, reverse=True):
         if _boost_match_is_too_generic(ingredient, rule["trigger"], rule):
             continue
         if _boost_changes_colour(ingredient, rule) and not rule.get("fdc_id"):
