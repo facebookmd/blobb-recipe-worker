@@ -367,7 +367,7 @@ Oyakodon
 ID: oyakodon_
 AKA: Chicken and Egg Rice Bowl
 Servings: 2
-2 boneless skinless chicken thigh
+10 oz boneless skinless chicken thigh
 1/2 medium onion
 4 large egg
 1/2 cup dashi stock
@@ -421,7 +421,7 @@ ID: omurice_
 AKA: Omelette Rice", "Omuraisu
 Servings: 2
 --Ketchup rice
-1 boneless skinless chicken thigh
+5 oz boneless skinless chicken thigh
 1/2 medium onion
 1/4 cup diced carrot
 1 tbsp butter
