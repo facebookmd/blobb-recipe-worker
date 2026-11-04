@@ -290,3 +290,24 @@ def test_water_copied_in_under_a_quarter_cup_is_in_spoons():
     assert matcher._water_ml_to_spoons({**row, "portion_amt": 62.5}) == {**row, "portion_amt": 62.5}
     tiny = matcher._water_ml_to_spoons({**row, "portion_amt": 1.0})
     assert tiny["unit_label"] == "1 tsp"
+
+
+# FNDDS Soy sauce (2707442): no tsp, and a 2 g sushi guideline that the
+# gram re-pick took for Chashu Pork's 1.5 tsp over 16 slices (4 Nov 2026).
+SOY_SAUCE = usda_food(("Guideline amount per piece of sushi", 2.0), ("1 individual packet", 9.0),
+                      ("1 tablespoon", 16.0), ("Quantity not specified", 16.0))
+
+
+def test_a_small_volume_never_takes_the_sushi_guideline(tmp_path, monkeypatch):
+    [row] = rows_for(tmp_path, monkeypatch, SOY_SAUCE, "1.5 tsp soy sauce", servings=16)
+    assert "sushi" not in row["unit_label"] and "packet" not in row["unit_label"]
+    # 3/32 tsp is 1.5 pinches of a 16 g tablespoon, the same grams as before.
+    assert row["unit_label"] == "1 pinch"
+    assert row["portion_amt"] == pytest.approx(1.5, abs=1e-9)
+    assert row["portion_amt"] * row["unit_grams"] == pytest.approx(16 / 3 * 1.5 / 16, abs=1e-6)
+
+
+def test_the_guideline_is_never_a_label_for_a_gram_line(tmp_path, monkeypatch):
+    # 1 g of soy sauce: closest in grams is the 2 g guideline, which nobody measures with.
+    [row] = rows_for(tmp_path, monkeypatch, SOY_SAUCE, "1 g soy sauce")
+    assert "Guideline" not in (row["portion_description"] or "")

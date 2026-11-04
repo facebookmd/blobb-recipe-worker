@@ -2939,7 +2939,10 @@ CHUNKY_CATEGORY_RE = re.compile(
 
 
 # Portions nobody measures with: switching away from them loses nothing.
-UNMEASURABLE_PORTION_RE = re.compile(r"quantity not specified|\bracc\b", re.IGNORECASE)
+# FNDDS's "Guideline amount per piece of sushi" (soy sauce, 2 g) was
+# Chashu Pork's soy sauce label (4 Nov 2026).
+UNMEASURABLE_PORTION_RE = re.compile(r"quantity not specified|\bracc\b|\bguideline amount\b",
+                                     re.IGNORECASE)
 
 
 AERATED_WORDS = {"whipped", "whip", "foam", "frothed", "fluffed", "popped", "puffed"}
@@ -3816,9 +3819,15 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
         override = get_portion_override(ingredient, boost_rules, unit)
         if override:
             return override
+    # Not "Quantity not specified" or a sushi guideline. A RACC stays: it
+    # can be the food's only weight of its own (a boneless thigh's 114 g,
+    # where the next pick was a borrowed 263 g breast "piece").
+    measurable = [p for p in portions
+                  if not re.search(r"(?i)quantity not specified|\bguideline amount\b",
+                                   p.get("label") or "")] or portions
     if gram_target is not None:
-        return min(portions, key=lambda p: abs(p["gram_weight"] - gram_target))
-    return portions[0]
+        return min(measurable, key=lambda p: abs(p["gram_weight"] - gram_target))
+    return measurable[0]
 
 
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -4570,16 +4579,23 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             # A portion in the recipe's own unit, or the spoon just worked out
             # for it, is exact, so 12 tbsp stays 12 tbsp (1 gallon against a
             # fl oz portion still moves); the 100g basis is never a better fit.
+            # A small volume against a volume portion stays a volume: the
+            # exact step below takes it down to tbsp, tsp, then pinches
+            # (0.03 tbsp soy sauce took "per piece of sushi", 4 Nov 2026).
             in_recipe_unit = portion is not None and (
                 portion.get("_derived_spoon")
                 or (_normalise_volume_unit(unit) is not None
                     and _portion_label_unit(portion["label"]) == _normalise_volume_unit(unit)))
+            small_volume = (portion is not None and portion_amt < 0.1
+                            and _normalise_volume_unit(unit) is not None
+                            and _portion_label_unit(portion["label"]) in VOLUME_TO_TSP)
             if (portion is not None and not is_countable
-                    and not vol_mismatch and not in_recipe_unit
+                    and not vol_mismatch and not in_recipe_unit and not small_volume
                     and (portion_amt < 0.1 or portion_amt > 10)):
                 recipe_grams = portion_amt * portion["gram_weight"]
                 all_portions = [p for p in food.get("portions", [])
-                                if p.get("portion_idx", 0) != 0]
+                                if p.get("portion_idx", 0) != 0
+                                and not UNMEASURABLE_PORTION_RE.search(p.get("label") or "")]
                 if all_portions:
                     better = min(all_portions,
                                  key=lambda p: abs(p["gram_weight"] - recipe_grams))
