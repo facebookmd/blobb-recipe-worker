@@ -38,7 +38,7 @@ def test_output_uses_the_display_label_for_the_matched_portion():
 
 
 def test_a_unit_the_matcher_made_keeps_its_label():
-    # A pinch made from the food's tsp portion: unit_label moved on.
-    row = {"_type": "data", "unit_label": matcher.PINCH_LABEL,
-           "_unit_display": ("1 tsp, ground", "1 tsp, ground")}
-    assert matcher._with_display_unit(row)["unit_label"] == matcher.PINCH_LABEL
+    # A tsp worked out from the food's cup: unit_label moved on.
+    row = {"_type": "data", "unit_label": "1 tsp",
+           "_unit_display": ("1 cup", "1 cup")}
+    assert matcher._with_display_unit(row)["unit_label"] == "1 tsp"

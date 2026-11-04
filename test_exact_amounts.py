@@ -118,27 +118,25 @@ def test_tiny_cup_of_a_branded_paste_steps_down_to_tbsp(tmp_path, monkeypatch):
     assert row["portion_amt"] == pytest.approx(1.0, abs=1e-9)
 
 
-@pytest.mark.parametrize("line, servings, pinches", [
-    ("1/4 tsp salt", 4, 1.0),
-    ("1/8 tsp salt", 4, 0.5),
-    ("1/4 tsp salt", 16, 0.25),
+@pytest.mark.parametrize("line, servings, tsp", [
+    ("1/4 tsp salt", 4, 1 / 16),
+    ("1/8 tsp salt", 4, 1 / 32),
+    ("1/4 tsp salt", 16, 1 / 64),
 ])
-def test_under_an_eighth_tsp_is_pinches(tmp_path, monkeypatch, line, servings, pinches):
+def test_under_an_eighth_tsp_stays_tsp(tmp_path, monkeypatch, line, servings, tsp):
+    # No pinches (Arianna, 4 Nov 2026): the app shows 0.063 tsp and opens its keypad.
     food = usda_food(("1 tsp", 6.0))
     [row] = rows_for(tmp_path, monkeypatch, food, line, servings=servings)
-    assert row["unit_label"] == "1 pinch"
-    assert row["portion_amt"] == pytest.approx(pinches, abs=1e-9)
-    # Same grams as the tsp it came from.
-    assert row["unit_grams"] * row["portion_amt"] == pytest.approx(
-        6.0 * pinches / 16, abs=1e-9)
+    assert row["unit_label"] == "1 tsp"
+    assert row["portion_amt"] == pytest.approx(tsp, abs=1e-9)
 
 
-def test_ground_pepper_and_teaspoon_labels_are_pinches_too(tmp_path, monkeypatch):
+def test_ground_pepper_and_teaspoon_labels_stay_tsp_too(tmp_path, monkeypatch):
     for label in ("tsp, ground", "1 teaspoon"):
         food = usda_food((label, 2.3))
         [row] = rows_for(tmp_path, monkeypatch, food, "1/8 tsp pepper", servings=4)
-        assert row["unit_label"] == "1 pinch"
-        assert row["portion_amt"] == pytest.approx(0.5, abs=1e-9)
+        assert row["unit_label"] == label
+        assert row["portion_amt"] == pytest.approx(1 / 32, abs=1e-9)
 
 
 def test_an_eighth_tsp_stays_tsp(tmp_path, monkeypatch):
@@ -148,7 +146,7 @@ def test_an_eighth_tsp_stays_tsp(tmp_path, monkeypatch):
     assert row["portion_amt"] == pytest.approx(1 / 8, abs=1e-9)
 
 
-def test_tiny_counts_are_not_pinches(tmp_path, monkeypatch):
+def test_tiny_counts_stay_counts(tmp_path, monkeypatch):
     food = usda_food(("1 large", 50.0))
     [row] = rows_for(tmp_path, monkeypatch, food, "1 large egg", servings=24)
     assert row["unit_label"] == "1 large"
@@ -172,39 +170,12 @@ def test_a_tbsp_of_oil_steps_down_whatever_its_category(tmp_path, monkeypatch):
     assert row["portion_amt"] == pytest.approx(0.25, abs=1e-9)
 
 
-def test_a_pinch_row_copied_in_at_an_eighth_tsp_goes_back_to_tsp():
-    # Chashu Pork's 1 pinch of sugar, copied into a ramen at 2 slices.
-    row = {"_type": "data", "portion_id": "746784-1-pinch", "unit_label": "1 pinch",
-           "unit_grams": 0.25, "portion_amt": 2.0, "calories_kcal": 0.9625,
-           "_tsp_label": "1 teaspoon", "_tsp_qty": 1.0}
-    back = matcher._pinches_to_tsp(row)
-    assert (back["unit_label"], back["portion_id"]) == ("1 teaspoon", "746784-1")
-    assert back["portion_amt"] == pytest.approx(0.125)
-    assert back["unit_grams"] * back["portion_amt"] == pytest.approx(0.5)
-    assert back["calories_kcal"] == pytest.approx(15.4)
-    # Still under 1/8 tsp: stays in pinches.
-    assert matcher._pinches_to_tsp({**row, "portion_amt": 1.5}) == {**row, "portion_amt": 1.5}
-
-
-def test_pinch_calories_add_up_as_the_tsp_did(tmp_path, monkeypatch):
+def test_small_tsp_calories_are_the_tsp_rows(tmp_path, monkeypatch):
     food = usda_food(("1 tsp", 5.3))   # soy sauce, 53 kcal / 100 g
     food["energy_kcal"] = 53.0
     [row] = rows_for(tmp_path, monkeypatch, food, "1.5 tsp soy sauce", servings=16)
-    assert row["unit_label"] == "1 pinch"
+    assert row["unit_label"] == "1 tsp"
     assert row["cal_tot"] == pytest.approx(round(2.8 * 1.5 / 16, 1))
-
-
-def test_a_tsp_row_copied_in_under_an_eighth_tsp_is_pinches():
-    # Dashi Stock's 1 tsp dashi powder, copied into Takoyaki x 0.0729.
-    row = {"_type": "data", "portion_id": "override_dashi_powder", "unit_label": "1 tsp",
-           "unit_grams": 4.0, "portion_amt": 0.0729166, "calories_kcal": 12.5}
-    pinch = matcher._tsp_to_pinches(row)
-    assert pinch["unit_label"] == "1 pinch"
-    assert pinch["portion_amt"] == pytest.approx(1.1666656)
-    assert pinch["unit_grams"] * pinch["portion_amt"] == pytest.approx(4.0 * 0.0729166)
-    assert pinch["cal_tot"] == round(12.5 * 0.0729166, 1)
-    assert matcher._pinches_to_tsp(pinch)["unit_label"] == "1 pinch"
-    assert matcher._tsp_to_pinches({**row, "portion_amt": 0.125}) == {**row, "portion_amt": 0.125}
 
 
 # ── Units the wheel can show ──────────────────────────────────────────────
@@ -301,9 +272,9 @@ SOY_SAUCE = usda_food(("Guideline amount per piece of sushi", 2.0), ("1 individu
 def test_a_small_volume_never_takes_the_sushi_guideline(tmp_path, monkeypatch):
     [row] = rows_for(tmp_path, monkeypatch, SOY_SAUCE, "1.5 tsp soy sauce", servings=16)
     assert "sushi" not in row["unit_label"] and "packet" not in row["unit_label"]
-    # 3/32 tsp is 1.5 pinches of a 16 g tablespoon, the same grams as before.
-    assert row["unit_label"] == "1 pinch"
-    assert row["portion_amt"] == pytest.approx(1.5, abs=1e-9)
+    # 3/32 tsp of a 16 g tablespoon, the same grams as before.
+    assert row["unit_label"] == "1 tsp"
+    assert row["portion_amt"] == pytest.approx(1.5 / 16, abs=1e-9)
     assert row["portion_amt"] * row["unit_grams"] == pytest.approx(16 / 3 * 1.5 / 16, abs=1e-6)
 
 

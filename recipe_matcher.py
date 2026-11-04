@@ -3300,38 +3300,9 @@ def fits_wheel(qty: float) -> bool:
     return qty > 0 and any(abs(rem - f) < 0.001 for f in WHEEL_FRACTIONS)
 
 
-# A pinch is 1/16 tsp (Arianna, 20 Oct 2026): amounts under 1/8 tsp of
-# salt or pepper read as 1 pinch, 1/2 pinch, not 0.0625 tsp.
-PINCHES_PER_TSP = 16
-
-
-PINCH_LABEL = "1 pinch"
-
-
-def _pinch_portion(portion: dict, measure: tuple[float, str, str]) -> dict:
-    """1 pinch of the food, from its tsp portion: the same grams per tsp,
-    so grams and calories don't move."""
-    return {
-        "portion_id": f"{portion['portion_id']}-pinch",
-        "label": PINCH_LABEL,
-        "gram_weight": portion["gram_weight"] / measure[0] / PINCHES_PER_TSP,
-        "gram_col": portion.get("gram_col", ""),
-        "portion_idx": portion.get("portion_idx", 1),
-        "_derived_spoon": True,
-        "_pinch": True,
-        "_tsp_label": portion["label"],
-        "_tsp_qty": measure[0],
-    }
-
-
 def _unit_calories(portion: dict, food: dict) -> float:
-    """Calories in one [portion], to 0.1 kcal; a pinch is a 16th of its
-    teaspoon's rounded figure, so its rows add up as the tsp ones did."""
-    kcal = food.get("energy_kcal", 0.0)
-    if portion.get("_pinch"):
-        tsp_grams = portion["gram_weight"] * PINCHES_PER_TSP
-        return round(round(tsp_grams / 100 * kcal, 1) / PINCHES_PER_TSP, 6)
-    return round((portion["gram_weight"] / 100) * kcal, 1)
+    """Calories in one [portion], to 0.1 kcal."""
+    return round((portion["gram_weight"] / 100) * food.get("energy_kcal", 0.0), 1)
 
 
 def _water_ml_to_spoons(row: dict) -> dict:
@@ -3354,47 +3325,6 @@ def _water_ml_to_spoons(row: dict) -> dict:
             "unit_label": f"1 {spoon}", "unit_grams": grams, "portion_amt": amt,
             "portion_description": f"1 {spoon} ({grams:.1f} g)", "recipe_unit": "cup",
             "calories_kcal": cal,
-            "cal_tot": round(cal * amt, 1) if isinstance(cal, (int, float)) else row.get("cal_tot")}
-
-
-def _tsp_to_pinches(row: dict) -> dict:
-    """A base template's tsp row, copied in under 1/8 tsp (Dashi Stock's
-    1 tsp dashi powder x 0.07 in Takoyaki), in pinches."""
-    if row.get("_type") != "data" or not row.get("unit_grams"):
-        return row
-    measure = _label_measure({"label": row.get("unit_label", ""),
-                              "gram_weight": float(row["unit_grams"])})
-    amt = float(row.get("portion_amt") or 0)
-    if measure is None or measure[1] != "tsp" or not 0 < amt * measure[0] < STEP_DOWN_BELOW:
-        return row
-    pinch = _pinch_portion({"portion_id": row.get("portion_id", ""), "label": row["unit_label"],
-                            "gram_weight": float(row["unit_grams"])}, measure)
-    cal = row.get("calories_kcal")
-    if isinstance(cal, (int, float)):
-        cal = round(cal / measure[0] / PINCHES_PER_TSP, 6)
-    amt = amt * measure[0] * PINCHES_PER_TSP
-    return {**row, "portion_id": pinch["portion_id"], "unit_label": PINCH_LABEL,
-            "unit_grams": pinch["gram_weight"], "portion_amt": amt,
-            "portion_description": f"{PINCH_LABEL} ({pinch['gram_weight']:.1f} g)",
-            "calories_kcal": cal, "_tsp_label": row["unit_label"], "_tsp_qty": measure[0],
-            "cal_tot": round(cal * amt, 1) if isinstance(cal, (int, float)) else row.get("cal_tot")}
-
-
-def _pinches_to_tsp(row: dict) -> dict:
-    """A base template's pinch row, copied in at 1/8 tsp or more (Chashu
-    Pork's 1 pinch of mirin x 2 slices), back in teaspoons."""
-    if (row.get("_type") != "data" or row.get("unit_label") != PINCH_LABEL
-            or float(row.get("portion_amt") or 0) < STEP_DOWN_BELOW * PINCHES_PER_TSP - 1e-9):
-        return row
-    label = row.get("_tsp_label") or "1 tsp"
-    per_tsp = PINCHES_PER_TSP * float(row.get("_tsp_qty") or 1.0)
-    grams = float(row["unit_grams"]) * per_tsp
-    cal = row.get("calories_kcal")
-    cal = round(cal * per_tsp, 1) if isinstance(cal, (int, float)) else cal
-    amt = float(row["portion_amt"]) / per_tsp
-    return {**row, "portion_id": str(row.get("portion_id", "")).removesuffix("-pinch"),
-            "unit_label": label, "unit_grams": grams, "portion_amt": amt,
-            "portion_description": f"{label} ({grams:.0f} g)", "calories_kcal": cal,
             "cal_tot": round(cal * amt, 1) if isinstance(cal, (int, float)) else row.get("cal_tot")}
 
 
@@ -3455,7 +3385,8 @@ def exact_same_kind_amount(food: dict, portion: dict | None, qty: float, unit: s
       tsp, when the food has that portion or one can be worked out.
     - An amount the app's wheel can't show (3/8 tbsp) moves to the unit
       where it can (1 1/8 tsp), within WHEEL_UNIT_RANGE.
-    - Under 1/8 tsp is pinches (1/16 tsp each).
+    - Under 1/8 tsp stays in tsp (0.094 tsp): the app shows the decimal and
+      opens its keypad (Arianna, 4 Nov 2026; pinches read oddly on liquids).
 
     None when the units are different kinds (volume to count, weight to
     volume), which still go through grams.
@@ -3511,9 +3442,6 @@ def exact_same_kind_amount(food: dict, portion: dict | None, qty: float, unit: s
                 portion, measure = other, _label_measure(other)
                 amount = recipe_tsp / _volume_to_tsp(measure[0], measure[1])
                 break
-    if measure[1] == "tsp" and amount * measure[0] < STEP_DOWN_BELOW:
-        portion = _pinch_portion(portion, measure)
-        amount = recipe_tsp * PINCHES_PER_TSP
     return portion, amount
 
 
@@ -4289,11 +4217,10 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                         "template_id": tid, "template_name": template_name,
                         "category": category, "other_names": other_names,
                     })
-                    # Scaled copies cross 1/8 tsp both ways; absorbed oil
-                    # (its section before copying) is left alone.
+                    # Absorbed oil (its section before copying) is left alone.
                     originals = [r for r in ref.rows or [] if r.get("_type") in ("data", "note")]
                     copied = [new if old.get("section") == ABSORBED_OIL_SECTION
-                              else _pinches_to_tsp(_tsp_to_pinches(_water_ml_to_spoons(new)))
+                              else _water_ml_to_spoons(new)
                               for old, new in zip(originals, copied)]
                     for row in tref.merge_rows(
                             [r for r in output_rows if r.get("template_id") == tid], copied):
@@ -4580,7 +4507,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             # for it, is exact, so 12 tbsp stays 12 tbsp (1 gallon against a
             # fl oz portion still moves); the 100g basis is never a better fit.
             # A small volume against a volume portion stays a volume: the
-            # exact step below takes it down to tbsp, tsp, then pinches
+            # exact step below takes it down to tbsp, then tsp
             # (0.03 tbsp soy sauce took "per piece of sushi", 4 Nov 2026).
             in_recipe_unit = portion is not None and (
                 portion.get("_derived_spoon")
@@ -4686,9 +4613,6 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 "estimated":estimated,
                 "unit_label": portion["label"] if portion is not None else "100 g",
                 "_unit_display": portion.get("_display") if portion is not None else None,
-                # A pinch row's teaspoon, for copies that come back to it.
-                "_tsp_label": portion.get("_tsp_label", "") if portion is not None else "",
-                "_tsp_qty": portion.get("_tsp_qty", "") if portion is not None else "",
                 "unit_grams": portion["gram_weight"] if portion is not None else 100.0,
                 "fry_type": fry_type or "",
                 "_unmeasured": unmeasured,
@@ -4761,7 +4685,7 @@ def _unmeasured_reason(portion, unit: str, is_countable: bool, vol_mismatch: boo
 def _with_display_unit(row: dict) -> dict:
     """[row] with its USDA unit under the display name ("1 medium" for
     'medium (4-1/8" long)'), once matching is done: the unit maths above
-    read the raw label. A unit the matcher made (a pinch, 1 tsp from a
+    read the raw label. A unit the matcher made (1 tsp from a
     cup) keeps its own label."""
     display = row.get("_unit_display")
     if row.get("_type") != "data" or not display or row.get("unit_label") != display[0]:
