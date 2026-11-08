@@ -339,13 +339,6 @@ _PORTION_SELECT = (
     "measure_unit_abbreviation, modifier, sequence_number, amount"
 )
 
-_LIKE_SPECIAL = str.maketrans({"%": r"\%", "_": r"\_"})
-
-
-def _escape_like(text: str) -> str:
-    return text.translate(_LIKE_SPECIAL)
-
-
 def _build_fts_query(query: str) -> str:
     """Build a prefix tsquery string: 'mirin rice' → 'mirin:* & rice:*'."""
     import re
@@ -355,6 +348,30 @@ def _build_fts_query(query: str) -> str:
     return " & ".join(f"{t}:*" for t in tokens)
 
 
+def ranked_search(tsq: str, *, core_tsq: str | None = None,
+                  usda_limit: int = 500, branded_limit: int = 200) -> list[dict]:
+    """
+    One ranked search (search_foods, USDA migration 20261104230000): foods
+    whose name, brand or category match the prefix tsquery *tsq*, ranked
+    on the server and only then cut, up to *usda_limit* USDA rows (matching
+    *tsq* or *core_tsq*, the query without its state words) and
+    *branded_limit* branded rows. Foods with no calories are left out.
+
+    Replaces four to six unordered capped queries (full text, USDA full
+    text, names outright, branded names, a substring pass): each could fill
+    with the wrong rows, and common words hit the 3 s statement limit
+    ("milk", 4 Nov 2026). Ingredient lists aren't searched.
+    """
+    if not tsq:
+        return []
+    params = f"tsq={quote(tsq)}&usda_limit={int(usda_limit)}&branded_limit={int(branded_limit)}"
+    if core_tsq and core_tsq != tsq:
+        params += f"&core_tsq={quote(core_tsq)}"
+    url = (f"{_supabase_url()}/rest/v1/rpc/search_foods"
+           f"?{params}&select={quote(_FOOD_SEARCH_SELECT)}")
+    return _request_all([(f"food search for {tsq!r}", url)])[0]
+
+
 def search_foods(
     query: str,
     *,
@@ -362,13 +379,8 @@ def search_foods(
     limit: int = 160,
 ) -> list[dict]:
     """
-    Search the foods table per-ingredient using FTS + ilike fallback.
-    Matches the app's FoodDatabase.search() pattern.
-
-    Full-text search also matches branded *ingredient lists* (search_vector
-    includes them), so "rigatoni" came back as 165 ready meals and no plain
-    RIGATONI (22 Oct 2026). Foods named exactly the query are fetched too;
-    nothing is dropped, the matcher's scoring ranks the rest.
+    Food rows for one ingredient: [ranked_search] over its words, up to 500
+    USDA rows and *limit* branded rows, best first.
 
     source_set: None=all, "usda"=non-branded, "branded"=branded only.
     Returns raw food rows (not built into food dicts yet).
@@ -378,100 +390,10 @@ def search_foods(
             "Supabase is not configured. Set SUPABASE_ANON_KEY "
             "(and optionally SUPABASE_URL) environment variables."
         )
-
-    q = query.strip()
-    if not q:
-        return []
-
-    base_url = _supabase_url()
-    rows_by_id: dict[int, dict] = {}
-
-    # Build source_set filter param
-    # Foods with no calories at all (42 Foundation lab entries such as dry
-    # beans at 0% moisture) would match as 0 kcal; real zeros are 0, not null.
-    source_filter = "&calories_100g=not.is.null"
-    if source_set in {"branded"}:
-        source_filter += "&source_set=eq.branded"
-    elif source_set in {"non-branded", "usda"}:
-        source_filter += "&source_set=neq.branded"
-
-    # The three strategies below are sent at the same time; their rows are
-    # merged in strategy order, so earlier strategies win as before.
-    requests: list[tuple[str, str]] = []
-
-    # Strategy 1: Full-text search via search_vector
-    fts = _build_fts_query(q)
-    if fts:
-        fts_encoded = quote(fts)
-        requests.append((f"full-text search for {q!r}", (
-            f"{base_url}/rest/v1/foods"
-            f"?select={quote(_FOOD_SEARCH_SELECT)}"
-            f"&search_vector=fts(english).{fts_encoded}"
-            f"&limit={limit}"
-            f"{source_filter}"
-        )))
-
-    # Strategy 2: FTS + display_name filter for multi-word queries.
-    # FTS indexes the ingredients column, so "rice vinegar" matches any
-    # food that lists both words anywhere (BAKED FALAFEL BALLS, MAYONNAISE…).
-    # Adding a display_name ilike AND-filter narrows FTS to foods whose
-    # *name* contains the phrase.  This is fast because FTS narrows the
-    # scan set first; a bare ilike on the full table times out.
-    tokens = re.findall(r'[a-zA-Z0-9]+', q.lower())
-    if len(tokens) >= 2 and fts:
-        pattern = f"%{_escape_like(q)}%"
-        requests.append((f"name search for {q!r}", (
-            f"{base_url}/rest/v1/foods"
-            f"?select={quote(_FOOD_SEARCH_SELECT)}"
-            f"&search_vector=fts(english).{fts_encoded}"
-            f"&display_name=ilike.{quote(pattern)}"
-            f"&limit={limit}"
-            f"{source_filter}"
-        )))
-
-    # Strategy 3: name/description match. Always run, not only when the
-    # strategies above came back short: for branded foods full-text search
-    # also matches *ingredient lists*, so "dry white wine" filled all `limit`
-    # rows with salad kits and pot pies and the products actually named
-    # "DRY WHITE COOKING WINE" were never fetched.
-    pattern = f"%{_escape_like(q)}%"
-    # Only the two columns with trigram indexes. An OR over any unindexed
-    # column scans the whole branded table and hits the 3 s anon timeout;
-    # matching `ingredients` also mostly found foods that merely contain it.
-    ilike_filters = ",".join([
-        f"display_name.ilike.{pattern}",
-        f"description.ilike.{pattern}",
-    ])
-    requests.append((f"text search for {q!r}", (
-        f"{base_url}/rest/v1/foods"
-        f"?select={quote(_FOOD_SEARCH_SELECT)}"
-        f"&or=({quote(ilike_filters)})"
-        f"&limit={limit}"
-        f"{source_filter}"
-    )))
-
-    # Strategy 4: foods named exactly the query. The searches above cap at
-    # `limit` in no particular order, so a common word can crowd out its own
-    # product. Last, so it only adds rows. Full-text search narrows the scan
-    # first: alone, an exact match over the branded table timed out ("milk").
-    if fts:
-        exact = _escape_like(q)
-        requests.append((f"exact name search for {q!r}", (
-            f"{base_url}/rest/v1/foods"
-            f"?select={quote(_FOOD_SEARCH_SELECT)}"
-            f"&search_vector=fts(english).{fts_encoded}"
-            f"&or=({quote(f'display_name.ilike.{exact},description.ilike.{exact}')})"
-            f"&limit={limit}"
-            f"{source_filter}"
-        )))
-
-    for rows in _request_all(requests):
-        for row in rows:
-            rid = row.get("id")
-            if rid is not None:
-                rows_by_id.setdefault(int(rid), row)
-
-    return list(rows_by_id.values())
+    usda_limit = 0 if source_set == "branded" else 500
+    branded_limit = 0 if source_set in {"non-branded", "usda"} else limit
+    return ranked_search(_build_fts_query(query.strip()),
+                         usda_limit=usda_limit, branded_limit=branded_limit)
 
 
 def fetch_food_by_fdc_id(fdc_id: int, *, branded: bool = False) -> dict | None:

@@ -2022,6 +2022,23 @@ def _row_words(row: dict) -> set[str]:
             normalise(f"{row.get('display_name') or ''} {row.get('description') or ''}").split()}
 
 
+def _as_row_food(row: dict) -> dict:
+    """A foods row as _word_the_food_lacks reads a built food."""
+    return {"display_name": row.get("display_name") or "", "raw_description": row.get("description") or "",
+            "data_type": row.get("data_type") or ""}
+
+
+def _word_the_food_lacks(query, food: dict) -> str | None:
+    """A word of the line, not a state word, that *food*'s name doesn't say."""
+    row = _as_row(food)
+    for word in query.tokens:
+        if not word.strip() or word in RECIPE_STATE_WORDS or word in food_name_search.STATE_WORDS:
+            continue
+        if not food_name_search.score_row(food_name_search.Query.parse(word), row).is_match:
+            return word
+    return None
+
+
 def _recipe_rows(text: str):
     """
     Layer 1's rows for a recipe line's name: with RECIPE_STATE_WORDS the best
@@ -2032,36 +2049,62 @@ def _recipe_rows(text: str):
     "Mayonnaise, regular", not "JAPANESE SPICY MAYO"). Returns (rows, split,
     query).
     """
-    found = _layer1(text)
+    seen = {}
+
+    def searched(t):
+        if t not in seen:
+            seen[t] = _layer1(t)
+        return seen[t]
+
+    found = searched(text)
     rows, _, query = found
     words = query.normalized.split()
     if not rows:
         # No row has every word: without the state words and "cut" ("cut
         # yardlong beans" is "Yardlong bean, raw"). Not a cooking word: dry
         # glass noodles by the cooked cup tripled sotanghon soup.
-        kept = [w for w in words if (w not in RECIPE_STATE_WORDS or COOKING_WORD_RE.fullmatch(w))
+        # Cooked pasta is measured as the dry pasta (build_output_rows), so
+        # "cooked linguine" goes without "cooked" too.
+        pasta = bool(_pasta_keyword(text))
+        kept = [w for w in words if (w not in RECIPE_STATE_WORDS
+                                     or (COOKING_WORD_RE.fullmatch(w) and not pasta))
                 and w != "cut"]
         if kept and len(kept) < len(words):
-            return _layer1(" ".join(kept))
+            return searched(" ".join(kept))
         return found
     top = _top_rank(found)
     carried = _row_words(rows[0])
     missing = [w for w in words if w in RECIPE_STATE_WORDS and _canonical_token(w) not in carried]
+    # A product's name says a state word in passing: "COOKED FETTUCCINE" in
+    # a pasta alfredo meal's list of what's in it kept "cooked" in "cooked
+    # fettuccine", and only meals say both. For a branded best row the
+    # search goes without them too and keeps the better-named best row.
+    said_in_passing = [w for w in words if w in RECIPE_STATE_WORDS and w not in missing]
+    if said_in_passing and food_name_search.is_branded_row(rows[0]) and len(said_in_passing) < len(words):
+        retry = searched(" ".join(w for w in words if w not in said_in_passing))
+        # Among products only: "FRENCH FRIED ONIONS" is the product, not
+        # "Onions, raw".
+        if (retry[0] and food_name_search.is_branded_row(retry[0][0])
+                and _top_rank(retry).key() > top.key()):
+            found = retry
+            words = found[2].normalized.split()
+            top = _top_rank(found)
+            missing = []
     if missing and len(missing) < len(words):
-        retry = _layer1(" ".join(w for w in words if w not in missing))
+        retry = searched(" ".join(w for w in words if w not in missing))
         if retry[0] and _top_rank(retry).tier >= top.tier:
             found = retry
             words = found[2].normalized.split()
             top = _top_rank(found)
     quality = [w for w in words if w in RECIPE_QUALITY_WORDS]
     if top.tier < 4 and quality and len(quality) < len(words):
-        retry = _layer1(" ".join(w for w in words if w not in quality))
+        retry = searched(" ".join(w for w in words if w not in quality))
         if retry[0] and _top_rank(retry).tier > top.tier:
             found = retry
             words = found[2].normalized.split()
             top = _top_rank(found)
     if len(words) > 1 and words[0] in LOCATION_PREFIXES and (top.tier < 4 or top.bucket < 1000):
-        retry = _layer1(" ".join(words[1:]))
+        retry = searched(" ".join(words[1:]))
         best = _top_rank(retry)
         if retry[0] and best.tier == 4 and best.bucket >= 1000:
             found = retry
@@ -2365,6 +2408,18 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     # WINE" for mirin) is a sure match, though branded rows rank in tier 1.
     if rank.tier == 1 and rank.bucket > 0 and rank.exact == len(query.tokens) > 0:
         score = max(score, NAMED_PRODUCT_SCORE)
+    # When no food has every word, the search drops one (search_foods,
+    # 8 Nov 2026): "pickled red ginger" is "Ginger root, pickled". The app
+    # shows what it finds; a template's food is to review, as the word may
+    # be the one saying which food ("cooked glass noodles" without "glass"
+    # is egg noodles). Only then: a row with every word means the search
+    # found the line and the recipe layer chose ("pitted black olives" is
+    # "Olives, ripe, canned"; "baby spinach" is "Spinach, raw").
+    dropped = None if any(_word_the_food_lacks(query, _as_row_food(r)) is None for r in rows) \
+        else _word_the_food_lacks(query, food)
+    if dropped:
+        score = min(score, 0.5)
+        food["_dropped_word"] = dropped
     result = (food, score, "high" if score >= 0.55 else "low", None)
     _MATCH_CACHE[cache_key] = result
     return result
@@ -4593,6 +4648,9 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             if unmeasured:
                 confidence = "low"
                 vol_note = f"CHECK AMOUNT: {unmeasured}. " + vol_note
+            # An alias names the food: nothing was dropped.
+            if food.get("_dropped_word") and alias is None:
+                vol_note = f"CHECK FOOD: nothing named every word, matched without \"{food['_dropped_word']}\". " + vol_note
             note_text=f"{vol_note}{'LOW CONF ' if confidence=='low' and not unmeasured else ''}score {score:.2f}{source_tag}{yield_tag}"
 
             output_rows.append({

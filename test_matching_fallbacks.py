@@ -92,39 +92,45 @@ def test_no_rewrite_means_no_second_pass_without_rules(once):
     assert calls == [("tomato puree", True)]
 
 
-def _fake_search(monkeypatch):
-    """Branded full-text search also matches ingredient lists: "dry white
-    wine" filled every row with salad kits, and the products named that
-    were never fetched."""
+def _fake_search(monkeypatch, rows=()):
     monkeypatch.setenv("SUPABASE_ANON_KEY", "test")
     requests = []
 
     def fake_request(url):
         requests.append(url)
-        if "or=(" in url:
-            return [{"id": 999, "source_set": "branded",
-                     "display_name": "DRY WHITE COOKING WINE"}]
-        if "search_vector=fts" in url and "display_name=ilike" not in url:
-            return [{"id": i, "source_set": "branded",
-                     "display_name": f"SALAD KIT {i}"} for i in range(5)]
-        return []
+        return list(rows)
 
     monkeypatch.setattr(source, "_request_json", fake_request)
     return requests
 
 
-def test_name_matches_are_added_and_nothing_is_dropped(monkeypatch):
-    # The salad kits stay; the matcher's scoring ranks them behind the name.
-    _fake_search(monkeypatch)
+def test_one_ranked_search_per_ingredient(monkeypatch):
+    # Unordered capped queries filled with ingredient-list matches ("dry
+    # white wine": salad kits) and timed out on common words; the server
+    # now ranks before it cuts (4 Nov 2026).
+    requests = _fake_search(monkeypatch, [{"id": 999, "source_set": "branded",
+                                           "display_name": "DRY WHITE COOKING WINE"}])
     rows = source.search_foods("dry white wine", source_set="branded", limit=5)
-    assert [row["id"] for row in rows] == [0, 1, 2, 3, 4, 999]
+    assert [row["id"] for row in rows] == [999]
+    assert len(requests) == 1
+    assert "/rpc/search_foods?" in requests[0]
+    assert "tsq=dry%3A%2A%20%26%20white%3A%2A%20%26%20wine%3A%2A" in requests[0]
+    assert "usda_limit=0&branded_limit=5" in requests[0]
 
 
-def test_foods_named_exactly_the_query_are_asked_for_last(monkeypatch):
-    # 165 rows for "rigatoni" held no plain RIGATONI.
+def test_usda_only_asks_for_no_branded_rows(monkeypatch):
     requests = _fake_search(monkeypatch)
-    source.search_foods("rigatoni", source_set="branded")
-    assert "display_name.ilike.rigatoni%2C" in requests[-1]
+    source.search_foods("rigatoni", source_set="usda")
+    assert "usda_limit=500&branded_limit=0" in requests[0]
+
+
+def test_state_words_leave_the_usda_match(monkeypatch):
+    # "Tomatoes, red, ripe, raw" never says "fresh".
+    import food_name_search
+    requests = _fake_search(monkeypatch)
+    monkeypatch.setattr(food_name_search, "_ALIASES", {})
+    food_name_search.fetch_rows("fresh tomatoes")
+    assert "core_tsq=tomato" in requests[0]
 
 
 def test_parallel_requests_keep_their_order_and_survive_a_failure(monkeypatch):

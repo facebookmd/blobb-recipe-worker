@@ -64,7 +64,6 @@ NO_ENERGY_PENALTY = 300
 OTHER_FIELD_PENALTY = 100
 
 USDA_CANDIDATE_LIMIT = 500
-HEAD_CANDIDATE_LIMIT = 100
 
 
 # ── Text ────────────────────────────────────────────────────────────────────
@@ -787,56 +786,18 @@ def _food_aliases() -> dict[str, int]:
 
 def fetch_rows(food_words: str, limit: int = 60, alias_text: str | None = None) -> tuple[list[dict], int | None]:
     """The rows the app's search fetches for *food_words*, and the row id its
-    alias names (None): full text over all sources and over USDA rows alone,
-    USDA rows named the query outright (and branded ones named with it, for
-    a query of several words), and a substring pass when full text came back
-    short."""
+    alias names (None): one ranked search (source.ranked_search) and the
+    alias's food."""
     q = Query.parse(food_words)
     if q.empty:
         return [], None
-    candidate_limit = limit * 4
-    tsq = " & ".join(f"{t}:*" for t in q.tokens)
-    n = q.normalized
-    head_or = [f'description.ilike."{n},*"', f'description.ilike."{n}"',
-               f'display_name.ilike."{n},*"', f'display_name.ilike."{n}"']
-    # Rows headed by the food without its state words: full text needs
-    # "fresh", which "Tomatoes, red, ripe, raw" never says.
-    rest = " ".join(t for t in q.tokens if t not in STATE_WORDS)
-    if rest and rest != n:
-        head_or += [f'description.ilike."{rest},*"', f'display_name.ilike."{rest},*"']
-    if " " in n:
-        head_or.append(f'display_name.ilike."*{n}*"')
-    reqs = [
-        ("full-text search", _rest(f"foods?select={_SELECT}&search_vector=fts(english).{quote(tsq)}"
-                                   f"&calories_100g=not.is.null&limit={candidate_limit}")),
-        ("USDA full-text search", _rest(f"foods?select={_SELECT}&search_vector=fts(english).{quote(tsq)}"
-                                        f"&calories_100g=not.is.null&source_set=neq.branded"
-                                        f"&limit={USDA_CANDIDATE_LIMIT}")),
-        ("exact name search", _rest(f"foods?select={_SELECT}&or=({quote(','.join(head_or))})"
-                                    f"&source_set=neq.branded&calories_100g=not.is.null"
-                                    f"&limit={HEAD_CANDIDATE_LIMIT}")),
-    ]
-    if " " in n:
-        # Branded products named with the search ("SMOKED PAPRIKA", "TASTY
-        # JOY, SUGAR PALM FRUIT"): full text over every source fills its
-        # rows with products that only list them as ingredients. Narrowed by
-        # full text: a name pattern alone times out over the branded rows.
-        # Named exactly apart: hundreds of products contain "white vinegar",
-        # and the plain "WHITE VINEGAR" fell outside those fetched.
-        for what, pattern in (("branded exact name search", n), ("branded name search", f"*{n}*")):
-            reqs.append((what, _rest(
-                f"foods?select={_SELECT}&search_vector=fts(english).{quote(' & '.join(q.tokens))}"
-                f"&display_name=ilike.{quote(pattern)}&source_set=eq.branded"
-                f"&calories_100g=not.is.null&limit={HEAD_CANDIDATE_LIMIT}")))
-    all_rows, usda_rows, head_rows, *branded_named = source._request_all(reqs)
-    by_id = {r["id"]: r for r in [*all_rows, *usda_rows, *head_rows, *(r for rows in branded_named for r in rows)]}
-    if len(all_rows) < candidate_limit:
-        pattern = "*" + n.replace("%", "").replace("*", "") + "*"
-        fb = source._request_all([("substring search", _rest(
-            f"foods?select={_SELECT}&or=({quote(f'description.ilike.{pattern},display_name.ilike.{pattern}')})"
-            f"&calories_100g=not.is.null&limit={candidate_limit}"))])[0]
-        for r in fb:
-            by_id.setdefault(r["id"], r)
+    # State words leave the USDA match: "Tomatoes, red, ripe, raw" never
+    # says "fresh".
+    core = [t for t in q.tokens if t not in STATE_WORDS]
+    rows = source.ranked_search(" & ".join(f"{t}:*" for t in q.tokens),
+                                core_tsq=" & ".join(f"{t}:*" for t in core) or None,
+                                usda_limit=USDA_CANDIDATE_LIMIT, branded_limit=limit * 4)
+    by_id = {r["id"]: r for r in rows}
     aliases = _food_aliases()
     alias_id = aliases.get(alias_key(alias_text)) if alias_text else None
     if alias_id is None:

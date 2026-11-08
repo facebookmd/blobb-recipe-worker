@@ -107,6 +107,25 @@ def test_a_state_word_no_row_carries_is_searched_without(shared):
     assert searched == ["fresh ginger", "ginger"]
 
 
+def test_a_food_found_without_a_word_of_the_line_is_to_review(shared):
+    results, _, _ = shared
+    # search_foods found nothing with every word and dropped one.
+    results["pickled red ginger"] = [row(1, "Ginger root, pickled", data_type="Survey (FNDDS)", kcal=20)]
+    food, score, confidence, _ = matcher.match_ingredient("pickled red ginger", [], 0.45, "", "", False)
+    assert food["fdc_id"] == "1" and food["_dropped_word"] == "red" and confidence == "low"
+    # A state word isn't one: "Ginger root, raw" is fresh ginger.
+    results["fresh ginger"] = [row(2, "Ginger root, raw", kcal=80)]
+    assert "_dropped_word" not in match("fresh ginger")
+
+
+def test_a_state_word_a_meal_says_in_passing_is_searched_without(shared):
+    results, _, searched = shared
+    results["cooked fettuccine"] = [row(1, "PASTA ALFREDO WITH CHICKEN, COOKED FETTUCCINE, PARMESAN",
+                                        branded=True, kcal=179)]
+    results["fettuccine"] = [row(2, "FETTUCCINE", branded=True, kcal=357)]
+    assert match("cooked fettuccine", "oz")["fdc_id"] == "B_2"
+
+
 def test_cooked_pasta_is_the_dry_product_by_weight(shared):
     results, _, _ = shared
     fresh = row(1, "LINGUINE", branded=True, kcal=282)
