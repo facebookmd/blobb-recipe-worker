@@ -1,0 +1,1383 @@
+Category: Filipino
+
+
+
+Garlic Fried Rice
+ID: garlic_fried_rice
+AKA: Sinangag", "Garlic rice", "Sinangag na kanin
+Servings: 6
+Serving size: 1 cup
+6 cup cooked long grain white rice
+10 clove garlic
+4 tbsp vegetable oil
+1 tsp salt
+SOURCE: https://panlasangpinoy.com/wprm_print/sinangag-na-kanin-recipe-how-to-make-garlic-fried-rice, https://www.recipesbynora.com/wprm_print/sinangag-recipe-garlic-fried-rice, https://www.thelittleepicurean.com/wprm_print/sinangag-filipino-garlic-fried-rice
+
+
+
+Beef Tapa
+ID: beef_tapa
+AKA: Tapa", "Tapang baka", "Filipino cured beef
+Servings: 24
+Serving size: 1 slice
+1.5 lb thinly sliced beef sirloin
+3 tbsp vegetable oil
+--Absorbed marinade
+2 tbsp soy sauce
+1 tbsp minced garlic
+1 tbsp sugar
+1/8 tsp salt
+1/8 tsp black pepper
+SOURCE: https://panlasangpinoy.com/wprm_print/homemade-beef-tapa, https://www.kawalingpinoy.com/wprm_print/recipe/31341, https://thequirinokitchen.com/wprm_print/beef-tapa
+
+
+
+Longganisa
+ID: longganisa_
+AKA: Longanisa", "Filipino sausage", "Longganisa hamonado", "Skinless longganisa", "Sweet longganisa
+Servings: 24
+Serving size: 1 piece
+2 lb ground pork
+1/2 cup brown sugar
+10 clove garlic
+1 tbsp soy sauce
+2 tsp salt
+3 tbsp cane vinegar
+1/4 cup pineapple juice
+1 tbsp paprika
+1/2 tsp black pepper
+SOURCE: https://www.foxyfolksy.com/wprm_print/12058, https://www.rivertenkitchen.com/wprm_print/easy-homemade-skinless-longganisa, https://www.recipesbynora.com/skinless-longganisa/
+
+
+
+Chicken Adobo
+ID: chicken_adobo
+AKA: Adobong manok", "Adobo chicken", "Adobo
+Servings: 6
+Serving size: 1 piece
+6 bone-in skin-on chicken thigh
+6 tbsp soy sauce
+6 tbsp cane vinegar
+6 clove garlic
+1 tsp black peppercorns
+4 bay leaf
+1/2 cup water
+3 tbsp vegetable oil
+SOURCE: https://panlasangpinoy.com/wprm_print/easy-chicken-adobo-recipe, https://www.foxyfolksy.com/chicken-adobo-with-browned-garlic/, https://www.foodnetwork.com/recipes/filipino-chicken-adobo-recipe-1955818
+
+
+
+Lechon Kawali
+ID: lechon_kawali
+AKA: Crispy pork belly", "Crispy fried pork belly", "Lechon kawali pork
+Servings: 16
+Serving size: 1 slice
+2 lb skin-on pork belly
+1 tbsp black peppercorns
+3 bay leaf
+8 clove garlic
+SOURCE: https://panlasangpinoy.com/wprm_print/lechon-kawali, https://www.manilaspoon.com/wprm_print/lechon-kawali-filipino-crispy-fried-pork-belly, https://www.bitemybun.com/lechon-kawali/
+
+
+
+Daing na Bangus
+ID: daing_na_bangus
+AKA: Fried marinated milkfish", "Bangus daing", "Daing
+Servings: 4
+Serving size: 1 piece
+2 lb boneless milkfish
+1 tsp salt
+1/2 tsp black pepper
+--Absorbed marinade
+3 tbsp cane vinegar
+1 clove garlic
+--Absorbed oil
+5 tbsp vegetable oil
+SOURCE: https://panlasangpinoy.com/wprm_print/daing-na-bangus-recipe, https://www.manilaspoon.com/wprm_print/daing-na-bangus-milkfish-marinated-in-vinegar-and-garlic, https://bitemybun.com/daing-na-bangus-recipe
+
+
+
+Brown Sugar Syrup
+ID: brown_sugar_syrup
+AKA: Arnibal", "Brown sugar arnibal", "Sago syrup
+Servings: 10
+Serving size: 2 tbsp
+1 cup brown sugar
+1 cup water
+SOURCE: https://panlasangpinoy.com/filipino-street-food-homemade-taho-recipe/, https://www.foxyfolksy.com/sagot-gulaman/, https://www.recipesbynora.com/sago-at-gulaman/
+
+
+
+Pork Sinigang
+ID: pork_sinigang
+AKA: Sinigang na baboy", "Sinigang", "Pork sinigang sa sampalok
+Servings: 6
+1.5 lb pork belly
+1 tbsp vegetable oil
+1 medium onion
+4 clove garlic
+4 medium tomato
+8 cup water
+1 cup cubed taro
+1 cup sliced daikon
+2 cup sliced eggplant
+5 whole okra
+1 cup cut yardlong beans
+3 cup chopped water spinach
+2 green chili pepper
+1 packet tamarind soup mix
+1 tbsp fish sauce
+1 tbsp salt
+SOURCE: https://www.knorr.com/ph/r/sinigang-na-baboy-by-mommy-beauty.html/216156, https://www.hungryhuy.com/sinigang-na-baboy/, https://www.recipesbynora.com/sinigang-na-baboy-recipe/
+
+
+
+Shrimp Sinigang
+ID: shrimp_sinigang
+AKA: Sinigang na hipon", "Shrimp sinigang sa sampalok
+Servings: 4
+1 lb head-on shrimp
+6 cup water
+1 medium onion
+2 medium tomato
+1 cup sliced daikon
+2 cup sliced eggplant
+3 whole okra
+1 cup cut yardlong beans
+3 cup chopped water spinach
+2 green chili pepper
+1 packet tamarind soup mix
+SOURCE: https://panlasangpinoy.com/wprm_print/sinigang-na-hipon-recipe-2, https://www.bitemybun.com/sinigang-na-hipon-sa-sampalok-recipe/, https://www.knorr.com/ph/recipes/recipe-tips/shrimp-sinigang-recipe.html
+
+
+
+Milkfish Sinigang
+ID: milkfish_sinigang
+AKA: Sinigang na bangus", "Bangus sinigang
+Servings: 4
+1.5 lb milkfish
+8 cup water
+1 medium onion
+2 medium tomato
+1 cup sliced daikon
+2 cup sliced eggplant
+6 whole okra
+1 cup cut yardlong beans
+3 cup chopped water spinach
+2 green chili pepper
+1 packet tamarind soup mix
+2 tbsp fish sauce
+SOURCE: https://panlasangpinoy.com/wprm_print/sinigang-na-bangus-recipe, https://www.recipesbynora.com/sinigang-na-bangus-recipe/, https://www.foxyfolksy.com/sinigang-na-bangus/
+
+
+
+Chicken Tinola
+ID: chicken_tinola
+AKA: Tinolang manok", "Tinola", "Chicken ginger soup
+Servings: 6
+2 lb bone-in skin-on chicken thigh
+2 tbsp vegetable oil
+1 medium onion
+4 clove garlic
+1/4 cup julienned ginger
+6 cup water
+1 chicken bouillon cube
+1 tbsp fish sauce
+3 cup green papaya chunks
+1 cup moringa leaves
+SOURCE: https://panlasangpinoy.com/wprm_print/chicken-tinola-recipe-2, https://www.recipesbynora.com/chicken-tinola-recipe/, https://www.recepedia.com/ph/r/chicken-tinola-recipe-(filipino-tinolang-manok).html/110276
+
+
+
+Bulalo
+ID: bulalo_
+AKA: Beef shank soup", "Beef marrow soup", "Nilagang bulalo
+Servings: 4
+1.5 lb bone-in beef shank
+7 cup water
+1 beef bouillon cube
+1/2 cup chopped onion
+4 clove garlic
+1 tsp black peppercorns
+1 ear sweet corn
+1 cup cut green beans
+2 cup chopped cabbage
+2 cup chopped bok choy
+SOURCE: https://pepper.ph/recipes/bulalo-beef-bone-marrow-soup, https://www.recipesbynora.com/wprm_print/bulalo-recipe-filipino-beef-shank-soup, https://www.knorr.com/ph/recipes/recipe-tips/hearty-beef-bulalo-recipe.html
+
+
+
+Beef Nilaga
+ID: beef_nilaga
+AKA: Nilagang baka", "Nilaga", "Boiled beef soup
+Servings: 6
+2 lb beef brisket
+6 cup water
+1 medium onion
+1 tbsp black peppercorns
+2 ear sweet corn
+1 large potato
+2 saba banana
+1/2 head cabbage
+2 cup chopped bok choy
+1 tbsp fish sauce
+SOURCE: https://pepper.ph/recipes/nilagang-baka-beef-nilaga, https://panlasangpinoy.com/wprm_print/beef-nilaga-recipe, https://www.knorr.com/ph/r/beef-nilaga-recipe.html/214402
+
+
+
+Sopas
+ID: sopas_
+AKA: Chicken sopas", "Chicken macaroni soup", "Filipino chicken macaroni soup
+Servings: 6
+1 lb boneless skinless chicken breast
+3 tbsp vegetable oil
+1 medium onion
+4 clove garlic
+2 stalk celery
+1 cup diced carrot
+3 hot dog
+10 cup chicken broth
+2 cup uncooked elbow macaroni
+4 cup shredded cabbage
+1.5 cup evaporated milk
+1 tbsp fish sauce
+1/4 tsp black pepper
+SOURCE: https://panlasangpinoy.com/wprm_print/creamy-chicken-sopas, https://iankewks.com/chicken-sopas-recipe/, https://www.bitemybun.com/filipino-creamy-chicken-sopas-recipe/
+
+
+
+Sotanghon Soup
+ID: sotanghon_soup
+AKA: Chicken sotanghon", "Chicken sotanghon soup", "Glass noodle soup
+Servings: 4
+1.25 lb boneless skinless chicken breast
+2.5 tbsp vegetable oil
+1 medium onion
+4 clove garlic
+2 stalk celery
+1 medium carrot
+1 tsp annatto powder
+7 cup chicken broth
+4 oz uncooked cellophane noodles
+1.5 cup shredded cabbage
+1 tbsp fish sauce
+2 tbsp chopped green onion
+SOURCE: https://panlasangpinoy.com/wprm_print/chicken-sotanghon-soup-2, https://www.thelittleepicurean.com/wprm_print/chicken-sotanghon-soup, https://www.sbs.com.au/food/recipes/filipino-chicken-noodle-soup-sotanghon
+
+
+
+Pork Adobo
+ID: pork_adobo
+AKA: Adobong baboy", "Adobo pork
+Servings: 4
+2 lb pork belly
+1/2 cup soy sauce
+1/2 cup cane vinegar
+6 clove garlic
+1 tbsp black peppercorns
+3 bay leaf
+1 cup water
+SOURCE: https://tarasmulticulturaltable.com/wprm_print/adobong-baboy-filipino-pork-adobo, https://pepper.ph/recipes/best-classic-pork-adobo, https://panlasangpinoy.com/wprm_print/47218
+
+
+
+Kare-Kare
+ID: kare_kare
+AKA: Kare kare", "Oxtail kare-kare", "Oxtail peanut stew
+Servings: 6
+2 lb oxtail
+6 cup water
+2 tbsp vegetable oil
+1 tbsp annatto powder
+1 medium onion
+8 clove garlic
+1/2 cup peanut butter
+3 tbsp glutinous rice flour
+1/2 tsp salt
+4 cup sliced eggplant
+1 cup cut yardlong beans
+1 cup chopped banana blossom
+3 cup chopped bok choy
+--Serving
+1/4 cup sauteed shrimp paste
+SOURCE: https://www.hungryhuy.com/kare-kare/, https://www.foxyfolksy.com/kare-kare/, https://www.knorr.com/ph/r/classic-kare-kare.html/148777
+
+
+
+Beef Caldereta
+ID: beef_caldereta
+AKA: Kaldereta", "Caldereta", "Kalderetang baka
+Servings: 6
+2.25 lb beef chuck
+2 tbsp vegetable oil
+1 medium onion
+4 clove garlic
+2 cup tomato sauce
+4 cup water
+3 bay leaf
+1/2 tsp red pepper flakes
+1/2 cup liver spread
+2 medium potato
+2 medium carrot
+1 red bell pepper
+1 green bell pepper
+1/2 cup green olives
+3/4 tsp salt
+1/4 tsp black pepper
+SOURCE: https://www.recipesbynora.com/wprm_print/beef-caldereta-recipe, https://www.bitemybun.com/beef-caldereta-recipe/, https://www.chilipeppermadness.com/wprm_print/beef-caldereta-recipe-filipino-beef-stew
+
+
+
+Beef Mechado
+ID: beef_mechado
+AKA: Mechado", "Mechadong baka
+Servings: 6
+1.75 lb beef chuck
+4 oz pork fatback
+1/3 cup soy sauce
+3 tbsp lemon juice
+3 tbsp vegetable oil
+1 large onion
+3 clove garlic
+1.25 cup tomato sauce
+1.5 cup water
+2 bay leaf
+2 medium potato
+1 large carrot
+1 red bell pepper
+1 green bell pepper
+1/2 tsp black pepper
+SOURCE: https://panlasangpinoy.com/wprm_print/beef-mechado-recipe, https://tarasmulticulturaltable.com/wprm_print/mechadong-baka-filipino-beef-mechado, https://www.foxyfolksy.com/wprm_print/17539
+
+
+
+Chicken Afritada
+ID: chicken_afritada
+AKA: Afritada", "Afritadang manok
+Servings: 4
+4 bone-in skin-on chicken thigh
+2 tbsp vegetable oil
+1 medium onion
+2 clove garlic
+1 cup tomato sauce
+1.5 cup chicken broth
+2 bay leaf
+2 medium potato
+1 medium carrot
+1/2 cup green peas
+1/2 tsp sugar
+1/2 tsp salt
+1/4 tsp black pepper
+SOURCE: https://panlasangpinoy.com/wprm_print/chicken-afritada-recipe, https://www.jocooks.com/wprm_print/chicken-afritada, https://pepper.ph/recipes/one-pot-chicken-afritada
+
+
+
+Pork Menudo
+ID: pork_menudo
+AKA: Menudo", "Filipino menudo
+Servings: 6
+2.25 lb boneless pork shoulder
+8 oz pork liver
+3 tbsp vegetable oil
+1 medium onion
+5 clove garlic
+1.5 cup tomato sauce
+3 tbsp soy sauce
+2 tsp fish sauce
+3.5 cup water
+2 bay leaf
+2 medium potato
+1 large carrot
+3 hot dog
+1/2 cup raisins
+SOURCE: https://panlasangpinoy.com/wprm_print/filipino-pork-menudo-recipe-2, https://www.krumpli.co.uk/wprm_print/filipino-pork-menudo-recipe, https://www.rivertenkitchen.com/wprm_print/pork-menudo-filipino-recipe
+
+
+
+Bistek Tagalog
+ID: bistek_tagalog
+AKA: Bistek", "Filipino beef steak", "Beefsteak tagalog
+Servings: 4
+1 lb thinly sliced beef sirloin
+1/4 cup soy sauce
+3 tbsp lemon juice
+3 clove garlic
+1/2 tsp black pepper
+2 tbsp vegetable oil
+1 large onion
+SOURCE: https://tarasmulticulturaltable.com/wprm_print/bistek-tagalog-filipino-beef-steak, https://www.bitemybun.com/wprm_print/recipe/9022, https://www.recipesbynora.com/wprm_print/bistek-tagalog-recipe
+
+
+
+Crispy Pata
+ID: crispy_pata
+AKA: Deep-fried pork knuckle", "Crispy pork hock", "Crispy pork leg
+Servings: 4
+3 lb pork hock
+1 tbsp black peppercorns
+3 bay leaf
+10 clove garlic
+2 star anise
+--Dipping sauce
+1/4 cup cane vinegar
+2 tbsp soy sauce
+2 tbsp chopped red onion
+1 tsp sugar
+SOURCE: https://www.recipesbynora.com/wprm_print/crispy-pata-recipe-pork-leg-with-crispy-skin, https://www.knorr.com/ph/r/classic-crispy-pata-recipe.html/110642, https://blog.thermoworks.com/wprm_print/crispy-pork-pata-recipe
+
+
+
+Sisig
+ID: sisig_
+AKA: Pork sisig", "Sizzling sisig", "Pork belly sisig
+Servings: 4
+8 slice lechon kawali
+2 oz chicken liver
+1 tbsp butter
+1 medium red onion
+2 clove garlic
+2 Thai chili pepper
+1.5 tbsp lemon juice
+1/2 tbsp soy sauce
+1/8 tsp black pepper
+1 large egg
+SOURCE: https://www.foxyfolksy.com/wprm_print/11969, https://iankewks.com/pork-belly-sisig, https://www.recipesbynora.com/pork-belly-sisig
+
+
+
+Bicol Express
+ID: bicol_express
+AKA: Pork bicol express", "Pork in spicy coconut milk", "Sinilihan
+Servings: 4
+1.25 lb pork belly
+1 tbsp vegetable oil
+1 small onion
+4 clove garlic
+1.5 tbsp sauteed shrimp paste
+1.5 cup coconut milk
+2/3 cup coconut cream
+1.5 cup water
+4 long green chili pepper
+8 Thai chili pepper
+SOURCE: https://panlasangpinoy.com/wprm_print/pork-bicol-express-recipe, https://www.kawalingpinoy.com/wprm_print/bicol-express, https://www.pepper.ph/recipes/bicol-express
+
+
+
+Pork Barbecue
+ID: pork_barbecue
+AKA: Filipino pork barbecue", "Pork BBQ skewers", "Filipino BBQ", "Inihaw na baboy
+Servings: 8
+1.75 lb boneless pork shoulder
+--Absorbed marinade
+1.5 tbsp soy sauce
+1.5 tbsp banana ketchup
+1 tbsp lemon-lime soda
+1 tsp brown sugar
+1 clove garlic
+--Basting sauce
+1/4 cup banana ketchup
+2 tbsp soy sauce
+1 tbsp brown sugar
+1 tbsp vegetable oil
+SOURCE: https://www.hungryhuy.com/filipino-bbq-pork-skewers/, https://www.foxyfolksy.com/wprm_print/11554, https://www.eatwithcarmen.com/wprm_print/filipino-bbq-pork-skewers
+
+
+
+Chicken Inasal
+ID: chicken_inasal
+AKA: Inasal", "Bacolod chicken inasal", "Inasal na manok
+Servings: 4
+4 chicken leg quarter
+--Absorbed marinade
+2 tbsp cane vinegar
+1 tbsp lemon juice
+1 tbsp brown sugar
+1 tsp minced garlic
+1 tsp grated ginger
+1/2 tsp salt
+--Basting
+2 tbsp butter
+2 tbsp vegetable oil
+--Dipping sauce
+2 tbsp soy sauce
+2 tbsp cane vinegar
+1 tbsp lemon juice
+SOURCE: https://www.hungryhuy.com/chicken-inasal/, https://www.kawalingpinoy.com/wprm_print/chicken-inasal, https://www.notquitenigella.com/2024/09/25/chicken-inasal/print/
+
+
+
+Pinakbet
+ID: pinakbet_
+AKA: Pakbet", "Pinakbet Tagalog", "Vegetable stew with shrimp paste
+Servings: 4
+4 oz pork belly
+1 tbsp vegetable oil
+4 clove garlic
+1 small onion
+1 tbsp sliced ginger
+2 medium tomato
+2 tbsp sauteed shrimp paste
+1.5 cup cubed kabocha squash
+1.5 cup sliced bitter melon
+2 cup sliced eggplant
+8 whole okra
+1 cup cut yardlong beans
+1 cup water
+SOURCE: https://pepper.ph/recipes/best-pinakbet-with-chicharon, https://thequirinokitchen.com/wprm_print/pinakbet-filipino-vegetable-stew-in-shrimp-paste, https://www.rivertenkitchen.com/wprm_print/pinakbet-tagalog-recipe
+
+
+
+Lechon Paksiw
+ID: lechon_paksiw
+AKA: Paksiw na lechon
+Servings: 6
+16 slice lechon kawali
+1.5 tbsp vegetable oil
+1 small onion
+5 clove garlic
+6 tbsp cane vinegar
+1 cup water
+3 bay leaf
+1 tsp black peppercorns
+2 tbsp brown sugar
+3/4 cup lechon sauce
+SOURCE: https://www.foxyfolksy.com/wprm_print/35007, https://www.recipesbynora.com/wprm_print/lechon-paksiw-recipe, https://www.rivertenkitchen.com/wprm_print/lechon-paksiw-recipe
+
+
+
+Dinuguan
+ID: dinuguan_
+AKA: Pork blood stew", "Chocolate meat", "Dinardaraan
+Servings: 4
+1 lb pork belly
+2 tbsp vegetable oil
+1 small onion
+3 clove garlic
+1 cup water
+3/4 cup pork blood
+1/2 cup cane vinegar
+2 long green chili pepper
+2 tsp brown sugar
+1 tbsp fish sauce
+1/2 tsp salt
+SOURCE: https://www.recipesbynora.com/wprm_print/dinuguan-recipe-pork-blood-stew, https://panlasangpinoy.com/wprm_print/dinuguan-recipe, https://www.bitemybun.com/wprm_print/pork-dinuguan-recipe
+
+
+
+Embutido
+ID: embutido_
+AKA: Filipino meatloaf", "Pork embutido
+Servings: 12
+3 lb ground pork
+1 large carrot
+1 large onion
+1 large red bell pepper
+3/4 cup sweet pickle relish
+1/2 cup raisins
+1.5 cup shredded cheddar cheese
+3 large egg
+2 cup breadcrumbs
+1 tsp salt
+1/2 tsp black pepper
+SOURCE: https://panlasangpinoy.com/wprm_print/pork-embutido, https://www.recipesbynora.com/wprm_print/embutido-recipe-filipino-meatloaf, https://www.rivertenkitchen.com/wprm_print/pork-embutido-recipe
+
+
+
+Pork Giniling
+ID: pork_giniling
+AKA: Giniling", "Giniling na baboy", "Ground pork with potatoes
+Servings: 6
+1.25 lb ground pork
+1 tbsp vegetable oil
+1 small onion
+2 clove garlic
+1/2 cup tomato sauce
+1.5 tbsp soy sauce
+1 cup water
+1 large potato
+1 large carrot
+1 red bell pepper
+1/4 cup raisins
+1/2 tsp salt
+1/4 tsp black pepper
+SOURCE: https://www.foxyfolksy.com/wprm_print/22406, https://www.bitemybun.com/pork-giniling-recipe/, https://www.kawalingpinoy.com/wprm_print/recipe/26972
+
+
+
+Kinilaw
+ID: kinilaw_
+AKA: Kilawin", "Kinilaw na isda", "Kinilaw na tuna", "Filipino ceviche
+Servings: 4
+1.25 lb sashimi-grade tuna
+1/4 cup cane vinegar
+1/4 cup lemon juice
+1 tbsp minced ginger
+1/2 cup chopped red onion
+6 Thai chili pepper
+1.5 tsp salt
+1/2 tsp black pepper
+SOURCE: https://www.bitemybun.com/wprm_print/kinilaw-na-isda-recipe-fish-ceviche, https://www.masarap.ph/kinilaw-na-isda-filipino-ceviche/, https://panlasangpinoy.com/wprm_print/kinilaw-na-tuna
+
+
+
+Tortang Talong
+ID: tortang_talong
+AKA: Eggplant omelette", "Filipino eggplant omelette", "Torta
+Servings: 2
+3 cup cubed eggplant
+2 large egg
+1/4 tsp salt
+1/8 tsp black pepper
+2 tbsp vegetable oil
+SOURCE: https://iankewks.com/tortang-talong/, https://www.rivertenkitchen.com/wprm_print/tortang-talong-recipe-filipino-eggplant-omelette, https://www.sbs.com.au/food/recipe/eggplant-omelette-tortang-talong/8o4wdazqk
+
+
+
+Ginisang Monggo
+ID: ginisang_monggo
+AKA: Monggo", "Munggo", "Mung bean stew", "Monggo guisado
+Servings: 4
+1.25 cup dried mung beans
+8 oz pork belly
+2 tbsp vegetable oil
+4 clove garlic
+1 medium onion
+3 medium tomato
+4 cup water
+1 pork bouillon cube
+1.5 tbsp fish sauce
+1 cup moringa leaves
+1 cup spinach
+1/2 cup crushed pork rinds
+SOURCE: https://www.knorr.com/ph/r/ginisang-monggo-recipe.html/175486, https://www.bitemybun.com/wprm_print/easy-ginisang-munggo-mung-bean-stew-recipe, https://panlasangpinoy.com/wprm_print/ginisang-monggo-with-kalabasa
+
+
+
+Tapsilog
+ID: tapsilog_
+AKA: Beef tapa with garlic rice and egg", "Tapa silog
+Servings: 1
+5 slice beef tapa
+1.25 cup garlic fried rice
+1 large egg
+1.5 tsp vegetable oil
+SOURCE: https://panlasangpinoy.com/wprm_print/tapsilog, https://www.bitemybun.com/tapsilog-recipe-beef-tapa-original/, https://www.thelittleepicurean.com/wprm_print/filipino-beef-tapa-tapsilog
+
+
+
+Tocilog
+ID: tocilog_
+AKA: Tosilog", "Tocino with garlic rice and egg", "Tocino silog
+Servings: 1
+5 oz pork tocino
+1 cup garlic fried rice
+1 large egg
+1.5 tsp vegetable oil
+SOURCE: https://norecipes.com/wprm_print/tosilog, https://panlasangpinoy.com/tosilog-recipe/, https://www.sbs.com.au/food/article/this-filipino-breakfast-transports-me-straight-to-manila/87zznkzsz
+
+
+
+Longsilog
+ID: longsilog_
+AKA: Longganisa with garlic rice and egg", "Longsilog breakfast
+Servings: 1
+2 piece longganisa
+1 cup garlic fried rice
+1 large egg
+1.5 tsp vegetable oil
+SOURCE: https://panlasangpinoy.com/wprm_print/longsilog-recipe, https://urbanblisslife.com/wprm_print/longsilog, https://www.cookmunitybyajinomoto.com/recipes/longsilog/
+
+
+
+Bangsilog
+ID: bangsilog_
+AKA: Daingsilog", "Milkfish with garlic rice and egg", "Daing na bangus silog
+Servings: 1
+1 piece daing na bangus
+1.5 cup garlic fried rice
+1 large egg
+1.5 tsp vegetable oil
+SOURCE: https://panlasangpinoy.com/bangsilog-bangus-sinangag-itlog/, https://panlasangpinoy.com/wprm_print/fried-daing-na-bangus-with-garlic-fried-rice-fried-egg-and-pickled-papaya-daing-silog, https://www.recepedia.com/ph/r/morning-cravings-satisfied!-easy-classic-bangsilog.html/253586
+
+
+
+Adobo Fried Rice
+ID: adobo_fried_rice
+AKA: Adobo rice", "Chicken adobo fried rice
+Servings: 4
+2.5 piece chicken adobo
+1.5 tbsp vegetable oil
+2 clove garlic
+4.5 cup cooked long grain white rice
+1 tbsp soy sauce
+1/2 tsp salt
+2 tbsp chopped green onion
+SOURCE: https://www.recipesbynora.com/wprm_print/filipino-adobo-fried-rice, https://urbanblisslife.com/wprm_print/adobo-fried-rice, https://www.manilaspoon.com/wprm_print/adobo-fried-rice
+
+
+
+Arroz Caldo
+ID: arroz_caldo
+AKA: Chicken arroz caldo", "Chicken rice porridge", "Filipino chicken congee", "Lugaw with chicken
+Servings: 6
+1.5 lb bone-in skin-on chicken thigh
+2 tbsp vegetable oil
+9 clove garlic
+1 medium onion
+2 tbsp julienned ginger
+2 tbsp fish sauce
+1.25 cup uncooked glutinous rice
+6 cup chicken broth
+3 large hard-boiled egg
+1/4 cup chopped green onion
+lemon wedge for serving
+SOURCE: https://theforkedspoon.com/wprm_print/arroz-caldo-recipe-filipino-chicken-and-rice-porridge, https://norecipes.com/wprm_print/arroz-caldo-filipino-chicken-porridge, https://www.rivertenkitchen.com/wprm_print/easy-chicken-arroz-caldo
+
+
+
+Champorado
+ID: champorado_
+AKA: Chocolate rice porridge", "Tsampurado", "Chocolate porridge
+Servings: 5
+1 cup uncooked glutinous rice
+5.5 cup water
+5 oz unsweetened baking chocolate
+1/2 cup sugar
+--Serving
+5 tbsp sweetened condensed milk
+SOURCE: https://tarasmulticulturaltable.com/wprm_print/champorado-filipino-chocolate-rice-porridge, https://panlasangpinoy.com/wprm_print/easy-champorado-recipe, https://pepper.ph/recipes/tablea-champorado
+
+
+
+Lumpia Shanghai (Large)
+ID: lumpia_shanghai
+AKA: Lumpiang shanghai", "Lumpia", "Filipino spring rolls", "Pork spring rolls
+Servings: 20
+1 lb ground pork
+1/2 cup minced carrot
+1/2 cup minced onion
+2 tbsp chopped green onion
+1 large egg
+1/2 tsp salt
+1/4 tsp black pepper
+20 lumpia wrapper
+--Absorbed oil
+5 1/4 tbsp vegetable oil
+SOURCE: https://panlasangpinoy.com/wprm_print/lumpiang-shanghai-recipe, https://tasty.co/recipe/lumpia-lumpiang-shanghai, https://www.foxyfolksy.com/lumpiang-shanghai-filipino-spring-rolls/
+
+
+
+Lumpia Shanghai (Small)
+ID: lumpia_shanghai_small
+AKA: Small lumpia", "Small lumpiang shanghai", "Half lumpia", "Cocktail lumpia
+Servings: 40
+1 lb ground pork
+1/2 cup minced carrot
+1/2 cup minced onion
+2 tbsp chopped green onion
+1 large egg
+1/2 tsp salt
+1/4 tsp black pepper
+20 lumpia wrapper
+--Absorbed oil
+5 1/4 tbsp vegetable oil
+SOURCE: https://thequirinokitchen.com/wprm_print/7694, https://www.foxyfolksy.com/lumpiang-shanghai-filipino-spring-rolls/, https://lemonsandanchovies.com/wprm_print/lumpiang-shanghai-filipino-fried-spring-rolls
+
+
+
+Atchara
+ID: atchara_
+AKA: Achara", "Atsara", "Pickled green papaya", "Papaya relish
+Servings: 24
+4 cup shredded green papaya
+1 cup julienned carrot
+1/2 cup sliced red bell pepper
+1/4 cup sliced onion
+1 tbsp julienned ginger
+4 clove garlic
+--Absorbed brine
+2/3 cup vinegar
+1/2 cup sugar
+1/2 tsp salt
+SOURCE: https://lemonsandanchovies.com/wprm_print/atchara-filipino-pickled-green-papaya, https://www.hungryhuy.com/atchara-pickled-papaya/, https://kitchenconfidante.com/wprm_print/achara-filipino-green-papaya-relish
+
+
+
+Water Spinach Adobo
+ID: water_spinach_adobo
+AKA: Adobong kangkong", "Kangkong adobo
+Servings: 4
+2 tbsp vegetable oil
+4 clove garlic
+1 small onion
+8 cup chopped water spinach
+2 tbsp soy sauce
+2 tbsp cane vinegar
+1/4 cup water
+1/4 tsp black pepper
+SOURCE: https://www.pepper.ph/recipes/adobong-kangkong, https://panlasangpinoy.com/wprm_print/adobong-kangkong-recipe, https://www.bitemybun.com/adobong-kangkong-recipe/
+
+
+
+Laing
+ID: laing_
+AKA: Taro leaves in coconut milk", "Ginataang laing", "Pinangat
+Servings: 6
+3 oz dried taro leaves
+4.75 cup coconut milk
+1.5 cup coconut cream
+1/3 cup sauteed shrimp paste
+6 oz pork shoulder
+1 medium onion
+6 clove garlic
+1/3 cup sliced ginger
+6 Thai chili pepper
+SOURCE: https://panlasangpinoy.com/wprm_print/48888, https://www.foxyfolksy.com/wprm_print/11486, https://www.bitemybun.com/laing-recipe-taro-leaves-in-coconut-milk/
+
+
+
+Chop Suey
+ID: chop_suey
+AKA: Chopsuey", "Filipino chop suey", "Filipino chopsuey
+Servings: 4
+10 oz pork shoulder
+2 tbsp vegetable oil
+1 medium onion
+4 clove garlic
+1 medium carrot
+2 cup cauliflower florets
+1 cup broccoli florets
+1 red bell pepper
+3 cup chopped cabbage
+1.5 tbsp oyster sauce
+2 tsp soy sauce
+3/4 cup water
+1 tbsp cornstarch
+SOURCE: https://panlasangpinoy.com/wprm_print/chopsuey-with-quail-eggs, https://www.manilaspoon.com/wprm_print/how-to-cook-chopsuey, https://tasty.co/recipe/filipino-home-style-chop-suey
+
+
+
+Tokwa't Baboy
+ID: tokwa_t_baboy
+AKA: Tofu and pork", "Tokwat baboy", "Fried tofu and pork in vinegar sauce
+Servings: 6
+1.5 lb pork belly
+20 oz firm tofu
+--Sauce
+1.5 cup cane vinegar
+1/4 cup soy sauce
+1.5 tsp sugar
+1 small red onion
+2 clove garlic
+2 Thai chili pepper
+2 tbsp chopped green onion
+--Absorbed oil
+2 tbsp vegetable oil
+SOURCE: https://www.bitemybun.com/wprm_print/tokwat-baboy-recipe, https://www.recipesbynora.com/wprm_print/tokwat-baboy-recipe-fried-tofu-and-pork, https://www.kawalingpinoy.com/wprm_print/tokwat-baboy
+
+
+
+Kwek-Kwek
+ID: kwek_kwek
+AKA: Kwek kwek", "Battered quail eggs", "Tokneneng
+Servings: 16
+16 quail egg
+1 cup all-purpose flour
+3 tbsp cornstarch
+3/4 cup water
+1 tbsp annatto powder
+1/2 tsp salt
+1/2 tsp black pepper
+--Absorbed oil
+5 tbsp vegetable oil
+SOURCE: https://panlasangpinoy.com/wprm_print/kwek-kwek-recipe, https://www.iankewks.com/kwek-kwek-filipino-battered-eggs/, https://asianinspirations.com.au/recipes/deep-fried-quail-eggs-kwek-kwek/
+
+
+
+Lumpiang Sariwa
+ID: lumpiang_sariwa
+AKA: Fresh lumpia", "Fresh spring rolls", "Filipino fresh lumpia
+Servings: 12
+--Filling
+3 tbsp vegetable oil
+1 medium onion
+2 clove garlic
+4 oz shrimp
+1 cup diced carrot
+1.5 cup diced sweet potato
+1 cup cut green beans
+2 cup chopped cabbage
+2 tbsp fish sauce
+--Wrapper
+1 cup cornstarch
+3 large egg
+1.5 cup water
+2 tsp vegetable oil
+--Sauce
+1/2 cup brown sugar
+2 tbsp soy sauce
+2 cup water
+1.5 tbsp cornstarch
+1 tbsp minced garlic
+--Assembly
+12 leaf green leaf lettuce
+3/4 cup crushed peanuts
+SOURCE: https://panlasangpinoy.com/wprm_print/lumpiang-sariwa-with-fresh-lumpia-wrapper, https://thequirinokitchen.com/wprm_print/lumpiang-sariwa-filipino-fresh-vegetable-lumpia-with-homemade-wrapper-and-sweet-sauce, https://www.kawalingpinoy.com/wprm_print/lumpiang-sariwa
+
+
+
+Ginataang Kalabasa at Sitaw
+ID: ginataang_kalabasa_at_sitaw
+AKA: Squash and long beans in coconut milk", "Ginataang sitaw at kalabasa", "Ginataang gulay
+Servings: 4
+3 oz pork belly
+2 tbsp vegetable oil
+1 small onion
+3 clove garlic
+3.5 cup cubed kabocha squash
+2 cup coconut milk
+2 cup cut yardlong beans
+1/2 tsp salt
+1/4 tsp black pepper
+SOURCE: https://panlasangpinoy.com/wprm_print/ginataang-kalabasa-at-sitaw, https://www.bitemybun.com/ginataang-sitaw-at-kalabasa-recipe, https://www.knorr.com/ph/r/ginataang-sitaw-at-kalabasa-recipe.html/214415
+
+
+
+Ensaladang Talong
+ID: ensaladang_talong
+AKA: Grilled eggplant salad", "Filipino eggplant salad", "Eggplant salad
+Servings: 4
+7 cup cubed eggplant
+2 medium tomato
+1 small red onion
+2 stalk green onion
+1 Thai chili pepper
+1/4 cup cane vinegar
+1 tbsp fish sauce
+SOURCE: https://foodwise.org/recipe/ensaladang-talong-filipino-eggplant-salad, https://www.bitemybun.com/wprm_print/ensaladang-talong-recipe-eggplant-salad, https://simplybakings.com/wprm_print/ensaladang-talong
+
+
+
+Pancit Bihon
+ID: pancit_bihon
+AKA: Bihon", "Pancit bihon guisado", "Pancit guisado", "Rice noodle stir-fry
+Servings: 6
+4 tbsp vegetable oil
+5 clove garlic
+1 medium onion
+8 oz boneless skinless chicken thigh
+4 oz shrimp
+2 stalk celery
+3/4 cup julienned carrot
+2 cup cut green beans
+3 cup shredded cabbage
+5 tbsp soy sauce
+4 cup chicken broth
+3.5 cup cooked rice vermicelli
+1/4 tsp black pepper
+lemon wedge for serving
+SOURCE: https://panlasangpinoy.com/wprm_print/51154, https://thequirinokitchen.com/wprm_print/pancit-bihon-guisado, https://www.krumpli.co.uk/pancit-bihon/
+
+
+
+Pancit Canton
+ID: pancit_canton
+AKA: Canton", "Pancit canton guisado", "Filipino stir-fried egg noodles
+Servings: 6
+2 tbsp vegetable oil
+8 oz pork belly
+4 oz shrimp
+3 clove garlic
+1 small onion
+1 medium carrot
+1 cup cut green beans
+2 cup shredded cabbage
+1.5 cup chicken broth
+1.5 tbsp soy sauce
+2 tsp fish sauce
+5 cup cooked egg noodles
+lemon wedge for serving
+SOURCE: https://www.recipesbynora.com/wprm_print/pancit-canton-recipe-filipino-stir-fried-noodles, https://thequirinokitchen.com/filipino-pancit-canton-thick-egg-noodles-sauteed-with-chicken-and-vegetables/, https://www.manilaspoon.com/wprm_print/how-to-make-pancit-canton-easy-recipe
+
+
+
+Pancit Palabok
+ID: pancit_palabok
+AKA: Palabok", "Rice noodles with shrimp sauce", "Pancit luglug
+Servings: 6
+3 cup cooked rice vermicelli
+--Sauce
+4 tbsp vegetable oil
+1/3 cup minced garlic
+1/3 cup minced onion
+1 tsp annatto powder
+3 cup water
+1 shrimp bouillon cube
+2.5 tbsp cornstarch
+2 tsp fish sauce
+--Toppings
+8 oz pork belly
+7 oz shrimp
+1.5 oz smoked fish
+3/4 cup crushed pork rinds
+3 large hard-boiled egg
+3 stalk green onion
+lemon wedge for serving
+SOURCE: https://www.hungryhuy.com/pancit-palabok/, https://pepper.ph/recipes/best-pancit-palabok, https://www.rivertenkitchen.com/wprm_print/pancit-palabok-with-easy-sauce-recipe
+
+
+
+Filipino Spaghetti
+ID: filipino_spaghetti
+AKA: Sweet spaghetti", "Pinoy spaghetti", "Filipino-style spaghetti
+Servings: 6
+2 tbsp vegetable oil
+6 hot dog
+1 large onion
+4 clove garlic
+1.25 lb ground pork
+3 cup tomato sauce
+1/4 cup tomato paste
+1 cup banana ketchup
+1 tbsp brown sugar
+1 tsp salt
+1/2 tsp black pepper
+9.5 cup cooked spaghetti
+1 cup shredded cheddar cheese
+SOURCE: https://tarasmulticulturaltable.com/wprm_print/filipino-spaghetti, https://theunlikelybaker.com/wprm_print/filipino-style-spaghetti, https://www.marionskitchen.com/filipino-spaghetti/
+
+
+
+La Paz Batchoy
+ID: la_paz_batchoy
+AKA: Batchoy", "Batsoy", "Pork noodle soup
+Servings: 6
+1 lb boneless pork shoulder
+4 oz pork liver
+2 tbsp vegetable oil
+1 medium onion
+10 clove garlic
+1 tbsp sauteed shrimp paste
+1 tbsp sugar
+1.5 tsp salt
+7 cup water
+3.5 cup cooked egg noodles
+1 cup crushed pork rinds
+3 tbsp chopped green onion
+SOURCE: https://www.bitemybun.com/wprm_print/recipe/9736, https://www.saveur.com/filipino-pork-noodle-soup-recipe, https://panlasangpinoy.com/wprm_print/batchoy-recipe-2
+
+
+
+Pancit Malabon
+ID: pancit_malabon
+AKA: Malabon noodles", "Pancit Malabon with seafood
+Servings: 9
+7 cup cooked rice noodles
+--Sauce
+1/4 cup vegetable oil
+1 tbsp annatto powder
+10 clove garlic
+1 medium onion
+1 lb ground pork
+6 cup water
+1 shrimp bouillon cube
+1/4 cup cornstarch
+1.5 tbsp fish sauce
+--Toppings
+10 oz shrimp
+8 oz squid
+2.5 oz smoked fish
+1 cup crushed pork rinds
+1 cup shredded napa cabbage
+3 large hard-boiled egg
+1/4 cup chopped green onion
+lemon wedge for serving
+SOURCE: https://panlasangpinoy.com/wprm_print/pancit-malabon, https://www.recipesbynora.com/pancit-malabon-recipe/, https://www.rivertenkitchen.com/wprm_print/pancit-malabon
+
+
+
+Leche Flan
+ID: leche_flan
+AKA: Filipino leche flan", "Caramel custard", "Filipino flan
+Servings: 12
+9 tbsp sugar
+10 large egg yolk
+1 cup sweetened condensed milk
+1.5 cup evaporated milk
+1 tsp vanilla extract
+SOURCE: https://www.kawalingpinoy.com/wprm_print/leche-flan, https://www.foxyfolksy.com/wprm_print/11696, https://www.iankewks.com/leche-flan/
+
+
+
+Halo-Halo
+ID: halo_halo
+AKA: Halo halo", "Filipino shaved ice dessert", "Mixed shaved ice
+Servings: 1
+1 cup shaved ice
+2 tbsp red bean paste
+2 tbsp coconut gel
+2 tbsp sugar palm fruit
+1 tbsp macapuno
+1 tsp sweetened jackfruit
+1 tsp sweetened plantain
+1 tsp cooked tapioca pearls
+1 tbsp purple yam jam
+1 tbsp caramel flan
+1/4 cup evaporated milk
+1/2 cup vanilla ice cream
+SOURCE: https://www.foodnetwork.com/recipes/halo-halo-filipino-mixed-fruit-dessert-recipe-1955553, https://www.foxyfolksy.com/wprm_print/recipe/16282, https://www.kawalingpinoy.com/wprm_print/43922
+
+
+
+Turon
+ID: turon_
+AKA: Banana lumpia", "Banana spring roll", "Turon na saging
+Servings: 12
+4 saba banana
+1 cup sliced jackfruit
+1/2 cup brown sugar
+12 lumpia wrapper
+1/2 cup sugar
+--Absorbed oil
+7 tbsp vegetable oil
+SOURCE: https://www.hungryhuy.com/turon-recipe/, https://www.thelittleepicurean.com/wprm_print/turon-filipino-fried-banana-rolls, https://urbanblisslife.com/wprm_print/turon-banana-lumpia
+
+
+
+Banana Cue
+ID: banana_cue
+AKA: Banana-Q", "Bananacue", "Caramelized fried plantain skewer
+Servings: 6
+12 saba banana
+1 cup brown sugar
+--Absorbed oil
+4.5 tbsp vegetable oil
+SOURCE: https://panlasangpinoy.com/wprm_print/bananacue-recipe, https://simplybakings.com/wprm_print/classic-banana-cue, https://www.foxyfolksy.com/wprm_print/29574
+
+
+
+Biko
+ID: biko_
+AKA: Sweet sticky rice cake", "Bibingkang malagkit", "Biko with latik
+Servings: 9
+2 cup uncooked glutinous rice
+3.25 cup coconut milk
+1.5 cup water
+2 cup brown sugar
+1/2 tsp salt
+SOURCE: https://www.hungryhuy.com/biko-filipino-rice-cake/, https://www.foxyfolksy.com/wprm_print/11792, https://panlasangpinoy.com/wprm_print/biko-with-latik
+
+
+
+Bibingka
+ID: bibingka_
+AKA: Coconut rice cake", "Bibingkang galapong", "Filipino baked rice cake
+Servings: 6
+1 cup rice flour
+2.5 tsp baking powder
+1/8 tsp salt
+3 tbsp butter
+1/2 cup sugar
+3 large egg
+1 cup coconut milk
+1/4 cup whole milk
+--Toppings
+1 salted duck egg
+1/2 cup shredded cheddar cheese
+1/4 cup grated coconut
+SOURCE: https://panlasangpinoy.com/wprm_print/bibingka-recipe, https://www.hungryhuy.com/bibingka/, https://www.knorr.com/ph/r/bibingka-recipe.html/110360
+
+
+
+Puto
+ID: puto_
+AKA: Steamed rice cake", "Filipino steamed rice cake", "Puto puti
+Servings: 18
+2 cup rice flour
+3/4 cup sugar
+4 tsp baking powder
+1/4 tsp salt
+1 cup coconut milk
+1 cup water
+SOURCE: https://www.hungryhuy.com/puto-filipino-steamed-rice-cakes/, https://jeanelleats.com/wprm_print/puto, https://www.kawalingpinoy.com/wprm_print/puto
+
+
+
+Buko Pandan
+ID: buko_pandan
+AKA: Buko pandan salad", "Young coconut pandan salad", "Buko pandan dessert
+Servings: 6
+2 cup young coconut strips
+1.5 cup all purpose cream
+1/3 cup sweetened condensed milk
+--Pandan jelly
+1.5 cup water
+1/4 cup sugar
+1 tbsp unflavored gelatin
+SOURCE: https://panlasangpinoy.com/buko-pandan-dessert-recipe/, https://www.rivertenkitchen.com/wprm_print/buko-pandan-recipe-extra-creamy, https://asiasociety.org/philippines/kulinarya-favorites-buko-pandan-gelatin
+
+
+
+Cassava Cake
+ID: cassava_cake
+AKA: Cassava bibingka", "Bibingkang kamoteng kahoy
+Servings: 15
+2 lb grated cassava
+2.75 cup coconut milk
+1.5 cup evaporated milk
+1.75 cup sweetened condensed milk
+4 large egg
+1/4 cup butter
+7 tbsp sugar
+2 tbsp all-purpose flour
+1/2 cup shredded cheddar cheese
+SOURCE: https://panlasangpinoy.com/wprm_print/cassava-cake, https://www.tastingtable.com/644307/soft-cassava-cake-recipe/?mode=print, https://www.notquitenigella.com/2026/02/16/cassava-cake/print/
+
+
+
+Mango Float
+ID: mango_float
+AKA: Mango graham cake", "Mango graham float", "Mango icebox cake
+Servings: 10
+4.5 whole mango
+3 cup heavy cream
+3/4 cup sweetened condensed milk
+1 tsp vanilla extract
+21 graham cracker
+SOURCE: https://tasty.co/recipe/mango-float, https://iankewks.com/classic-mango-float, https://tastingtable.com/1805972/no-bake-filipino-mango-float-recipe
+
+
+
+Taho
+ID: taho_
+AKA: Silken tofu with sago and syrup", "Filipino tofu pudding", "Taho dessert
+Servings: 3
+22 oz silken tofu
+1/2 cup small pearl tapioca
+1 cup brown sugar syrup
+SOURCE: https://panlasangpinoy.com/filipino-street-food-homemade-taho-recipe/, https://www.hungryhuy.com/filipino-taho-recipe/, https://www.iankewks.com/taho-filipino-tofu-dessert/
+
+
+
+Maja Blanca
+ID: maja_blanca
+AKA: Coconut corn pudding", "Maja blanca con mais", "Maja
+Servings: 8
+3.5 cup coconut milk
+3/4 cup whole milk
+1/2 cup sweetened condensed milk
+1/2 cup sugar
+1.25 cup cream-style corn
+1 cup sweet corn kernels
+3/4 cup cornstarch
+1/4 cup toasted coconut
+SOURCE: https://panlasangpinoy.com/wprm_print/maja-blanca, https://www.rivertenkitchen.com/wprm_print/maja-blanca-recipe, https://www.recipesbynora.com/wprm_print/maja-blanca-recipe
+
+
+
+Kutsinta
+ID: kutsinta_
+AKA: Cuchinta", "Brown rice cake", "Filipino steamed brown sugar cake
+Servings: 24
+3/4 cup all-purpose flour
+1/4 cup tapioca flour
+3/4 cup brown sugar
+1.5 cup water
+1.5 tsp lye water
+1.5 tsp annatto powder
+SOURCE: https://www.foxyfolksy.com/kutsinta/, https://www.kawalingpinoy.com/wprm_print/kutsinta, https://jeanelleats.com/how-to-make-kutsinta-recipe-filipino-steamed-rice-cakes-filipino-desserts/
+
+
+
+Ginataang Bilo-Bilo
+ID: ginataang_bilo_bilo
+AKA: Bilo-bilo", "Bilo bilo", "Sticky rice balls in coconut milk", "Ginataan
+Servings: 8
+2.5 cup glutinous rice flour
+1 cup water
+4 cup coconut milk
+1 cup coconut cream
+1 cup sugar
+1 cup sliced jackfruit
+2 cup cubed sweet potato
+2 cup diced plantain
+1/3 cup small pearl tapioca
+SOURCE: https://www.kawalingpinoy.com/wprm_print/ginataang-bilo-bilo, https://www.rivertenkitchen.com/wprm_print/special-ginataang-bilo-bilo, https://www.hawaiianelectric.com/recipes/find-a-recipe/ginataang-bilo-bilo-(sticky-rice-balls-in-coconut-milk)
+
+
+
+Polvoron
+ID: polvoron_
+AKA: Filipino shortbread", "Pinipig polvoron
+Servings: 13
+1 cup all-purpose flour
+1/2 cup powdered whole milk
+6 tbsp sugar
+10 tbsp butter
+2 tbsp toasted rice flakes
+SOURCE: https://panlasangpinoy.com/wprm_print/polvoron-recipe-2, https://www.thelittleepicurean.com/wprm_print/filipino-polvoron, https://usa.inquirer.net/3261/look-pinipig-polvoron-recipe-goldilocks-bakebook
+
+
+
+Sago't Gulaman
+ID: sago_t_gulaman
+AKA: Sago at gulaman", "Sago gulaman", "Samalamig
+Servings: 6
+1.25 cup brown sugar syrup
+2/3 cup small pearl tapioca
+--Gulaman
+1.5 cup water
+1 tbsp agar powder
+3 tbsp sugar
+--Drink
+5 cup water
+2 cup crushed ice
+SOURCE: https://www.foxyfolksy.com/sagot-gulaman/, https://www.kawalingpinoy.com/wprm_print/sago-at-gulaman, https://panlasangpinoy.com/wprm_print/sago-at-gulaman-recipe
+
+
+
+Calamansi Juice
+ID: calamansi_juice
+AKA: Kalamansi juice", "Calamansi drink", "Philippine lime juice
+Servings: 4
+2/3 cup calamansi juice
+1/2 cup sugar
+2 2/3 cup water
+2 cup ice
+SOURCE: https://www.greedygirlgourmet.com/wprm_print/calamansi-juice-filippino-lemonade, https://nourishedkitchen.com/wprm_print/calamansi-juice-recipe, https://www.foxyfolksy.com/calamansi-juice/
+
+
+
+Salabat
+ID: salabat_
+AKA: Ginger tea", "Filipino ginger tea
+Servings: 4
+4 cup water
+2 tbsp sliced ginger
+2 tbsp honey
+lemon wedge for serving
+SOURCE: https://maeservesyoufood.com/wprm_print/filipino-salabat-homemade-ginger-tea, https://simplybakings.com/wprm_print/how-to-make-salabat, https://kitchenconfidante.com/wprm_print/homemade-fresh-ginger-tea-filipino-salabat
+
+
+
+Mango Shake
+ID: mango_shake
+AKA: Filipino mango shake", "Mango smoothie
+Servings: 1
+1 whole mango
+2 tbsp evaporated milk
+2 tbsp sugar
+3/4 cup ice
+1/4 cup water
+SOURCE: https://www.kawalingpinoy.com/wprm_print/mango-shake, https://simplybakings.com/wprm_print/filipino-mango-shake, https://rezelkealoha.com/wprm_print/filipino-mango-shake
+
+
+
+Tsokolate
+ID: tsokolate_
+AKA: Filipino hot chocolate", "Sikwate", "Tablea hot chocolate
+Servings: 2
+3 oz unsweetened baking chocolate
+2 cup water
+2 tbsp sugar
+SOURCE: https://damecacao.com/wprm_print/tablea-sikwate-filipino-hot-chocolate, https://www.recipesbynora.com/filipino-hot-chocolate-with-tablea/, https://www.kawalingpinoy.com/wprm_print/tsokolate

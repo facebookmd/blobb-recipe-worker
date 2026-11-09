@@ -1,0 +1,940 @@
+Category: Italian
+
+
+
+Bolognese Sauce
+ID: bolognese_sauce
+AKA: Ragu alla bolognese", "Bolognese", "Bolognese meat sauce", "Ragu
+Servings: 12
+Serving size: 1/2 cup
+2 tbsp olive oil
+2 tbsp butter
+1 medium onion
+1 medium carrot
+1 stalk celery
+4 oz pancetta
+1.5 lb ground beef
+1 cup dry red wine
+1 cup whole milk
+2 cup tomato puree
+2 tbsp tomato paste
+1 cup chicken broth
+1.5 tsp salt
+1/4 tsp black pepper
+SOURCE: https://bitingatthebits.com/ragu-alla-bolognese/print/13294/, https://www.saveur.com/recipes/bolognese-sauce-recipe/, https://www.beyondkimchee.com/wprm_print/classic-italian-ragu-bolognese-sauce
+
+
+
+Italian Meatballs
+ID: italian_meatballs
+AKA: Meatballs", "Meatball", "Polpette
+Servings: 30
+Serving size: 1 piece
+1 lb ground beef
+8 oz ground pork
+2/3 cup breadcrumbs
+1/3 cup whole milk
+1 large egg
+1/3 cup grated parmesan
+1/3 cup chopped onion
+2 clove garlic
+2 tbsp chopped parsley
+1 tsp Italian seasoning
+1 tsp salt
+1/4 tsp black pepper
+1 tbsp olive oil
+SOURCE: https://www.kowalskis.com/recipes/main-dishes/meatballs, https://grantourismotravels.com/wprm_print/best-meatballs-recipe-for-the-tastiest-juiciest-italian-style-meatballs, https://poshjournal.com/wprm_print/ground-beef-italian-meatballs
+
+
+
+Chicken Milanese
+ID: chicken_milanese
+AKA: Chicken cutlet", "Breaded chicken cutlet", "Cotoletta di pollo
+Servings: 6
+Serving size: 1 piece
+1.5 lb boneless skinless chicken breast
+1 tsp salt
+1/2 tsp black pepper
+1/2 cup all-purpose flour
+2 large egg
+1.25 cup breadcrumbs
+1/4 cup grated parmesan
+1/2 cup olive oil for frying
+lemon wedge for serving
+SOURCE: https://www.themediterraneandish.com/chicken-milanese/, https://www.aheadofthyme.com/chicken-milanese/, https://thecookful.com/chicken-milanese/print/67366/
+
+
+
+Minestrone
+ID: minestrone_
+AKA: Minestrone soup", "Italian vegetable soup
+Servings: 6
+2 tbsp olive oil
+1 medium onion
+2 medium carrot
+2 stalk celery
+3 clove garlic
+1 medium yukon gold potato
+1 tbsp tomato paste
+1.75 cup canned diced tomatoes
+6 cup vegetable broth
+1 cup chopped green beans
+1.5 cup canned cannellini beans
+1 cup uncooked ditalini
+2 cup chopped kale
+3/4 tsp salt
+1/4 tsp black pepper
+1/4 cup grated parmesan
+SOURCE: https://familystylefood.com/classic-minestrone-soup-recipe/, https://gatheringdreams.com/classic-italian-minestrone-soup/, https://asimplepalate.com/blog/hearty-italian-minestrone-soup/
+
+
+
+Italian Wedding Soup
+ID: italian_wedding_soup
+AKA: Wedding soup", "Minestra maritata
+Servings: 6
+--Meatballs
+8 oz ground beef
+8 oz ground pork
+1/3 cup breadcrumbs
+1/3 cup grated parmesan
+1 large egg
+2 tbsp chopped parsley
+1 tsp salt
+1/4 tsp black pepper
+--Soup
+2 tbsp olive oil
+1 medium onion
+1 large carrot
+2 stalk celery
+3 clove garlic
+9 cup chicken broth
+1 cup uncooked acini di pepe
+5 cup baby spinach
+SOURCE: https://www.spendwithpennies.com/italian-wedding-soup/, https://scarlatifamilykitchen.com/italian-wedding-soup/, https://grantourismotravels.com/wprm_print/italian-wedding-soup-recipe-for-the-italian-american-meatball-soup-americans-fell-in-love-with
+
+
+
+Pasta e Fagioli
+ID: pasta_e_fagioli
+AKA: Pasta fagioli", "Pasta and bean soup", "Pasta fazool
+Servings: 6
+2 tbsp olive oil
+3 oz pancetta
+1 medium onion
+1 medium carrot
+1 stalk celery
+2 clove garlic
+1 tsp chopped rosemary
+1 cup canned crushed tomatoes
+4.5 cup chicken broth
+3 cup canned cannellini beans
+1.25 cup uncooked ditalini
+1/4 cup grated parmesan
+3/4 tsp salt
+1/4 tsp black pepper
+SOURCE: https://www.marcellinaincucina.com/authentic-italian-pasta-e-fagioli-recipe/, https://www.cucinabyelena.com/authentic-italian-pasta-e-fagioli-recipe-soup/, https://asimplepalate.com/blog/authentic-pasta-e-fagioli/
+
+
+
+Ribollita
+ID: ribollita_
+AKA: Tuscan bread soup", "Tuscan bean and bread soup
+Servings: 6
+1/4 cup olive oil
+1 medium onion
+1 medium carrot
+1 stalk celery
+3 clove garlic
+1 medium russet potato
+1 cup canned diced tomatoes
+1 tbsp tomato paste
+4 cup canned cannellini beans
+4 cup chopped kale
+3 cup shredded savoy cabbage
+6 cup vegetable broth
+10 slice Italian bread
+1/4 cup grated parmesan
+1 tsp salt
+1/4 tsp black pepper
+SOURCE: https://grantourismotravels.com/ribollita-soup-recipe/, https://www.visittuscany.com/en/recipes/ribollita/, https://www.greatitalianchefs.com/recipes/ribollita-recipe
+
+
+
+Stracciatella Soup
+ID: stracciatella_soup
+AKA: Stracciatella", "Stracciatella alla romana", "Italian egg drop soup
+Servings: 4
+6 cup chicken broth
+4 large egg
+1/2 cup grated parmesan
+3 tbsp semolina flour
+1/8 tsp ground nutmeg
+1/2 tsp salt
+1/4 tsp black pepper
+lemon wedge for serving
+SOURCE: https://umamigirl.com/wprm_print/stracciatella-alla-romana-italian-egg-drop-soup/, https://www.recipesfromitaly.com/wprm_print/stracciatella-alla-romana-recipe, https://memoriediangelina.com/wprm_print/16915
+
+
+
+Chicken Parmesan
+ID: chicken_parmesan
+AKA: Chicken parm", "Chicken parmigiana", "Pollo alla parmigiana
+Servings: 4
+5 piece chicken milanese
+1.25 cup marinara sauce
+1.25 cup shredded mozzarella
+2 tbsp grated parmesan
+basil leaf for garnish
+SOURCE: https://preppykitchen.com/wprm_print/chicken-parmesan-recipe, https://www.justataste.com/wprm_print/best-chicken-parmesan, https://howtofeedaloon.com/wprm_print/chicken-parmesan-parmigiana
+
+
+
+Eggplant Parmesan
+ID: eggplant_parmesan
+AKA: Eggplant parm", "Parmigiana di melanzane", "Melanzane alla parmigiana", "Aubergine parmigiana
+Servings: 6
+2 medium eggplant
+1 tsp salt
+1/4 tsp black pepper
+2/3 cup all-purpose flour
+2 large egg
+1.5 cup breadcrumbs
+3 cup marinara sauce
+2 cup shredded mozzarella
+1/2 cup grated parmesan
+2 cup vegetable oil for frying
+basil leaf for garnish
+SOURCE: https://www.thepetitecook.com/parmigiana-di-melanzane/, https://simplyhomecooked.com/wprm_print/baked-eggplant-parmesan, https://natashaskitchen.com/wprm_print/classic-eggplant-parmesan-recipe
+
+
+
+Chicken Piccata
+ID: chicken_piccata
+AKA: Pollo piccata", "Lemon caper chicken
+Servings: 4
+1.25 lb boneless skinless chicken breast
+3/4 tsp salt
+1/4 tsp black pepper
+1/3 cup all-purpose flour
+3 tbsp olive oil
+3 tbsp butter
+2 clove garlic
+1/4 cup dry white wine
+3/4 cup chicken broth
+3 tbsp lemon juice
+2 tbsp capers
+2 tbsp chopped parsley
+lemon slice for garnish
+SOURCE: https://natashaskitchen.com/chicken-piccata-recipe/, https://twopeasandtheirpod.com/wprm_print/chicken-piccata, https://houseofnasheats.com/chicken-piccata-recipe/
+
+
+
+Chicken Marsala
+ID: chicken_marsala
+AKA: Pollo al marsala
+Servings: 4
+1.5 lb boneless skinless chicken breast
+3/4 tsp salt
+1/4 tsp black pepper
+1/3 cup all-purpose flour
+2 tbsp olive oil
+3 tbsp butter
+3 cup sliced white mushrooms
+2 tbsp chopped shallot
+2 clove garlic
+2/3 cup marsala wine
+3/4 cup chicken broth
+2 tbsp chopped parsley
+SOURCE: https://www.daringgourmet.com/wprm_print/chicken-marsala, https://iamhomesteader.com/wprm_print/chicken-marsala, https://easychickenrecipes.com/wprm_print/easy-chicken-marsala-recipe
+
+
+
+Chicken Cacciatore
+ID: chicken_cacciatore
+AKA: Pollo alla cacciatora", "Hunter's chicken
+Servings: 4
+8 bone-in skin-on chicken thigh
+1 tsp salt
+1/2 tsp black pepper
+5 tbsp olive oil
+1 large onion
+1 medium red bell pepper
+1 medium carrot
+1 stalk celery
+2 clove garlic
+2/3 cup dry white wine
+3 cup canned crushed tomatoes
+1 cup pitted black olives
+1 sprig rosemary
+SOURCE: https://www.chilipeppermadness.com/wprm_print/chicken-cacciatore-recipe, https://www.sbs.com.au/food/recipe/chicken-cacciatore-pollo-all-cacciatora/3rrwuiepk, https://grantourismotravels.com/chicken-cacciatore-recipe/
+
+
+
+Saltimbocca
+ID: saltimbocca_
+AKA: Saltimbocca alla romana", "Veal saltimbocca
+Servings: 4
+1 lb veal cutlet
+6 slice prosciutto
+1/2 tsp ground sage
+1/2 tsp salt
+1/4 tsp black pepper
+1/4 cup all-purpose flour
+2 tbsp olive oil
+2 tbsp butter
+1/2 cup dry white wine
+SOURCE: https://www.recipesfromitaly.com/wprm_print/saltimbocca-alla-romana-recipe, https://www.sbs.com.au/food/recipe/saltimbocca-alla-romana-con-salvia-fritta/pg8g02l2k, https://www.turismoroma.it/en/page/saltimbocca-alla-romana, https://www.williams-sonoma.com/m/recipe/chicken-saltimbocca.html
+
+
+
+Osso Buco
+ID: osso_buco
+AKA: Ossobuco", "Ossobuco alla milanese", "Braised veal shanks
+Servings: 4
+2.5 lb veal shank
+1 tsp salt
+1/4 tsp black pepper
+1/4 cup all-purpose flour
+3 tbsp olive oil
+2 tbsp butter
+1 large onion
+1 medium carrot
+2 stalk celery
+1 clove garlic
+3/4 cup dry white wine
+1 cup canned diced tomatoes
+1 tbsp tomato paste
+2 cup beef broth
+--Gremolata
+1 tbsp lemon zest
+2 tbsp chopped parsley
+1 clove garlic
+SOURCE: https://www.giangiskitchen.com/ossobuco-alla-milanese-veal-shanks/, https://www.orodiparma.de/en/italian-recipes/ossobuco, https://clevelandmagazine.com/articles/ossobuco-alla-milanese/
+
+
+
+Beef Braciole
+ID: beef_braciole
+AKA: Braciole", "Italian stuffed beef rolls", "Involtini di manzo
+Servings: 6
+1.5 lb flank steak
+3/4 tsp salt
+1/4 tsp black pepper
+--Filling
+1/2 cup breadcrumbs
+1/2 cup grated parmesan
+1/2 cup grated pecorino romano
+2 clove garlic
+3 tbsp chopped parsley
+2 tbsp pine nuts
+2 tbsp raisins
+--Braise
+1/4 cup olive oil
+1/2 cup dry red wine
+4 cup marinara sauce
+SOURCE: https://www.cucinabyelena.com/wprm_print/italian-beef-braciole-recipe, https://coleycooks.com/sunday-braciole/, https://www.themediterraneandish.com/italian-beef-braciole-stuffed-beef-rolls/
+
+
+
+Sausage and Peppers
+ID: sausage_and_peppers
+AKA: Italian sausage and peppers", "Salsiccia e peperoni", "Sausage peppers and onions
+Servings: 4
+1 lb Italian sausage
+1 tbsp olive oil
+1 medium onion
+1 medium red bell pepper
+1 medium yellow bell pepper
+1 medium green bell pepper
+3 clove garlic
+1.25 cup canned diced tomatoes
+1/4 cup chicken broth
+1 tsp dried oregano
+1/4 tsp red pepper flakes
+1/2 tsp salt
+1/4 tsp black pepper
+SOURCE: https://www.primaverakitchen.com/wprm_print/italian-sausage-peppers-and-onions, https://www.nourish-and-fete.com/wprm_print/saucy-italian-sausage-with-peppers-and-onions, https://www.chilipeppermadness.com/recipes/sausage-and-peppers/
+
+
+
+Margherita Pizza
+ID: margherita_pizza
+AKA: Pizza margherita", "Neapolitan pizza
+Servings: 8
+12 oz pizza dough
+3/4 cup canned crushed tomatoes
+1 tbsp olive oil
+1/4 tsp salt
+8 oz fresh mozzarella
+8 leaf basil
+SOURCE: https://www.surlatable.com/print/recipe/classic-pizza-margherita/REC-283114, https://savvybites.co.uk/wprm_print/easy-margherita-pizza-with-homemade-pizza-dough, https://www.julieseatsandtreats.com/wprm_print/margherita-pizza-recipe
+
+
+
+Pepperoni Pizza
+ID: pepperoni_pizza
+AKA: Pizza with pepperoni
+Servings: 8
+12 oz pizza dough
+1/2 cup pizza sauce
+1.5 cup shredded mozzarella
+2 oz pepperoni
+SOURCE: https://onmykidsplate.com/wprm_print/homemade-pepperoni-pizza, https://www.chiselandfork.com/homemade-pepperoni-pizza/, https://lilluna.com/pepperoni-pizza/
+
+
+
+Calzone
+ID: calzone_
+AKA: Cheese calzone", "Calzoni
+Servings: 4
+1.5 lb pizza dough
+1 cup ricotta cheese
+2 cup shredded mozzarella
+1/4 cup grated parmesan
+1 clove garlic
+1 tbsp olive oil
+--Serving
+1/2 cup marinara sauce
+SOURCE: https://sunset.com/recipe/flexible-calzones, https://carlsbadcravings.com/wprm_print/how-to-make-calzones, https://www.vice.com/en/article/cheese-calzone-recipe/
+
+
+
+Frittata
+ID: frittata_
+AKA: Italian omelette", "Zucchini frittata", "Frittata di zucchine
+Servings: 4
+6 large egg
+1/4 cup grated parmesan
+1 small onion
+1 medium zucchini
+2 tbsp olive oil
+1/2 tsp salt
+1/4 tsp black pepper
+SOURCE: https://www.recipesfromitaly.com/zucchini-and-potato-frittata-recipe/, https://hilltoprecipes.com/frittata/, https://saltandwind.com/wprm_print/zucchini-ricotta-and-herb-frittata-with-prosciutto-recipe
+
+
+
+Mushroom Risotto
+ID: mushroom_risotto
+AKA: Risotto ai funghi", "Risotto with mushrooms
+Servings: 4
+2 tbsp olive oil
+3.5 tbsp butter
+1 small onion
+2 clove garlic
+3.5 cup sliced cremini mushrooms
+1.5 cup uncooked arborio rice
+1/3 cup dry white wine
+4.5 cup chicken broth
+1/2 cup grated parmesan
+1/2 tsp salt
+1/4 tsp black pepper
+1 tbsp chopped parsley
+SOURCE: https://www.tablefortwoblog.com/wprm_print/mushroom-risotto, https://www.foodlandsa.com.au/recipes/mushroom-risotto, https://www.italyabroad.com/recipes/risotto-ai-funghi-porcini-porcini-mushroom-risotto
+
+
+
+Risotto alla Milanese
+ID: risotto_alla_milanese
+AKA: Saffron risotto", "Risotto milanese", "Risotto allo zafferano
+Servings: 4
+5 tbsp butter
+1 small onion
+2 cup uncooked arborio rice
+1/2 cup dry white wine
+5 cup chicken broth
+1/2 tsp saffron threads
+1/2 cup grated parmesan
+1/2 tsp salt
+SOURCE: https://www.themediterraneandish.com/wprm_print/risotto-alla-milanese-saffron-risotto, https://www.sbs.com.au/food/the-cook-up-with-adam-liaw/recipe/risotto-alla-milanese-saffron-risotto/5hxwcqroz, https://www.visititaly.eu/food-and-flavours/risotto-with-saffron-recipe
+
+
+
+Arancini
+ID: arancini_
+AKA: Sicilian rice balls", "Arancine", "Arancini di riso
+Servings: 16
+--Rice
+2 tbsp olive oil
+2 tbsp butter
+2 cup uncooked arborio rice
+1/2 cup dry white wine
+4 cup chicken broth
+3/4 cup grated parmesan
+1 large egg
+--Filling
+2 cup bolognese sauce
+3/4 cup frozen peas
+1/2 cup diced mozzarella
+--Coating
+1/2 cup all-purpose flour
+2 large egg
+1.5 cup breadcrumbs
+--Absorbed oil
+1 cup vegetable oil
+SOURCE: https://www.christinascucina.com/arancini-di-riso-sicilian-italian-rice-balls/, https://www.sbs.com.au/food/recipe/sicilian-arancini/v5ccw4mtc, https://www.notquitenigella.com/2020/11/09/arancini-balls-recipe/print/
+
+
+
+Caprese Salad
+ID: caprese_salad
+AKA: Insalata caprese", "Tomato mozzarella salad
+Servings: 4
+2 large tomato
+8 oz fresh mozzarella
+10 leaf basil
+3 tbsp olive oil
+1/4 tsp salt
+1/8 tsp black pepper
+SOURCE: https://www.christinascucina.com/wprm_print/caprese-salad-recipe-or-tomato-basil-and-mozzarella-salad, https://www.surlatable.com/print/recipe/caprese-salad/REC-320526, https://steenbergs.co.uk/recipes/insalata-caprese-caprese-salad-recipe/
+
+
+
+Bruschetta
+ID: bruschetta_
+AKA: Tomato bruschetta", "Bruschetta al pomodoro
+Servings: 24
+24 slice baguette
+1/4 cup olive oil
+3 clove garlic
+6 medium tomato
+1/4 cup chopped basil
+2 tsp balsamic vinegar
+1/2 tsp salt
+1/8 tsp black pepper
+SOURCE: https://www.thecookierookie.com/wprm_print/classic-bruschetta-recipe, https://www.mygorgeousrecipes.com/wprm_print/italian-tomato-bruschetta-recipe, https://www.recipegirl.com/how-to-make-bruschetta/
+
+
+
+Garlic Bread
+ID: garlic_bread
+AKA: Italian garlic bread", "Pane all'aglio
+Servings: 10
+16 slice Italian bread
+1/2 cup butter
+3 clove garlic
+1/3 cup grated parmesan
+1 tbsp chopped parsley
+1/4 tsp salt
+SOURCE: https://www.simplyscratch.com/wprm_print/67179, https://www.loveandlemons.com/wprm_print/garlic-bread, https://www.americastestkitchen.com/recipes/13788-roasted-garlic-parmesan-bread
+
+
+
+Focaccia
+ID: focaccia_
+AKA: Focaccia bread", "Focaccia genovese", "Rosemary focaccia
+Servings: 10
+3 cup all-purpose flour
+1.5 cup water
+1 tbsp active dry yeast
+1 tsp honey
+1.25 tsp salt
+5 tbsp olive oil
+1 tbsp chopped rosemary
+SOURCE: https://www.italianrecipebook.com/traditional-focaccia/, https://houseofnasheats.com/wprm_print/easy-rosemary-focaccia-bread-2, https://anaffairfromtheheart.com/wprm_print/84222
+
+
+
+Panzanella
+ID: panzanella_
+AKA: Tuscan bread salad", "Bread and tomato salad
+Servings: 6
+9 cup cubed Italian bread
+4 medium tomato
+1 medium cucumber
+1/2 small red onion
+1/2 cup olive oil
+3 tbsp red wine vinegar
+1/4 cup chopped basil
+1/2 tsp salt
+1/4 tsp black pepper
+SOURCE: https://grantourismotravels.com/panzanella-salad-recipe/, https://organictuscany.org/recipes/panzanella/, https://www.spendwithpennies.com/easy-panzanella-salad/
+
+
+
+Caponata
+ID: caponata_
+AKA: Sicilian caponata", "Eggplant caponata", "Caponata siciliana
+Servings: 6
+3 large eggplant
+6 tbsp olive oil
+1 large onion
+2 stalk celery
+2/3 cup tomato puree
+3/4 cup pitted green olives
+2 tbsp capers
+3 tbsp white wine vinegar
+2 tsp sugar
+2 tbsp raisins
+1.5 tbsp pine nuts
+3/4 tsp salt
+basil leaf for garnish
+SOURCE: https://tastefullygrace.com/eggplant-caponata/, https://www.recipesfromitaly.com/caponata-recipe-authentic-sicilian-version/, https://hilltoprecipes.com/eggplant-caponata/
+
+
+
+Creamy Polenta
+ID: creamy_polenta
+AKA: Polenta", "Soft polenta", "Parmesan polenta
+Servings: 4
+4 cup chicken broth
+1 cup yellow cornmeal
+2 tbsp butter
+1/3 cup grated parmesan
+1/2 tsp salt
+1/8 tsp black pepper
+SOURCE: https://cheflolaskitchen.com/creamy-polenta-recipe/, https://www.acedarspoon.com/creamy-polenta-recipe/, https://fortheloveofcooking.net/2015/08/creamy-parmesan-polenta.html
+
+
+
+Fried Calamari
+ID: fried_calamari
+AKA: Calamari fritti", "Calamari", "Fried squid
+Servings: 4
+1 lb squid
+1/2 tsp salt
+1/2 cup all-purpose flour
+1/2 cup semolina flour
+1.5 cup vegetable oil for frying
+lemon wedge for serving
+SOURCE: https://www.marcellinaincucina.com/calamari-fritti/, https://yourguardianchef.com/wprm_print/calamari-fritti-crispy-italian-fried-calamari-recipe, https://houseandhome.com/food/calamari-fritti/
+
+
+
+Spaghetti Bolognese
+ID: spaghetti_bolognese
+AKA: Spaghetti alla bolognese", "Spag bol", "Spaghetti with meat sauce
+Servings: 4
+6 cup cooked spaghetti
+3.5 cup bolognese sauce
+1/4 cup grated parmesan
+SOURCE: https://www.jamieoliver.com/recipes/pasta/family-spaghetti-bolognese/, https://wholesomepatisserie.com/wprm_print/30-minute-ground-beef-spaghetti-bolognese, https://www.kraftheinz.com/en-CA/lea-perrins/recipes/578718-spaghetti-bolognese
+
+
+
+Spaghetti and Meatballs
+ID: spaghetti_and_meatballs
+AKA: Spaghetti with meatballs", "Spaghetti e polpette
+Servings: 4
+8 cup cooked spaghetti
+28 piece meatballs
+3.5 cup marinara sauce
+1/4 cup grated parmesan
+basil leaf for garnish
+SOURCE: https://www.onceuponachef.com/recipes/spaghetti-and-meatballs.html, https://robinmillercooks.com/wprm_print/spaghetti-and-meatballs, https://noshingwiththenolands.com/wprm_print/spaghetti-and-meatballs-in-marinara-sauce
+
+
+
+Spaghetti Carbonara
+ID: spaghetti_carbonara
+AKA: Carbonara", "Spaghetti alla carbonara", "Pasta carbonara
+Servings: 4
+6.5 cup cooked spaghetti
+5 oz guanciale
+1 tsp olive oil
+4 large egg yolk
+1.25 cup grated pecorino romano
+1/2 tsp black pepper
+SOURCE: https://www.christinascucina.com/wprm_print/spaghetti-alla-carbonara-authentic-roman-recipe, https://culinaryginger.com/wprm_print/traditional-spaghetti-carbonara, https://anitalianinmykitchen.com/spaghetti-carbonara/
+
+
+
+Cacio e Pepe
+ID: cacio_e_pepe
+AKA: Spaghetti cacio e pepe", "Cheese and pepper pasta", "Tonnarelli cacio e pepe
+Servings: 4
+8 cup cooked spaghetti
+2 cup grated pecorino romano
+2 tsp black pepper
+SOURCE: https://www.americastestkitchen.com/recipes/5031-spaghetti-with-pecorino-romano-and-black-pepper-cacio-e-pepe, https://saltandwind.com/wprm_print/cacio-e-pepe-leonardo-vignolis-cacio-e-pepe-pasta-recipe, https://www.irishexaminer.com/recipes/recipe-14569.html
+
+
+
+Spaghetti Aglio e Olio
+ID: spaghetti_aglio_e_olio
+AKA: Aglio e olio", "Garlic and oil spaghetti", "Spaghetti aglio olio e peperoncino
+Servings: 4
+6 cup cooked spaghetti
+6.5 tbsp olive oil
+9 clove garlic
+1 tsp red pepper flakes
+1/4 cup chopped parsley
+1/2 tsp salt
+SOURCE: https://www.sbs.com.au/food/recipe/spaghetti-aglio-olio-peperoncino-spaghetti-with-garlic-olive-oil-and-chilli/numy7x0ep, https://www.budgetbytes.com/spaghetti-aglio-e-olio/, https://www.alphafoodie.com/easy-garlic-and-olive-oil-pasta/
+
+
+
+Fettuccine Alfredo
+ID: fettuccine_alfredo
+AKA: Alfredo pasta", "Fettuccine all'Alfredo", "Pasta Alfredo
+Servings: 4
+5 cup cooked fettuccine
+4 tbsp butter
+1.5 cup heavy cream
+1 cup grated parmesan
+1/8 tsp ground nutmeg
+1/4 tsp salt
+1/4 tsp black pepper
+SOURCE: https://www.eazypeazymealz.com/wprm_print/fettuccine-alfredo, https://www.melissassouthernstylekitchen.com/wprm_print/fettuccine-alfredo, https://icancookthat.org/2021/02/easy-fettuccine-alfredo.html
+
+
+
+Penne alla Vodka
+ID: penne_alla_vodka
+AKA: Vodka pasta", "Penne vodka", "Vodka sauce pasta
+Servings: 4
+5 cup cooked penne
+3 oz pancetta
+1 tbsp olive oil
+1 tbsp butter
+2/3 cup chopped onion
+2 clove garlic
+1/4 cup vodka
+2.25 cup canned crushed tomatoes
+3/4 cup heavy cream
+1/2 cup grated parmesan
+1/4 tsp red pepper flakes
+1/2 tsp salt
+basil leaf for garnish
+SOURCE: https://www.spendwithpennies.com/penne-alla-vodka/, https://sugarspunrun.com/wprm_print/penne-alla-vodka, https://www.billyparisi.com/penne-alla-vodka-recipe/
+
+
+
+Penne Arrabbiata
+ID: penne_arrabbiata
+AKA: Penne all'arrabbiata", "Arrabbiata", "Spicy tomato pasta
+Servings: 4
+6 cup cooked penne
+1/4 cup olive oil
+3 clove garlic
+1 whole red chili pepper
+2.25 cup canned crushed tomatoes
+1 tsp salt
+1 tbsp chopped parsley
+1/4 cup grated parmesan
+SOURCE: https://www.christinascucina.com/wprm_print/penne-arrabbiata-authentic-italian-spicy-pasta-recipe, https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/, https://www.micaelaskitchen.com/original-penne-arrabbiata-recipe/
+
+
+
+Pesto Pasta
+ID: pesto_pasta
+AKA: Pasta al pesto", "Pesto spaghetti", "Pasta with pesto
+Servings: 4
+6 cup cooked spaghetti
+1 cup pesto sauce
+1/4 cup grated parmesan
+SOURCE: https://kitchenfunwithmy3sons.com/wprm_print/pesto-pasta, https://themodernproper.com/print/pesto-spaghetti, https://yourguardianchef.com/the-classic-pasta-with-pesto-recipe/
+
+
+
+Lasagna Bolognese
+ID: lasagna_bolognese
+AKA: Lasagne alla bolognese", "Lasagna", "Lasagne", "Beef lasagna
+Servings: 8
+12 lasagna noodles
+8 cup bolognese sauce
+2 cup grated parmesan
+--Bechamel
+4 tbsp butter
+1/4 cup all-purpose flour
+3 cup whole milk
+1/8 tsp ground nutmeg
+1/4 tsp salt
+SOURCE: https://www.cucinabyelena.com/wprm_print/classic-lasagna-bolognese-with-bechamel-sauce, https://xoxobella.com/wprm_print/lasagna-alla-bolognese, https://www.krumpli.co.uk/wprm_print/lasagna-bolognese-recipe
+
+
+
+Baked Ziti
+ID: baked_ziti
+AKA: Ziti al forno", "Baked ziti with ricotta
+Servings: 8
+7.5 cup cooked ziti
+4 cup marinara sauce
+2 cup ricotta cheese
+2.5 cup shredded mozzarella
+2/3 cup grated parmesan
+2 clove garlic
+1 tsp Italian seasoning
+1/2 tsp salt
+1/4 tsp black pepper
+SOURCE: https://onmykidsplate.com/wprm_print/easy-baked-ziti, https://valentinascorner.com/wprm_print/baked-ziti-recipe-with-ricotta, https://www.seasonalcravings.com/baked-ziti/
+
+
+
+Shrimp Scampi
+ID: shrimp_scampi
+AKA: Shrimp scampi linguine", "Linguine with shrimp scampi", "Garlic butter shrimp pasta
+Servings: 4
+6 cup cooked linguine
+1 lb large shrimp
+4 tbsp butter
+2 tbsp olive oil
+4 clove garlic
+1/3 cup dry white wine
+1 tbsp lemon juice
+1/4 tsp red pepper flakes
+2 tbsp chopped parsley
+1/2 tsp salt
+1/4 tsp black pepper
+SOURCE: https://rasamalaysia.com/wprm_print/shrimp-scampi-and-linguine, https://askchefdennis.com/wprm_print/classic-shrimp-scampi-recipe, https://www.ciaoitalia.com/recipes/shrimp-with-linguini-and-lemon-scampi-con-linguine-e-limone
+
+
+
+Linguine alle Vongole
+ID: linguine_alle_vongole
+AKA: Linguine with clams", "Spaghetti alle vongole", "Clam linguine
+Servings: 4
+8 cup cooked linguine
+24 littleneck clam
+4 tbsp olive oil
+4 clove garlic
+1 cup dry white wine
+1/2 tsp red pepper flakes
+3 tbsp chopped parsley
+SOURCE: https://www.olivemagazine.com/recipes/fish-and-seafood/linguine-alle-vongole/, https://www.thepetitecook.com/linguine-with-clams-and-lemon/, https://www.foodrepublic.com/recipes/linguine-con-vongole-recipe/
+
+
+
+Bucatini all'Amatriciana
+ID: bucatini_all_amatriciana
+AKA: Amatriciana", "Pasta amatriciana", "Spaghetti all'amatriciana
+Servings: 4
+8 cup cooked bucatini
+5 oz guanciale
+1 tbsp olive oil
+1 small onion
+3 clove garlic
+1/2 tsp red pepper flakes
+1/4 cup dry white wine
+3.25 cup canned whole tomatoes
+1/2 tsp salt
+1/4 tsp black pepper
+1/4 cup grated pecorino romano
+SOURCE: https://www.tastingtable.com/1243770/traditional-bucatini-allamatriciana-recipe/, https://leitesculinaria.com/print/bucatini-allamatriciana, https://www.sbs.com.au/food/recipe/bucatini-allamatriciana/x9rxylpmc
+
+
+
+Spaghetti alla Puttanesca
+ID: spaghetti_alla_puttanesca
+AKA: Puttanesca", "Pasta puttanesca
+Servings: 4
+7 cup cooked spaghetti
+3 tbsp olive oil
+5 anchovy fillet
+2 clove garlic
+1/2 tsp red pepper flakes
+3.25 cup canned crushed tomatoes
+1/2 cup pitted black olives
+2 tbsp capers
+2 tbsp chopped parsley
+1/4 tsp salt
+SOURCE: https://www.manusmenu.com/wprm_print/spaghetti-alla-puttanesca-recipe, https://www.recipetineats.com/spaghetti-alla-puttanesca/, https://culinaryginger.com/wprm_print/traditional-spaghetti-alla-puttanesca
+
+
+
+Gnocchi alla Sorrentina
+ID: gnocchi_alla_sorrentina
+AKA: Baked gnocchi", "Gnocchi sorrentina", "Gnocchi with tomato and mozzarella
+Servings: 4
+1 lb potato gnocchi
+3 tbsp olive oil
+4 clove garlic
+2 cup tomato puree
+1/2 tsp salt
+8 oz fresh mozzarella
+1/3 cup grated parmesan
+8 leaf basil
+SOURCE: https://www.recipesfromitaly.com/wprm_print/gnocchi-alla-sorrentina-baked-gnocchi-with-tomato-mozzarella, https://www.krumpli.co.uk/gnocchi-alla-sorrentina/, https://www.fattiretours.com/travel-to-eat/gnocchi-alla-sorrentina-recipe/
+
+
+
+Tiramisu
+ID: tiramisu_
+AKA: Tiramisu classico", "Tirami su
+Servings: 8
+4 large egg
+1/2 cup sugar
+2.25 cup mascarpone
+20 ladyfingers
+2 cup brewed espresso
+2 tbsp unsweetened cocoa powder
+SOURCE: https://www.tastingtable.com/687313/how-to-make-tiramisu/, https://www.sbs.com.au/food/recipe/mini-tiramisu/u8z8f6d6x, https://www.bakinglikeachef.com/authentic-italian-tiramisu-recipe/
+
+
+
+Panna Cotta
+ID: panna_cotta
+AKA: Vanilla panna cotta", "Pannacotta
+Servings: 6
+2 cup heavy cream
+1 cup whole milk
+4.5 tbsp sugar
+2 tsp unflavored gelatin
+1.5 tsp vanilla extract
+SOURCE: https://www.americastestkitchen.com/recipes/641-classic-panna-cotta, https://www.livewellbakeoften.com/panna-cotta/, https://www.laylita.com/recipes/wprm_print/how-to-make-panna-cotta
+
+
+
+Cannoli
+ID: cannoli_
+AKA: Cannoli siciliani", "Sicilian cannoli", "Cannolo
+Servings: 12
+12 cannoli shell
+1.5 cup ricotta cheese
+6 tbsp powdered sugar
+1/2 tsp vanilla extract
+1/2 tsp orange zest
+1/3 cup mini semisweet chocolate chips
+2 tbsp chopped pistachios
+SOURCE: https://www.themediterraneandish.com/cannoli-recipe/, https://www.tastingtable.com/687253/how-to-make-sicilian-cannoli/, https://www.emerils.com/print/124175
+
+
+
+Biscotti
+ID: biscotti_
+AKA: Cantucci", "Almond biscotti", "Cantuccini
+Servings: 48
+2 cup all-purpose flour
+1 cup sugar
+2 large egg
+1 cup whole almonds
+1 tsp baking powder
+1 tsp vanilla extract
+1 tsp lemon zest
+1/8 tsp salt
+SOURCE: https://www.marcellinaincucina.com/wprm_print/cantucci-recipe, https://www.bakinglikeachef.com/cantucci-toscani-italian-almond-biscuits/, https://www.italianrecipebook.com/cantucci-almond-biscotti/
+
+
+
+Affogato
+ID: affogato_
+AKA: Affogato al caffe", "Espresso over gelato
+Servings: 1
+1/2 cup vanilla gelato
+2 tbsp brewed espresso
+SOURCE: https://www.loveandlemons.com/affogato-recipe/, https://www.onceuponachef.com/recipes/affogato.html, https://www.tamingtwins.com/wprm_print/affogato-recipe
+
+
+
+Cappuccino
+ID: cappuccino_
+AKA: Cappuccino coffee
+Servings: 1
+3 tbsp brewed espresso
+7 tbsp whole milk
+SOURCE: https://www.acouplecooks.com/how-to-make-cappuccino/, https://www.delonghi.com/en-us/e/r/how-to-make-cappuccino, https://www.nespresso.com/uk/coffee-recipes/cappuccino-coffee-recipe
+
+
+
+Italian Hot Chocolate
+ID: italian_hot_chocolate
+AKA: Cioccolata calda", "Thick hot chocolate
+Servings: 4
+2 cup whole milk
+3/4 cup chopped dark chocolate
+2 tbsp sugar
+2 tbsp unsweetened cocoa powder
+1 tbsp cornstarch
+1/8 tsp salt
+SOURCE: https://scarlatifamilykitchen.com/italian-hot-chocolate/, https://www.marcellinaincucina.com/italian-hot-chocolate-recipe/, https://insanelygoodrecipes.com/italian-hot-chocolate/
