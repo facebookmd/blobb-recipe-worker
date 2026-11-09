@@ -79,7 +79,11 @@ BUILTIN_BOOSTS = [
     {"trigger": "chicken pate",  "boost": "chicken liver pate canned",   "weight": 0.9},
     {"trigger": "duck pate",     "boost": "chicken liver pate canned",   "weight": 0.7},
     {"trigger": "pork pate",     "boost": "chicken liver pate canned",   "weight": 0.7},
-    {"trigger": "pork bouillon", "boost": "beef bouillon cubes dry",     "weight": 0.6},
+    # No pork bouillon in the data: Knorr's ham cube is pork and the same
+    # oily 12 g cube as Knorr's Philippine pork cubes; the beef cubes it
+    # had were 4 g dry salt cubes (9 Nov 2026).
+    {"trigger": "pork bouillon", "boost": "HAM FLAVOR BOUILLON CUBES", "fdc_id": "B_2055351",
+     "weight": 0.95},
     {"trigger": "hotdog",        "boost": "frankfurter meat",            "weight": 0.6},
     {"trigger": "unsalted peanut", "boost": "peanuts without salt",      "weight": 0.9,
      "exclude": ["butter","flour","sauce","oil"]},

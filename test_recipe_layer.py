@@ -239,6 +239,8 @@ LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
     # Broilers or fryers, USDA's plain chicken (9 Nov 2026).
     ("1 lb boneless skinless chicken pieces", "Chicken, skinless, raw"),
     ("1 cup cut yardlong beans", "Yardlong bean, raw"),
+    # No pork bouillon in the data: Knorr's ham cube (9 Nov 2026).
+    ("1 pork bouillon cube", "HAM FLAVOR BOUILLON CUBES, HAM"),
     # The food_aliases row from supabase-usda 20261027140000.
     pytest.param("3 cup green papaya chunks", "Papayas, raw", marks=pytest.mark.skipif(
         os.environ.get("SUPABASE_ANON_KEY") and "green papaya" not in layer1._food_aliases(),
