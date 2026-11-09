@@ -2221,6 +2221,12 @@ def _recipe_variant_delta(query, row: dict, line_cooked: bool, skinless: bool | 
     # "Chicken, ground", "ground" being a standard word for spices.
     if wanted & GROUND_MEAT_WORDS and "ground" not in wanted and "ground" in desc.split():
         delta += 1
+    # A recipe's grain is refined unless it says whole: "yellow cornmeal" is
+    # degermed, not "Cornmeal, whole-grain, yellow" (Arianna, 9 Nov 2026).
+    # Recipe layer only: in the app the word broke "pizza", whose plain
+    # rows tie with whole-wheat-crust ones.
+    if WHOLE_GRAIN_RE.search(desc) and not wanted & {"whole", "wheat", "grain"}:
+        delta += 1
     if skinless is not None:
         has_skin = bool(_SKIN_ROW_RE.search(desc))
         counted = (bool(wanted & SKINLESS_BY_DEFAULT_CUTS) and "skin" not in wanted
@@ -2265,6 +2271,7 @@ def _same_food(row: dict, rank) -> tuple:
     return rank.tier, rank.bucket, words
 
 
+WHOLE_GRAIN_RE = re.compile(r"\bwhole\s+(?:grain|wheat)\b")
 FNDDS_FROM_RE = re.compile(r"\bfrom (?:canned|frozen|dried|dry|fresh|raw)\b")
 
 

@@ -326,3 +326,14 @@ def test_a_100_g_label_serving_that_names_a_measure_is_kept():
     assert matcher._branded_label_serving(row, "2288946")["label"] == "0.5 cup"
     assert matcher._branded_label_serving({**row, "household_serving_full_text": "100 GRM"}, "1") is None
     assert matcher._branded_label_serving({**row, "household_serving_full_text": ""}, "1") is None
+
+
+@pytest.mark.parametrize("line,delta", [
+    ("yellow cornmeal", 1),          # a recipe's grain is refined
+    ("whole grain cornmeal", 0),     # unless it says whole
+])
+def test_whole_grain_is_a_variant_unless_the_line_says_it(line, delta):
+    row = {"description": "Cornmeal, whole-grain, yellow", "data_type": "SR Legacy",
+           "source_set": "sr_legacy"}
+    query = layer1.Query.parse(line)
+    assert matcher._recipe_variant_delta(query, row, False, None) == delta
