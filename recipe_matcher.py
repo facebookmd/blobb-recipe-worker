@@ -1972,7 +1972,8 @@ _MATCH_CACHE: dict[tuple, tuple] = {}
 # that only describes another food (demoted below 1).
 _TIER_SCORE = {4: 0.95, 3: 0.9, 2: 0.75, 1: 0.5}
 NAMED_PRODUCT_SCORE = 0.85
-# Layer 1's best rows the recipe layer re-ranks; it never reaches further.
+# Layer 1's best rows the recipe layer re-ranks; it never reaches further,
+# except past rows lacking more of the line's food words (_lacking_order).
 RERANK_LIMIT = 30
 # Words a line says about the food's state or quality, not which food:
 # searched without when layer 1's best row doesn't carry one ("cooked
@@ -2008,7 +2009,10 @@ _SKINLESS_ROW_RE = re.compile(r"\b(?:skinless|meat only|skin not eaten)\b")
 
 
 def _layer1(text: str) -> tuple[list[dict], food_name_search.SplitQuery, food_name_search.Query]:
-    rows, split = food_name_search.search(text, limit=60)
+    # Every row the search found, in layer 1's order: the recipe layer
+    # chooses the ones it re-ranks (_lacking_order). "Yardlong bean, raw"
+    # was past layer 1's first 60 for "cut yardlong beans" (9 Nov 2026).
+    rows, split = food_name_search.search(text, limit=60, keep_all=True)
     return rows, split, food_name_search.Query.parse(split.food)
 
 
@@ -2022,21 +2026,52 @@ def _row_words(row: dict) -> set[str]:
             normalise(f"{row.get('display_name') or ''} {row.get('description') or ''}").split()}
 
 
-def _as_row_food(row: dict) -> dict:
-    """A foods row as _word_the_food_lacks reads a built food."""
-    return {"display_name": row.get("display_name") or "", "raw_description": row.get("description") or "",
-            "data_type": row.get("data_type") or ""}
+# Words a line says about the food's state or how it's cut, not which food:
+# a row without one still names the line's food ("cut yardlong beans" is
+# "Yardlong bean, raw").
+NOT_THE_FOOD_WORDS = RECIPE_STATE_WORDS | food_name_search.STATE_WORDS | {"cut"}
 
 
-def _word_the_food_lacks(query, food: dict) -> str | None:
-    """A word of the line, not a state word, that *food*'s name doesn't say."""
-    row = _as_row(food)
-    for word in query.tokens:
-        if not word.strip() or word in RECIPE_STATE_WORDS or word in food_name_search.STATE_WORDS:
-            continue
-        if not food_name_search.score_row(food_name_search.Query.parse(word), row).is_match:
-            return word
-    return None
+def _word_stem(word: str) -> str:
+    """A word without its plural and a final "ed" or "e": "pickled",
+    "pickle" and "pickles" are "pickl"; "reduced" isn't "red"."""
+    w = food_name_search.canonical(word)
+    for ending in ("ed", "e"):
+        if w.endswith(ending) and len(w) - len(ending) >= 3:
+            return w[:-len(ending)]
+    return w
+
+
+def _names_word(word: str, row: dict) -> bool:
+    """Whether a row's name, or its brand owner, says *word*: the word
+    itself, its plural, "pickle" for "pickled" ([_word_stem]). Not a word a
+    letter or two off, nor one it begins: the search's near misses and
+    prefixes ("red:*") aren't the word. A Kroger bowl "... CABBAGE AND
+    PICKLED GINGER" doesn't say "red", nor "Archway reduced-fat
+    gingersnaps" (9 Nov 2026)."""
+    stem = _word_stem(normalise(word))
+    named = normalise(" ".join(str(row.get(k) or "") for k in ("display_name", "description", "brand_owner")))
+    return any(_word_stem(t) == stem for t in named.split())
+
+
+def _lacking_order(lacked: list[str], row: dict) -> tuple[int, int]:
+    """How the recipe layer orders rows by the line's food words they lack,
+    before layer 1's rank, lowest first: fewer lacked, then among rows
+    lacking any, a USDA row before a product. When no food has every word
+    the search drops one (search_foods, 8 Nov 2026) and returns USDA rows
+    first; layer 1 ranks the products above them again ("cut yardlong
+    beans" had 30 "CUT ... BEANS" products before "Yardlong bean, raw",
+    "pickled red ginger" the sweet sushi "PICKLED GINGER", 133 kcal, before
+    "Ginger root, pickled", 20). A row lacking only a state or cut word
+    ("cut") lacks nothing."""
+    return len(lacked), int(bool(lacked) and food_name_search.is_branded_row(row))
+
+
+def _food_words_lacked(query, row: dict) -> list[str]:
+    """The words of the line naming the food (not NOT_THE_FOOD_WORDS) that a
+    foods row doesn't say ([_names_word])."""
+    return [w for w in query.tokens
+            if w.strip() and w not in NOT_THE_FOOD_WORDS and not _names_word(w, row)]
 
 
 def _recipe_rows(text: str):
@@ -2059,19 +2094,28 @@ def _recipe_rows(text: str):
     found = searched(text)
     rows, _, query = found
     words = query.normalized.split()
-    if not rows:
-        # No row has every word: without the state words and "cut" ("cut
-        # yardlong beans" is "Yardlong bean, raw"). Not a cooking word: dry
-        # glass noodles by the cooked cup tripled sotanghon soup.
-        # Cooked pasta is measured as the dry pasta (build_output_rows), so
-        # "cooked linguine" goes without "cooked" too.
+    # No row has every word (layer 1's state words aside: the search goes
+    # without them itself): without the state words and "cut" ("cut
+    # yardlong beans" is "Yardlong bean, raw"), before the search's own
+    # choice of a word to drop (search_foods, 8 Nov 2026), which found
+    # "CUT WAX BEANS". Not a cooking word: dry glass noodles by the cooked
+    # cup tripled sotanghon soup. Cooked pasta is measured as the dry pasta
+    # (build_output_rows), so "cooked linguine" goes without "cooked" too.
+    # An alias's food names the line ("black olives").
+    alias_id = food_name_search._food_aliases().get(food_name_search.alias_key(text))
+    if not any(r.get("id") == alias_id
+               or all(w in food_name_search.STATE_WORDS or _names_word(w, r) for w in query.tokens)
+               for r in rows):
         pasta = bool(_pasta_keyword(text))
         kept = [w for w in words if (w not in RECIPE_STATE_WORDS
                                      or (COOKING_WORD_RE.fullmatch(w) and not pasta))
                 and w != "cut"]
         if kept and len(kept) < len(words):
-            return searched(" ".join(kept))
-        return found
+            retry = searched(" ".join(kept))
+            if retry[0] or not rows:
+                return retry
+        if not rows:
+            return found
     top = _top_rank(found)
     carried = _row_words(rows[0])
     missing = [w for w in words if w in RECIPE_STATE_WORDS and _canonical_token(w) not in carried]
@@ -2307,10 +2351,13 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
                                    for w in line_words)
     query_tokens = {_canonical_token(t) for t in query.tokens}
 
-    top = rows[:RERANK_LIMIT]
-    portions = load_portions_for_food_ids([int(r["id"]) for r in top]) if top else {}
     aliases = food_name_search._food_aliases()
     alias_ids = {aliases.get(food_name_search.alias_key(t)) for t in (remapped, split.food)} - {None}
+    # An alias's food is the line's, whatever its name says: "black olives"
+    # is "Olives, ripe, canned".
+    lacked_of = {id(r): [] if r.get("id") in alias_ids else _food_words_lacked(query, r) for r in rows}
+    top = sorted(rows, key=lambda r: _lacking_order(lacked_of[id(r)], r))[:RERANK_LIMIT]
+    portions = load_portions_for_food_ids([int(r["id"]) for r in top]) if top else {}
     raw_known = any(_says_raw(query, r) for r in top)
     raw_meat_line = _is_raw_meat_weight_line(ingredient, unit, line_cooked)
     by_can = unit.strip().lower() in ("can", "cans")
@@ -2331,6 +2378,7 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         measurable = food.get("source") != "usda" or _has_measurable_portion(food)
         says_raw = _says_raw(query, row)
         first = first_of_food.setdefault(_same_food(row, rank), i)
+        lacked = lacked_of[id(row)]
         key = (row.get("id") in alias_ids,  # an alias names the food, as in the app
                line_raw and says_raw,
                # A restaurant or fast-food dish, or a mix ("Chicken, fried,
@@ -2342,6 +2390,9 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
                # line's product cut ("Cheese, parmesan, grated").
                food_name_search.names_product_cut(query, row, split.product_cuts),
                not _is_specialty_row(food, query_tokens),
+               # Fewer of the line's food words lacked, then a USDA row
+               # (_lacking_order).
+               *(-x for x in _lacking_order(lacked, row)),
                rank.tier,
                # Meat bought by weight is raw: an uncooked row before a cooked
                # one measured by a generic yield ("pork shoulder" found a
@@ -2359,7 +2410,7 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
                # Among one food's rows: a portion in the line's unit, one
                # people can measure, a standard reference row.
                has_unit is not False, measurable, _data_type_rank(food), -i)
-        ranked.append((key, food, rank))
+        ranked.append((key, food, rank, lacked))
     if not ranked:
         result = (None, 0.0, "none", None)
         _MATCH_CACHE[cache_key] = result
@@ -2376,10 +2427,10 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         if dry and (ranked[0][1].get("energy_kcal") or 0) < DRY_PASTA_MIN_KCAL:
             ranked.remove(dry[0])
             ranked.insert(0, dry[0])
-    best_key, food, rank = ranked[0]
+    best_key, food, rank, best_lacked = ranked[0]
     if food.get("source") == "branded":
         name = normalise(food["display_name"])
-        same = [f for k, f, _ in ranked if k[:9] == best_key[:9] and f.get("source") == "branded"
+        same = [f for k, f, _, _ in ranked if k[:11] == best_key[:11] and f.get("source") == "branded"
                 and normalise(f["display_name"]) == name]
         if len(same) > 1:
             # Cooked pasta: the dry product, labelled by weight.
@@ -2387,7 +2438,7 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
                 same = [f for f in same if (f.get("energy_kcal") or 0) >= DRY_PASTA_MIN_KCAL] or same
             food = _typical_branded(same, "oz" if cooked_pasta else unit)
     # A volume is borrowed from a USDA row only, as the matcher does.
-    foods = [f for _, f, _ in ranked if f.get("source") == "usda"]
+    foods = [f for _, f, _, _ in ranked if f.get("source") == "usda"]
     food = _volume_unit_fallback(food, foods, unit, query.normalized, list(query.tokens))
     food = dict(food)
     if cut:
@@ -2415,8 +2466,8 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     # is egg noodles). Only then: a row with every word means the search
     # found the line and the recipe layer chose ("pitted black olives" is
     # "Olives, ripe, canned"; "baby spinach" is "Spinach, raw").
-    dropped = None if any(_word_the_food_lacks(query, _as_row_food(r)) is None for r in rows) \
-        else _word_the_food_lacks(query, food)
+    dropped = None if any(not lacked_of[id(r)] for r in rows) \
+        else (best_lacked[0] if best_lacked else None)
     if dropped:
         score = min(score, 0.5)
         food["_dropped_word"] = dropped

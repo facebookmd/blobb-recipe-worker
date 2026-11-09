@@ -810,10 +810,11 @@ def fetch_rows(food_words: str, limit: int = 60, alias_text: str | None = None) 
     return list(by_id.values()), (alias_id if alias_id in by_id else None)
 
 
-def search(text: str, limit: int = 60) -> tuple[list[dict], SplitQuery]:
-    """Ranked rows for a search, best first, and how it was split."""
+def search(text: str, limit: int = 60, keep_all: bool = False) -> tuple[list[dict], SplitQuery]:
+    """Ranked rows for a search, best first, and how it was split: the best
+    *limit*, or with *keep_all* every row fetched for them."""
     split = split_portion_words(text)
     # An alias names the whole search ("hot sauce"), else the food's words.
     rows, alias_id = fetch_rows(split.food, limit, alias_text=text)
     ranked = rank_rows(Query.parse(split.food), rows, alias_id, split.product_cuts)
-    return ranked[:limit], split
+    return (ranked if keep_all else ranked[:limit]), split

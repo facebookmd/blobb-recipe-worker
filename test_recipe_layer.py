@@ -36,7 +36,7 @@ def shared(monkeypatch):
     ranks them); *portions* holds each row's portion labels."""
     results, portions, searched = {}, {}, []
 
-    def search(text, limit=60):
+    def search(text, limit=60, keep_all=False):
         searched.append(text)
         split = layer1.split_portion_words(text)
         rows = results.get(split.food, [])
@@ -116,6 +116,33 @@ def test_a_food_found_without_a_word_of_the_line_is_to_review(shared):
     # A state word isn't one: "Ginger root, raw" is fresh ginger.
     results["fresh ginger"] = [row(2, "Ginger root, raw", kcal=80)]
     assert "_dropped_word" not in match("fresh ginger")
+
+
+def test_without_a_word_the_food_lacking_a_cut_word_beats_one_lacking_the_food(shared):
+    results, _, _ = shared
+    # search_foods dropped a word; a product heading "CUT" ranks higher in
+    # layer 1, but it isn't yardlong beans.
+    results["cut yardlong beans"] = [row(1, "CUT WAX BEANS", branded=True, kcal=24),
+                                     row(2, "Yardlong bean, raw", kcal=47)]
+    food = match("cut yardlong beans", "cup")
+    assert food["fdc_id"] == "2"
+    # "cut" says how it's cut, not which food: nothing to review.
+    assert "_dropped_word" not in food
+
+
+def test_without_a_word_a_usda_row_beats_a_product_lacking_as_many(shared):
+    results, _, _ = shared
+    results["pickled red ginger"] = [
+        row(1, "PICKLED GINGER", branded=True, kcal=133),
+        row(2, "EDAMAME + TOFU PONZU BOWL WITH CABBAGE AND PICKLED GINGER", branded=True, kcal=150),
+        row(3, "Ginger root, pickled", data_type="Survey (FNDDS)", kcal=20),
+        row(4, "Archway Home Style Cookies, Reduced Fat Ginger Snaps", "Archway reduced-fat gingersnaps",
+            kcal=436)]
+    food = match("pickled red ginger")
+    assert food["fdc_id"] == "3"
+    # A Kroger bowl's "AND" is a word two letters off "red", and "reduced"
+    # only begins with it: no row names every word.
+    assert food["_dropped_word"] == "red"
 
 
 def test_a_state_word_a_meal_says_in_passing_is_searched_without(shared):

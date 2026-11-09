@@ -36,7 +36,7 @@ def best(search: str, foods: list[dict], unit: str = "", is_cooked: bool = False
     rows = [_row(f) for f in foods]
     by_id = {r["id"]: f for r, f in zip(rows, foods)}
 
-    def search_rows(text, limit=60):
+    def search_rows(text, limit=60, keep_all=False):
         split = layer1.split_portion_words(text)
         query = layer1.Query.parse(split.food)
         words = {layer1.canonical(t) for t in query.tokens}
