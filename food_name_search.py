@@ -62,6 +62,13 @@ NO_ENERGY_PENALTY = 300
 # ranks this much below one on its name: brand "Star Anise Foods" put
 # "BROWN RICE NOODLES" above "STAR ANISE" (26 Oct 2026).
 OTHER_FIELD_PENALTY = 100
+# A product that doesn't say every word of the search whole ([says_every_word])
+# ranks this much lower: a word it only begins ("mango" for "mang") or
+# misses by a letter or two ("tomatoes" for "tomas") isn't the word. More
+# than OTHER_FIELD_PENALTY, so a brand saying every word ("MANG TOMAS",
+# FDC 2024572 "ALL PURPOSE SAUCE") ranks before names that don't (9 Nov
+# 2026).
+NOT_WHOLE_PENALTY = 200
 
 USDA_CANDIDATE_LIMIT = 500
 
@@ -90,6 +97,26 @@ def canonical(token: str) -> str:
     if t.endswith("s") and not t.endswith(("ss", "us", "is")):
         return t[:-1]
     return t
+
+
+def word_stem(token: str) -> str:
+    """A word as [says_every_word] compares it: [canonical], then without a
+    final "ed" or "e" ("pickled", "pickle" and "pickles" are "pickl";
+    "reduced" isn't "red")."""
+    w = canonical(token)
+    for ending in ("ed", "e"):
+        if w.endswith(ending) and len(w) - len(ending) >= 3:
+            return w[:-len(ending)]
+    return w
+
+
+def says_every_word(query: "Query", texts) -> bool:
+    """Whether *texts* together say each of the query's words whole: the
+    word or another form of it ([word_stem]), not a word it begins or one a
+    letter or two off, which the search's prefixes and the ranking's near
+    matches let in."""
+    said = {word_stem(t) for text in texts for t in tokens(text or "")}
+    return all(word_stem(t) in said for t in query.tokens)
 
 
 def alias_key(text: str) -> str:
@@ -711,7 +738,7 @@ def score_row(query: Query, row: dict) -> Rank:
             return (rank_general_fields(query, fields, allow_plural=False) if branded
                     else rank_fields(query, fields))
         rank = fields_rank([_text(row.get("description"))])
-        other = fields_rank([_text(row.get(k)) for k in ("category", "brand_owner",
+        other = fields_rank([_text(row.get(k)) for k in ("category", "brand_owner", "brand_name",
                                                          "scientific_name", "gtin_upc")])
         other = other.penalized(OTHER_FIELD_PENALTY)
         if other.key() > rank.key():
@@ -724,8 +751,20 @@ def score_row(query: Query, row: dict) -> Rank:
     else:
         # A product's name says its variants as USDA's do: "TOFU, FRIED"
         # isn't plain tofu, "BROWN RICE NOODLES" rice noodles (27 Oct 2026).
-        rank = rank.penalized(usda_variant_count(query, display) * VARIANT_PENALTY)
+        rank = rank_branded_row(query, rank, display, [display, _text(row.get("description")),
+                                                       _text(row.get("brand_name")),
+                                                       _text(row.get("brand_owner"))])
     return demote_modifier_match(query, rank, display)
+
+
+def rank_branded_row(query: Query, rank: Rank, display: str, names) -> Rank:
+    """A product's rank (the app's rankBrandedRow): less its variants, and
+    NOT_WHOLE_PENALTY when its *names* (name, description, brand, brand
+    owner) don't say every word of the search whole."""
+    penalty = usda_variant_count(query, display) * VARIANT_PENALTY
+    if not says_every_word(query, names):
+        penalty += NOT_WHOLE_PENALTY
+    return rank.penalized(penalty)
 
 
 def names_product_cut(query: Query, row: dict, cuts: tuple[str, ...]) -> bool:

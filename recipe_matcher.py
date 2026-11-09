@@ -2032,26 +2032,17 @@ def _row_words(row: dict) -> set[str]:
 NOT_THE_FOOD_WORDS = RECIPE_STATE_WORDS | food_name_search.STATE_WORDS | {"cut"}
 
 
-def _word_stem(word: str) -> str:
-    """A word without its plural and a final "ed" or "e": "pickled",
-    "pickle" and "pickles" are "pickl"; "reduced" isn't "red"."""
-    w = food_name_search.canonical(word)
-    for ending in ("ed", "e"):
-        if w.endswith(ending) and len(w) - len(ending) >= 3:
-            return w[:-len(ending)]
-    return w
-
-
 def _names_word(word: str, row: dict) -> bool:
-    """Whether a row's name, or its brand owner, says *word*: the word
-    itself, its plural, "pickle" for "pickled" ([_word_stem]). Not a word a
-    letter or two off, nor one it begins: the search's near misses and
-    prefixes ("red:*") aren't the word. A Kroger bowl "... CABBAGE AND
-    PICKLED GINGER" doesn't say "red", nor "Archway reduced-fat
-    gingersnaps" (9 Nov 2026)."""
-    stem = _word_stem(normalise(word))
-    named = normalise(" ".join(str(row.get(k) or "") for k in ("display_name", "description", "brand_owner")))
-    return any(_word_stem(t) == stem for t in named.split())
+    """Whether a row's name, brand or brand owner says *word*: the word
+    itself, its plural, "pickle" for "pickled" (food_name_search.word_stem).
+    Not a word a letter or two off, nor one it begins: the search's near
+    misses and prefixes ("red:*") aren't the word. A Kroger bowl "...
+    CABBAGE AND PICKLED GINGER" doesn't say "red", nor "Archway
+    reduced-fat gingersnaps" (9 Nov 2026)."""
+    stem = food_name_search.word_stem(normalise(word))
+    named = normalise(" ".join(str(row.get(k) or "")
+                               for k in ("display_name", "description", "brand_name", "brand_owner")))
+    return any(food_name_search.word_stem(t) == stem for t in named.split())
 
 
 def _lacking_order(lacked: list[str], row: dict) -> tuple[int, int]:

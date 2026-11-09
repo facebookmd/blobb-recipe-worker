@@ -1,5 +1,5 @@
 {
-  "_about": "Cases the app's food search (test/search_rules_shared_test.dart) and the recipe matcher (blobb-recipe-worker, test_search_rules_shared.py) must both pass, so their ranking rules can't drift apart. Each repo keeps a copy (blobb-app test/search_rank_cases.json, blobb-recipe-worker search_rank_cases.json); a test on each side fails while they differ. A candidate's display_name defaults to its description, data_type to 'SR Legacy', kcal to 100.",
+  "_about": "Cases the app's food search (test/search_rules_shared_test.dart) and the recipe matcher (blobb-recipe-worker, test_search_rules_shared.py) must both pass, so their ranking rules can't drift apart. Each repo keeps a copy (blobb-app test/search_rank_cases.json, blobb-recipe-worker search_rank_cases.json); a test on each side fails while they differ. A candidate's display_name defaults to its description, data_type to 'SR Legacy', kcal to 100, brand_name (FDC's brandName) to none.",
 
   "tokens": [
     ["pickles", "pickle"], ["tomatoes", "tomato"], ["peaches", "peach"],
@@ -91,6 +91,7 @@
   ],
 
   "rank": [
+    {"query": "mang tomas", "first": "ALL PURPOSE SAUCE", "candidates": [{"description": "QUINOA MEAL WITH TOMATO AND MANGO", "branded": true, "kcal": 120}, {"description": "ALL PURPOSE SAUCE", "branded": true, "brand_name": "MANG TOMAS", "kcal": 125}]},
     {"query": "milk", "first": "Milk, whole, 3.25% milkfat, with added vitamin D", "candidates": [
       {"description": "Milk, sheep, fluid", "display_name": "Sheep milk"},
       {"description": "Milk, reduced fat, fluid, 2% milkfat"},

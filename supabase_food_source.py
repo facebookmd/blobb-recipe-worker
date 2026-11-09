@@ -328,7 +328,7 @@ _FOOD_SEARCH_SELECT = (
     "category, brand_owner, gtin_upc, scientific_name, ingredients, "
     "serving_size, serving_size_unit, household_serving_full_text, "
     "is_historical_reference, calories_100g, protein_100g, fat_100g, "
-    "carbs_100g, fiber_100g, "
+    "carbs_100g, fiber_100g, brand_name:payload->>brandName, "
     # FDC's label package size ("1.4 oz/40 g"), for "1 packet" lines.
     "package_weight:payload->>packageWeight"
 )

@@ -83,7 +83,8 @@ def test_layer1_ranks_the_plain_food_first(case):
         rows.append({"id": i + 1, "description": c["description"],
                      "display_name": c.get("display_name", c["description"]),
                      "source_set": "branded" if branded else data_type.lower().replace(" ", "_"),
-                     "data_type": data_type, "calories_100g": c.get("kcal", 100)})
+                     "data_type": data_type, "calories_100g": c.get("kcal", 100),
+                     "brand_name": c.get("brand_name")})
     ranked = layer1.rank_rows(layer1.Query.parse(case["query"]), rows)
     assert ranked[0]["description"] == case["first"]
 
