@@ -35,10 +35,11 @@ LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
     ("1 cup brown rice", "Brown rice, long-grain, cooked"),
     ("2 cup cooked brown rice", "Brown rice, long-grain, cooked"),
     ("1 cup skim milk", "Nonfat milk, vitamins A and D added"),
-    # A recipe's chicken is raw (27 Oct 2026; it was roasted breast).
-    ("1 lb boneless skinless chicken pieces", "Roasting chicken, skinless, raw"),
+    # A recipe's chicken is raw (27 Oct 2026; it was roasted breast):
+    # broilers or fryers, USDA's plain chicken (9 Nov 2026).
+    ("1 lb boneless skinless chicken pieces", "Chicken, skinless, raw"),
     # Unchanged.
-    ("1 lb chicken", "Roasting chicken, skinless, raw"),
+    ("1 lb chicken", "Chicken, skinless, raw"),
     ("1 lb chicken thighs", "Chicken thigh, with skin, raw"),
     ("2 cup cooked rice", "White rice, long-grain, cooked, enriched"),
 ])

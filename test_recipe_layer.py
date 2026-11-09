@@ -235,8 +235,9 @@ LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
     ("2 red chili", "Red hot chili peppers, raw"),
     ("1 cup grilled chicken", "Chicken fillet, grilled"),
     ("1 lb fried chicken", "Chicken, skinless, fried"),
-    ("2 eggs, scrambled", "Egg, whole, raw"),
-    ("1 lb boneless skinless chicken pieces", "Roasting chicken, skinless, raw"),
+    ("2 eggs, scrambled", "Whole egg, raw"),
+    # Broilers or fryers, USDA's plain chicken (9 Nov 2026).
+    ("1 lb boneless skinless chicken pieces", "Chicken, skinless, raw"),
     ("1 cup cut yardlong beans", "Yardlong bean, raw"),
     # The food_aliases row from supabase-usda 20261027140000.
     pytest.param("3 cup green papaya chunks", "Papayas, raw", marks=pytest.mark.skipif(

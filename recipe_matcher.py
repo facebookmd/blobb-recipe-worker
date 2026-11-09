@@ -2209,6 +2209,19 @@ def _recipe_variant_delta(query, row: dict, line_cooked: bool, skinless: bool | 
 SAME_FOOD_IGNORED = {"raw", "fresh", "broiler", "broilers", "or", "fryer", "fryers"}
 
 
+def _unsaid_name_words(row: dict, said: set[str]) -> int:
+    """How many words a row's display name says that the line doesn't
+    (*said*: the line's word stems), state and cooking words aside ("raw",
+    "cooked"); not size words, which a name uses otherwise ("medium-grain").
+    USDA's display names leave out what's usual: broilers or fryers are
+    "Chicken, skinless, raw"."""
+    name = row.get("display_name") or row.get("description") or ""
+    return sum(1 for t in normalise(name).split()
+               if not t.isdigit() and t not in food_name_search.STATE_WORDS
+               and not COOKING_WORD_RE.fullmatch(t)
+               and food_name_search.word_stem(t) not in said)
+
+
 def _same_food(row: dict, rank) -> tuple:
     """Rows layer 1 ranks alike that are one food in several datasets: the
     same tier and bucket, and the same description but for
@@ -2352,7 +2365,9 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     raw_known = any(_says_raw(query, r) for r in top)
     raw_meat_line = _is_raw_meat_weight_line(ingredient, unit, line_cooked)
     by_can = unit.strip().lower() in ("can", "cans")
-    ranked, first_of_food = [], {}
+    ranked, first_of_food, unsaid_of_food = [], {}, {}
+    said = {food_name_search.word_stem(t) for t in [*line_words, *query.tokens]}
+    name_count = Counter(normalise(r.get("display_name") or "") for r in top)
     for i, row in enumerate(top):
         build = (_build_supabase_branded_food if food_name_search.is_branded_row(row)
                  else _build_supabase_usda_food)
@@ -2369,6 +2384,8 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         measurable = food.get("source") != "usda" or _has_measurable_portion(food)
         says_raw = _says_raw(query, row)
         first = first_of_food.setdefault(_same_food(row, rank), i)
+        # One food's rows share its best row's count (_unsaid_name_words).
+        unsaid = unsaid_of_food.setdefault(_same_food(row, rank), _unsaid_name_words(row, said))
         lacked = lacked_of[id(row)]
         key = (row.get("id") in alias_ids,  # an alias names the food, as in the app
                line_raw and says_raw,
@@ -2397,6 +2414,14 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
                not line_cooked and says_raw,
                # By the can, canned ("1 can chicken noodle soup").
                not by_can or "canned" in _row_words(row),
+               # Foods still alike: the name saying fewest words the line
+               # doesn't ("chicken": "Chicken, skinless, raw", USDA's
+               # broilers or fryers, not stewing chicken, whose name was a
+               # letter shorter than roasting's); then the name most of the
+               # products share ("SMOKED PAPRIKA", not the two "PAPRIKA
+               # (SMOKED)", first by the alphabet) (9 Nov 2026).
+               -unsaid,
+               name_count[normalise(row.get("display_name") or "")],
                -first,
                # Among one food's rows: a portion in the line's unit, one
                # people can measure, a standard reference row.

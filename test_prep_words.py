@@ -88,7 +88,8 @@ def _match(line):
     ("2 deviled eggs", "Egg, deviled"),
     ("1 fried egg", "Fried egg"),           # the "egg" boost rewrote it raw
     # Unchanged: no preparation, or one the food already has.
-    ("2 eggs, scrambled", "Egg, whole, raw"),
+    # SR's row of the same food: it has a "large" (9 Nov 2026).
+    ("2 eggs, scrambled", "Whole egg, raw"),
     ("1 cup grilled chicken", "Chicken fillet, grilled"),
     ("2 potatoes", "White potatoes, flesh and skin, raw"),
     ("2 cup fresh diced tomatoes", "Tomatoes, raw"),   # diced tomatoes are canned
