@@ -68,6 +68,19 @@ def test_a_broader_row_naming_its_own_kind_is_not_the_same_food():
     assert matcher._same_usda_food(semolina, usda("1", "Semolina, enriched", [], 360.0))
 
 
+def test_rows_each_saying_a_kind_the_other_doesnt_are_different_foods():
+    # "whole" and "white" are everyday words, ignored by search ranking but
+    # not here: whole wheat flour isn't white all-purpose (9 Nov 2026).
+    whole = usda("790085", "Whole wheat flour, unenriched", [], 370.0,
+                 raw="Flour, whole wheat, unenriched")
+    white = usda("169761", "Wheat flour, white, all-purpose, unenriched", [], 364.0)
+    assert not matcher._same_usda_food(whole, white)
+    # Only one row adding the everyday kind is the same food.
+    foundation = usda("789890", "Flour, wheat, all-purpose, enriched, bleached", [], 366.0)
+    sr = usda("168894", "Wheat flour, white, all-purpose, enriched, bleached", [], 364.0)
+    assert matcher._same_usda_food(foundation, sr)
+
+
 # ── Live: each line has a household portion ───────────────────────────────
 
 LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),

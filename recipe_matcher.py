@@ -1648,20 +1648,17 @@ SAME_FOOD_KCAL_TOLERANCE = 0.2
 # Foundation's "Peanuts, raw".
 ALL_TYPES_RE = re.compile(r"\ball types\b")
 
-# USDA's standard words about how a product is labelled or fortified, not
-# which food it is: a broader row may say them (_same_usda_food).
-LABELLING_WORDS = {"enriched", "bleached", "unbleached", "iodized", "fortified",
-                   "fluid", "vitamin", "a", "d", "added", "with", "and",
-                   "commercially", "prepared", "unprepared", "regular"}
-
-
 def _same_usda_food(food: dict, cand: dict) -> bool:
-    """Whether *cand* is *food* in another USDA dataset: a USDA row whose
-    words are *food*'s, give or take USDA's standard and state words
-    ("Wheat flour, white, all-purpose, enriched, bleached" for Foundation
-    "Flour, wheat, all-purpose, enriched, bleached"; "Nuts, almonds" for
-    almonds), with about the same calories. Not "Green beans, pickled" for
-    green beans."""
+    """Whether *cand* is *food* in another USDA dataset: a USDA row with
+    about the same calories, in the same state, whose words are *food*'s
+    give or take USDA's labelling and state words (search_rules.json:
+    "enriched", "bleached", "raw"). Either row may say words the other
+    doesn't, not both: Foundation "Flour, wheat, all-purpose, enriched,
+    bleached" is SR's "Wheat flour, white, ..." (an everyday word only
+    the SR row says), baby spinach "Spinach, raw" (a word only the food
+    says), but whole wheat flour isn't "Wheat flour, white, all-purpose"
+    and "Bread, Italian" isn't "Bread, white" (9 Nov 2026). Not "Green
+    beans, pickled" for green beans."""
     if cand.get("source") != "usda" or food.get("source") not in ("usda", None):
         return False
     a, b = food.get("energy_kcal") or 0, cand.get("energy_kcal") or 0
@@ -1676,23 +1673,20 @@ def _same_usda_food(food: dict, cand: dict) -> bool:
         return ALL_TYPES_RE.sub(" ", normalise(f"{','.join(segs)} {f.get('display_name') or ''}")).split()
     def kind(f):
         return {_canonical_token(w) for w in words(f)
-                if w not in food_name_search.STANDARD_WORDS and w not in food_name_search.STATE_WORDS}
+                if w not in food_name_search.LABELLING_WORDS and w not in food_name_search.STATE_WORDS}
     # The same state too, raw or unsaid alike: "Tomatoes, raw" isn't
     # "Whole tomatoes, canned" (3 Nov 2026).
     def state(f):
         return {w for w in words(f) if w in food_name_search.STATE_WORDS} - food_name_search.FRESH_IS_RAW
-    if not (kind(cand) <= kind(food) and state(cand) == state(food)):
+    if state(cand) != state(food):
         return False
-    # A broader row (it lacks some of the food's words: "Spinach, raw" for
-    # baby spinach, "Semolina, enriched" for "Flour, semolina, fine") is
-    # the same food only when it names no kind of its own. "Bread, white"
-    # isn't Italian bread: "white" is a standard word for flour and sugar,
-    # but here it's the bread's kind (9 Nov 2026).
-    if kind(cand) < kind(food):
-        said = {_canonical_token(w) for w in words(food)}
-        return all(_canonical_token(w) in said or w in food_name_search.STATE_WORDS
-                   or w in LABELLING_WORDS for w in words(cand))
-    return True
+    food_only, cand_only = kind(food) - kind(cand), kind(cand) - kind(food)
+    # A row may add only the everyday kind ("white" flour) to the food,
+    # and only when it lacks none of the food's words.
+    return not cand_only or (not food_only and cand_only <= EVERYDAY_KINDS)
+
+
+EVERYDAY_KINDS = {_canonical_token(w) for w in food_name_search.EVERYDAY_WORDS}
 
 
 def _mismatch_amount(qty: float, unit: str, portion: dict,

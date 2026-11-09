@@ -21,15 +21,17 @@
   },
 
   "standard_qualifier_words": {
-    "_about": "Qualifier words that describe the everyday product or only its labelling; a head match loses nothing for them.",
+    "_about": "Qualifier words that describe the everyday product ('words') or only its labelling ('labelling'); a head match loses nothing for either. Comparing two USDA rows (the recipe matcher's same-food lookup), only labelling words say nothing: the everyday words tell foods apart, 'white' all-purpose flour isn't 'whole' wheat, 'Bread, white' isn't Italian bread (9 Nov 2026).",
     "words": [
-      "whole", "milk", "fluid", "granulated", "all", "purpose", "enriched",
-      "bleached", "unbleached", "raw", "fresh", "ground", "plain",
-      "regular", "cultured", "ripe", "year", "round", "average", "commercially",
-      "prepared", "unprepared", "table", "white", "with", "added", "vitamin",
-      "a", "d", "and", "milkfat", "double", "acting", "flesh", "skin", "salted",
-      "stick", "iodized", "cured", "skinless", "boneless", "meat", "only",
-      "brewed"
+      "whole", "milk", "granulated", "all", "purpose", "raw", "fresh",
+      "ground", "plain", "regular", "cultured", "ripe", "table", "white",
+      "double", "acting", "flesh", "skin", "salted", "stick", "cured",
+      "skinless", "boneless", "meat", "only", "brewed"
+    ],
+    "labelling": [
+      "fluid", "enriched", "bleached", "unbleached", "year", "round",
+      "average", "commercially", "prepared", "unprepared", "with", "added",
+      "vitamin", "a", "d", "and", "milkfat", "iodized"
     ]
   },
 

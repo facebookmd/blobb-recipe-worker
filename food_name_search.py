@@ -34,7 +34,11 @@ GROUP_LABELS = set(_words("group_labels"))
 SOUP_LABEL = RULES["soup_label"]["label"]
 SOUP_WORDS = set(RULES["soup_label"]["query_words"])
 KIND_SEGMENTS = set(_words("kind_segments"))
-STANDARD_WORDS = set(_words("standard_qualifier_words"))
+# Search reads both as standard; comparing two rows, only labelling words
+# say nothing (recipe_matcher._same_usda_food).
+LABELLING_WORDS = set(_words("standard_qualifier_words", "labelling"))
+EVERYDAY_WORDS = set(_words("standard_qualifier_words"))
+STANDARD_WORDS = EVERYDAY_WORDS | LABELLING_WORDS
 VARIANT_RE = re.compile(r"\b(" + "|".join(_words("variant_qualifiers", "patterns")) + r")\b")
 SKINLESS_CUTS = set(RULES["skin"]["skinless_by_default_cuts"])
 SKIN_ON_RE = re.compile(r"\b(" + RULES["skin"]["skin_on_pattern"] + r")\b")
