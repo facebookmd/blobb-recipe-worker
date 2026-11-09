@@ -56,6 +56,18 @@ def test_another_state_is_not_the_same_food():
     assert not matcher._same_usda_food(canned, raw)
 
 
+def test_a_broader_row_naming_its_own_kind_is_not_the_same_food():
+    # "white" is a standard word (flour, sugar), but "Bread, white" names
+    # a kind of bread: Italian bread keeps its slice (9 Nov 2026).
+    italian = usda("174913", "Italian bread", [portion(1, "1 slice", 29.0)], 259.0,
+                   raw="Bread, Italian")
+    white = usda("2707598", "Bread, white", [portion(1, "1 cup", 40.0)], 266.0)
+    assert not matcher._same_usda_food(italian, white)
+    # A broader row saying only labelling words still is.
+    semolina = usda("2", "Flour, semolina, fine", [], 362.0)
+    assert matcher._same_usda_food(semolina, usda("1", "Semolina, enriched", [], 360.0))
+
+
 # ── Live: each line has a household portion ───────────────────────────────
 
 LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
@@ -69,6 +81,7 @@ LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
     ("3 tbsp semolina flour", "Semolina, enriched", "1 cup"),
     ("3/4 cup crushed peanuts", "Peanuts, raw", "1 cup"),
     ("1 cup whole almonds", "Almonds", "1 cup, whole"),
+    ("9 cup cubed Italian bread", "Italian bread", "1 slice"),
     ("3.25 cup canned whole tomatoes", "Ripe red tomatoes, canned, packed in tomato juice", "1 cup"),
 ])
 def test_the_line_has_a_household_portion(line, food, label):

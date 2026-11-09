@@ -45,6 +45,14 @@ def test_a_branded_variety_borrows_its_head_foods_cup():
     assert row is POTATOES and cup["gram_weight"] == 75.0
 
 
+def test_a_dish_cooked_by_another_word_lends_no_raw_density():
+    # FNDDS "Stewed potatoes" never says cooked; counted raw, its 1.06 g/ml
+    # (raw potatoes 0.63) made the rows disagree and the yukon line 1 g/ml.
+    stewed = usda("2709554", "Stewed potatoes", [portion(1, "1 cup", 250.0)], 103.0)
+    row, cup = borrow("YUKON GOLD POTATOES", "yukon gold potato", [stewed, POTATOES])
+    assert row is POTATOES and cup["gram_weight"] == 75.0
+
+
 def test_a_food_far_off_in_calories_borrows_nothing():
     # Konjac noodles (70 kcal here) aren't dry egg noodles (384).
     assert borrow("ORGANIC KONJAC NOODLES, LINGUINE", "konjac", [CHOW_MEIN, NOODLES]) == (None, None)

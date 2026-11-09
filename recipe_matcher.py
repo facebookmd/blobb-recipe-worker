@@ -1644,6 +1644,12 @@ SAME_FOOD_KCAL_TOLERANCE = 0.2
 # Foundation's "Peanuts, raw".
 ALL_TYPES_RE = re.compile(r"\ball types\b")
 
+# USDA's standard words about how a product is labelled or fortified, not
+# which food it is: a broader row may say them (_same_usda_food).
+LABELLING_WORDS = {"enriched", "bleached", "unbleached", "iodized", "fortified",
+                   "fluid", "vitamin", "a", "d", "added", "with", "and",
+                   "commercially", "prepared", "unprepared", "regular"}
+
 
 def _same_usda_food(food: dict, cand: dict) -> bool:
     """Whether *cand* is *food* in another USDA dataset: a USDA row whose
@@ -1671,7 +1677,18 @@ def _same_usda_food(food: dict, cand: dict) -> bool:
     # "Whole tomatoes, canned" (3 Nov 2026).
     def state(f):
         return {w for w in words(f) if w in food_name_search.STATE_WORDS} - food_name_search.FRESH_IS_RAW
-    return kind(cand) <= kind(food) and state(cand) == state(food)
+    if not (kind(cand) <= kind(food) and state(cand) == state(food)):
+        return False
+    # A broader row (it lacks some of the food's words: "Spinach, raw" for
+    # baby spinach, "Semolina, enriched" for "Flour, semolina, fine") is
+    # the same food only when it names no kind of its own. "Bread, white"
+    # isn't Italian bread: "white" is a standard word for flour and sugar,
+    # but here it's the bread's kind (9 Nov 2026).
+    if kind(cand) < kind(food):
+        said = {_canonical_token(w) for w in words(food)}
+        return all(_canonical_token(w) in said or w in food_name_search.STATE_WORDS
+                   or w in LABELLING_WORDS for w in words(cand))
+    return True
 
 
 def _mismatch_amount(qty: float, unit: str, portion: dict,
@@ -1740,7 +1757,15 @@ def _density_from_head_food(food, unit, search):
     head = _food_head_word(food)
     if not head:
         return None, None
-    cooked = _is_cooked_food(food)
+    # Cooked by any cooking word (search_rules.json cooking_words), as the
+    # recipe layer reads it: "Stewed potatoes" (1.06 g/ml) never says
+    # cooked, counted as a raw relative and, 1.7x raw potatoes' cup, left
+    # yukon gold potatoes at 1 g/ml (9 Nov 2026).
+    def says_cooked(f):
+        return bool(COOKING_WORD_RE.search(
+            normalise(f"{f.get('raw_description') or ''} {f.get('display_name') or ''}")))
+    cooked = says_cooked(food)
+    cooked_cup = _is_cooked_food(food)  # "1 cup, cooked" measures it
     food_tokens = set(normalise(food.get("raw_description") or food["display_name"]).split())
     best, best_key, best_portion = None, None, None
     densities = []
@@ -1754,7 +1779,7 @@ def _density_from_head_food(food, unit, search):
                  and w not in food_name_search.STANDARD_WORDS and w not in food_name_search.STATE_WORDS}
         if len(extra) > 1:
             continue
-        if (_is_cooked_food(cand) != cooked or _is_dish_category(cand)
+        if (says_cooked(cand) != cooked or _is_dish_category(cand)
                 or _names_other_variant(search, cand)):
             continue
         if food.get("energy_kcal") and not _within(cand["energy_kcal"], food["energy_kcal"],
@@ -1762,10 +1787,10 @@ def _density_from_head_food(food, unit, search):
             continue
         # "1 cup, cooked" measures cooked pasta, whatever the row is named.
         for portion in _volume_portions(cand):
-            if bool(re.search(r"\bcooked\b", portion["label"], re.I)) == cooked:
+            if bool(re.search(r"\bcooked\b", portion["label"], re.I)) == cooked_cup:
                 densities.append(_grams_per_ml(portion))
         portion = _density_portion(cand, unit, search)
-        if portion is None or bool(re.search(r"\bcooked\b", portion["label"], re.I)) != cooked:
+        if portion is None or bool(re.search(r"\bcooked\b", portion["label"], re.I)) != cooked_cup:
             continue
         overlap = len(food_tokens & set(normalise(cand.get("raw_description") or cand["display_name"]).split()))
         key = (_layer1_rank(head, cand)[0] == 4, overlap, _layer1_rank(head, cand))

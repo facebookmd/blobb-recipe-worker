@@ -168,6 +168,10 @@
     {"query": "lumpia wrappers", "first": "SPRING ROLL PASTRY LUMPIA WRAPPER", "candidates": [
       {"description": "LUMPIA SHANGHAI SPRING ROLL, CHICKEN", "branded": true, "kcal": 200},
       {"description": "SPRING ROLL PASTRY LUMPIA WRAPPER", "branded": true, "kcal": 280}
+    ]},
+    {"query": "seaweed flakes", "first": "GREEN SEAWEED FLAKES", "candidates": [
+      {"description": "SHRIMP ANCHOVY SESAME SEAFOOD SEASONED ROASTED SEAWEED FLAKES, SHRIMP ANCHOVY SESAME", "branded": true, "kcal": 769},
+      {"description": "GREEN SEAWEED FLAKES", "branded": true, "kcal": 0}
     ]}
   ]
 }

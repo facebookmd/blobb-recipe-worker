@@ -34,7 +34,7 @@
   },
 
   "variant_qualifiers": {
-    "_about": "Regex alternatives (joined as \\b(a|b|...)\\b over the normalized description) naming a different product: lighter versions, other animals and plants, other forms, trimmed meat ('separable lean only'), preparations that change the food, unenriched grains (US flour, rice and pasta are enriched), glutinous (sticky) rice, and USDA's 'not (further) specified' rows. Not counted when the query says one of its words ('brown sugar', 'fried chicken').",
+    "_about": "Regex alternatives (joined as \\b(a|b|...)\\b over the normalized description) naming a different product: lighter versions, other animals and plants, other forms, trimmed meat ('separable lean only'), preparations that change the food (a seasoned or flavored product: 'seaweed flakes' found a seasoned shrimp-anchovy mix over green seaweed flakes, 9 Nov 2026), unenriched grains (US flour, rice and pasta are enriched), glutinous (sticky) rice, and USDA's 'not (further) specified' rows. Not counted when the query says one of its words ('brown sugar', 'fried chicken').",
     "patterns": [
       "light", "lite", "reduced fat", "low fat", "lowfat", "nonfat", "non fat",
       "fat free", "part skim", "skim", "low sodium", "reduced sodium", "no salt",
@@ -44,7 +44,7 @@
       "black", "baby", "unenriched", "glutinous", "nfs", "ns", "alaska native",
       "fried", "breaded", "battered", "glazed", "candied", "honey roasted",
       "stuffed", "meatless", "pickled", "fermented", "sprouted", "edible podded",
-      "coated", "caramel", "chocolate", "flavored", "canned", "gluten free",
+      "coated", "caramel", "chocolate", "flavored", "seasoned", "canned", "gluten free",
       "skin only", "lean only",
       "skin and breading from all pieces", "with cheese", "with milk",
       "fat added", "for use", "[a-z]+ style"
