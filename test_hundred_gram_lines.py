@@ -81,6 +81,16 @@ def test_rows_each_saying_a_kind_the_other_doesnt_are_different_foods():
     assert matcher._same_usda_food(foundation, sr)
 
 
+def test_whole_grain_unenriched_flour_is_whole_wheat_flour():
+    # "whole-grain" is the whole kernel of the row's grain, "unenriched" is
+    # labelling, and USDA's Food Distribution note isn't about the food.
+    whole = usda("790085", "Whole wheat flour, unenriched", [], 370.0,
+                 raw="Flour, whole wheat, unenriched")
+    sr = usda("168893", "Wheat flour, whole-grain", [portion(1, "1 cup", 120.0)], 340.0,
+              raw="Wheat flour, whole-grain (Includes foods for USDA's Food Distribution Program)")
+    assert matcher._same_usda_food(whole, sr)
+
+
 # ── Live: each line has a household portion ───────────────────────────────
 
 LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),

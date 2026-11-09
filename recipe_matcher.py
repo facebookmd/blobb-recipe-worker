@@ -1667,13 +1667,18 @@ def _same_usda_food(food: dict, cand: dict) -> bool:
     def words(f):
         # A leading USDA group label isn't a word about the food: "Nuts,
         # almonds" is almonds.
-        segs = (f.get("raw_description") or "").split(",")
+        # Split as layer 1 does, without USDA's "(Includes foods for USDA's
+        # Food Distribution Program)" note.
+        segs = food_name_search.usda_segments(f.get("raw_description") or "")
         if len(segs) > 1 and normalise(segs[0]) in food_name_search.GROUP_LABELS:
             segs = segs[1:]
-        return ALL_TYPES_RE.sub(" ", normalise(f"{','.join(segs)} {f.get('display_name') or ''}")).split()
+        text = ALL_TYPES_RE.sub(" ", normalise(f"{','.join(segs)} {f.get('display_name') or ''}"))
+        # "Whole-grain" is the whole kernel of the grain the row names:
+        # SR "Wheat flour, whole-grain" is Foundation "Flour, whole wheat".
+        return WHOLE_GRAIN_WORD_RE.sub("whole", text).split()
     def kind(f):
         return {_canonical_token(w) for w in words(f)
-                if w not in food_name_search.LABELLING_WORDS and w not in food_name_search.STATE_WORDS}
+                if w not in ROW_LABELLING_WORDS and w not in food_name_search.STATE_WORDS}
     # The same state too, raw or unsaid alike: "Tomatoes, raw" isn't
     # "Whole tomatoes, canned" (3 Nov 2026).
     def state(f):
@@ -1687,6 +1692,11 @@ def _same_usda_food(food: dict, cand: dict) -> bool:
 
 
 EVERYDAY_KINDS = {_canonical_token(w) for w in food_name_search.EVERYDAY_WORDS}
+# Labelling either way: whole-grain flour is "unenriched" because nothing
+# is added, the same food as one that doesn't say (9 Nov 2026).
+ROW_LABELLING_WORDS = food_name_search.LABELLING_WORDS | {
+    f"un{w}" for w in food_name_search.LABELLING_WORDS}
+WHOLE_GRAIN_WORD_RE = re.compile(r"\bwhole grain\b")
 
 
 def _mismatch_amount(qty: float, unit: str, portion: dict,
