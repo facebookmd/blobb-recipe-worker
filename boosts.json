@@ -525,12 +525,12 @@
     "_comment": "22 Oct 2026 (Arianna): annatto powder is LA NUESTRA GROUND ANNATTO. Named 'ground annatto', so the 'annatto powder' searches never fetched it, and the old substring trigger 'natto' pinned natto."
   },
   {
-    "_comment": "23 Oct 2026 (Arianna): lasagna noodles are dry sheets, Barilla WHOLE GRAIN LASAGNE (label 2 sheets = 50 g, 360 kcal/100 g). The search found only a hearts-of-palm 'LASAGNA SHAPE VEGGIE PASTA NOODLES', about 30 kcal/100 g. Cooked and uncooked lines are food_aliases."
+    "_comment": "23 Oct 2026 (Arianna): lasagna noodles are dry sheets, Barilla's plain ENRICHED MACARONI PRODUCT, LASAGNE (label 2 sheets = 50 g, 340 kcal/100 g; was its WHOLE GRAIN LASAGNE until 9 Nov 2026, Arianna: a recipe's noodles aren't whole grain). The search found only a hearts-of-palm 'LASAGNA SHAPE VEGGIE PASTA NOODLES', about 30 kcal/100 g. Cooked and uncooked lines are food_aliases."
   },
   {
     "trigger": "lasagna noodles",
-    "fdc_id": "B_2549622",
-    "boost": "whole grain lasagne",
+    "fdc_id": "B_2588023",
+    "boost": "enriched macaroni product lasagne",
     "weight": 0.95,
     "exclude": [
       "cooked"

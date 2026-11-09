@@ -537,11 +537,15 @@ def usda_segments(description: str) -> list[str]:
     return [s.strip() for s in d.split(",") if s.strip()]
 
 
-def usda_head_qualifiers(query: Query, description: str) -> list[str] | None:
+def usda_head_qualifiers(query: Query, description: str, loose: bool = False) -> list[str] | None:
+    """The qualifiers after *description*'s head when it's headed by the
+    search's food; with *loose*, also when the search's other words are
+    each a qualifier of their own, anywhere ("yellow cornmeal" is
+    "Cornmeal, degermed, enriched, yellow"). None when it isn't."""
     segs = usda_segments(description)
     if not segs or query.empty:
         return None
-    found = _head_qualifiers(list(query.tokens), segs)
+    found = _head_qualifiers(list(query.tokens), segs, loose)
     if found is not None:
         return found
     # A state word before the food, in a qualifier (search_rules.json
@@ -550,7 +554,7 @@ def usda_head_qualifiers(query: Query, description: str) -> list[str] | None:
     rest = [t for t in query.tokens if t not in STATE_WORDS]
     if not state or not rest:
         return None
-    found = _head_qualifiers(rest, segs)
+    found = _head_qualifiers(rest, segs, loose)
     if found is None:
         return None
     # Fresh is raw: "fresh tomatoes" is "Tomatoes, red, ripe, raw".
@@ -571,7 +575,19 @@ def _or_head(segment: str) -> list[str] | None:
     return None
 
 
-def _head_qualifiers(query_tokens: list[str], segs: list[str]) -> list[str] | None:
+COOKING_WORDS = set(_words("cooking_words"))
+
+
+def _names_a_kind(word: str) -> bool:
+    """Whether *word* can say which kind of a food a loose head match is:
+    "yellow" cornmeal. Not a standard, state or cooking word nor a variant:
+    "grilled chicken" isn't "Chicken, breast, boneless, skinless, grilled",
+    "skim milk" isn't "Milk, dry, nonfat" (9 Nov 2026)."""
+    return not (word in STANDARD_WORDS or word in STATE_WORDS or word in COOKING_WORDS
+                or VARIANT_RE.search(word))
+
+
+def _head_qualifiers(query_tokens: list[str], segs: list[str], loose: bool = False) -> list[str] | None:
     wanted_order = [canonical(t) for t in query_tokens]
     wanted_sorted = sorted(wanted_order)
 
@@ -582,6 +598,18 @@ def _head_qualifiers(query_tokens: list[str], segs: list[str]) -> list[str] | No
             return s[1:]
         if len(s) > 1 and sorted(canonical(t) for t in tokens(f"{s[0]} {s[1]}")) == wanted_sorted:
             return s[2:]
+        # Loose: the food first and each other word a qualifier of its
+        # own, wherever USDA puts it (usda_row_head_qualifiers).
+        if loose and len(wanted_order) > 1 and s and [canonical(t) for t in tokens(s[0])] == wanted_order[-1:]:
+            rest = list(s[1:])
+            for word in wanted_order[:-1]:
+                if not _names_a_kind(word):
+                    return None
+                seg = next((q for q in rest if [canonical(t) for t in tokens(q)] == [word]), None)
+                if seg is None:
+                    return None
+                rest.remove(seg)
+            return rest
         return None
 
     direct = head_of(segs)
@@ -596,11 +624,23 @@ def _head_qualifiers(query_tokens: list[str], segs: list[str]) -> list[str] | No
     return None
 
 
+def usda_row_head_match(query: Query, description: str,
+                        display_name: str) -> tuple[list[str] | None, bool]:
+    """A row's head qualifiers ([usda_head_qualifiers]) and whether only
+    the loose form found them. Either name headed by the search first:
+    "Egg, whole, cooked, scrambled" is "Scrambled egg" by its display name,
+    not "egg ... scrambled" with "whole" and "cooked" left over (9 Nov 2026)."""
+    names = [description] + ([display_name] if (display_name or "").strip() else [])
+    for loose in (False, True):
+        for name in names:
+            q = usda_head_qualifiers(query, name, loose)
+            if q is not None:
+                return q, loose
+    return None, False
+
+
 def usda_row_head_qualifiers(query: Query, description: str, display_name: str) -> list[str] | None:
-    q = usda_head_qualifiers(query, description)
-    if q is None and (display_name or "").strip():
-        q = usda_head_qualifiers(query, display_name)
-    return q
+    return usda_row_head_match(query, description, display_name)[0]
 
 
 def usda_variant_count(query: Query, description: str) -> int:
@@ -688,14 +728,18 @@ def rank_usda_row(query: Query, display_rank: Rank, description: str, display_na
     if query.empty or not (description or "").strip():
         return display_rank
     rank = display_rank
-    quals = usda_row_head_qualifiers(query, description, display_name)
+    quals, loose = usda_row_head_match(query, description, display_name)
     # Variants in whichever name carries the search's words: "Beef ribeye,
     # boneless, lean only" heads ribeye by its display name, its
     # description says "rib eye" (27 Oct 2026).
     penalty = max(usda_variant_count(query, description),
                   usda_variant_count(query, display_name)) * VARIANT_PENALTY
     if quals is not None:
-        unknown = sum(is_unknown_qualifier(q) for q in quals)
+        # A loose head match ranks below a strict one with the same
+        # qualifiers: one more unknown qualifier ("Chicken, broiler,
+        # rotisserie, BBQ, back meat only" isn't over the plain rotisserie
+        # chicken).
+        unknown = sum(is_unknown_qualifier(q) for q in quals) + loose
         rank = _build_rank(4, 1000 - unknown * UNKNOWN_QUALIFIER_PENALTY, len(query.tokens),
                            len(query.tokens), 0, 0, 0, 3, tokens(_strip_parentheses(description)))
         penalty += (part_segment_count(query, quals) + with_food_count(query, quals)) * VARIANT_PENALTY

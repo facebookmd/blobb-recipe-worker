@@ -22,6 +22,7 @@
     {"query": "jalapeno", "description": "Peppers, jalapenos", "expect": []},
     {"query": "latte", "description": "Coffee, Latte", "expect": []},
     {"query": "yellow cornmeal", "description": "Cornmeal, yellow (Navajo)", "expect": ["Navajo"]},
+    {"query": "yellow cornmeal", "description": "Cornmeal, degermed, enriched, yellow", "expect": ["degermed", "enriched"]},
     {"query": "brown rice", "description": "Rice, brown, long-grain, raw (Includes foods for USDA's Food Distribution Program)", "expect": ["long-grain", "raw"]},
     {"query": "beef broth", "description": "Beef broth or bouillon, canned, ready-to-serve", "expect": ["canned", "ready-to-serve"]},
     {"query": "beef broth canned", "description": "Beef broth or bouillon, canned, ready-to-serve", "expect": ["ready-to-serve"]},
@@ -172,6 +173,10 @@
     {"query": "seaweed flakes", "first": "GREEN SEAWEED FLAKES", "candidates": [
       {"description": "SHRIMP ANCHOVY SESAME SEAFOOD SEASONED ROASTED SEAWEED FLAKES, SHRIMP ANCHOVY SESAME", "branded": true, "kcal": 769},
       {"description": "GREEN SEAWEED FLAKES", "branded": true, "kcal": 0}
+    ]},
+    {"query": "yellow cornmeal", "first": "Cornmeal, degermed, enriched, yellow", "candidates": [
+      {"description": "Cornmeal, yellow, self-rising, degermed, enriched", "display_name": "Yellow self-rising degermed cornmeal, enriched", "kcal": 355},
+      {"description": "Cornmeal, degermed, enriched, yellow", "display_name": "Yellow degermed cornmeal, enriched", "kcal": 370}
     ]}
   ]
 }

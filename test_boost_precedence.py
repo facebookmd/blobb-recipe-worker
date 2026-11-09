@@ -51,6 +51,8 @@ def test_the_real_rules_pin_their_own_triggers():
     rules = matcher.load_boosts(os.path.join(HERE, "boosts.json"))
     assert matcher.apply_boosts("white miso", rules)[2] == "B_2053303"
     assert matcher.apply_boosts("adzuki beans", rules)[2] == "173728"
+    # Plain sheets, not whole grain: Barilla's enriched lasagne, 2 sheets = 50 g.
+    assert matcher.apply_boosts("lasagna noodles", rules)[2] == "B_2588023"
 
 
 def test_no_rule_repeats_an_earlier_trigger():
