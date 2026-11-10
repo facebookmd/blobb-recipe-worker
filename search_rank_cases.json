@@ -177,6 +177,10 @@
     {"query": "yellow cornmeal", "first": "Cornmeal, degermed, enriched, yellow", "candidates": [
       {"description": "Cornmeal, yellow, self-rising, degermed, enriched", "display_name": "Yellow self-rising degermed cornmeal, enriched", "kcal": 355},
       {"description": "Cornmeal, degermed, enriched, yellow", "display_name": "Yellow degermed cornmeal, enriched", "kcal": 370}
+    ]},
+    {"query": "star anise", "first": "STAR ANISE", "candidates": [
+      {"description": "BROWN RICE NOODLES", "branded": true, "brand_name": "Star Anise Foods"},
+      {"description": "STAR ANISE", "branded": true}
     ]}
   ]
 }
