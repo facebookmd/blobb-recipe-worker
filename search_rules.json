@@ -73,7 +73,9 @@
     "words": [
       "frozen", "canned", "dried", "dry", "fresh", "raw", "smoked", "salted",
       "unsalted", "sweetened", "unsweetened", "roasted", "toasted", "cooked"
-    ]
+    ],
+    "same": [["fresh", "raw"], ["sweetened", "syrup"]],
+    "_about_same": "State words a row may say another way: 'fresh tomatoes' is 'Tomatoes, red, ripe, raw', 'sweetened jackfruit' 'Jackfruit, canned, syrup pack'. A qualifier naming the other word ('heavy syrup pack') is the state said, not an unknown qualifier (10 Nov 2026)."
   },
 
   "part_segments": {

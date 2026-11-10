@@ -181,6 +181,10 @@
     {"query": "star anise", "first": "STAR ANISE", "candidates": [
       {"description": "BROWN RICE NOODLES", "branded": true, "brand_name": "Star Anise Foods"},
       {"description": "STAR ANISE", "branded": true}
+    ]},
+    {"query": "sweetened jackfruit", "first": "Jackfruit, canned, syrup pack", "candidates": [
+      {"description": "Jackfruit, raw", "kcal": 95},
+      {"description": "Jackfruit, canned, syrup pack", "kcal": 92}
     ]}
   ]
 }

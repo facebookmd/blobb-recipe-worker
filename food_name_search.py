@@ -51,7 +51,10 @@ PRODUCT_CUTS = set(RULES["portion_words"]["product_cuts"])
 PORTION_FILLERS = set(RULES["portion_words"]["fillers"])
 CUT_LABELS = dict(RULES["portion_words"]["cut_labels"])
 STATE_WORDS = set(_words("state_words"))
-FRESH_IS_RAW = {"fresh", "raw"}
+# Groups of state words a row may say for one another (state_words.same):
+# fresh is raw, sweetened is syrup.
+STATE_SAME = [set(g) for g in RULES["state_words"]["same"]]
+FRESH_IS_RAW = next(g for g in STATE_SAME if "fresh" in g)
 WITH_LEAD = RULES["with_qualifiers"]["lead"]
 WITH_IGNORED = set(RULES["with_qualifiers"]["ignore"])
 PART_SEGMENTS = set(_words("part_segments"))
@@ -561,13 +564,18 @@ def usda_head_qualifiers(query: Query, description: str, loose: bool = False) ->
     found = _head_qualifiers(rest, segs, loose)
     if found is None:
         return None
-    # Fresh is raw: "fresh tomatoes" is "Tomatoes, red, ripe, raw".
-    said = state | (FRESH_IS_RAW if state & FRESH_IS_RAW else set())
-    if not state - FRESH_IS_RAW <= {canonical(t) for q in found for t in tokens(q)}:
+    # Fresh is raw, sweetened is syrup (state_words.same): each state word
+    # is said by itself or a word of its group; a qualifier naming such a
+    # word ("heavy syrup pack") is that state, not an unknown qualifier.
+    groups = [next((g for g in STATE_SAME if w in g), {w}) for w in state]
+    named = {canonical(t) for q in found for t in tokens(q)}
+    if not all(g & named for g in groups):
         return None
-    if state & FRESH_IS_RAW and not FRESH_IS_RAW & {canonical(t) for q in found for t in tokens(q)}:
-        return None
-    return [q for q in found if not {canonical(t) for t in tokens(q)} <= said]
+    said = set().union(*groups)
+    other_ways = said - state - STATE_WORDS
+    return [q for q in found
+            if not {canonical(t) for t in tokens(q)} <= said
+            and not other_ways & {canonical(t) for t in tokens(q)}]
 
 
 def _or_head(segment: str) -> list[str] | None:
