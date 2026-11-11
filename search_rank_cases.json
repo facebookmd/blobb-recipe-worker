@@ -185,6 +185,10 @@
     {"query": "sweetened jackfruit", "first": "Jackfruit, canned, syrup pack", "candidates": [
       {"description": "Jackfruit, raw", "kcal": 95},
       {"description": "Jackfruit, canned, syrup pack", "kcal": 92}
+    ]},
+    {"query": "mang tomas", "first": "ALL PURPOSE SAUCE", "candidates": [
+      {"description": "MANG TOMAS, ALL PURPOSE SAUCE, HOT & SPICY, HOT & SPICY", "branded": true, "brand_name": "MANG TOMAS", "kcal": 125},
+      {"description": "ALL PURPOSE SAUCE", "branded": true, "brand_name": "MANG TOMAS", "kcal": 125}
     ]}
   ]
 }
