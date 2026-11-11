@@ -1384,6 +1384,10 @@ INGREDIENT_REMAP = {
     # These are only reached when the recipe explicitly says "cooked" â€” the
     # is_cooked flag in build_output_rows suppresses the yield factor so grams
     # aren't double-deflated.
+    # Rice vermicelli (bihon) is USDA's rice noodles; it was cooked white
+    # rice, 130 kcal/100 g for 108 (11 Nov 2026).
+    "cooked rice vermicelli": "cooked rice noodles",
+    "rice vermicelli":    "rice noodles",
     "cooked rice":        "white rice long grain cooked",
     "steamed rice":       "white rice long grain cooked",
     "boiled rice":        "white rice long grain cooked",
@@ -1511,9 +1515,12 @@ def _pasta_keyword(ingredient: str) -> bool:
 # when matching to raw entry.
 # "cooked rice" variants remap to the cooked entry and is_cooked suppresses
 # any yield factor so grams are not deflated a second time.
-RICE_EXCLUDES = {"flour", "wine", "vinegar", "paper", "noodle", "cake",
+RICE_EXCLUDES = {"flour", "wine", "vinegar", "paper", "noodle", "vermicelli", "cake",
                  "syrup", "pudding", "crispy", "puffed", "porridge", "congee",
                  "koji"}
+
+PLAIN_COOKED_RICE = "white rice long grain cooked"
+
 
 def _rice_keyword(ingredient: str) -> bool:
     """Return True if ingredient is plain rice (not a rice-derived product)."""
@@ -2629,6 +2636,10 @@ def _recipe_remap(ingredient: str, category: str, unit: str, is_cooked: bool) ->
         else:
             remapped = "white rice long grain cooked"
     for trigger, replacement in INGREDIENT_REMAP.items():
+        # A plain-rice name inside a rice product's isn't the rice: "cooked
+        # rice noodles" was cooked white rice (11 Nov 2026).
+        if replacement == PLAIN_COOKED_RICE and not _rice_keyword(ingredient):
+            continue
         if trigger in ingredient.lower():
             remapped = replacement
             break

@@ -574,7 +574,9 @@ def parse_ingredient_line(raw: str) -> dict | None:
     # carries it). 22 Oct 2026.
     _LEADING_PREP = (
         r"finely|thinly|roughly|coarsely|freshly|lightly|"
-        r"sliced|chopped|minced|torn|peeled|"
+        # "cut" too: "cut green beans" are green beans cut up, not the
+        # canned "CUT GREEN BEANS" (17 kcal/100 g, 11 Nov 2026).
+        r"sliced|chopped|minced|torn|peeled|cut|"
         r"julienned|julienne|"
         r"lukewarm|warm|hot|cold|chilled|iced|"
         + _SIZE_WORDS
