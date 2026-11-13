@@ -4982,5 +4982,14 @@ def main():
         print(f"[!] openpyxl unavailable — skipping xlsx.")
     write_csv(output_rows, csv_path)
 
+    # Each template's calories against its outside reference
+    # (calorie_references.json): a report only, so a problem in it never
+    # stops the run (13 Nov 2026).
+    try:
+        import check_template_calories
+        check_template_calories.main([csv_path])
+    except Exception as e:  # noqa: BLE001
+        print(f"[!] Calorie check failed: {e}")
+
 if __name__=="__main__":
     main()

@@ -1,0 +1,1307 @@
+{
+ "_about": "Outside calorie references per template serving, checked by check_template_calories.py after every matcher run. kcal is the reference normalised to OUR serving (null when none is usable). status: ok (compare), serving_differs, not_comparable (the reason is in note), none. See RECIPE_RULES.md, 'Calorie reference'. First filled by the 11-13 Nov 2026 audit.",
+ "templates": {
+  "dashi_stock": {
+   "kcal": 12,
+   "status": "ok",
+   "url": "https://fdc.nal.usda.gov/food-details/2381716/nutrients",
+   "basis": "Product label: 8 g powder per 2 cups water, 4 g per cup",
+   "note": null
+  },
+  "chashu_pork": {
+   "kcal": 190,
+   "status": "serving_differs",
+   "url": "https://orwhateveryoudo.com/2018/11/chashu-pork-belly-recipe.html",
+   "basis": "379 per serving; Biting at the Bits serves 2 slices, so ~190 per slice",
+   "note": "Slice size: 2 lb raw belly cut into 16 slices is 2 oz raw belly a slice, counted as raw pork belly (518 kcal/100 g, none of the rendered fat lost). References' slices are thinner. Drives shoyu ramen too."
+  },
+  "ramen_egg": {
+   "kcal": 82,
+   "status": "ok",
+   "url": "https://pickledplum.com/ramen-egg-recipe/",
+   "basis": "per egg",
+   "note": null
+  },
+  "tonkatsu_": {
+   "kcal": 414,
+   "status": "ok",
+   "url": "https://christieathome.com/wprm_print/easy-quick-crispy-tonkatsu",
+   "basis": "per serving (no nutrition on own sources; Christie at Home)",
+   "note": null
+  },
+  "miso_soup": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "pork_and_vegetable_miso_soup": {
+   "kcal": 340,
+   "status": "ok",
+   "url": "https://shop.yutaka.london/blogs/recipes/tonjiru-recipe",
+   "basis": "4 servings",
+   "note": "Pork belly now skin-on Foundation (341 → 276); tonjiru uses skinless belly in Japan, so the line could say \"skinless pork belly\"."
+  },
+  "japanese_beef_and_potato_stew": {
+   "kcal": 337,
+   "status": "ok",
+   "url": "https://rasamalaysia.com/wprm_print/japanese-meat-and-potato-stew-nikujaga",
+   "basis": "3 servings (own sources list none)",
+   "note": "Yukon gold potato is now the general raw potato (live alias): 346 → 387."
+  },
+  "chicken_karaage": {
+   "kcal": 523,
+   "status": "ok",
+   "url": "https://japan.recipetineats.com/wprm_print/japanese-fried-chicken-karaage-chicken",
+   "basis": "217 g serving",
+   "note": null
+  },
+  "teriyaki_chicken": {
+   "kcal": 446,
+   "status": "ok",
+   "url": "https://www.okonomikitchen.com/teriyaki-chicken/",
+   "basis": "mean of Okonomi Kitchen 450 and RecipeTin Japan 442, both 2 servings",
+   "note": null
+  },
+  "ginger_pork": {
+   "kcal": 306,
+   "status": "ok",
+   "url": "https://norecipes.com/shogayaki-japanese-ginger-pork/",
+   "basis": "3 servings",
+   "note": "Recipe amount: 10 oz pork loin for 2 (5 oz each, 280 kcal); Norecipes splits a similar amount 3 ways. Matches are right."
+  },
+  "shrimp_tempura": {
+   "kcal": 198,
+   "status": "ok",
+   "url": "https://www.foodfaithfitness.com/wprm_print/shrimp-tempura-recipe",
+   "basis": "mean of Food Faith Fitness 210 and XOXO Bella 185 (4 servings each)",
+   "note": "Absorbed oil: 5 tbsp for 16 large shrimp is 150 of the 294 kcal. At the 15% wet-battered rate the shrimp (USDA large) would take far less; the line amount looks high for the rate. Oil amounts are Arianna's."
+  },
+  "vegetable_tempura": {
+   "kcal": 250,
+   "status": "ok",
+   "url": "https://chefjacooks.com/en/wprm_print/the-best-japanese-vegetable-tempura-recipe",
+   "basis": "4 servings",
+   "note": "Absorbed oil: 210 of 421 kcal. 7 tbsp is 15% (wet-battered) of the ~925 g of vegetables, so it follows the rate; reference counts much less oil. \"1 small eggplant\" is USDA's only eggplant, 500 g."
+  },
+  "yakitori_": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.jocooks.com/wprm_print/chicken-yakitori",
+   "basis": "Refs give per plate (236/6, 290/4), not per skewer",
+   "note": "Ours is per skewer (8); references serve 4-6 plates. Per-skewer not stated."
+  },
+  "okonomiyaki_": {
+   "kcal": 500,
+   "status": "ok",
+   "url": "https://norecipes.com/wprm_print/okonomiyaki-osaka-style",
+   "basis": "Norecipes 518 (3 servings), Chopstick Chronicles 483 (4)",
+   "note": "Pork belly now skin-on Foundation (736 → 643): 5 oz in 2 pancakes. Japanese belly is sold skinless; the line could say \"skinless pork belly\"."
+  },
+  "takoyaki_": {
+   "kcal": 50,
+   "status": "ok",
+   "url": "https://japan.recipetineats.com/wprm_print/takoyaki-recipe-octopus-balls",
+   "basis": "per ball",
+   "note": null
+  },
+  "gyoza_": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://norecipes.com/wprm_print/best-pork-gyoza",
+   "basis": "447 per serving of 8, yield in pieces not stated",
+   "note": "Per piece (30); references don't give pieces per serving."
+  },
+  "japanese_hamburger_steak": {
+   "kcal": 290,
+   "status": "ok",
+   "url": "https://oishibook.com/wprm_print/japanese-hamburger-steak-hambagu",
+   "basis": "4 servings",
+   "note": null
+  },
+  "salt_grilled_mackerel": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "miso_marinated_black_cod": {
+   "kcal": 375,
+   "status": "ok",
+   "url": "https://japan.recipetineats.com/wprm_print/nobus-miso-marinated-black-cod-recipe",
+   "basis": "263 g serving",
+   "note": null
+  },
+  "japanese_chicken_curry": {
+   "kcal": 500,
+   "status": "ok",
+   "url": "https://www.chopstickchronicles.com/wprm_print/japanese-curry-rice-%e3%82%ab%e3%83%ac%e3%83%bc%e3%83%a9%e3%82%a4%e3%82%b9",
+   "basis": "median of 598 / 406 / 500 (with rice)",
+   "note": null
+  },
+  "japanese_beef_curry": {
+   "kcal": 785,
+   "status": "ok",
+   "url": "https://www.foodologygeek.com/japanese-beef-curry/",
+   "basis": "543 per cup of curry + 1 cup cooked rice (242), as ours includes",
+   "note": null
+  },
+  "oyakodon_": {
+   "kcal": 593,
+   "status": "ok",
+   "url": "https://oishibook.com/oyakodon/",
+   "basis": "per bowl (own sources list none)",
+   "note": "Rice: 1⅓ cups cooked rice (322 kcal) and 5 oz thigh per bowl. Recipe amounts."
+  },
+  "gyudon_": {
+   "kcal": 644,
+   "status": "ok",
+   "url": "https://norecipes.com/wprm_print/yoshinoya-beef-bowl",
+   "basis": "2 bowls",
+   "note": null
+  },
+  "katsudon_": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://grantourismotravels.com/wprm_print/katsudon-recipe-for-a-japanese-pork-cutlet-and-egg-rice-bowl",
+   "basis": "Its 2201 per bowl looks like a batch total",
+   "note": "Only reference found is implausible."
+  },
+  "omurice_": {
+   "kcal": 561,
+   "status": "ok",
+   "url": "https://norecipes.com/wprm_print/omurice-recipe",
+   "basis": "mean of Norecipes 552 and Okonomi Kitchen 570",
+   "note": null
+  },
+  "japanese_fried_rice": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.carolinescooking.com/wprm_print/chashu-chahan-japanese-fried-rice-with-pork-belly",
+   "basis": "1026 for the whole batch as one lunch",
+   "note": "Reference serves the batch as 1; ours is 2."
+  },
+  "salmon_onigiri": {
+   "kcal": 250,
+   "status": "serving_differs",
+   "url": "https://ryukoch.com/en/recipes/salmon-onigiri",
+   "basis": "1 serving (not stated how many onigiri)",
+   "note": "Rice per ball: 105 g (½ cup+) per onigiri; reference serving size unknown."
+  },
+  "umeboshi_onigiri": {
+   "kcal": 166,
+   "status": "ok",
+   "url": "https://www.chopstickchronicles.com/umeboshi-onigiri/",
+   "basis": "per rice ball",
+   "note": null
+  },
+  "tuna_mayo_onigiri": {
+   "kcal": 207,
+   "status": "ok",
+   "url": "https://pickledplum.com/conbini-style-tuna-mayo-onigiri/",
+   "basis": "per onigiri",
+   "note": null
+  },
+  "california_roll": {
+   "kcal": 32,
+   "status": "ok",
+   "url": "https://www.carolinescooking.com/wprm_print/california-roll",
+   "basis": "223 per serving of 3-4 rolls / 4 = ~7 pieces",
+   "note": null
+  },
+  "salmon_nigiri": {
+   "kcal": 87,
+   "status": "not_comparable",
+   "url": "https://pinchandswirl.com/salmon-nigiri/",
+   "basis": "per piece",
+   "note": "Rice per piece follows the settled 15 g rule (21 Oct); Pinch and Swirl's 87 implies more rice and fish. Not a fault."
+  },
+  "inari_sushi": {
+   "kcal": 180,
+   "status": "ok",
+   "url": "https://www.kikkoman.com/en/cookbook/recipe/00002085.html",
+   "basis": "537 per serving of 3 pouches (12 pouches / 4); Norecipes 376/2 = 188",
+   "note": null
+  },
+  "chawanmushi_": {
+   "kcal": 100,
+   "status": "ok",
+   "url": "https://www.chopstickchronicles.com/chawanmushi/",
+   "basis": "range 62 (RecipeTin Japan, no topping) to 141",
+   "note": null
+  },
+  "spinach_ohitashi": {
+   "kcal": 34,
+   "status": "ok",
+   "url": "https://norecipes.com/wprm_print/spinach-ohitashi-japanese-spinach-salad",
+   "basis": "4 servings",
+   "note": null
+  },
+  "tamagoyaki_": {
+   "kcal": 130,
+   "status": "ok",
+   "url": "https://www.chopstickchronicles.com/tamagoyaki/",
+   "basis": "2 servings",
+   "note": null
+  },
+  "cucumber_salad": {
+   "kcal": 37,
+   "status": "ok",
+   "url": "https://pickledplum.com/japanese-cucumber-salad-sunomono/",
+   "basis": "mean of Caroline's 26 and Pickled Plum 48",
+   "note": null
+  },
+  "japanese_potato_salad": {
+   "kcal": 183,
+   "status": "ok",
+   "url": "https://www.chopstickchronicles.com/japanese-potato-salad/",
+   "basis": "4 servings",
+   "note": "Recipe amounts: 3 medium russets (USDA 213 g each) and 6 tbsp mayo (141 kcal a serving) for 4. Matches are right."
+  },
+  "agedashi_tofu": {
+   "kcal": 117,
+   "status": "ok",
+   "url": "https://norecipes.com/wprm_print/agedashi-tofu",
+   "basis": "4 small portions",
+   "note": "Absorbed oil: 2 tbsp (75 kcal a serving) is the 8% starch-dusted rate on 14 oz tofu; references count less oil. Oil rates are Arianna's."
+  },
+  "braised_burdock_and_carrot": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "udon_noodle_soup": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://pickledplum.com/light-udon-noodle-soup/",
+   "basis": "references disagree: 96 (broth only?) vs 497",
+   "note": "Ours (one 250 g udon pack + dashi) sits between."
+  },
+  "shoyu_ramen": {
+   "kcal": 782,
+   "status": "ok",
+   "url": "https://feedmebetter.com/wprm_print/shoyu-ramen-recipe",
+   "basis": "mean of Feed Me Better 865 and Ramen Kaonashi 700, per bowl",
+   "note": "Chashu: 2 slices are 4 oz raw pork belly, 588 kcal, half the bowl (see chashu_pork). Plus 1 tbsp oil."
+  },
+  "miso_ramen": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "tonkotsu_ramen": {
+   "kcal": 1262,
+   "status": "ok",
+   "url": "https://glebekitchen.com/wprm_print/4251",
+   "basis": "per bowl",
+   "note": null
+  },
+  "yakisoba_": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "zaru_soba": {
+   "kcal": 422,
+   "status": "ok",
+   "url": "https://www.chopstickchronicles.com/zaru-soba/",
+   "basis": "1 serving (about 100 g dry soba)",
+   "note": "Serving size: 2 cups cooked soba (228 g) per plate, less noodle than the reference's single serving. Recipe amount."
+  },
+  "mitarashi_dango": {
+   "kcal": 135,
+   "status": "ok",
+   "url": "https://www.chopstickchronicles.com/mitarashi-dango/",
+   "basis": "per skewer: 145 (Chopstick) and 124 (Norecipes)",
+   "note": null
+  },
+  "strawberry_mochi": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://1mal1japan.de/en/rezepte/ichigo-daifuku-mochi-with-fresh-strawberries-red-adzuki-bean-paste/",
+   "basis": "185 per 3 pieces is ~62 a piece, implausibly low",
+   "note": "Only reference found isn't credible per piece."
+  },
+  "dorayaki_": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://pickledplum.com/dorayaki/",
+   "basis": "references disagree: 367 per dorayaki (Pickled Plum) vs ~136 (Chopstick, 271 per 2)",
+   "note": "Ours 208 sits between."
+  },
+  "taiyaki_": {
+   "kcal": 278,
+   "status": "ok",
+   "url": "https://norecipes.com/taiyaki-fish-shaped-pastry/",
+   "basis": "per taiyaki (Pickled Plum's smaller ones: 111)",
+   "note": null
+  },
+  "coffee_jelly": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.brewcoffeehome.com/wprm_print/japanese-coffee-jelly-recipe",
+   "basis": "5 kcal: jelly only, no cream or syrup",
+   "note": "Reference leaves out the cream and sugar ours includes."
+  },
+  "matcha_latte": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "hojicha_latte": {
+   "kcal": 174,
+   "status": "ok",
+   "url": "https://lifecurrentsblog.com/wprm_print/hojicha-latte",
+   "basis": "1 drink",
+   "note": null
+  },
+  "garlic_fried_rice": {
+   "kcal": 257,
+   "status": "ok",
+   "url": "https://www.recipesbynora.com/wprm_print/sinangag-recipe-garlic-fried-rice",
+   "basis": "6 servings (~1 cup)",
+   "note": null
+  },
+  "beef_tapa": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://thequirinokitchen.com/wprm_print/beef-tapa",
+   "basis": "228 per 100 g serving",
+   "note": "Ours is per slice (24 a batch, 1 oz sirloin each); reference per 100 g."
+  },
+  "longganisa_": {
+   "kcal": 125,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/wprm_print/12058",
+   "basis": "per piece: Foxy Folksy 129, Recipes by Nora 120 (24 each)",
+   "note": null
+  },
+  "chicken_adobo": {
+   "kcal": 374,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/chicken-adobo-with-browned-garlic/",
+   "basis": "6 servings (Panlasang Pinoy 661 per 4)",
+   "note": "Skin and pieces per serving: each piece is a skin-on thigh, USDA 193 g (426 kcal). The weight is right: Australia's AUSNUT 2023 puts a medium thigh with skin at 195 g. Skin is about half its calories (skinless ≈ 180 kcal); Foxy Folksy's 374 points to smaller or skinless pieces. Judgement: is the skin eaten."
+  },
+  "lechon_kawali": {
+   "kcal": 315,
+   "status": "ok",
+   "url": "https://www.bitemybun.com/lechon-kawali/",
+   "basis": "630 per 8 servings = 315 per slice at our 16 slices",
+   "note": "Skin-on pork belly is now USDA's Foundation belly with skin (385 kcal/100 g; was the old SR belly at 518): 297 → 222. Bite My Bun's figure was likely calculated from the old 518 value."
+  },
+  "daing_na_bangus": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition (FatSecret-type listings 200-350 only)",
+   "note": null
+  },
+  "brown_sugar_syrup": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Sources are drink/taho recipes, no syrup figure",
+   "note": null
+  },
+  "pork_sinigang": {
+   "kcal": 632,
+   "status": "not_comparable",
+   "url": "https://www.recipesbynora.com/sinigang-na-baboy-recipe/",
+   "basis": "mean of Nora 656 (6) and Hungry Huy 607 (8)",
+   "note": "Both references calculated from USDA's old SR pork belly: Nora's 1½ lb belly for 6 gives 60 g fat at 53% (page: 61 g); Hungry Huy's 1 lb belly + 1 lb ribs for 8 gives about 43 g (page: 45.6 g). Ours uses the skin-on Foundation belly: 549."
+  },
+  "shrimp_sinigang": {
+   "kcal": 212,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/sinigang-na-hipon-recipe-2",
+   "basis": "4 servings (Bite My Bun 471/5)",
+   "note": "Head-on shrimp: 1 lb head-on is counted at 46% meat (USDA AH-102), 52 g a serving. Amount is the recipe's."
+  },
+  "milkfish_sinigang": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.recipesbynora.com/sinigang-na-bangus-recipe/",
+   "basis": "references disagree: 74 / 165 / 444",
+   "note": "Ours 246 sits inside the spread."
+  },
+  "chicken_tinola": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.recipesbynora.com/chicken-tinola-recipe/",
+   "basis": "references disagree: 240 vs 662 (both 6 servings)",
+   "note": "Ours 366 sits between the references. Thigh weight confirmed (see chicken_adobo); skin is often left in tinola, so a skinless line may fit."
+  },
+  "bulalo_": {
+   "kcal": 342,
+   "status": "ok",
+   "url": "https://www.recipesbynora.com/wprm_print/bulalo-recipe-filipino-beef-shank-soup",
+   "basis": "8 servings",
+   "note": "Beef shank: USDA has only \"Beef shank crosscuts, lean only\" (128 kcal/100 g) and bone marrow isn't counted. Cut green beans fixed (canned → raw)."
+  },
+  "beef_nilaga": {
+   "kcal": 275,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/beef-nilaga-recipe",
+   "basis": "6 servings",
+   "note": "Brisket: 2 lb whole brisket (1/8\" fat) for 6 = 5.3 oz each, 382 kcal. Matches right; reference's meat amount or cut is leaner."
+  },
+  "sopas_": {
+   "kcal": 560,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/creamy-chicken-sopas",
+   "basis": "4 servings",
+   "note": null
+  },
+  "sotanghon_soup": {
+   "kcal": 383,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/chicken-sotanghon-soup-2",
+   "basis": "750 g serving",
+   "note": null
+  },
+  "pork_adobo": {
+   "kcal": 1211,
+   "status": "not_comparable",
+   "url": "https://panlasangpinoy.com/wprm_print/47218",
+   "basis": "4 servings",
+   "note": "Reference calculated from USDA's old SR pork belly: Panlasang Pinoy's 2 lb belly for 4 at 518 kcal/100 g is 1,175 kcal and 120 g fat, the page prints 1,211 and 120 g. Ours uses the skin-on Foundation belly (385): 907."
+  },
+  "kare_kare": {
+   "kcal": 614,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/kare-kare/",
+   "basis": "mean of Foxy Folksy 865 (6) and Hungry Huy 363 (8)",
+   "note": "Oxtail is counted at USDA's 0.56 bone-and-cooking yield (85 g meat, 219 kcal a serving), settled 28 Oct. References disagree widely (363 vs 865); ours is inside that range."
+  },
+  "beef_caldereta": {
+   "kcal": 512,
+   "status": "ok",
+   "url": "https://www.recipesbynora.com/wprm_print/beef-caldereta-recipe",
+   "basis": "8 servings",
+   "note": null
+  },
+  "beef_mechado": {
+   "kcal": 529,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/wprm_print/17539",
+   "basis": "mean of Foxy Folksy 697 (4) and Panlasang Pinoy 361 (6)",
+   "note": null
+  },
+  "chicken_afritada": {
+   "kcal": 583,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/chicken-afritada-recipe",
+   "basis": "4 servings",
+   "note": null
+  },
+  "pork_menudo": {
+   "kcal": 510,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/filipino-pork-menudo-recipe-2",
+   "basis": "5 servings (Krumpli 846 per 2)",
+   "note": "Pork shoulder 2.25 lb for 6 (331 kcal each, via the braised-butt alias at 0.73 yield ≈ raw). Recipe amount."
+  },
+  "bistek_tagalog": {
+   "kcal": 234,
+   "status": "ok",
+   "url": "https://www.bitemybun.com/wprm_print/recipe/9022",
+   "basis": "mean of Bite My Bun 228 and Nora 240",
+   "note": null
+  },
+  "crispy_pata": {
+   "kcal": 457,
+   "status": "ok",
+   "url": "https://www.recipesbynora.com/wprm_print/crispy-pata-recipe-pork-leg-with-crispy-skin",
+   "basis": "4 servings",
+   "note": null
+  },
+  "sisig_": {
+   "kcal": 605,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/wprm_print/11969",
+   "basis": "4 servings",
+   "note": "Lechon kawali sub-template: skin-on belly now the Foundation row (679 → 528)."
+  },
+  "bicol_express": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://panlasangpinoy.com/wprm_print/pork-bicol-express-recipe",
+   "basis": "289 for 1.25 lb pork belly + coconut milk per 4 is not possible (belly alone is ~730)",
+   "note": "Reference implausible (289 for 1.25 lb belly + coconut per 4). Ours: belly now skin-on Foundation (1,182 → 993) + 1½ cups coconut milk and ⅔ cup cream for 4. Thai chili also counted at USDA's 45 g pepper."
+  },
+  "pork_barbecue": {
+   "kcal": 226,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/wprm_print/11554",
+   "basis": "per skewer (8 skewers)",
+   "note": null
+  },
+  "chicken_inasal": {
+   "kcal": 694,
+   "status": "ok",
+   "url": "https://www.hungryhuy.com/chicken-inasal/",
+   "basis": "5 servings",
+   "note": "Leg quarter: USDA's \"1 leg with skin\" is 344 g (thigh, drumstick and back), 736 kcal, consistent with the confirmed thigh weight. Judgement: one skin-on leg quarter a serving."
+  },
+  "pinakbet_": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "lechon_paksiw": {
+   "kcal": 680,
+   "status": "ok",
+   "url": "https://www.recipesbynora.com/wprm_print/lechon-paksiw-recipe",
+   "basis": "8 servings (Foxy Folksy's 96 is implausible)",
+   "note": "Lechon kawali sub-template: skin-on belly now the Foundation row (886 → 685), within 1% of Nora's 680."
+  },
+  "dinuguan_": {
+   "kcal": 466,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/dinuguan-recipe",
+   "basis": "median of 779 / 466 / 376",
+   "note": "Pork belly now the skin-on Foundation row (715 → 564). Remaining gap: pork amount."
+  },
+  "embutido_": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.recipesbynora.com/wprm_print/embutido-recipe-filipino-meatloaf",
+   "basis": "773 per log (6 logs)",
+   "note": "Ours is per serving of 12 (2 a log) → 386 per half log would compare; ours 455."
+  },
+  "pork_giniling": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.foxyfolksy.com/wprm_print/22406",
+   "basis": "references disagree: 553 vs 138",
+   "note": "Ours 353 sits between."
+  },
+  "kinilaw_": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.bitemybun.com/wprm_print/kinilaw-na-isda-recipe-fish-ceviche",
+   "basis": "40 for 1 lb fish per 4 is not possible",
+   "note": "Reference implausible. Ours: 5 oz tuna (155) + Thai chili counted at 45 g a pepper (27 kcal; a Thai chili is ~2 g)."
+  },
+  "tortang_talong": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "ginisang_monggo": {
+   "kcal": 345,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/ginisang-monggo-with-kalabasa",
+   "basis": "mean of Panlasang Pinoy 410 and Bite My Bun 279",
+   "note": "Pork belly now skin-on Foundation (647 → 572). Recipe amounts: 1¼ cups dried mung beans + 8 oz pork belly for 4."
+  },
+  "tapsilog_": {
+   "kcal": 883,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/tapsilog",
+   "basis": "per plate",
+   "note": null
+  },
+  "tocilog_": {
+   "kcal": 321,
+   "status": "ok",
+   "url": "https://norecipes.com/wprm_print/tosilog",
+   "basis": "per plate",
+   "note": "Tocino 5 oz (234) + 1 cup garlic rice with 2 tsp oil + fried egg. Recipe amounts; Norecipes plates are smaller."
+  },
+  "longsilog_": {
+   "kcal": 682,
+   "status": "ok",
+   "url": "https://www.cookmunitybyajinomoto.com/recipes/longsilog/",
+   "basis": "1 cup rice, 3 longganisa, 1 egg",
+   "note": null
+  },
+  "bangsilog_": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://panlasangpinoy.com/bangsilog-bangus-sinangag-itlog/",
+   "basis": "1425 per plate looks like a batch figure",
+   "note": "Reference implausible."
+  },
+  "adobo_fried_rice": {
+   "kcal": 426,
+   "status": "ok",
+   "url": "https://www.recipesbynora.com/wprm_print/filipino-adobo-fried-rice",
+   "basis": "4 servings",
+   "note": "Skin-on thigh meat (121 g, 267 kcal) + 1⅛ cups rice. Thigh weight confirmed (see chicken_adobo); the gap is skin and amounts."
+  },
+  "arroz_caldo": {
+   "kcal": 408,
+   "status": "ok",
+   "url": "https://norecipes.com/wprm_print/arroz-caldo-filipino-chicken-porridge",
+   "basis": "6 servings",
+   "note": null
+  },
+  "champorado_": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "lumpia_shanghai": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.foxyfolksy.com/lumpiang-shanghai-filipino-spring-rolls/",
+   "basis": "48 per piece at 35 pieces/lb-batch",
+   "note": "Ours is the large roll (20 a batch), so per piece is bigger by design; per batch ours 2,660 vs Foxy Folksy 1,680."
+  },
+  "lumpia_shanghai_small": {
+   "kcal": 48,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/lumpiang-shanghai-filipino-spring-rolls/",
+   "basis": "per small piece (35 a batch); Tasty 32 (50 a batch)",
+   "note": null
+  },
+  "atchara_": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.hungryhuy.com/atchara-pickled-papaya/",
+   "basis": "486 per 12-oz jar",
+   "note": "Ours per 2 tbsp-style serving (24); jar basis not comparable."
+  },
+  "water_spinach_adobo": {
+   "kcal": 169,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/adobong-kangkong-recipe",
+   "basis": "3 servings",
+   "note": "Recipe amount: 2 tbsp oil for 4 (60 kcal each) is most of it; Panlasang Pinoy splits a similar pan 3 ways. Small absolute gap."
+  },
+  "laing_": {
+   "kcal": 499,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/48888",
+   "basis": "mean of Panlasang Pinoy 618 (8) and Foxy Folksy 380 (5)",
+   "note": "Coconut: 3 cups coconut milk + 1 cup cream for 6 (635 kcal a serving). Recipe amount. Dried taro leaves are counted as raw leaves (minor)."
+  },
+  "chop_suey": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://tasty.co/recipe/filipino-home-style-chop-suey",
+   "basis": "668 per 3 servings, recipe has more meat",
+   "note": "Only reference found is a meat-heavy version."
+  },
+  "tokwa_t_baboy": {
+   "kcal": 532,
+   "status": "ok",
+   "url": "https://www.bitemybun.com/wprm_print/tokwat-baboy-recipe",
+   "basis": "mean of Bite My Bun 584 (4) and Nora 480 (8)",
+   "note": "Pork belly now the skin-on Foundation row (799 → 648): 1.5 lb belly for 6 (4 oz raw each)."
+  },
+  "kwek_kwek": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "lumpiang_sariwa": {
+   "kcal": 301,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/lumpiang-sariwa-with-fresh-lumpia-wrapper",
+   "basis": "8 servings (~1 roll each)",
+   "note": "Cut green beans fixed (canned → raw)."
+  },
+  "ginataang_kalabasa_at_sitaw": {
+   "kcal": 512,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/ginataang-kalabasa-at-sitaw",
+   "basis": "6 servings",
+   "note": null
+  },
+  "ensaladang_talong": {
+   "kcal": 92,
+   "status": "ok",
+   "url": "https://simplybakings.com/wprm_print/ensaladang-talong",
+   "basis": "4 servings (Bite My Bun 190/3)",
+   "note": null
+  },
+  "pancit_bihon": {
+   "kcal": 172,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/51154",
+   "basis": "mean of Panlasang Pinoy 193 and Quirino 151 (6 each)",
+   "note": "Rice vermicelli was cooked white rice (fixed → Rice noodles, cooked; 347 → 337). Cut green beans fixed. Remaining gap is recipe amounts: 3 tbsp oil (80 kcal a serving) and more chicken than the references."
+  },
+  "pancit_canton": {
+   "kcal": 279,
+   "status": "ok",
+   "url": "https://www.recipesbynora.com/wprm_print/pancit-canton-recipe-filipino-stir-fried-noodles",
+   "basis": "mean of Nora 310 (8) and Quirino 248 (4)",
+   "note": "Pork belly now skin-on Foundation (471 → 421). Recipe amounts: belly 1.5 oz raw + 1 cup egg noodles a serving."
+  },
+  "pancit_palabok": {
+   "kcal": 400,
+   "status": "ok",
+   "url": "https://www.hungryhuy.com/pancit-palabok/",
+   "basis": "6 servings",
+   "note": "Rice vermicelli fixed (→ Rice noodles, cooked) and pork belly now skin-on Foundation: 517 → 460."
+  },
+  "filipino_spaghetti": {
+   "kcal": 761,
+   "status": "ok",
+   "url": "https://theunlikelybaker.com/wprm_print/filipino-style-spaghetti",
+   "basis": "6 servings",
+   "note": "Recipe amounts: a whole hot dog (177), 3.3 oz ground pork (248) and 1¼ cups spaghetti a plate."
+  },
+  "la_paz_batchoy": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://panlasangpinoy.com/wprm_print/batchoy-recipe-2",
+   "basis": "1240 per bowl looks like a batch figure",
+   "note": "Reference implausible."
+  },
+  "pancit_malabon": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.recipesbynora.com/pancit-malabon-recipe/",
+   "basis": "329 per serving of 16",
+   "note": "Ours serves 9; Nora's 16 servings. Rice noodles were cooked white rice (fixed)."
+  },
+  "leche_flan": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.foxyfolksy.com/wprm_print/11696",
+   "basis": "81 per slice of 12 is too low for yolks + condensed milk",
+   "note": "Reference implausible."
+  },
+  "halo_halo": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.foxyfolksy.com/wprm_print/recipe/16282",
+   "basis": "195 per tall glass with ice cream and milk looks low",
+   "note": "Reference doubtful; ours includes ½ cup ice cream (137) and ¼ cup evaporated milk."
+  },
+  "turon_": {
+   "kcal": 114,
+   "status": "ok",
+   "url": "https://www.hungryhuy.com/turon-recipe/",
+   "basis": "per piece (12)",
+   "note": "Absorbed oil 70 kcal a roll (8% wrapper rate) + brown sugar. Reference counts little oil. Oil rates are Arianna's."
+  },
+  "banana_cue": {
+   "kcal": 150,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/wprm_print/29574",
+   "basis": "per skewer (6)",
+   "note": "Brown sugar: 3 tbsp per skewer (140 kcal) counted fully; most caramel stays on, but some is left in the pan. Plus oil 90. Judgement."
+  },
+  "biko_": {
+   "kcal": 538,
+   "status": "ok",
+   "url": "https://www.hungryhuy.com/biko-filipino-rice-cake/",
+   "basis": "mean of Hungry Huy 621 and Foxy Folksy 455 (9 slices each)",
+   "note": null
+  },
+  "bibingka_": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.hungryhuy.com/bibingka/",
+   "basis": "621 per cake (4 a batch)",
+   "note": "Ours 6 a batch (smaller cakes)."
+  },
+  "puto_": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.hungryhuy.com/puto-filipino-steamed-rice-cakes/",
+   "basis": "45 per mini cake (24 a batch)",
+   "note": "Ours 18 a batch with ~1 tbsp+ rice flour each: bigger cakes."
+  },
+  "buko_pandan": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "No usable figure (Panlasang Pinoy prints 4217 per serving)",
+   "note": null
+  },
+  "cassava_cake": {
+   "kcal": 409,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/cassava-cake",
+   "basis": "1023 per 6 servings, rescaled to our 15 pieces from a similar batch",
+   "note": null
+  },
+  "mango_float": {
+   "kcal": 485,
+   "status": "ok",
+   "url": "https://tasty.co/recipe/mango-float",
+   "basis": "8 servings",
+   "note": null
+  },
+  "taho_": {
+   "kcal": 605,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/filipino-street-food-homemade-taho-recipe/",
+   "basis": "3 servings (Hungry Huy 747 per 2 glasses)",
+   "note": "References use more syrup and pearls per glass. Ours: 208 g silken tofu, 2 tbsp dry pearls, 3 tbsp syrup."
+  },
+  "maja_blanca": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://panlasangpinoy.com/wprm_print/maja-blanca",
+   "basis": "references disagree: 574 vs 93 (both 8)",
+   "note": "Ours 471 sits between."
+  },
+  "kutsinta_": {
+   "kcal": 45,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/kutsinta/",
+   "basis": "per small piece (16)",
+   "note": null
+  },
+  "ginataang_bilo_bilo": {
+   "kcal": 400,
+   "status": "ok",
+   "url": "https://www.hawaiianelectric.com/recipes/find-a-recipe/ginataang-bilo-bilo-(sticky-rice-balls-in-coconut-milk)",
+   "basis": "8 servings",
+   "note": "Recipe amounts: 4 cups coconut milk + 1 cup cream + ¾ cup sugar for 8 (467 kcal from those). Matches right."
+  },
+  "polvoron_": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://panlasangpinoy.com/wprm_print/polvoron-recipe-2",
+   "basis": "769 per serving of 8, pieces not stated",
+   "note": "Ours per piece (13). Toasted rice flakes (pinipig) match cooked rice (minor; see open items)."
+  },
+  "sago_t_gulaman": {
+   "kcal": 255,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/sago-at-gulaman-recipe",
+   "basis": "6 servings",
+   "note": "Recipe amounts: 2 tbsp dry pearls and about 2 tbsp brown sugar syrup a glass; Panlasang Pinoy is sweeter."
+  },
+  "calamansi_juice": {
+   "kcal": 128,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/calamansi-juice/",
+   "basis": "4 glasses",
+   "note": null
+  },
+  "salabat_": {
+   "kcal": 35,
+   "status": "ok",
+   "url": "https://simplybakings.com/wprm_print/how-to-make-salabat",
+   "basis": "1 cup",
+   "note": null
+  },
+  "mango_shake": {
+   "kcal": 272,
+   "status": "ok",
+   "url": "https://simplybakings.com/wprm_print/filipino-mango-shake",
+   "basis": "2 servings",
+   "note": "One whole mango (336 g) + 2 tbsp sugar in one shake; Simply Bakings splits a similar blend in 2."
+  },
+  "tsokolate_": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.recipesbynora.com/filipino-hot-chocolate-with-tablea/",
+   "basis": "16 per cup with tablea is not possible",
+   "note": "Reference implausible. Ours: 1.5 oz unsweetened chocolate (273) + sugar per cup."
+  },
+  "bolognese_sauce": {
+   "kcal": 406,
+   "status": "ok",
+   "url": "https://bitingatthebits.com/ragu-alla-bolognese/print/13294/",
+   "basis": "369 per 4 oz (½ cup is ~4.4 oz)",
+   "note": "Ours 272 per ½ cup vs ~400 per ½ cup by the reference."
+  },
+  "italian_meatballs": {
+   "kcal": 89,
+   "status": "ok",
+   "url": "https://grantourismotravels.com/wprm_print/best-meatballs-recipe-for-the-tastiest-juiciest-italian-style-meatballs",
+   "basis": "per meatball: Grantourismo 115 (30), Posh Journal 63 (24)",
+   "note": null
+  },
+  "chicken_milanese": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources blocked (403); calculator listings 320-650",
+   "note": null
+  },
+  "minestrone_": {
+   "kcal": 216,
+   "status": "ok",
+   "url": "https://familystylefood.com/classic-minestrone-soup-recipe/",
+   "basis": "mean of Family Style 185 and Gathering Dreams 247 (6 each)",
+   "note": null
+  },
+  "italian_wedding_soup": {
+   "kcal": 353,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/italian-wedding-soup/",
+   "basis": "mean of Spend with Pennies 376 and Scarlati 330 (6 each)",
+   "note": "Acini di pepe: 8 oz dry pasta for 6 (134 kcal each) — already flagged CHECK AMOUNT as an estimate. Recipe amount."
+  },
+  "pasta_e_fagioli": {
+   "kcal": 349,
+   "status": "ok",
+   "url": "https://www.marcellinaincucina.com/authentic-italian-pasta-e-fagioli-recipe/",
+   "basis": "4 servings; ours serves 6 → 349 rescaled",
+   "note": null
+  },
+  "ribollita_": {
+   "kcal": 439,
+   "status": "ok",
+   "url": "https://grantourismotravels.com/ribollita-soup-recipe/",
+   "basis": "6 servings",
+   "note": null
+  },
+  "stracciatella_soup": {
+   "kcal": 149,
+   "status": "serving_differs",
+   "url": "https://www.recipesfromitaly.com/wprm_print/stracciatella-alla-romana-recipe",
+   "basis": "per 100 g serving (4)",
+   "note": "Serving size: reference's serving is 100 g; ours is 1½ cups broth + 1 egg + 2 tbsp parmesan."
+  },
+  "chicken_parmesan": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources blocked (403)",
+   "note": null
+  },
+  "eggplant_parmesan": {
+   "kcal": 424,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/wprm_print/classic-eggplant-parmesan-recipe",
+   "basis": "mean of Natasha 458 (8) and Petite Cook 390 (6)",
+   "note": "Absorbed oil: 177 kcal a serving (12% breaded rate). Oil rates are Arianna's."
+  },
+  "chicken_piccata": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://twopeasandtheirpod.com/wprm_print/chicken-piccata",
+   "basis": "references disagree: 638 (4) vs 254 (6)",
+   "note": "Ours 394 sits between."
+  },
+  "chicken_marsala": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources not reached; calculator listings 240-570",
+   "note": null
+  },
+  "chicken_cacciatore": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources not reached; Once Upon a Chef lists 790 for 2 thighs a serving",
+   "note": "Pieces per serving: 2 skin-on thighs a person (2 × 193 g = 853 kcal) + 2 tbsp oil. The thigh weight is right (AUSNUT 195 g); references serve 1–1.5 thighs."
+  },
+  "saltimbocca_": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.recipesfromitaly.com/wprm_print/saltimbocca-alla-romana-recipe",
+   "basis": "170 per 100 g",
+   "note": "Ours per cutlet plate (4 oz veal + prosciutto + butter/oil); reference per 100 g."
+  },
+  "osso_buco": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources not reached",
+   "note": null
+  },
+  "beef_braciole": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources not reached",
+   "note": null
+  },
+  "sausage_and_peppers": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources not reached",
+   "note": null
+  },
+  "margherita_pizza": {
+   "kcal": 173,
+   "status": "ok",
+   "url": "https://savvybites.co.uk/wprm_print/easy-margherita-pizza-with-homemade-pizza-dough",
+   "basis": "692 per pizza ÷ 4 slices",
+   "note": "Slice size: ours is 1 of 8 slices from 2 pizzas' worth of dough; Savvy Bites' pizza ÷ 4. Matches right."
+  },
+  "pepperoni_pizza": {
+   "kcal": 227,
+   "status": "ok",
+   "url": "https://www.chiselandfork.com/homemade-pepperoni-pizza/",
+   "basis": "per slice (8)",
+   "note": null
+  },
+  "calzone_": {
+   "kcal": 555,
+   "status": "ok",
+   "url": "https://sunset.com/recipe/flexible-calzones",
+   "basis": "per calzone (4)",
+   "note": "6 oz dough per calzone (418). Recipe amount."
+  },
+  "frittata_": {
+   "kcal": 320,
+   "status": "ok",
+   "url": "https://hilltoprecipes.com/frittata/",
+   "basis": "mean of Hilltop 368 and Recipes from Italy 271 (4 each)",
+   "note": "Recipe: 6 eggs for 4 with no potato; both references add potato or ricotta. Matches right."
+  },
+  "mushroom_risotto": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources blocked; calculator listings 300-515",
+   "note": null
+  },
+  "risotto_alla_milanese": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "arancini_": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.christinascucina.com/arancini-di-riso-sicilian-italian-rice-balls/",
+   "basis": "525 per serving of 2 (16 a batch) → 263 each",
+   "note": "Ours 409 per ball. Absorbed oil + 16 a batch; check yield."
+  },
+  "caprese_salad": {
+   "kcal": 245,
+   "status": "ok",
+   "url": "https://www.christinascucina.com/wprm_print/caprese-salad-recipe-or-tomato-basil-and-mozzarella-salad",
+   "basis": "4 servings",
+   "note": null
+  },
+  "bruschetta_": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.recipegirl.com/how-to-make-bruschetta/",
+   "basis": "204 per serving of 8",
+   "note": "Ours per piece (24)."
+  },
+  "garlic_bread": {
+   "kcal": 287,
+   "status": "ok",
+   "url": "https://www.simplyscratch.com/wprm_print/67179",
+   "basis": "per slice (10)",
+   "note": "Slice size: 16 Italian bread slices (29 g, USDA) for 10 servings; Simply Scratch's slices are bigger with more butter."
+  },
+  "focaccia_": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.italianrecipebook.com/traditional-focaccia/",
+   "basis": "296 per serving of 6",
+   "note": "Ours per piece of 10."
+  },
+  "panzanella_": {
+   "kcal": 253,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/easy-panzanella-salad/",
+   "basis": "8 servings (Grantourismo 754 per 2)",
+   "note": "Olive oil: ¼ cup+ for 6 (168 kcal a serving) and 56 g bread each. Recipe amounts."
+  },
+  "caponata_": {
+   "kcal": 253,
+   "status": "ok",
+   "url": "https://tastefullygrace.com/eggplant-caponata/",
+   "basis": "mean of Tastefully Grace 232 and Recipes from Italy 273",
+   "note": null
+  },
+  "creamy_polenta": {
+   "kcal": 262,
+   "status": "ok",
+   "url": "https://cheflolaskitchen.com/creamy-polenta-recipe/",
+   "basis": "4 servings",
+   "note": null
+  },
+  "fried_calamari": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.marcellinaincucina.com/calamari-fritti/",
+   "basis": "references disagree: 487 (no oil) vs 216",
+   "note": "Ours 316 sits between."
+  },
+  "spaghetti_bolognese": {
+   "kcal": 738,
+   "status": "ok",
+   "url": "https://wholesomepatisserie.com/wprm_print/30-minute-ground-beef-spaghetti-bolognese",
+   "basis": "4 servings, 17.6 oz dry pasta",
+   "note": null
+  },
+  "spaghetti_and_meatballs": {
+   "kcal": 824,
+   "status": "ok",
+   "url": "https://robinmillercooks.com/wprm_print/spaghetti-and-meatballs",
+   "basis": "mean of Robin Miller 917 (4) and Once Upon a Chef 731 (6), 1 lb pasta",
+   "note": "Recipe amounts: 2 cups cooked spaghetti + 5.6 oz meat in meatballs a plate."
+  },
+  "spaghetti_carbonara": {
+   "kcal": 805,
+   "status": "ok",
+   "url": "https://www.christinascucina.com/wprm_print/spaghetti-alla-carbonara-authentic-roman-recipe",
+   "basis": "5 servings, 1 lb pasta (Culinary Ginger 480 uses ½ lb for 4)",
+   "note": null
+  },
+  "cacio_e_pepe": {
+   "kcal": 406,
+   "status": "not_comparable",
+   "url": "https://saltandwind.com/wprm_print/cacio-e-pepe-leonardo-vignolis-cacio-e-pepe-pasta-recipe",
+   "basis": "4 servings, 1 lb pasta",
+   "note": "Reference too low for its own amounts: 1 lb dry spaghetti alone is ~400 kcal a serving before cheese. Ours (2 cups pasta + 1.4 oz pecorino) is plausible."
+  },
+  "spaghetti_aglio_e_olio": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources not reached",
+   "note": null
+  },
+  "fettuccine_alfredo": {
+   "kcal": 649,
+   "status": "ok",
+   "url": "https://www.melissassouthernstylekitchen.com/wprm_print/fettuccine-alfredo",
+   "basis": "mean of Melissa's 621 and Eazy Peazy 677",
+   "note": "Cream: 1½ cups heavy cream for 4 (309) + butter + parmesan; 2.5 oz dry fettuccine. Recipe amounts."
+  },
+  "penne_alla_vodka": {
+   "kcal": 595,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/penne-alla-vodka/",
+   "basis": "6 servings from 1 lb pasta (about 1.3 cups cooked each; ours 1.25 cups)",
+   "note": null
+  },
+  "penne_arrabbiata": {
+   "kcal": 539,
+   "status": "ok",
+   "url": "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
+   "basis": "mean of RecipeTin 567 and Christina's 510",
+   "note": null
+  },
+  "pesto_pasta": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources: no figure / 403",
+   "note": null
+  },
+  "lasagna_bolognese": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://xoxobella.com/wprm_print/lasagna-alla-bolognese",
+   "basis": "references disagree: 705 (12) vs 1080 (4)",
+   "note": "Ours 920 (8 pieces) sits between."
+  },
+  "baked_ziti": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources not reached",
+   "note": null
+  },
+  "shrimp_scampi": {
+   "kcal": 910,
+   "status": "ok",
+   "url": "https://askchefdennis.com/wprm_print/classic-shrimp-scampi-recipe",
+   "basis": "2 servings with ½ lb linguine (4 oz dry each)",
+   "note": "Pasta: ours is 3 oz dry linguine a plate, Chef Dennis 4 oz; plus less butter. Recipe amounts."
+  },
+  "linguine_alle_vongole": {
+   "kcal": 703,
+   "status": "ok",
+   "url": "https://www.olivemagazine.com/recipes/fish-and-seafood/linguine-alle-vongole/",
+   "basis": "mean of Olive 936 and Petite Cook 470",
+   "note": null
+  },
+  "bucatini_all_amatriciana": {
+   "kcal": 781,
+   "status": "ok",
+   "url": "https://www.tastingtable.com/1243770/traditional-bucatini-allamatriciana-recipe/",
+   "basis": "4 servings, 1 lb pasta",
+   "note": null
+  },
+  "spaghetti_alla_puttanesca": {
+   "kcal": 480,
+   "status": "ok",
+   "url": "https://culinaryginger.com/wprm_print/traditional-spaghetti-alla-puttanesca",
+   "basis": "mean of Culinary Ginger 364 and RecipeTin 596",
+   "note": null
+  },
+  "gnocchi_alla_sorrentina": {
+   "kcal": 447,
+   "status": "ok",
+   "url": "https://www.krumpli.co.uk/gnocchi-alla-sorrentina/",
+   "basis": "893 per 2 with 500 g gnocchi, rescaled to our 113 g gnocchi a plate",
+   "note": null
+  },
+  "tiramisu_": {
+   "kcal": 463,
+   "status": "ok",
+   "url": "https://www.bakinglikeachef.com/authentic-italian-tiramisu-recipe/",
+   "basis": "617 per 6 slices; Tasting Table 526 per 4",
+   "note": "Ours 8 slices: 461 vs ~460 rescaled."
+  },
+  "panna_cotta": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "cannoli_": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "Own sources list no nutrition",
+   "note": null
+  },
+  "biscotti_": {
+   "kcal": 53,
+   "status": "ok",
+   "url": "https://www.bakinglikeachef.com/cantucci-toscani-italian-almond-biscuits/",
+   "basis": "per biscuit",
+   "note": null
+  },
+  "affogato_": {
+   "kcal": 276,
+   "status": "ok",
+   "url": "https://www.onceuponachef.com/recipes/affogato.html",
+   "basis": "1 portion",
+   "note": null
+  },
+  "cappuccino_": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "No nutrition on sources",
+   "note": null
+  },
+  "italian_hot_chocolate": {
+   "kcal": 279,
+   "status": "ok",
+   "url": "https://scarlatifamilykitchen.com/italian-hot-chocolate/",
+   "basis": "½ cup (4 servings)",
+   "note": null
+  }
+ }
+}

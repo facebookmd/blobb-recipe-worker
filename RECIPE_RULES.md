@@ -245,6 +245,24 @@ All base templates (sauces, batters, pastes, broths, glazes, cured or prepared p
 
 Use commonly known ratios; do not reproduce any published recipe verbatim. Compare ratios across sources for realism. The SOURCE line must reflect the pages actually consulted.
 
+## Calorie reference
+
+Every recipe gets an outside calorie figure in `calorie_references.json`, keyed by its ID. The matcher checks each template against it after every run (`check_template_calories.py`) and lists the ones more than 20% and 30 kcal off. A new recipe without one is listed too.
+
+* **kcal**: calories per serving printed on one of the recipe's SOURCE pages (its nutrition box), **normalised to our serving**: per piece, per skewer, per ½ cup, or the batch ÷ our `Servings:`, using the page's own yield. If no source prints one, use another real recipe page for the dish that does (the same source rules apply). Never estimate calories yourself.
+* **url**: the page the figure is from. **basis**: one line on how it was normalised ("447 per serving of 8, 6 pieces each").
+* **status**: `ok` to compare; `serving_differs` when the page's serving can't be turned into ours; `not_comparable` when the figure can't be right or isn't independent, with the reason in **note**; `none` when no page gives one.
+* Treat a printed figure as suspect when it is impossible for its own ingredients (40 kcal for 1 lb of fish per 4, 4,217 per serving), is a whole batch labelled per serving, or plainly comes from old USDA data we have replaced. Blog nutrition boxes are worked out by a plugin from USDA data: Panlasang Pinoy's pork adobo (1,211) and two sinigang na baboy pages match USDA's old 53%-fat pork belly, which the templates no longer use (13 Nov 2026).
+* When the check flags a template, find the cause line by line before importing: a wrong food, amount, unit, portion, raw vs cooked, absorbed oil, servings, or a reference that isn't comparable. Write the cause in **note**. Fix only a real error; recipe amounts and servings are Arianna's call.
+
+Example:
+
+```json
+"takoyaki_": {"kcal": 50, "status": "ok",
+  "url": "https://japan.recipetineats.com/wprm_print/takoyaki-recipe-octopus-balls",
+  "basis": "per ball", "note": null}
+```
+
 ## Self-check before finishing
 
 * Every base template has `Serving size:` and an AKA line with the names recipes use for it.
@@ -254,4 +272,5 @@ Use commonly known ratios; do not reproduce any published recipe verbatim. Compa
 * No grams, no cups of meat, no dry pasta/rice/noodles (except the cooked-in-dish exception), no bare `rice`.
 * No "to taste", no non-Latin script in AKA, no commas inside URLs, exactly 3 URLs per SOURCE, and every URL opened and loading.
 * Every ID is unique across all recipe files, not just this one.
+* Every new recipe has an entry in `calorie_references.json`, normalised to its serving.
 * Exactly 3 blank lines between blocks.

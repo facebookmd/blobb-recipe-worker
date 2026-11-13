@@ -29,6 +29,9 @@ FILES
   supabase_food_source.py  Reads foods and portions from the USDA Supabase
                            project (cached on disk).
   boosts.json              Hand-written matching rules (see FIXING A MATCH).
+  calorie_references.json  Outside calories per serving for each template.
+  check_template_calories.py
+                           Compares them with the output after each run.
   app.py                   The Cloud Run server behind "Convert recipe".
   auth.py                  Who may call it (signed-in app users), how often.
   Dockerfile, .dockerignore, requirements.txt
@@ -74,6 +77,16 @@ From this folder, with SUPABASE_ANON_KEY set:
 
 Output: templates_output.xlsx (to review) and templates_output.csv (to
 import), in the folder you ran from.
+
+Calorie check: after writing the output, the matcher compares each
+template's calories per serving with its outside reference in
+calorie_references.json and lists the ones more than 20% and 30 kcal off,
+with the known cause when there is one, and every new template that has
+no reference yet. It only reports. Look into each new flag before
+importing, and add a reference for each new recipe (RECIPE_RULES.md,
+"Calorie reference"). On its own:
+
+    .venv/bin/python check_template_calories.py templates_output.csv
 
 A Supabase request that still fails after four retries (1, 2, 4 and 8 s
 apart) stops the run, and the output files are left as they were: run it
