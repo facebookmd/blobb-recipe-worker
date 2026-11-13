@@ -57,6 +57,11 @@ def foods(monkeypatch):
         return (food, 1.0, "high", None) if food else (None, 0.0, "none", None)
     monkeypatch.setattr(matcher, "match_ingredient", fake)
     monkeypatch.setattr(matcher, "_search_and_build_index", lambda *a, **k: None)
+    # These foods only: the live "pork belly" alias (13 Nov 2026) took the
+    # stubbed pork's place.
+    monkeypatch.setattr(matcher, "load_food_aliases", lambda: [])
+    monkeypatch.setattr(matcher, "_FOOD_ALIASES", {})
+    monkeypatch.setattr(matcher, "_FOOD_ALIASES_TRIED_AT", None)
 
 
 def run(tmp_path, *blocks, published=None, strict=True):
