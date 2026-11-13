@@ -184,3 +184,22 @@ FOUNDATION_BELLY["display_name"] = "Pork belly, with skin, raw"
 ])
 def test_a_skin_on_line_takes_the_row_with_skin(line, expected):
     assert best(line, [SR_BELLY, FOUNDATION_BELLY], "lb") is expected
+
+
+# ── Plain pork belly is skin-on (food_aliases, 13 Nov 2026) ────────────────
+# "pork belly" and "pork bellies" are aliases of the Foundation belly with
+# skin; "skinless pork belly" must not pick that alias up when the search
+# leaves "skinless" out.
+
+@pytest.mark.parametrize("line, expected", [
+    ("pork belly", FOUNDATION_BELLY),
+    ("pork bellies", FOUNDATION_BELLY),
+    ("skinless pork belly", SR_BELLY),
+])
+def test_plain_pork_belly_is_the_skin_on_alias(line, expected, monkeypatch):
+    import food_name_search
+    aliases = dict(food_name_search._food_aliases())
+    for name in ("pork belly", "pork bellies"):
+        aliases[food_name_search.alias_key(name)] = 2727576
+    monkeypatch.setattr(food_name_search, "_ALIASES", aliases)
+    assert best(line, [SR_BELLY, FOUNDATION_BELLY], "lb") is expected

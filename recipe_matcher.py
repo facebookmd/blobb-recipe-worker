@@ -2047,6 +2047,7 @@ MEAT_PIECE_RE = re.compile(r"(?i)\b(?:pieces?|chunks?|bite[- ]?sized?|cut up)\b"
 _SKIN_ROW_RE = re.compile(r"\b(?:meat and skin|with skin|skin eaten|skin coating eaten)\b")
 # A line asking for the skin, outside chicken cuts.
 SKIN_ON_LINE_RE = re.compile(r"(?i)\b(?:skin[- ]?on|with skin)\b")
+SKINLESS_LINE_RE = re.compile(r"(?i)\b(?:skinless|skin[- ]?off|without skin|no skin)\b")
 _SKINLESS_ROW_RE = re.compile(r"\b(?:skinless|meat only|skin not eaten)\b")
 
 
@@ -2406,7 +2407,12 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
     query_tokens = {_canonical_token(t) for t in query.tokens}
 
     aliases = food_name_search._food_aliases()
-    alias_ids = {aliases.get(food_name_search.alias_key(t)) for t in (remapped, split.food)} - {None}
+    # Not the alias of a search that left out the line's "skinless": "pork
+    # belly" names the skin-on belly, "skinless pork belly" doesn't
+    # (13 Nov 2026).
+    alias_texts = (remapped,) if (SKINLESS_LINE_RE.search(remapped)
+                                  and not SKINLESS_LINE_RE.search(split.food)) else (remapped, split.food)
+    alias_ids = {aliases.get(food_name_search.alias_key(t)) for t in alias_texts} - {None}
     # An alias's food is the line's, whatever its name says: "black olives"
     # is "Olives, ripe, canned".
     lacked_of = {id(r): [] if r.get("id") in alias_ids else _food_words_lacked(query, r) for r in rows}
