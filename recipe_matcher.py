@@ -2045,6 +2045,8 @@ CUT_BONE_SKIN_RE = re.compile(
 # skinless chicken pieces" found breaded fried boneless pieces.
 MEAT_PIECE_RE = re.compile(r"(?i)\b(?:pieces?|chunks?|bite[- ]?sized?|cut up)\b")
 _SKIN_ROW_RE = re.compile(r"\b(?:meat and skin|with skin|skin eaten|skin coating eaten)\b")
+# A line asking for the skin, outside chicken cuts.
+SKIN_ON_LINE_RE = re.compile(r"(?i)\b(?:skin[- ]?on|with skin)\b")
 _SKINLESS_ROW_RE = re.compile(r"\b(?:skinless|meat only|skin not eaten)\b")
 
 
@@ -2361,6 +2363,7 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
         boosted_text = remapped
 
     cut, skinless = _chicken_cut(ingredient)
+    skin_on_line = skinless is None and bool(SKIN_ON_LINE_RE.search(ingredient))
 
     def search_text(text):
         # "eggs, scrambled" is raw eggs to scramble (_line_preparations).
@@ -2425,6 +2428,13 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
             continue
         rank = layer1_rank = food_name_search.score_row(query, row)
         delta = _recipe_variant_delta(query, row, line_cooked and not line_raw, skinless, raw_known)
+        # A skin-on line's food with its skin, as for chicken cuts
+        # (_chicken_cut): "skin-on pork belly" is "Pork, belly, with skin,
+        # raw" (Foundation, 385 kcal/100 g), not the plain SR belly (518).
+        # The search goes without "skin-on" (BONE_IN_SKIN_ON_RE), so the
+        # row that says it ranked below (Arianna, 13 Nov 2026).
+        if skin_on_line and _SKIN_ROW_RE.search(_row_words_text(row)):
+            delta -= 1
         if delta and rank.is_match:
             rank = dataclasses.replace(rank, bucket=rank.bucket - delta * food_name_search.VARIANT_PENALTY)
         has_unit = _has_unit_portion(food, unit)

@@ -160,3 +160,27 @@ def test_a_row_named_cooked_is_not_raw(description, category, raw):
         {"id": 1, "fdc_id": 1, "source_set": "sr_legacy", "description": description,
          "display_name": description, "category": category, "calories_100g": 100}, 0, {})
     assert food["is_raw"] is raw
+
+
+# ── Skin-on lines outside chicken (13 Nov 2026) ─────────────────────────────
+# "skin-on pork belly" went without "skin-on" to the search and found the
+# plain SR belly (518 kcal/100 g); the Foundation row that says the skin
+# (385) ranked below it.
+
+SR_BELLY = usda("167812", "Pork, fresh, belly, raw", [portion(1, "4 oz", 113.0)],
+                518.0, raw=True)
+FOUNDATION_BELLY = usda("2727576", "Pork, belly, with skin, raw", [portion(1, "RACC", 26.0)],
+                        385.0, raw=True, data_type="Foundation")
+SR_BELLY["display_name"] = "Pork belly, raw"
+FOUNDATION_BELLY["display_name"] = "Pork belly, with skin, raw"
+
+
+@pytest.mark.parametrize("line, expected", [
+    ("skin-on pork belly", FOUNDATION_BELLY),
+    ("pork belly with skin", FOUNDATION_BELLY),
+    # Not asked for: the plain belly, as before.
+    ("pork belly", SR_BELLY),
+    ("skinless pork belly", SR_BELLY),
+])
+def test_a_skin_on_line_takes_the_row_with_skin(line, expected):
+    assert best(line, [SR_BELLY, FOUNDATION_BELLY], "lb") is expected
