@@ -41,7 +41,7 @@
    "status": "ok",
    "url": "https://shop.yutaka.london/blogs/recipes/tonjiru-recipe",
    "basis": "4 servings",
-   "note": "Pork belly now skin-on Foundation (341 → 276); tonjiru uses skinless belly in Japan, so the line could say \"skinless pork belly\"."
+   "note": null
   },
   "japanese_beef_and_potato_stew": {
    "kcal": 337,
@@ -97,7 +97,7 @@
    "status": "ok",
    "url": "https://norecipes.com/wprm_print/okonomiyaki-osaka-style",
    "basis": "Norecipes 518 (3 servings), Chopstick Chronicles 483 (4)",
-   "note": "Pork belly now skin-on Foundation (736 → 643): 5 oz in 2 pancakes. Japanese belly is sold skinless; the line could say \"skinless pork belly\"."
+   "note": "Pork belly: 5 oz skinless belly in 2 pancakes (366 kcal each) plus mayo; references make 3-4 pancakes from the same batter. Recipe amount/servings question."
   },
   "takoyaki_": {
    "kcal": 50,
