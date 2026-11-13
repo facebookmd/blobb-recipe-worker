@@ -2048,6 +2048,22 @@ _SKIN_ROW_RE = re.compile(r"\b(?:meat and skin|with skin|skin eaten|skin coating
 # A line asking for the skin, outside chicken cuts.
 SKIN_ON_LINE_RE = re.compile(r"(?i)\b(?:skin[- ]?on|with skin)\b")
 SKINLESS_LINE_RE = re.compile(r"(?i)\b(?:skinless|skin[- ]?off|without skin|no skin)\b")
+
+# Pork belly as the recipe's cuisine buys it when the line doesn't say:
+# skinless in Japanese and Korean cooking (butabara, chashu, samgyeopsal),
+# else the "pork belly" alias's skin-on belly (Arianna, 13 Nov 2026). The
+# cuisine is a template's Category, or Convert recipe's cuisine pick.
+SKINLESS_BELLY_CUISINES = ("japanese", "korean")
+_PLAIN_PORK_BELLY_RE = re.compile(r"(?i)^pork bell(?:y|ies)$")
+
+
+def _cuisine_skin_default(ingredient: str, category: str) -> str:
+    """The line's food as the cuisine means it: "pork belly" in a Japanese
+    or Korean recipe is "skinless pork belly"; anything else unchanged."""
+    cat = (category or "").lower()
+    if _PLAIN_PORK_BELLY_RE.match(ingredient.strip()) and any(c in cat for c in SKINLESS_BELLY_CUISINES):
+        return f"skinless {ingredient.strip()}"
+    return ingredient
 _SKINLESS_ROW_RE = re.compile(r"\b(?:skinless|meat only|skin not eaten)\b")
 
 
@@ -4343,6 +4359,9 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
         # Frying oil last, once the fried food's weight is known.
         for ing_row in sorted(ing_rows, key=_is_frying_oil):
             ingredient=ing_row.get("ingredient","").strip()
+            # What the template shows: the line's own words, even when the
+            # cuisine reads them differently (_cuisine_skin_default).
+            label=ingredient
             qty_raw=ing_row.get("qty","").strip()
             unit=ing_row.get("unit","").strip()
             section=ing_row.get("section","").strip() or "Main"
@@ -4370,7 +4389,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                     or (unit.lower() in ("tt","") and qty_raw in ("","0"))):
                 output_rows.append({
                     "_type":"note","template_id":tid,"template_name":template_name,
-                    "category":category,"component_label":ingredient,
+                    "category":category,"component_label":label,
                     "notes":"to taste â€” no calories logged",
                     "section":section,
                 })
@@ -4379,7 +4398,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             if _is_aromatic_leaf(ingredient):
                 output_rows.append({
                     "_type":"note","template_id":tid,"template_name":template_name,
-                    "category":category,"component_label":ingredient,
+                    "category":category,"component_label":label,
                     "notes":AROMATIC_NOTE,
                     "section":section,
                 })
@@ -4437,6 +4456,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 r"|\bcooking\s+water\b", re.I)
             if PREP_WATER_RE.search(ingredient):
                 continue
+            ingredient=_cuisine_skin_default(ingredient, category)
 
             try: qty=float(qty_raw) if qty_raw else 1.0
             except ValueError: qty=1.0
@@ -4503,7 +4523,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                 output_rows.append({
                     "_type":"data","_confidence":"none","_source":"none",
                     "template_id":tid,"template_name":template_name,
-                    "category":category,"component_label":ingredient,
+                    "category":category,"component_label":label,
                     "notes":f"UNMATCHED (best score {score:.2f})",
                     "section":section,
                 })
@@ -4547,7 +4567,7 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
 
             u_low=unit.lower()
             is_countable=u_low in ("piece","pieces","clove","cloves","unit","units","item","serving","servings","sheet","sheets","leaf","leaves","stalk","stalks","slice","slices","strip","strips","spear","spears","head","heads","ear","ears","fillet","fillets","steak","steaks","patty","patties","chop","chops","drumstick","drumsticks","knob","knobs","cube","cubes","block","blocks","stick","sticks","wrapper","wrappers","whole","pack","sachet","sprig","sprigs","bunch","bunches")
-            display_label=matched_alt if matched_alt else ingredient
+            display_label=matched_alt if matched_alt else label
             vol_mismatch=False
 
             if portion is None:

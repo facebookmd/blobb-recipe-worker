@@ -79,7 +79,7 @@ Pork and Vegetable Miso Soup
 ID: pork_and_vegetable_miso_soup
 AKA: Tonjiru", "Butajiru
 Servings: 4
-7 oz thinly sliced pork belly
+7 oz thinly sliced skinless pork belly
 1 tsp sesame oil
 1/2 medium onion
 1.5 cup sliced daikon
@@ -223,7 +223,7 @@ Servings: 2
 1/3 cup dashi stock
 3 cup shredded cabbage
 2 stalk green onion
-5 oz thinly sliced pork belly
+5 oz thinly sliced skinless pork belly
 2 tsp vegetable oil
 --Toppings
 2 tbsp okonomiyaki sauce
@@ -739,7 +739,7 @@ Yakisoba
 ID: yakisoba_
 AKA: Stir-Fried Noodles", "Pork yakisoba
 Servings: 4
-8 oz thinly sliced pork belly
+8 oz thinly sliced skinless pork belly
 3 tbsp vegetable oil
 1/2 medium onion
 1/3 cup carrot matchsticks

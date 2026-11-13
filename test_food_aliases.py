@@ -227,3 +227,55 @@ def test_small_chilies_count_by_a_small_pepper(tmp_path, chilies, line, label, f
     r = row(run(tmp_path, f"X\nServings: 1\n{line}"), label)
     assert r["matched_food_name"] == food
     assert float(r["portion_amt"]) * float(r["unit_grams"]) == pytest.approx(grams)
+
+
+# ── Pork belly by cuisine (13 Nov 2026) ────────────────────────────────────
+# Plain "pork belly" is the skin-on alias, except in Japanese and Korean
+# recipes (a template's Category, or Convert recipe's cuisine), where it is
+# bought skinless. The line keeps its own words as its label.
+
+SR_BELLY = matcher._build_supabase_usda_food(
+    {"id": 664, "fdc_id": 167812, "source_set": "sr_legacy",
+     "description": "Pork, fresh, belly, raw", "display_name": "Pork belly, raw",
+     "calories_100g": 518},
+    0, {664: [{"label": "oz", "grams": 113.0, "sequence_number": 1}]})
+SKIN_ON_BELLY = matcher._build_supabase_usda_food(
+    {"id": 325, "fdc_id": 2727576, "source_set": "foundation",
+     "description": "Pork, belly, with skin, raw", "display_name": "Pork belly, with skin, raw",
+     "calories_100g": 385},
+    0, {325: [{"label": "RACC", "grams": 26.0, "sequence_number": 1}]})
+BELLY_ALIAS = {"alias": "pork belly", "unit": None,
+               "food": {"fdc_id": 2727576, "source_set": "foundation"}, "portion": None}
+
+
+@pytest.mark.parametrize("ingredient, category, expected", [
+    ("pork belly", "Japanese", "skinless pork belly"),
+    ("pork belly", "Korean", "skinless pork belly"),
+    ("Pork Bellies", "japanese", "skinless Pork Bellies"),
+    ("pork belly", "Filipino", "pork belly"),
+    ("pork belly", "", "pork belly"),
+    ("skin-on pork belly", "Japanese", "skin-on pork belly"),
+    ("pork belly adobo", "Japanese", "pork belly adobo"),
+])
+def test_the_cuisine_says_whether_plain_belly_has_skin(ingredient, category, expected):
+    assert matcher._cuisine_skin_default(ingredient, category) == expected
+
+
+@pytest.mark.parametrize("category, food", [
+    ("Japanese", "Pork belly, raw"),
+    ("Filipino", "Pork belly, with skin, raw"),
+])
+def test_plain_belly_follows_the_recipe_cuisine(tmp_path, monkeypatch, stubbed, category, food):
+    monkeypatch.setattr(matcher, "load_food_aliases", lambda: [BELLY_ALIAS])
+    foods = {"167812": SR_BELLY, "2727576": SKIN_ON_BELLY}
+    monkeypatch.setattr(matcher, "_fetch_food_by_fdc_id", lambda fdc: foods.get(fdc))
+    monkeypatch.setattr(matcher, "match_ingredient",
+                        lambda ing, *a, **k: ((SR_BELLY if "skinless" in ing else SKIN_ON_BELLY),
+                                              1.0, "high", None))
+    recipe = parse_recipe.parse_single_block("X\nServings: 1\n4 oz pork belly".split("\n"),
+                                             name_hint="recipe", category_override=category)
+    csv = tmp_path / "r.csv"
+    parse_recipe.write_recipes_csv([recipe], str(csv), append=False)
+    rows = [r for r in matcher.build_output_rows(str(csv), [], 0.0) if r.get("_type") == "data"]
+    assert rows[0]["matched_food_name"] == food
+    assert rows[0]["component_label"] == "pork belly"
