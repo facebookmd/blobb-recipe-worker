@@ -538,7 +538,7 @@
    "status": "not_comparable",
    "url": "https://panlasangpinoy.com/wprm_print/pork-bicol-express-recipe",
    "basis": "289 for 1.25 lb pork belly + coconut milk per 4 is not possible (belly alone is ~730)",
-   "note": "Reference implausible (289 for 1.25 lb belly + coconut per 4). Ours: belly now skin-on Foundation (1,182 → 993) + 1½ cups coconut milk and ⅔ cup cream for 4. Thai chili also counted at USDA's 45 g pepper."
+   "note": "Reference implausible (289 for 1.25 lb belly + coconut per 4). Ours: belly now skin-on Foundation, chilies now small peppers (1,182 → 948) + 1½ cups coconut milk and ⅔ cup cream for 4."
   },
   "pork_barbecue": {
    "kcal": 226,
@@ -594,7 +594,7 @@
    "status": "not_comparable",
    "url": "https://www.bitemybun.com/wprm_print/kinilaw-na-isda-recipe-fish-ceviche",
    "basis": "40 for 1 lb fish per 4 is not possible",
-   "note": "Reference implausible. Ours: 5 oz tuna (155) + Thai chili counted at 45 g a pepper (27 kcal; a Thai chili is ~2 g)."
+   "note": "Reference implausible (40 kcal for 1 lb fish per 4). Ours: 5 oz tuna (155) + Thai chili now counted as a serrano pepper (6.1 g; was 45 g)."
   },
   "tortang_talong": {
    "kcal": null,
