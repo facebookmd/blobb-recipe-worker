@@ -175,3 +175,55 @@ def test_names_without_an_alias_match_as_before(tmp_path, stubbed):
     r = row(run(tmp_path, "X\nServings: 1\n1 cup cooked quinoa"), "cooked quinoa")
     assert r["_confidence"] == "none"
     assert stubbed == ["cooked quinoa"]
+
+
+# ── Small chilies by the piece (13 Nov 2026) ───────────────────────────────
+# "Peppers, hot chili, red, raw" has only "1 pepper" = 45 g: "8 Thai chili
+# pepper" weighed 360 g. Aliases point Thai / bird's eye chili at serrano
+# (USDA's smallest whole pepper, 6.1 g) and long green chili at FNDDS's
+# generic hot pepper (1 whole = 15 g). Live portions, 13 Nov 2026.
+
+SERRANO = matcher._build_supabase_usda_food(
+    {"id": 2247, "fdc_id": 169395, "source_set": "sr_legacy",
+     "description": "Peppers, serrano, raw", "display_name": "Serrano peppers, raw",
+     "calories_100g": 32},
+    0, {2247: [{"label": "1 cup, chopped", "grams": 105.0, "sequence_number": 1},
+               {"label": "pepper", "grams": 6.1, "sequence_number": 2}]})
+HOT_PEPPER = matcher._build_supabase_usda_food(
+    {"id": 468030, "fdc_id": 2709798, "source_set": "survey_fndds",
+     "description": "Peppers, hot, raw", "display_name": "Peppers, hot, raw",
+     "calories_100g": 34},
+    0, {468030: [{"label": "1 piece", "grams": 5, "sequence_number": 1},
+                 {"label": "1 slice", "grams": 5, "sequence_number": 2},
+                 {"label": "1 whole", "grams": 15, "sequence_number": 3},
+                 {"label": "Quantity not specified", "grams": 15, "sequence_number": 4}]})
+SERRANO_PEPPER = {"label": "pepper", "grams": 6.1, "sequence_number": 2}
+HOT_PEPPER_WHOLE = {"label": "1 whole", "grams": 15, "sequence_number": 3}
+CHILI_ALIASES = [
+    {"alias": "thai chili pepper", "unit": "piece",
+     "food": {"fdc_id": 169395, "source_set": "sr_legacy"}, "portion": SERRANO_PEPPER},
+    {"alias": "bird's eye chili", "unit": "piece",
+     "food": {"fdc_id": 169395, "source_set": "sr_legacy"}, "portion": SERRANO_PEPPER},
+    # Its own portion: a count took "1 piece" (5 g, a cut piece) before.
+    {"alias": "long green chili pepper", "unit": "piece",
+     "food": {"fdc_id": 2709798, "source_set": "survey_fndds"}, "portion": HOT_PEPPER_WHOLE},
+]
+
+
+@pytest.fixture
+def chilies(monkeypatch, stubbed):
+    monkeypatch.setattr(matcher, "load_food_aliases", lambda: ALIASES + CHILI_ALIASES)
+    foods = {"169395": SERRANO, "2709798": HOT_PEPPER}
+    monkeypatch.setattr(matcher, "_fetch_food_by_fdc_id", lambda fdc: foods.get(fdc))
+    return stubbed
+
+
+@pytest.mark.parametrize("line, label, food, grams", [
+    ("8 Thai chili pepper", "Thai chili pepper", "Serrano peppers, raw", 8 * 6.1),
+    ("3 bird's eye chili", "bird's eye chili", "Serrano peppers, raw", 3 * 6.1),
+    ("4 long green chili pepper", "long green chili pepper", "Peppers, hot, raw", 4 * 15),
+])
+def test_small_chilies_count_by_a_small_pepper(tmp_path, chilies, line, label, food, grams):
+    r = row(run(tmp_path, f"X\nServings: 1\n{line}"), label)
+    assert r["matched_food_name"] == food
+    assert float(r["portion_amt"]) * float(r["unit_grams"]) == pytest.approx(grams)
