@@ -1434,7 +1434,7 @@
    "status": "ok",
    "url": "https://www.spendwithpennies.com/lemon-roasted-chicken/",
    "basis": "532 per quarter of a 3 lb chicken",
-   "note": "'1 whole chicken' matches Roasting chicken with giblets and neck, 1509 g edible (804 kcal a quarter, raw, skin on). The reference bird is 3 lb; the broiler row's 1 chicken is 1046 g."
+   "note": "'1 whole chicken' is USDA's broiler, meat and skin, raw: 2 x '0.5 chicken, bone removed' (460 g), 920 g a bird, about 495 kcal a quarter. The rest of the gap is the skin-on meat counted raw with all its fat. Was the roasting chicken with giblets (1509 g, 975 kcal) until 14 Nov 2026."
   },
   "chicken_pot_pie": {
    "kcal": 573,

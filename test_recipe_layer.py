@@ -218,7 +218,7 @@ LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
 @pytest.mark.parametrize("line,expected", [
     ("3 cloves garlic", "Garlic, raw"),
     ("2 lb bone-in skin-on chicken thighs", "Chicken thigh, with skin, raw"),
-    ("1 whole chicken", "Roasting chicken, with skin, giblets, and neck, raw"),
+    ("1 whole chicken", "Chicken, with skin, raw"),
     ("1 tsp smoked paprika", "SMOKED PAPRIKA"),
     ("2 star anise", "ANISE STAR"),  # its boosts.json rewrite, as the matcher
     ("1 cup frozen peas", "Green peas, frozen, unprepared"),

@@ -105,6 +105,19 @@ def test_a_whole_fruit_beats_a_slice_or_a_borrowed_piece():
     assert pick(AVOCADO, "piece", "avocado large") == "1 fruit"
 
 
+# USDA's broiler, meat and skin: no "1 chicken", only half a bird and a
+# per-pound yield (14 Nov 2026).
+BROILER = usda(171447, "Chicken, with skin, raw", [
+    ("0.5 chicken, bone removed", 460.0),
+    ("1 unit (yield from 1 lb ready-to-cook chicken)", 276.0),
+    ("4 oz", 113.0)], category="Poultry Products", kcal=215.0)
+
+
+def test_a_whole_chicken_is_two_halves_not_a_pound_s_yield():
+    assert pick(BROILER, "whole", "whole chicken") == "0.5 chicken, bone removed"
+    assert matcher._portion_label_qty("0.5 chicken, bone removed") == 0.5
+
+
 def test_a_food_counted_in_pieces_keeps_its_piece():
     assert pick(GYOZA, "piece", "gyoza wrapper") == "1 piece"
 
@@ -172,7 +185,7 @@ LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
     ("4 hoagie roll", "Roll, white, hoagie, submarine"),
     ("2 pie crust", "Pie crust, refrigerated, unbaked"),
     ("4 bone-in skin-on chicken drumstick", "Chicken drumstick, with skin, raw"),
-    ("1 whole chicken", "Roasting chicken, with skin, giblets, and neck, raw"),
+    ("1 whole chicken", "Chicken, with skin, raw"),
     ("12 oz pork breakfast sausage", "Pork sausage, link/patty, unprepared"),  # raw
     ("3 cup clam juice", "CLAM JUICE BROTH"),
     ("3/4 cup uncooked grits", "Quick white corn grits, enriched, dry"),

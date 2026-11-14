@@ -1934,11 +1934,11 @@
     ]
   },
   {
-    "_comment": "'1 whole chicken' found roasted skinless breast by the cup. Roasting chicken with skin, raw, '1 chicken' 1509 g edible."
+    "_comment": "'1 whole chicken' found roasted skinless breast by the cup. An ordinary broiler, meat and skin without giblets: '0.5 chicken, bone removed' 460 g, 920 g a bird. Was the roasting chicken with giblets (1509 g) until 14 Nov 2026."
   },
   {
     "trigger": "whole chicken",
-    "fdc_id": "172394",
+    "fdc_id": "171447",
     "weight": 0.95,
     "exclude": [
       "breast",

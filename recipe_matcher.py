@@ -3200,6 +3200,7 @@ PART_LABEL_RE = re.compile(
 
 # Count words that name no variety: "1 whole" is the food itself.
 PLAIN_COUNT_WORDS = {"whole", "each", "item", "unit", "regular", "fruit"}
+YIELD_UNIT_LABEL_RE = re.compile(r"(?i)^\s*[\d.]+\s+units?\b.*\byield from\b")
 
 
 def _unsized_whole_portion(food: dict, line: str = "") -> dict | None:
@@ -3215,6 +3216,11 @@ def _unsized_whole_portion(food: dict, line: str = "") -> dict | None:
         return None
     counted = []
     for p in own:
+        # "1 unit (yield from 1 lb ready-to-cook chicken)" is what a pound
+        # gives, not one item: "1 whole chicken" took it (276 g) over the
+        # bird's own "0.5 chicken, bone removed" (14 Nov 2026).
+        if YIELD_UNIT_LABEL_RE.search(p.get("label") or ""):
+            continue
         label = re.sub(r"\([^)]*\)", " ", p.get("label") or "")
         if (_is_counted_portion(label) and not SIZED_LABEL_RE.search(label)
                 and not PART_LABEL_RE.search(label)):
