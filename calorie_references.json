@@ -1302,6 +1302,384 @@
    "url": "https://scarlatifamilykitchen.com/italian-hot-chocolate/",
    "basis": "½ cup (4 servings)",
    "note": null
+  },
+  "buttermilk_biscuits": {
+   "kcal": 179,
+   "status": "ok",
+   "url": "https://www.onceuponachef.com/recipes/southern-style-buttermilk-biscuits.html",
+   "basis": "179 per biscuit (12)",
+   "note": null
+  },
+  "coleslaw_": {
+   "kcal": 247,
+   "status": "ok",
+   "url": "https://www.loveandlemons.com/coleslaw-recipe/",
+   "basis": "247 per serving of 6",
+   "note": null
+  },
+  "chicken_noodle_soup": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.spendwithpennies.com/homemade-chicken-noodle-soup/",
+   "basis": "352 per serving of 4",
+   "note": "Serves 4 from its batch; ours serves 6. Bowl size not stated."
+  },
+  "beef_chili": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://cheerfulcook.com/chili-recipe/",
+   "basis": "197 per serving of 4",
+   "note": "Serves 4; ours serves 6. Bowl size not stated."
+  },
+  "new_england_clam_chowder": {
+   "kcal": 412,
+   "status": "ok",
+   "url": "https://www.nutmegnanny.com/new-england-clam-chowder/",
+   "basis": "412 per serving of 6",
+   "note": null
+  },
+  "broccoli_cheddar_soup": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.tasteofhome.com/recipes/broccoli-cheddar-soup/",
+   "basis": "494 per 1 cup (2-serving batch)",
+   "note": "Per cup; ours is a quarter of the pot, size not stated."
+  },
+  "tomato_soup": {
+   "kcal": 222,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/tomato-soup-recipe/",
+   "basis": "222 per 1-cup (344 g) serving of 8",
+   "note": null
+  },
+  "beef_stew": {
+   "kcal": 444,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/beef-stew-recipe/",
+   "basis": "444 per serving of 8",
+   "note": "Reference serves 8, ours 6; kept as a bowl-for-bowl check."
+  },
+  "buttermilk_pancakes": {
+   "kcal": 164,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/quick-and-easy-buttermilk-pancakes-recipe/",
+   "basis": "111 per 4-inch pancake, plus 53 for our 1 tbsp pancake syrup",
+   "note": null
+  },
+  "waffles_": {
+   "kcal": 419,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/fluffy-homemade-waffle-recipe/",
+   "basis": "313 per serving of 6, plus 106 for our 2 tbsp pancake syrup",
+   "note": null
+  },
+  "french_toast": {
+   "kcal": 260,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/french-toast-recipe/",
+   "basis": "260 per slice (9)",
+   "note": null
+  },
+  "scrambled_eggs": {
+   "kcal": 182,
+   "status": "ok",
+   "url": "https://www.recipetineats.com/scrambled-eggs/",
+   "basis": "182 per 2 eggs with 1/2 tbsp butter",
+   "note": null
+  },
+  "biscuits_and_gravy": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.tasteofhome.com/recipes/biscuits-and-sausage-gravy/",
+   "basis": "337 per 3/4 cup",
+   "note": "Label doesn't say whether the biscuit is counted; ours includes one."
+  },
+  "breakfast_burrito": {
+   "kcal": 429,
+   "status": "ok",
+   "url": "https://www.tasteofhome.com/recipes/sausage-breakfast-burritos/",
+   "basis": "429 per burrito (8)",
+   "note": "Ours adds 2 cups hash browns, uses 1 1/2 cups cheddar (reference 1 cup) and a large tortilla (71 g, 217 kcal) where the reference uses 8-inch."
+  },
+  "meatloaf_": {
+   "kcal": 338,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/meatloaf-recipe/",
+   "basis": "338 per serving of 8",
+   "note": null
+  },
+  "southern_fried_chicken": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.recipetineats.com/fried-chicken/",
+   "basis": "280 per 100 g boneless (KFC figure)",
+   "note": "RecipeTin prints KFC's per-100 g figure, not its recipe. Ours counts all 2 cups dredging flour (114 kcal a serving) plus absorbed oil."
+  },
+  "pot_roast": {
+   "kcal": 428,
+   "status": "ok",
+   "url": "https://www.wellplated.com/crockpot-roast-recipe/",
+   "basis": "428 per serving of 6 (2-3 lb chuck)",
+   "note": "Raw choice chuck counted with its fat is 437 of our 547; the reference serves 6 from up to 3 lb chuck, so it must count leaner meat."
+  },
+  "bbq_baby_back_ribs": {
+   "kcal": 1298,
+   "status": "ok",
+   "url": "https://www.onceuponachef.com/recipes/baby-back-ribs-smoker-or-oven.html",
+   "basis": "1298 per serving of 4 (2 racks)",
+   "note": "Same 2 racks for 4. The reference looks like whole rack weight counted as meat (4 lb x 277 kcal/100 g / 4 = 1257); ours takes the bone out."
+  },
+  "roast_chicken": {
+   "kcal": 532,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/lemon-roasted-chicken/",
+   "basis": "532 per quarter of a 3 lb chicken",
+   "note": "'1 whole chicken' matches Roasting chicken with giblets and neck, 1509 g edible (804 kcal a quarter, raw, skin on). The reference bird is 3 lb; the broiler row's 1 chicken is 1046 g."
+  },
+  "chicken_pot_pie": {
+   "kcal": 573,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/homemade-chicken-pot-pie/",
+   "basis": "573 per slice (6)",
+   "note": null
+  },
+  "buffalo_wings": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://cafedelites.com/crispy-buffalo-chicken-wings-baked/",
+   "basis": "496 per serving of 8",
+   "note": "Ours is per wing (24 from 2 lb); wings per serving not stated."
+  },
+  "chicken_tenders": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.onceuponachef.com/recipes/buttermilk-fried-chicken-tenders-2.html",
+   "basis": "925 per serving of 4, about 1/4 cup oil absorbed",
+   "note": "Ours is per tender (12). Tenderloins match a branded row at 80 kcal/100 g; dredging flour and eggs counted in full."
+  },
+  "shrimp_and_grits": {
+   "kcal": 699,
+   "status": "ok",
+   "url": "https://www.tasteofhome.com/recipes/southern-shrimp-and-grits/",
+   "basis": "699 per serving of 4",
+   "note": "The reference adds 8 thick bacon strips and uses 1/3 cup butter (ours 3 tbsp, no bacon)."
+  },
+  "baked_salmon": {
+   "kcal": 457,
+   "status": "ok",
+   "url": "https://www.wellplated.com/garlic-salmon/",
+   "basis": "457 per 6 oz fillet",
+   "note": null
+  },
+  "cheeseburger_": {
+   "kcal": 755,
+   "status": "ok",
+   "url": "https://www.recipetineats.com/cheeseburger-recipe/",
+   "basis": "755 per burger, sauce not counted",
+   "note": null
+  },
+  "grilled_cheese_sandwich": {
+   "kcal": 499,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/grilled-cheese-sandwich/",
+   "basis": "499 per sandwich (4)",
+   "note": "The reference uses 3 slices of cheese and thick Texas toast; ours 2 thin cheddar slices (17 g) on sandwich bread."
+  },
+  "blt_sandwich": {
+   "kcal": 816,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/how-to-make-the-perfect-blt/",
+   "basis": "816 per sandwich (2)",
+   "note": "The reference uses 4 bacon slices on sourdough; ours 3 slices on sandwich bread, same 2 tbsp mayo."
+  },
+  "pulled_pork_sandwich": {
+   "kcal": 670,
+   "status": "ok",
+   "url": "https://www.recipetineats.com/slow-cooker-bbq-pulled-pork-sandwich/",
+   "basis": "670 per 295 g sandwich (8)",
+   "note": null
+  },
+  "philly_cheesesteak": {
+   "kcal": 732,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/philly-cheesesteak/",
+   "basis": "732 per sandwich (4)",
+   "note": "Ours uses 1.5 lb ribeye for 4 (reference 1 lb, trimmed) plus 2 tbsp oil."
+  },
+  "sloppy_joes": {
+   "kcal": 439,
+   "status": "ok",
+   "url": "https://www.tasteofhome.com/recipes/sloppy-joes-sandwiches/",
+   "basis": "439 per sandwich",
+   "note": null
+  },
+  "tuna_salad_sandwich": {
+   "kcal": 410,
+   "status": "ok",
+   "url": "https://www.bettycrocker.com/recipes/tuna-salad-sandwiches/1516cf19-d7c2-44ea-8698-5e9f3c5aed4d",
+   "basis": "410 per sandwich",
+   "note": null
+  },
+  "cobb_salad": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.onceuponachef.com/recipes/cobb-salad.html",
+   "basis": "425 per serving of 8",
+   "note": "Reference serves 6-8 (nutrition per 8); ours is a main-course quarter."
+  },
+  "chicken_caesar_salad": {
+   "kcal": null,
+   "status": "not_comparable",
+   "url": "https://www.recipetineats.com/chicken-caesar-salad/",
+   "basis": "396 per side serving of 5, no chicken or egg",
+   "note": "The reference leaves out the chicken."
+  },
+  "jambalaya_": {
+   "kcal": 785,
+   "status": "ok",
+   "url": "https://www.onceuponachef.com/recipes/jambalaya.html",
+   "basis": "785 per serving of 6",
+   "note": "The reference uses 2 cups rice (ours 1 1/4), 1 3/4 lb skin-on thighs (ours 12 oz skinless), 13 oz andouille and 1 lb shrimp."
+  },
+  "red_beans_and_rice": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.onceuponachef.com/recipes/red-beans-and-rice.html",
+   "basis": "659 per serving of 8",
+   "note": "Reference serves 6-8 (nutrition per 8); ours serves 6."
+  },
+  "mashed_potatoes": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.spendwithpennies.com/how-to-make-mashed-potatoes/",
+   "basis": "209 per 1/2 cup",
+   "note": "Per 1/2 cup; our serving is a sixth of the batch, cups not stated."
+  },
+  "potato_salad": {
+   "kcal": 455,
+   "status": "ok",
+   "url": "https://www.jocooks.com/recipes/classic-potato-salad/",
+   "basis": "455 per serving of 8",
+   "note": null
+  },
+  "cornbread_": {
+   "kcal": 390,
+   "status": "ok",
+   "url": "https://www.tasteofhome.com/recipes/quick-buttermilk-cornbread/",
+   "basis": "390 per piece (9)",
+   "note": "The reference uses 3/4 cup oil and 1 cup sugar; ours 6 tbsp butter and 1/4 cup sugar."
+  },
+  "green_bean_casserole": {
+   "kcal": 151,
+   "status": "ok",
+   "url": "https://www.campbells.com/recipes/green-bean-casserole/",
+   "basis": "151 per serving of 6",
+   "note": null
+  },
+  "baked_beans": {
+   "kcal": null,
+   "status": "serving_differs",
+   "url": "https://www.spendwithpennies.com/the-best-baked-beans/",
+   "basis": "276 per serving of 16",
+   "note": "Serves 16 from a larger batch; ours serves 8."
+  },
+  "deviled_eggs": {
+   "kcal": 68,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/classic-deviled-eggs-recipe/",
+   "basis": "68 per egg half",
+   "note": null
+  },
+  "hash_browns": {
+   "kcal": 180,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/crispy-hash-browns-recipe/",
+   "basis": "180 per serving of 4",
+   "note": "Same 2 tbsp oil and 2 tbsp butter for 4. The reference's 7 g fat is less than half that; ours counts all the pan fat."
+  },
+  "macaroni_and_cheese": {
+   "kcal": 621,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/baked-mac-and-cheese/",
+   "basis": "621 per serving of 8",
+   "note": "The reference uses 1 lb dry macaroni, 4 cups cheddar plus parmesan and cream; ours 5 cups cooked macaroni and 2 2/3 cups cheddar."
+  },
+  "chocolate_chip_cookies": {
+   "kcal": 160,
+   "status": "ok",
+   "url": "https://www.bettycrocker.com/recipes/homemade-chocolate-chip-cookies/77c14e03-d8b0-4844-846d-f19304f61c57",
+   "basis": "160 per cookie (36)",
+   "note": null
+  },
+  "brownies_": {
+   "kcal": 395,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/fudgy-brownie-recipe/",
+   "basis": "526 per square of 12, so 395 for our 16 squares from one pan",
+   "note": null
+  },
+  "apple_pie": {
+   "kcal": 380,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/apple-pie-recipe/",
+   "basis": "380 per slice (8)",
+   "note": null
+  },
+  "pumpkin_pie": {
+   "kcal": 216,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/pumpkin-pie-recipe/",
+   "basis": "216 per slice (8)",
+   "note": "Same filling (15 oz pumpkin, 10 oz evaporated milk, 2 eggs, 3/4 cup sugar). The reference's 7 g fat is less than its own crust and evaporated milk carry, so its figure looks low."
+  },
+  "peach_cobbler": {
+   "kcal": 278,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/peach-cobbler/",
+   "basis": "278 per serving of 9",
+   "note": null
+  },
+  "cheesecake_": {
+   "kcal": 549,
+   "status": "ok",
+   "url": "https://www.onceuponachef.com/recipes/new-york-style-cheesecake.html",
+   "basis": "659 per slice of 10, so 549 for our 12 slices",
+   "note": null
+  },
+  "banana_bread": {
+   "kcal": 207,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/banana-bread-recipe-video/",
+   "basis": "350 per slice of 10 includes 1 cup walnuts (765) and 1/2 cup raisins (247); without them 249, so 207 for our 12 slices",
+   "note": null
+  },
+  "blueberry_muffins": {
+   "kcal": 224,
+   "status": "ok",
+   "url": "https://www.tasteofhome.com/recipes/best-ever-blueberry-muffins/",
+   "basis": "224 per muffin",
+   "note": null
+  },
+  "lemonade_": {
+   "kcal": 155,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/lemonade-recipe/",
+   "basis": "155 per serving of 8",
+   "note": null
+  },
+  "sweet_tea": {
+   "kcal": null,
+   "status": "none",
+   "url": null,
+   "basis": "None of the three source pages prints calories",
+   "note": null
+  },
+  "chocolate_milkshake": {
+   "kcal": 390,
+   "status": "ok",
+   "url": "https://www.hersheyland.com/recipes/hersheys-chocolate-milkshake.html",
+   "basis": "390 per 10 oz glass",
+   "note": null
   }
  }
 }
