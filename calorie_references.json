@@ -30,11 +30,11 @@
    "note": null
   },
   "miso_soup": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
-   "note": null
+   "kcal": 100,
+   "status": "ok",
+   "url": "https://pickledplum.com/miso-soup-tofu-wakame/",
+   "basis": "4 servings: 4 cups dashi water, 3-4 tbsp miso, 8-10 oz silken tofu",
+   "note": "Recipe amounts: ours 3 tbsp miso and 7 oz silken tofu for 4 (about 15 kcal a serving less); the rest is the page's estimate."
   },
   "pork_and_vegetable_miso_soup": {
    "kcal": 340,
@@ -268,10 +268,10 @@
    "note": "Absorbed oil: 2 tbsp (75 kcal a serving) is the 8% starch-dusted rate on 14 oz tofu; references count less oil. Oil rates are Arianna's."
   },
   "braised_burdock_and_carrot": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
+   "kcal": 118,
+   "status": "ok",
+   "url": "https://www.chopstickchronicles.com/kinpira-gobo/",
+   "basis": "4 servings: 2 burdock roots, 1 tbsp oil, 2 tbsp sugar (Norecipes: 64 per 8 side portions)",
    "note": null
   },
   "udon_noodle_soup": {
@@ -289,10 +289,10 @@
    "note": "Chashu: 2 slices are 4 oz raw pork belly, 588 kcal, half the bowl (see chashu_pork). Plus 1 tbsp oil."
   },
   "miso_ramen": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
+   "kcal": 551,
+   "status": "ok",
+   "url": "https://pickledplum.com/miso-ramen-recipe/",
+   "basis": "2 servings: 2 packs ramen noodles, 4 cups stock, 1 tbsp oil, no pork",
    "note": null
   },
   "tonkotsu_ramen": {
@@ -303,10 +303,10 @@
    "note": null
   },
   "yakisoba_": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
+   "kcal": 567,
+   "status": "ok",
+   "url": "https://japan.recipetineats.com/yakisoba-japanese-stir-fried-noodles/",
+   "basis": "per 276 g serving at 4 servings (note 10; the card's 647 conflicts): 300 g noodles, 200 g pork, 3 tbsp oil",
    "note": null
   },
   "zaru_soba": {
@@ -352,10 +352,10 @@
    "note": "Reference leaves out the cream and sugar ours includes."
   },
   "matcha_latte": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
+   "kcal": 154,
+   "status": "ok",
+   "url": "https://www.chopstickchronicles.com/matcha-latte/",
+   "basis": "1 cup: 3 tsp matcha, 3/4 cup milk",
    "note": null
   },
   "hojicha_latte": {
@@ -408,11 +408,11 @@
    "note": null
   },
   "brown_sugar_syrup": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Sources are drink/taho recipes, no syrup figure",
-   "note": null
+   "kcal": 79,
+   "status": "ok",
+   "url": "https://www.recipesbynora.com/how-to-make-brown-sugar-syrup-arnibal/",
+   "basis": "211 per 1/3 cup (2 cups from 1.5 cups sugar, 6 servings), scaled to our 2 tbsp",
+   "note": "Brown sugar is counted as an unpacked cup; a packed cup is about half as heavy again. Under 30 kcal off, so not flagged."
   },
   "pork_sinigang": {
    "kcal": 632,
@@ -555,11 +555,11 @@
    "note": "Leg quarter: USDA's \"1 leg with skin\" is 344 g (thigh, drumstick and back), 736 kcal, consistent with the confirmed thigh weight. Judgement: one skin-on leg quarter a serving."
   },
   "pinakbet_": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
-   "note": null
+   "kcal": 308,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/pinakbet/",
+   "basis": "4 servings with 8 oz pork belly and 1 tbsp oil",
+   "note": "Pork: ours 4 oz pork belly for 4, Foxy Folksy 8 oz. Recipe amount."
   },
   "lechon_paksiw": {
    "kcal": 680,
@@ -597,11 +597,11 @@
    "note": "Reference implausible (40 kcal for 1 lb fish per 4). Ours: 5 oz tuna (155) + Thai chili now counted as a serrano pepper (6.1 g; was 45 g)."
   },
   "tortang_talong": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
-   "note": null
+   "kcal": 376,
+   "status": "ok",
+   "url": "https://simplybakings.com/classic-eggplant-omelette/",
+   "basis": "2 servings: 2 eggs, 2 tbsp oil, plus 2 tbsp flour and sesame seeds (Recipes by Nora 352 per 4, deep-fried)",
+   "note": "Recipe: Simply Bakings adds flour and sesame seeds (about 80 kcal a serving); ours is eggs, eggplant and 2 tbsp oil for 2."
   },
   "ginisang_monggo": {
    "kcal": 345,
@@ -653,11 +653,11 @@
    "note": null
   },
   "champorado_": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
-   "note": null
+   "kcal": 324,
+   "status": "ok",
+   "url": "https://www.recipesbynora.com/filipino-champorado-recipe/",
+   "basis": "270 per serving of 6 (1 cup glutinous rice, coconut milk, 4 oz dark chocolate), rescaled to our 5",
+   "note": "Recipe amounts: 5 oz unsweetened chocolate (182 a serving), ½ cup sugar and 5 tbsp condensed milk for 5. Hungry Huy's cocoa version is 585 per 2."
   },
   "lumpia_shanghai": {
    "kcal": null,
@@ -709,11 +709,11 @@
    "note": "Pork belly now the skin-on Foundation row (799 → 648): 1.5 lb belly for 6 (4 oz raw each)."
   },
   "kwek_kwek": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
-   "note": null
+   "kcal": 27,
+   "status": "ok",
+   "url": "https://www.foxyfolksy.com/kwek-kwek/",
+   "basis": "91 per serving of 8 from 24-30 quail eggs (about 3.4 each), so about 27 an egg",
+   "note": "Batter and oil: ours coats 16 eggs in 1 cup flour (28 kcal an egg) and counts 38 kcal of absorbed oil an egg (15% wet-battered rate on egg and batter); Foxy Folksy spreads 1¼ cups flour over ~27 eggs and likely leaves the frying oil out. Oil rates are Arianna's."
   },
   "lumpiang_sariwa": {
    "kcal": 301,
@@ -828,11 +828,11 @@
    "note": "Ours 18 a batch with ~1 tbsp+ rice flour each: bigger cakes."
   },
   "buko_pandan": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "No usable figure (Panlasang Pinoy prints 4217 per serving)",
-   "note": null
+   "kcal": 451,
+   "status": "ok",
+   "url": "https://www.recipesbynora.com/buko-pandan/",
+   "basis": "6 servings: 1 lb young coconut, 16 oz nata de coco, sago, 4 oz cream cheese, ½ cup condensed milk",
+   "note": "Recipe: Nora adds nata de coco and sago. Ours is coconut, cream and condensed milk; its \"all purpose cream\" is counted as heavy whipping cream (340 kcal/100 g), richer than Philippine all-purpose cream."
   },
   "cassava_cake": {
    "kcal": 409,
@@ -933,10 +933,10 @@
    "note": null
   },
   "chicken_milanese": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources blocked (403); calculator listings 320-650",
+   "kcal": 332,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/chicken-milanese/",
+   "basis": "4 servings from 1 lb cutlets (4 oz each, as ours), ¼ cup oil (Inspired Taste: 460 a 4.7 oz cutlet)",
    "note": null
   },
   "minestrone_": {
@@ -975,11 +975,11 @@
    "note": "Serving size: reference's serving is 100 g; ours is 1½ cups broth + 1 egg + 2 tbsp parmesan."
   },
   "chicken_parmesan": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources blocked (403)",
-   "note": null
+   "kcal": 502,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/chicken-parmesan-recipe/",
+   "basis": "4 servings: 1½ lb breast as 4 cutlets, 2 tbsp oil, 3 cups marinara, 1 cup mozzarella",
+   "note": "Chicken Milanese base: 1¼ cutlets a serving (5 oz chicken) with their absorbed frying oil (158 kcal, 12% breaded rate). Natasha's Kitchen pan-fries in 2 tbsp for 4. Oil rates are Arianna's."
   },
   "eggplant_parmesan": {
    "kcal": 424,
@@ -996,18 +996,18 @@
    "note": "Ours 394 sits between."
   },
   "chicken_marsala": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources not reached; calculator listings 240-570",
+   "kcal": 530,
+   "status": "ok",
+   "url": "https://www.onceuponachef.com/recipes/chicken-marsala.html",
+   "basis": "mean of Once Upon a Chef 537 and RecipeTin 524, 4 servings each, both with cream",
    "note": null
   },
   "chicken_cacciatore": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources not reached; Once Upon a Chef lists 790 for 2 thighs a serving",
-   "note": "Pieces per serving: 2 skin-on thighs a person (2 × 193 g = 853 kcal) + 2 tbsp oil. The thigh weight is right (AUSNUT 195 g); references serve 1–1.5 thighs."
+   "kcal": 790,
+   "status": "ok",
+   "url": "https://www.onceuponachef.com/recipes/chicken-cacciatore.html",
+   "basis": "4 servings: 8 bone-in skin-on thighs (skin removed before serving), 2 tbsp oil",
+   "note": "Skin and oil: ours counts 2 skin-on thighs a serving with the skin eaten (853 kcal) and 5 tbsp olive oil for 4; Once Upon a Chef removes the skin before serving and uses 2 tbsp."
   },
   "saltimbocca_": {
    "kcal": null,
@@ -1017,25 +1017,25 @@
    "note": "Ours per cutlet plate (4 oz veal + prosciutto + butter/oil); reference per 100 g."
   },
   "osso_buco": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources not reached",
+   "kcal": 485,
+   "status": "ok",
+   "url": "https://www.jocooks.com/recipes/osso-buco/",
+   "basis": "4 veal shanks, 3 tbsp oil (RecipeTin 549 per 516 g, worked out with beef chuck)",
    "note": null
   },
   "beef_braciole": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources not reached",
-   "note": null
+   "kcal": 321,
+   "status": "ok",
+   "url": "https://www.marcellinaincucina.com/authentic-italian-braciole-recipe/",
+   "basis": "481 per serving of 4 (1½ lb top round, 1 cup pecorino, 4 tbsp oil, 28 oz tomatoes), rescaled to our 6",
+   "note": "Recipe amounts: ours adds ½ cup parmesan, pine nuts, raisins and 4 cups marinara to the same 1½ lb of beef."
   },
   "sausage_and_peppers": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources not reached",
-   "note": null
+   "kcal": 574,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/sausage-and-peppers/",
+   "basis": "4 servings: 1 lb Italian sausage, 2 tbsp olive oil and 2 tbsp butter",
+   "note": "Fat: Spend with Pennies adds 2 tbsp butter and 1 more tbsp oil (about 80 kcal a serving). Same 1 lb sausage for 4."
   },
   "margherita_pizza": {
    "kcal": 173,
@@ -1066,18 +1066,18 @@
    "note": "Recipe: 6 eggs for 4 with no potato; both references add potato or ricotta. Matches right."
   },
   "mushroom_risotto": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources blocked; calculator listings 300-515",
+   "kcal": 555,
+   "status": "ok",
+   "url": "https://www.inspiredtaste.net/8877/mushroom-risotto-recipe/",
+   "basis": "mean of Inspired Taste 461 (4 servings) and RecipeTin 649 (4-5, with cream)",
    "note": null
   },
   "risotto_alla_milanese": {
    "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
-   "note": null
+   "status": "not_comparable",
+   "url": "https://www.giangiskitchen.com/risotto-milanese/",
+   "basis": "395 per serving of 4 from 2 cups arborio",
+   "note": "Giangi's 395 is below its own ingredients: 2 cups arborio alone is about 360 a serving before 4 tbsp butter and ½ cup parmesan."
   },
   "arancini_": {
    "kcal": null,
@@ -1171,10 +1171,10 @@
    "note": "Reference too low for its own amounts: 1 lb dry spaghetti alone is ~400 kcal a serving before cheese. Ours (2 cups pasta + 1.4 oz pecorino) is plausible."
   },
   "spaghetti_aglio_e_olio": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources not reached",
+   "kcal": 564,
+   "status": "ok",
+   "url": "https://www.recipetineats.com/aglio-e-olio-garlic-spaghetti/",
+   "basis": "5 servings from 500 g spaghetti and ½ cup oil (Once Upon a Chef 788 per 4, with ¾ cup cheese)",
    "note": null
   },
   "fettuccine_alfredo": {
@@ -1199,10 +1199,10 @@
    "note": null
   },
   "pesto_pasta": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources: no figure / 403",
+   "kcal": 589,
+   "status": "ok",
+   "url": "https://www.onceuponachef.com/recipes/pesto-pasta.html",
+   "basis": "6 servings from 1 lb pasta, ⅔ cup oil in the pesto",
    "note": null
   },
   "lasagna_bolognese": {
@@ -1214,10 +1214,10 @@
   },
   "baked_ziti": {
    "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources not reached",
-   "note": null
+   "status": "not_comparable",
+   "url": "https://www.spendwithpennies.com/baked-ziti/",
+   "basis": "642 per serving of 8, with 1 lb Italian sausage",
+   "note": "Spend with Pennies and RecipeTin both add meat; without Spend with Pennies' sausage (about 165 kcal a serving) it is about 477, close to ours."
   },
   "shrimp_scampi": {
    "kcal": 910,
@@ -1262,17 +1262,17 @@
    "note": "Ours 8 slices: 461 vs ~460 rescaled."
   },
   "panna_cotta": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
-   "note": null
+   "kcal": 253,
+   "status": "ok",
+   "url": "https://www.recipetineats.com/panna-cotta/",
+   "basis": "per ½-cup panna cotta (6), no topping: 1¼ cups cream, 1½ cups milk (Christina's 252)",
+   "note": "Recipe amount: 2 cups heavy cream for 6, against 1¼-1½ cups in both references."
   },
   "cannoli_": {
-   "kcal": null,
-   "status": "none",
-   "url": null,
-   "basis": "Own sources list no nutrition",
+   "kcal": 249,
+   "status": "ok",
+   "url": "https://anitalianinmykitchen.com/baked-cannoli/",
+   "basis": "per pastry (15), with chocolate coating",
    "note": null
   },
   "biscotti_": {
