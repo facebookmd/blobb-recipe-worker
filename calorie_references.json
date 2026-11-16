@@ -391,7 +391,7 @@
    "status": "ok",
    "url": "https://www.foxyfolksy.com/chicken-adobo-with-browned-garlic/",
    "basis": "6 servings (Panlasang Pinoy 661 per 4)",
-   "note": "Skin and pieces per serving: each piece is a skin-on thigh, USDA 193 g (426 kcal). The weight is right: Australia's AUSNUT 2023 puts a medium thigh with skin at 195 g. Skin is about half its calories (skinless ≈ 180 kcal); Foxy Folksy's 374 points to smaller or skinless pieces. Judgement: is the skin eaten."
+   "note": "Skin-on thigh, one a piece: USDA 193 g (426 kcal), matching AUSNUT 2023's medium thigh with skin (195 g). Skin is about half its calories (skinless ≈ 180); Foxy Folksy's 374 points to smaller or skinless pieces. Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
   },
   "lechon_kawali": {
    "kcal": 315,
@@ -440,7 +440,7 @@
    "status": "not_comparable",
    "url": "https://www.recipesbynora.com/chicken-tinola-recipe/",
    "basis": "references disagree: 240 vs 662 (both 6 servings)",
-   "note": "Ours 366 sits between the references. Thigh weight confirmed (see chicken_adobo); skin is often left in tinola, so a skinless line may fit."
+   "note": "Ours 366 sits between the references. Thigh weight confirmed (see chicken_adobo). Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
   },
   "bulalo_": {
    "kcal": 342,
@@ -552,7 +552,7 @@
    "status": "ok",
    "url": "https://www.hungryhuy.com/chicken-inasal/",
    "basis": "5 servings",
-   "note": "Leg quarter: USDA's \"1 leg with skin\" is 344 g (thigh, drumstick and back), 736 kcal, consistent with the confirmed thigh weight. Judgement: one skin-on leg quarter a serving."
+   "note": "One skin-on leg quarter a serving: USDA's \"1 leg with skin\" is 344 g (thigh, drumstick and back), 736 kcal, consistent with the thigh weight. Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
   },
   "pinakbet_": {
    "kcal": 308,
@@ -643,7 +643,7 @@
    "status": "ok",
    "url": "https://www.recipesbynora.com/wprm_print/filipino-adobo-fried-rice",
    "basis": "4 servings",
-   "note": "Skin-on thigh meat (121 g, 267 kcal) + 1⅛ cups rice. Thigh weight confirmed (see chicken_adobo); the gap is skin and amounts."
+   "note": "Skin-on thigh meat (121 g, 267 kcal) + 1⅛ cups rice; the gap is skin and amounts (see chicken_adobo). Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
   },
   "arroz_caldo": {
    "kcal": 408,
@@ -1007,7 +1007,7 @@
    "status": "ok",
    "url": "https://www.onceuponachef.com/recipes/chicken-cacciatore.html",
    "basis": "4 servings: 8 bone-in skin-on thighs (skin removed before serving), 2 tbsp oil",
-   "note": "Skin and oil: ours counts 2 skin-on thighs a serving with the skin eaten (853 kcal) and 5 tbsp olive oil for 4; Once Upon a Chef removes the skin before serving and uses 2 tbsp."
+   "note": "Two skin-on thighs a serving (853 kcal) and 5 tbsp olive oil for 4; Once Upon a Chef removes the skin before serving and uses 2 tbsp. Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
   },
   "saltimbocca_": {
    "kcal": null,
@@ -1434,7 +1434,7 @@
    "status": "ok",
    "url": "https://www.spendwithpennies.com/lemon-roasted-chicken/",
    "basis": "532 per quarter of a 3 lb chicken",
-   "note": "'1 whole chicken' is USDA's broiler, meat and skin, raw: 2 x '0.5 chicken, bone removed' (460 g), 920 g a bird, about 495 kcal a quarter. The rest of the gap is the skin-on meat counted raw with all its fat. Was the roasting chicken with giblets (1509 g, 975 kcal) until 14 Nov 2026."
+   "note": "'1 whole chicken' is USDA's broiler, meat and skin, raw: 2 x '0.5 chicken, bone removed' (460 g), 920 g a bird, about 495 kcal a quarter. The rest of the gap is the skin-on meat counted raw with all its fat. Was the roasting chicken with giblets (1509 g, 975 kcal) until 14 Nov 2026. Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
   },
   "chicken_pot_pie": {
    "kcal": 573,
