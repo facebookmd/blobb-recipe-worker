@@ -200,6 +200,8 @@ For anything cooked in a liquid or fat that is mostly discarded, list only what 
 
 Sautés, stir-fries, stews and braises: list **all** the oil — it stays in the dish.
 
+Battered, breaded or dusted food takes the rate on the food alone, not the food plus its coating: nobody knows how much batter clings (`16 large shrimp`, 112 g, wet-battered at 15% is 17 g, `1.25 tbsp`). The coating's own calories are its own lines.
+
 These rates are fixed. Use them as they are; never change a rate or add a row while writing recipes. Changing one is Arianna's call.
 
 The rates have one copy: the app project's `fry_types` table (blobbapp migration `20261028120000_create_fry_types.sql`). The table above is written from it by `sync_fry_rates.py`, never by hand; the worker reads it (`fry_rates.py`) and sends it to the app's editor, and blobb.app/sources is built from it. To change a rate, change the table, then run `sync_fry_rates.py` and rebuild the site. Sources for every rate: `ABSORPTION_SOURCES.md`.
