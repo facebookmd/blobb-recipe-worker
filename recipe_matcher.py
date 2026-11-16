@@ -1618,10 +1618,17 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens):
             return food
         return {**food, "_g_per_ml": best_portion["gram_weight"] / ml,
                 "_density_from": best["fdc_id"]}
-    borrowed = {**best_portion,
-                "portion_id": f"{food['fdc_id']}-vol-{best['fdc_id']}",
-                "portion_idx": max([p.get("portion_idx", 0) for p in food.get("portions", [])] + [0]) + 1}
-    return {**food, "portions": list(food.get("portions", [])) + [borrowed],
+    # A count borrows every count portion of the sibling, the one picked
+    # first: the line's size picks among them later (pick_best_portion).
+    # "16 large shrimp" took "1 medium" (6 g), the only one borrowed, over
+    # the sibling's "4 large" (28 g) (16 Nov 2026).
+    picks = [best_portion] + [p for p in _count_portions(best, unit)
+                              if p is not best_portion]
+    start = max([p.get("portion_idx", 0) for p in food.get("portions", [])] + [0]) + 1
+    borrowed = [{**p, "portion_id": f"{food['fdc_id']}-vol-{best['fdc_id']}" + (f"-{i}" if i else ""),
+                 "portion_idx": start + i}
+                for i, p in enumerate(picks)]
+    return {**food, "portions": list(food.get("portions", [])) + borrowed,
             "_density_from": best["fdc_id"]}
 
 
@@ -1876,6 +1883,18 @@ def _density_relative(food, foods, unit, search, query_tokens):
         if best is None or key > best_key:
             best, best_key, best_portion = cand, key, portion
     return best, best_portion
+
+
+def _count_portions(food: dict, unit: str) -> list[dict]:
+    """*food*'s count portions for a count [unit] (_density_portion's
+    candidates), in their own order; none for a volume unit."""
+    if unit.lower() in VOLUMETRIC_UNITS:
+        return []
+    keywords = PORTION_UNIT_KEYWORDS.get(unit.lower()) or PORTION_UNIT_KEYWORDS["piece"]
+    return [p for p in food.get("portions", []) if p.get("gram_weight")
+            and not _is_basis_portion(p)
+            and any(re.search(rf"\b{re.escape(kw)}", (p.get("label") or "").lower())
+                    for kw in keywords)]
 
 
 def _density_portion(food: dict, unit: str, line: str) -> dict | None:
