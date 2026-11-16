@@ -199,7 +199,22 @@ def test_a_skin_on_line_takes_the_row_with_skin(line, expected):
 def test_plain_pork_belly_is_the_skin_on_alias(line, expected, monkeypatch):
     import food_name_search
     aliases = dict(food_name_search._food_aliases())
+    aliases.pop(food_name_search.alias_key("skinless pork belly"), None)
     for name in ("pork belly", "pork bellies"):
         aliases[food_name_search.alias_key(name)] = 2727576
     monkeypatch.setattr(food_name_search, "_ALIASES", aliases)
     assert best(line, [SR_BELLY, FOUNDATION_BELLY], "lb") is expected
+
+
+# ── Skinless belly is the Foundation belly too (food_aliases, 16 Nov 2026) ──
+# USDA's only skinless row is the old SR belly (518 kcal/100 g, 53% fat);
+# Japan's food tables put raw belly at 366 (MEXT 11129), near the Foundation
+# belly's 385. "skinless pork belly" is its own alias of the Foundation row.
+
+def test_skinless_pork_belly_is_its_own_alias(monkeypatch):
+    import food_name_search
+    aliases = dict(food_name_search._food_aliases())
+    for name in ("pork belly", "skinless pork belly"):
+        aliases[food_name_search.alias_key(name)] = 2727576
+    monkeypatch.setattr(food_name_search, "_ALIASES", aliases)
+    assert best("skinless pork belly", [SR_BELLY, FOUNDATION_BELLY], "lb") is FOUNDATION_BELLY
