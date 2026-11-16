@@ -14,7 +14,7 @@ SOURCE: https://www.justonecookbook.com/dashi-powder/, https://www.americastestk
 Chashu Pork
 ID: chashu_pork
 AKA: Chashu", "Ramen pork
-Servings: 16
+Servings: 24
 Serving size: 1 slice
 2 lb skinless pork belly
 2 stalk green onion
