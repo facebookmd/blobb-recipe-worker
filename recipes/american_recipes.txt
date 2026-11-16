@@ -280,13 +280,14 @@ AKA: Buttermilk fried chicken", "Fried chicken", "Southern buttermilk fried chic
 Servings: 8
 4 bone-in skin-on chicken thigh
 4 bone-in skin-on chicken drumstick
-1 cup buttermilk
-1 large egg
-2 cup all-purpose flour
-1.5 tsp salt
-1 tsp black pepper
-1 tsp paprika
-1 tsp garlic powder
+1.5 cup all-purpose flour
+1 tsp salt
+3/4 tsp black pepper
+3/4 tsp paprika
+3/4 tsp garlic powder
+--Absorbed marinade
+3.5 tbsp buttermilk
+1/4 large egg
 --Absorbed oil
 7 tbsp vegetable oil
 SOURCE: https://www.food.com/recipe/southern-fried-chicken-67307, https://www.recipetineats.com/fried-chicken/, https://www.jocooks.com/recipes/jos-fried-chicken/
@@ -390,9 +391,9 @@ Servings: 12
 1/2 tsp black pepper
 1 tsp paprika
 1/2 tsp garlic powder
-1 cup all-purpose flour
-3 large egg
-1/2 cup panko breadcrumbs
+3 tbsp all-purpose flour
+1 large egg
+1 1/4 cup panko breadcrumbs
 --Absorbed oil
 6 tbsp vegetable oil
 SOURCE: https://www.onceuponachef.com/recipes/buttermilk-fried-chicken-tenders-2.html, https://www.spendwithpennies.com/honey-garlic-crunch-chicken-tenders/, https://www.food.com/recipe/panko-crusted-chicken-tenders-327080

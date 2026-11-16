@@ -1413,7 +1413,7 @@
    "status": "not_comparable",
    "url": "https://www.recipetineats.com/fried-chicken/",
    "basis": "280 per 100 g boneless (KFC figure)",
-   "note": "RecipeTin prints KFC's per-100 g figure, not its recipe. Ours counts all 2 cups dredging flour (114 kcal a serving) plus absorbed oil."
+   "note": "RecipeTin prints KFC's per-100 g figure, not its recipe. Coating at the 15% wet-surface rate (1.5 cups flour for 1.3 kg chicken); the buttermilk and egg soak at the 5% marinade rate."
   },
   "pot_roast": {
    "kcal": 428,
@@ -1455,7 +1455,7 @@
    "status": "serving_differs",
    "url": "https://www.onceuponachef.com/recipes/buttermilk-fried-chicken-tenders-2.html",
    "basis": "925 per serving of 4, about 1/4 cup oil absorbed",
-   "note": "Ours is per tender (12). Tenderloins match a branded row at 80 kcal/100 g; dredging flour and eggs counted in full."
+   "note": "Ours is per tender (12). Tenderloins match a branded row at 80 kcal/100 g. Coating at the breaded rates (3 tbsp flour, 1 egg, 1 1/4 cups panko for 1.5 lb)."
   },
   "shrimp_and_grits": {
    "kcal": 699,
