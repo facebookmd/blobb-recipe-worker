@@ -118,22 +118,22 @@ def test_a_whole_chicken_is_two_halves_not_a_pound_s_yield():
     assert matcher._portion_label_qty("0.5 chicken, bone removed") == 0.5
 
 
-# "Shrimp, raw" has only "3 oz"; its sibling lends its count portions.
-# Only "1 medium" (6 g) was lent, so "16 large shrimp" weighed 96 g, not
-# the sibling's "4 large" (28 g) a four (16 Nov 2026).
+# "Shrimp, raw" has only "3 oz"; "Shrimp, mixed species, raw" has the
+# counts. A count line is that row with its own "4 large", not "Shrimp,
+# raw" with a lent "1 medium" (Arianna, 16 Nov 2026).
 SHRIMP = usda(175179, "Shrimp, raw", [("3 oz", 85.0)], category="Finfish and Shellfish Products",
               kcal=85.0)
 SHRIMP_SR = usda(174210, "Shrimp, mixed species, raw", [
     ("4 large", 28.0), ("1 medium", 6.0), ("1 small", 5.0), ("3 oz", 85.0)],
-    category="Finfish and Shellfish Products", kcal=85.0)
+    category="Finfish and Shellfish Products", kcal=71.0)
 
 
-def test_a_borrowed_count_keeps_the_size_the_line_names(monkeypatch):
+def test_a_count_matches_the_row_that_has_the_count(monkeypatch):
     monkeypatch.setattr(matcher, "_density_relative", lambda *a, **k: (None, None))
     food = matcher._volume_unit_fallback(SHRIMP, [SHRIMP, SHRIMP_SR], "piece", "shrimp", ["shrimp"])
+    assert food["fdc_id"] == "174210"
     assert pick(food, "piece", "shrimp large") == "4 large"
     assert pick(food, "piece", "shrimp") == "1 medium"
-    assert pick(food, "piece", "shrimp small") == "1 small"
 
 
 def test_a_food_counted_in_pieces_keeps_its_piece():

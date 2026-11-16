@@ -1618,17 +1618,26 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens):
             return food
         return {**food, "_g_per_ml": best_portion["gram_weight"] / ml,
                 "_density_from": best["fdc_id"]}
-    # A count borrows every count portion of the sibling, the one picked
-    # first: the line's size picks among them later (pick_best_portion).
-    # "16 large shrimp" took "1 medium" (6 g), the only one borrowed, over
-    # the sibling's "4 large" (28 g) (16 Nov 2026).
-    picks = [best_portion] + [p for p in _count_portions(best, unit)
-                              if p is not best_portion]
-    start = max([p.get("portion_idx", 0) for p in food.get("portions", [])] + [0]) + 1
-    borrowed = [{**p, "portion_id": f"{food['fdc_id']}-vol-{best['fdc_id']}" + (f"-{i}" if i else ""),
-                 "portion_idx": start + i}
-                for i, p in enumerate(picks)]
-    return {**food, "portions": list(food.get("portions", [])) + borrowed,
+    # A count on a row with no count portion at all matches the row that
+    # has the count, not a portion lent to this one (Arianna, 16 Nov 2026):
+    # "16 large shrimp" is "Shrimp, mixed species, raw" with its own "4
+    # large", not "Shrimp, raw" (3 oz only) with a lent "1 medium"; "3 slice
+    # cooked bacon" is FNDDS cooked bacon with its slices, not Foundation
+    # restaurant bacon (no portions). A row with a count of its own ("1
+    # thigh with skin", "1 regular" hot dog) keeps itself; the lent portion
+    # only stands in if its own can't measure the line.
+    # Not a bare count ("sugar") or a container ("1 can"): those keep
+    # their row too.
+    is_piece_count = (unit.strip() and not CONTAINER_LABEL_RE.search(unit)
+                      and unit.lower() not in PACKET_UNITS)
+    if is_piece_count and not any(_is_counted_portion(re.sub(r"\([^)]*\)", " ", p.get("label") or ""))
+                                  for p in food.get("portions", []) if not _is_basis_portion(p)):
+        return {**best, **{k: v for k, v in food.items() if k.startswith("_")},
+                "_count_from": food["fdc_id"]}
+    borrowed = {**best_portion,
+                "portion_id": f"{food['fdc_id']}-vol-{best['fdc_id']}",
+                "portion_idx": max([p.get("portion_idx", 0) for p in food.get("portions", [])] + [0]) + 1}
+    return {**food, "portions": list(food.get("portions", [])) + [borrowed],
             "_density_from": best["fdc_id"]}
 
 
@@ -1883,18 +1892,6 @@ def _density_relative(food, foods, unit, search, query_tokens):
         if best is None or key > best_key:
             best, best_key, best_portion = cand, key, portion
     return best, best_portion
-
-
-def _count_portions(food: dict, unit: str) -> list[dict]:
-    """*food*'s count portions for a count [unit] (_density_portion's
-    candidates), in their own order; none for a volume unit."""
-    if unit.lower() in VOLUMETRIC_UNITS:
-        return []
-    keywords = PORTION_UNIT_KEYWORDS.get(unit.lower()) or PORTION_UNIT_KEYWORDS["piece"]
-    return [p for p in food.get("portions", []) if p.get("gram_weight")
-            and not _is_basis_portion(p)
-            and any(re.search(rf"\b{re.escape(kw)}", (p.get("label") or "").lower())
-                    for kw in keywords)]
 
 
 def _density_portion(food: dict, unit: str, line: str) -> dict | None:
