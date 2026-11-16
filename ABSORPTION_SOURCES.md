@@ -26,6 +26,8 @@ ingredients.
 | **Kyotango** | Kyotango City health office, [揚げ物の種類によって違う吸油量](https://www.city.kyotango.lg.jp/material/files/group/25/oil.pdf) | Ranges per 80 g of food, by frying style |
 | **TMD** | Tokyo Medical and Dental University Hospital, clinical nutrition dept., [recipe sheet 031](https://www.tmd.ac.jp/medhospital/column/recipe/pdf/031.pdf) | Ranges by frying style and for high-water vegetables |
 | **Kumitasu** | [くみたす](https://www.kumitasu.com/contents/hyoji/3565), citing 日本栄養改善学会『食事調査マニュアル』改訂2版 (2008) and the 日本食品標準成分表2015 | Reference rates per 100 g of food plus coating |
+| **Nawata** | 縄田敬子, 竹下尚男, 石田裕美 (2005). 食事調査標準化のためのフライ調理の吸油率に関する基礎的検討 (Nawata K., Takeshita M., Ishida H., *Absorption rate of frying oil by breaded deep-fried foods for standardization in a dietary survey*). 栄養学雑誌 (Jpn. J. Nutr. Diet.) 63(6): 339–345. [J-STAGE PDF](https://www.jstage.jst.go.jp/article/eiyogakuzashi1941/63/6/63_6_339/_pdf) | Coating that stuck, as % of the raw food's weight: flour, egg and dry breadcrumbs on five foods, each coated by 5–6 home cooks their usual way (Table 1) |
+| **MEXT** | 文部科学省 科学技術・学術審議会 資源調査分科会, 日本食品標準成分表2015年版（七訂）, 揚げ物における衣の割合及び脂質量の増減, 表17. [PDF](https://www.mext.go.jp/component/a_menu/science/detail/__icsFiles/afieldfile/2016/11/08/1365334_1-0320r3.pdf) | Weights of raw food and of each coating component (flour or mix, breadcrumbs, egg) per 100 g of 14 fried foods, and the fat each gained |
 | **USDA** | FoodData Central, SR Legacy: [170026](https://fdc.nal.usda.gov/food-details/170026/nutrients) raw potato (water 79.25 g, fat 0.09 g), [169677](https://fdc.nal.usda.gov/food-details/169677/nutrients) potato chips (water 1.86 g, fat 34.0 g), [167812](https://fdc.nal.usda.gov/food-details/167812/nutrients) raw pork belly (fat 53 g) | Compositions for the mass-balance checks below |
 
 ## Frying oil, row by row
@@ -53,6 +55,39 @@ Sautés, stir-fries, stews and braises count all the oil, because it stays in th
 | Marinade cooked down or used as sauce | All of it | Definition: nothing is discarded. | — |
 
 TMD's karaage recipe counts about 50% of the soy-sauce marinade as absorbed. That's a share of the marinade, not of the meat, and fits a small marinade that isn't drained.
+
+## Coatings
+
+Flour, egg wash and crumbs set out for coating are mostly left in the bowl.
+The rate is the coating that stays on the food, as % of the raw food's
+edible weight (the same basis as the oil rates). Both sources weighed the
+coating material before and after coating; Nawata's cooks coated the food
+the way they do at home.
+
+MEXT Table 17 gives grams per 100 g of fried food; the figures below divide
+each coating weight by that row's raw-food weight.
+
+| Row | Rate | Nawata (Table 1) | MEXT (Table 17) | Verdict |
+|---|---|---|---|---|
+| Flour before egg (breaded) | 3.5% | Pork loin 2.7, pork fillet 3.6, salmon 3.0, horse mackerel 3.8, shrimp 3.7; **mean 3.4 ± 0.5** | Fish fry: horse mackerel 4.3, sardine 5.2, mackerel 3.6, pollock 3.2 | **Supported**: the two agree. |
+| Egg wash | 9% | Pork loin 7.9, pork fillet 9.5, salmon 6.3, horse mackerel 8.9, shrimp 7.1; **mean 7.9 ± 1.3** | Fish fry: 10.1, 12.6, 7.0, 7.8 (mean 9.4) | **Between the two means.** |
+| Dry breadcrumbs or panko | 9.5% | Pork loin 8.2, pork fillet 9.9, salmon 6.9, horse mackerel 9.7, shrimp 6.8; **mean 8.3 ± 1.5** (crumbs soaked in water: 13.1, one cook) | Fish fry: 9.9, 13.4, 7.0, 7.2; tonkatsu loin 9.3, fillet 10.9 (mean of six 9.6) | **Between the two means.** |
+| Flour or starch on a dry surface | 3.5% | — | Small horse mackerel karaage, flour: 3.5 | **One measurement**, the same as flour before egg. |
+| Flour or starch on a wet surface (marinated, buttermilk-soaked) | 15% | — | Chicken thigh karaage, karaage mix (から揚げ粉): skin-on 14.3, skinless 15.6 | **The only wet-surface measurement found.** Taken with a seasoned karaage mix, not plain flour. |
+
+A wet surface holds four times the flour of a dry one. Meat and fish
+differed little next to the spread between cooks (Nawata), so the rates
+aren't split by food.
+
+Not found: a measurement of plain flour on buttermilk-soaked chicken, or of
+home dredging in English. Food-science papers on industrial batters and
+breadings report 11–36% pickup ([Effect of breading particle size on coating
+adhesion in breaded, fried chicken breasts](https://www.researchgate.net/publication/230173131_Effect_of_breading_particle_size_on_coating_adhesion_in_breaded_fried_chicken_breasts)),
+which is a factory process, not a home dredge.
+
+Tempura and other wet batters are not covered here: MEXT Table 17 gives
+their dry mix at 6–13% of the raw food, but the batter's water and the
+mix-to-water ratio vary by recipe.
 
 ## Brines and pickles
 

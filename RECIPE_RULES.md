@@ -206,6 +206,20 @@ The rates have one copy: the app project's `fry_types` table (blobbapp migration
 
 Convert recipe applies these rates to "oil for frying" lines as fry types, on the fried food's edible weight: wrapped when there's a wrapper (lumpia, spring roll, egg roll, wonton, gyoza; the whole roll, wrapper and filling), then breaded, battered, starch-dusted, else unbreaded (lean meat, fish, tofu), unbreaded veg, or thick-cut (starchy pieces, bananas). Unbreaded fish in oil "for pan-frying" or "shallow frying" is pan-fried fish; unbreaded fatty or skin-on cuts start at no oil. Thin-sliced and fatty cut are picked by the user. The user can change the type (any of the table's) and the rows it is a share of in the app.
 
+### Coating (flour, egg wash, crumbs)
+
+Coating set out in a bowl is mostly left there. List only what sticks: the rate × the raw food's edible weight, in tbsp/tsp (flour 7.8 g a tbsp, panko 3.4 g a tbsp, a large egg 50 g). Write the lines in the main ingredient list, not a section.
+
+| Coating step | Stays on the food (% of the raw food's edible weight) |
+|---|---|
+| Flour before egg (breaded) | 3.5% |
+| Egg wash | 9% |
+| Dry breadcrumbs or panko | 9.5% |
+| Flour or starch on a dry surface | 3.5% |
+| Flour or starch on a wet surface (marinated, buttermilk-soaked: karaage, Southern fried chicken) | 15% |
+
+The liquid the food soaked in follows the marinade rule below. Wet batters (tempura, kwek-kwek) are not covered by these rates. These rates are fixed: use them as they are; changing one is Arianna's call. Sources: `ABSORPTION_SOURCES.md`, "Coatings".
+
 ### Marinades (`--Absorbed marinade`)
 
 | Situation | What to list |
