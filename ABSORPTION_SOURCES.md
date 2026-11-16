@@ -85,9 +85,15 @@ breadings report 11–36% pickup ([Effect of breading particle size on coating
 adhesion in breaded, fried chicken breasts](https://www.researchgate.net/publication/230173131_Effect_of_breading_particle_size_on_coating_adhesion_in_breaded_fried_chicken_breasts)),
 which is a factory process, not a home dredge.
 
-Tempura and other wet batters are not covered here: MEXT Table 17 gives
-their dry mix at 6–13% of the raw food, but the batter's water and the
-mix-to-water ratio vary by recipe.
+**Wet batter (tempura, kwek-kwek): 11% of the raw food, flour and starch
+only** (16 Nov 2026). MEXT Table 17's tempura rows give the dry tempura mix
+that stayed on each food, divided by its raw weight: sweet potato 6.1,
+eggplant 11.1, Japanese whiting (kisu) 13.3, whiteleg shrimp 12.7, squid
+10.8; mean 10.8. Their batter was tempura mix and water at 39:61, a thin
+batter, so a thick one (kwek-kwek's) likely carries a little more; no
+measurement of one was found. The batter's egg, water and seasoning scale
+with its flour, by the recipe's own ratio. Listing the whole bowl had
+counted 7.8 g of flour on each 9 g quail egg.
 
 ## Brines and pickles
 

@@ -219,8 +219,9 @@ Coating set out in a bowl is mostly left there. List only what sticks: the rate 
 | Dry breadcrumbs or panko | 9.5% |
 | Flour or starch on a dry surface | 3.5% |
 | Flour or starch on a wet surface (marinated, buttermilk-soaked: karaage, Southern fried chicken) | 15% |
+| Wet batter (tempura, kwek-kwek): its flour and starch | 11% |
 
-The liquid the food soaked in follows the marinade rule below. Wet batters (tempura, kwek-kwek) are not covered by these rates. These rates are fixed: use them as they are; changing one is Arianna's call. Sources: `ABSORPTION_SOURCES.md`, "Coatings".
+The liquid the food soaked in follows the marinade rule below. For a wet batter, scale its egg, water and seasoning by the same share as its flour (`16 large shrimp`, 112 g: 1.5 tbsp flour, 1/6 egg, 1.5 tbsp water). These rates are fixed: use them as they are; changing one is Arianna's call. Sources: `ABSORPTION_SOURCES.md`, "Coatings".
 
 ### Marinades (`--Absorbed marinade`)
 

@@ -76,14 +76,14 @@
    "status": "ok",
    "url": "https://www.foodfaithfitness.com/wprm_print/shrimp-tempura-recipe",
    "basis": "mean of Food Faith Fitness 210 and XOXO Bella 185 (4 servings each)",
-   "note": "Absorbed oil at the 15% wet-battered rate on the shrimp alone (16 large, 112 g): 1 1/4 tbsp (was 5 tbsp, 294 kcal; 16 Nov 2026)."
+   "note": "Batter at the 11% wet-batter rate and oil at 15%, both on the shrimp alone (16 large, 112 g): 1.5 tbsp flour, 1/6 egg, 1 1/4 tbsp oil (16 Nov 2026; was 2/3 cup flour, 1 egg, 5 tbsp oil, 294 kcal). Now under: USDA's shrimp are small (\"large\" 7 g, and the count takes its 6 g medium), where US large shrimp (31-40 a lb) are about twice that."
   },
   "vegetable_tempura": {
    "kcal": 250,
    "status": "ok",
    "url": "https://chefjacooks.com/en/wprm_print/the-best-japanese-vegetable-tempura-recipe",
    "basis": "4 servings",
-   "note": "Absorbed oil: 210 of 421 kcal. 7 tbsp is 15% (wet-battered) of the ~925 g of vegetables, so it follows the rate; reference counts much less oil. \"1 small eggplant\" is USDA's only eggplant, 500 g."
+   "note": "Absorbed oil: 210 of 413 kcal, 7 tbsp at 15% (wet-battered) of the ~925 g of vegetables; reference counts much less oil. Batter at the 11% rate (3/4 cup flour, 1 tbsp cornstarch). \"1 small eggplant\" is USDA's only eggplant, 500 g."
   },
   "yakitori_": {
    "kcal": null,
@@ -713,7 +713,7 @@
    "status": "ok",
    "url": "https://www.foxyfolksy.com/kwek-kwek/",
    "basis": "91 per serving of 8 from 24-30 quail eggs (about 3.4 each), so about 27 an egg",
-   "note": "Batter: ours coats 16 quail eggs in 1 cup flour (28 kcal an egg); Foxy Folksy spreads 1 1/4 cups over ~27 eggs. Oil at the 15% wet-battered rate on the eggs alone (144 g): 1 1/2 tbsp (was 5 tbsp, 89 kcal; 16 Nov 2026). Batter amount is a recipe call."
+   "note": "Batter at the 11% wet-batter rate on the eggs (144 g): 1.5 tbsp flour, 1.5 tsp cornstarch; oil at 15% on the eggs alone, 1 1/2 tbsp (16 Nov 2026). Was 1 cup flour for 16 eggs and 5 tbsp oil, 89 kcal an egg."
   },
   "lumpiang_sariwa": {
    "kcal": 301,
