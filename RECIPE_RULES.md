@@ -94,6 +94,7 @@ Write amounts the way a home cook would read them. **Never grams**: a user readi
 * **Counts** (whole, piece, clove, stalk, sheet, slice, fillet, chop, thigh, drumstick, leaf, block) for anything naturally counted, with size where it varies (`1 large onion`, `2 whole medium tomato`). Without a size the matcher assumes medium. The cut can follow the food (`2 boneless pork loin chop`, `2 bread slice`); it is still the unit.
 * **Leafy greens sold by the bunch** by the bunch (`1 bunch spinach`), not oz or cups, when the database food has a `bunch` portion (raw spinach's is 340 g; in cups it read as "11 cups"). Without one, use the usual units.
 * **Meat** by count (`2 boneless skinless chicken thigh`) or, when it is sold by weight, **oz or lb** (`8 oz ground beef`, `1.5 lb oxtail`). Never cups of meat: the matcher can't convert them and logs the wrong weight.
+  * Shrimp counted (`16 large shrimp`, tempura) is FNDDS's boiled shrimp by its piece weight (large/jumbo 15 g as eaten, about 17.5 g raw); the batter and oil rates take the raw weight. Shrimp by weight (`8 oz shrimp`) keeps the raw row. The raw rows' own "large" is 7 g, half a store's large shrimp (16 Nov 2026).
 * **Packaged items** by the package (`1 packet tamarind soup mix`, `4 block boxed Japanese curry roux`).
 * Sources disagree on units → use the unit most of them use. The ratios still come from all three.
 * A source gives both metric and US amounts → use the US/household one. A source gives only grams → prefer another source that doesn't.

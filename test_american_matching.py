@@ -192,6 +192,22 @@ def test_a_cut_or_whole_bird_in_the_unit_is_searched(monkeypatch):
     assert searched == ["bone-in skin-on chicken drumstick", "whole chicken", "onion"]
 
 
+def test_shrimp_by_the_piece_is_searched_as_boiled_shrimp(monkeypatch):
+    searched = []
+
+    def fake_once(ingredient, *args, **kwargs):
+        searched.append(ingredient)
+        return ({"fdc_id": "1", "display_name": ingredient}, 1.0, "high", None)
+
+    monkeypatch.setattr(matcher, "_match_ingredient_once", fake_once)
+    monkeypatch.setattr(matcher, "_respelled", lambda ingredient, *a: ingredient)
+    matcher.match_ingredient("shrimp", [], unit="piece")
+    matcher.match_ingredient("peeled shrimp", [], unit="piece")
+    matcher.match_ingredient("shrimp", [], unit="oz")
+    matcher.match_ingredient("head-on shrimp", [], unit="piece")
+    assert searched == ["boiled shrimp", "boiled shrimp", "shrimp", "head-on shrimp"]
+
+
 # ── Live matches (boosts.json rules) ────────────────────────────────────────
 
 LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),

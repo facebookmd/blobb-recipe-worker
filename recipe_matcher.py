@@ -2607,6 +2607,13 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
     # parser's "whole" unit left "chicken", roasted breast by the cup.
     if unit.lower() == "whole" and re.fullmatch(r"(?i)(?:roasting\s+)?(?:chicken|duck|turkey)", ingredient.strip()):
         ingredient = f"whole {ingredient.strip()}"
+    # Shrimp by the piece is FNDDS's "Shrimp, steamed or boiled", the only
+    # USDA shrimp with realistic piece weights ("1 large/jumbo shrimp" 15 g,
+    # as eaten); the raw rows' "4 large" is 7 g each, half a store's large
+    # shrimp. Shrimp by weight keeps the raw row (Arianna, 16 Nov 2026).
+    if (unit.lower() in ("piece", "pieces", "whole")
+            and re.fullmatch(r"(?i)(?:peeled\s+|deveined\s+|raw\s+)*shrimps?", ingredient.strip())):
+        ingredient = "boiled shrimp"
     respelled = _respelled(ingredient, boost_rules, category)
     if respelled != ingredient:
         result = match_ingredient(respelled, boost_rules, threshold, category, unit, is_cooked)
