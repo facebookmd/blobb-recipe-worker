@@ -450,11 +450,11 @@
    "note": "Beef shank: USDA has only \"Beef shank crosscuts, lean only\" (128 kcal/100 g) and bone marrow isn't counted. Cut green beans fixed (canned → raw)."
   },
   "beef_nilaga": {
-   "kcal": 275,
+   "kcal": 390,
    "status": "ok",
-   "url": "https://panlasangpinoy.com/wprm_print/beef-nilaga-recipe",
-   "basis": "6 servings",
-   "note": "Brisket: 2 lb whole brisket (1/8\" fat) for 6 = 5.3 oz each, 382 kcal. Matches right; reference's meat amount or cut is leaner."
+   "url": "https://www.chefadora.com/mrsrosen19/nilagang-baka-fi7osjczwf",
+   "basis": "Chefadora: 1 kg shank or brisket for 6",
+   "note": "Swapped 19 Nov 2026 (Arianna); was Panlasang Pinoy 275. Kept whole brisket (1/8\" fat, as bought; fat renders into the soup). 2 lb for 6 = 5.3 oz each, 382 kcal of beef alone. Panlasang Pinoy (275) and EatFresh (261) both use 2 lb brisket but print totals below that beef, so they count lean meat."
   },
   "sopas_": {
    "kcal": 560,
@@ -622,7 +622,7 @@
    "status": "ok",
    "url": "https://norecipes.com/wprm_print/tosilog",
    "basis": "per plate",
-   "note": "Tocino 5 oz (234) + 1 cup garlic rice with 2 tsp oil + fried egg. Recipe amounts; Norecipes plates are smaller."
+   "note": "Tocino 3 oz since 19 Nov 2026 (was 5 oz, 658 a plate; Arianna's call): a store pack of about 450 g serves 5-6. Plus 1 cup garlic rice and a fried egg; Norecipes serves less rice."
   },
   "longsilog_": {
    "kcal": 682,
@@ -737,11 +737,11 @@
    "note": null
   },
   "pancit_bihon": {
-   "kcal": 172,
+   "kcal": 389,
    "status": "ok",
-   "url": "https://panlasangpinoy.com/wprm_print/51154",
-   "basis": "mean of Panlasang Pinoy 193 and Quirino 151 (6 each)",
-   "note": "Rice vermicelli was cooked white rice (fixed → Rice noodles, cooked; 347 → 337). Cut green beans fixed. Remaining gap is recipe amounts: 3 tbsp oil (80 kcal a serving) and more chicken than the references."
+   "url": "https://www.hawaiianelectric.com/recipes/find-a-recipe/pancit-bihon-(for-long-life-and-good-luck)",
+   "basis": "mean of Hawaiian Electric 280 (8 oz bihon, 1/2 lb ground pork, no oil, 6) and Cup of Yum 497 (8 oz bihon, 3 tbsp oil, 1/2 lb pork belly, 1/2 lb shrimp, 6; https://cupofyum.com/recipes/pancit-bihon/print)",
+   "note": "Swapped 19 Nov 2026 (Arianna); was Panlasang Pinoy/Quirino mean 172. Same noodle amount as ours; ours sits between (oil over Hawaiian Electric, less meat than Cup of Yum). Cup of Yum's other bihon page (240) is below its own 1 lb noodles and 1 lb meat."
   },
   "pancit_canton": {
    "kcal": 279,
@@ -800,11 +800,11 @@
    "note": "Absorbed oil 70 kcal a roll (8% wrapper rate) + brown sugar. Reference counts little oil. Oil rates are Arianna's."
   },
   "banana_cue": {
-   "kcal": 150,
+   "kcal": 350,
    "status": "ok",
-   "url": "https://www.foxyfolksy.com/wprm_print/29574",
-   "basis": "per skewer (6)",
-   "note": "Brown sugar: 3 tbsp per skewer (140 kcal) counted fully; most caramel stays on, but some is left in the pan. Plus oil 90. Judgement."
+   "url": "https://www.snapcalorie.com/nutrition/banana_cue_nutrition.html",
+   "basis": "SnapCalorie 250 per 150 g (167/100 g), scaled to our ~210 g skewer (2 saba, 1/6 cup brown sugar, absorbed oil)",
+   "note": "Swapped 19 Nov 2026 (Arianna). Foxy Folksy's 150 (same amounts: 12 saba, 1 cup brown sugar for 6) is below its own bananas and sugar (~284 before oil); Cup of Yum repeats it. SnapCalorie is an estimate, the only figure found that counts the sugar."
   },
   "biko_": {
    "kcal": 538,

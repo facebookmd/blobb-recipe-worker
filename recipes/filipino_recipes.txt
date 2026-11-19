@@ -669,7 +669,7 @@ Tocilog
 ID: tocilog_
 AKA: Tosilog", "Tocino with garlic rice and egg", "Tocino silog
 Servings: 1
-5 oz pork tocino
+3 oz pork tocino
 1 cup garlic fried rice
 1 large egg
 1.5 tsp vegetable oil
