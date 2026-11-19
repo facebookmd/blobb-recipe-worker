@@ -218,6 +218,8 @@ LIVE = pytest.mark.skipif(not os.environ.get("SUPABASE_ANON_KEY"),
 @pytest.mark.parametrize("line,expected", [
     ("4 hoagie roll", "Roll, white, hoagie, submarine"),
     ("4.75 cup cooked beef stew meat", "Beef, stew meat"),
+    ("8 oz 90% lean ground beef", "Ground beef, 90/10, raw"),
+    ("8 oz 96% lean ground pork", "Ground pork, 96% lean, raw"),
     ("2 pie crust", "Pie crust, refrigerated, unbaked"),
     ("4 bone-in skin-on chicken drumstick", "Chicken drumstick, with skin, raw"),
     ("1 whole chicken", "Chicken, with skin, raw"),

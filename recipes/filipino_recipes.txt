@@ -199,7 +199,8 @@ Servings: 4
 1/2 cup chopped onion
 4 clove garlic
 1 tsp black peppercorns
-1 ear sweet corn
+2 ear sweet corn
+1 large potato
 1 cup cut green beans
 2 cup chopped cabbage
 2 cup chopped bok choy
@@ -284,7 +285,7 @@ SOURCE: https://tarasmulticulturaltable.com/wprm_print/adobong-baboy-filipino-po
 Kare-Kare
 ID: kare_kare
 AKA: Kare kare", "Oxtail kare-kare", "Oxtail peanut stew
-Servings: 6
+Servings: 8
 2 lb oxtail
 6 cup water
 2 tbsp vegetable oil
@@ -636,7 +637,7 @@ SOURCE: https://iankewks.com/tortang-talong/, https://www.rivertenkitchen.com/wp
 Ginisang Monggo
 ID: ginisang_monggo
 AKA: Monggo", "Munggo", "Mung bean stew", "Monggo guisado
-Servings: 4
+Servings: 6
 1.25 cup dried mung beans
 8 oz pork belly
 2 tbsp vegetable oil

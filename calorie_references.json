@@ -447,7 +447,7 @@
    "status": "ok",
    "url": "https://www.recipesbynora.com/wprm_print/bulalo-recipe-filipino-beef-shank-soup",
    "basis": "8 servings",
-   "note": "Beef shank: USDA has only \"Beef shank crosscuts, lean only\" (128 kcal/100 g) and bone marrow isn't counted. Cut green beans fixed (canned → raw)."
+   "note": "1 large potato and a second ear of corn added 19 Nov 2026 (Arianna), as in Recipes by Nora (2 large potatoes, 2 ears for 8). Remaining gap: USDA has only \"Beef shank crosscuts, lean only\" (128 kcal/100 g) and no beef bone marrow row; Nora prints 18 g fat a serving. Cut green beans fixed (canned -> raw)."
   },
   "beef_nilaga": {
    "kcal": 390,
@@ -478,11 +478,11 @@
    "note": "Reference calculated from USDA's old SR pork belly: Panlasang Pinoy's 2 lb belly for 4 at 518 kcal/100 g is 1,175 kcal and 120 g fat, the page prints 1,211 and 120 g. Ours uses the skin-on Foundation belly (385): 907."
   },
   "kare_kare": {
-   "kcal": 614,
+   "kcal": 363,
    "status": "ok",
-   "url": "https://www.foxyfolksy.com/kare-kare/",
-   "basis": "mean of Foxy Folksy 865 (6) and Hungry Huy 363 (8)",
-   "note": "Oxtail is counted at USDA's 0.56 bone-and-cooking yield (85 g meat, 219 kcal a serving), settled 28 Oct. References disagree widely (363 vs 865); ours is inside that range."
+   "url": "https://www.hungryhuy.com/kare-kare/",
+   "basis": "Hungry Huy: 2 lb oxtail and shank for 8",
+   "note": "Serves 8 since 19 Nov 2026 (was 6; Arianna), like Hungry Huy's 2 lb of meat for 8. Foxy Folksy's 865 dropped: it prints 81 g protein a serving (~490 g a pot) but its oxtail, tripe and peanut butter give ~270 g; from its own amounts it is ~625. Oxtail is counted at USDA's 0.56 bone-and-cooking yield (settled 28 Oct)."
   },
   "beef_caldereta": {
    "kcal": 512,
@@ -604,11 +604,11 @@
    "note": "Recipe: Simply Bakings adds flour and sesame seeds (about 80 kcal a serving); ours is eggs, eggplant and 2 tbsp oil for 2."
   },
   "ginisang_monggo": {
-   "kcal": 345,
+   "kcal": 410,
    "status": "ok",
    "url": "https://panlasangpinoy.com/wprm_print/ginisang-monggo-with-kalabasa",
-   "basis": "mean of Panlasang Pinoy 410 and Bite My Bun 279",
-   "note": "Pork belly now skin-on Foundation (647 → 572). Recipe amounts: 1¼ cups dried mung beans + 8 oz pork belly for 4."
+   "basis": "Panlasang Pinoy: 14 oz mung beans for 6",
+   "note": "Serves 6 since 19 Nov 2026 (was 4; Arianna): a pot of ours is about Panlasang Pinoy's, which serves 6. Bite My Bun's 279 dropped: its own 1.5 cups mung beans, 1 lb pork and 2 tbsp oil for 5 are about 460 a serving."
   },
   "tapsilog_": {
    "kcal": 883,
@@ -951,7 +951,7 @@
    "status": "ok",
    "url": "https://www.spendwithpennies.com/italian-wedding-soup/",
    "basis": "mean of Spend with Pennies 376 and Scarlati 330 (6 each)",
-   "note": "Acini di pepe: 8 oz dry pasta for 6 (134 kcal each) — already flagged CHECK AMOUNT as an estimate. Recipe amount."
+   "note": "Meatballs use 90% lean beef and 96% lean pork since 19 Nov 2026 (Arianna), as Spend with Pennies specifies lean (was 80/20 and regular). Acini di pepe: the branded row has no cup, so a cup is estimated from its 56 g serving at 1 g/ml (236 g) — CHECK AMOUNT, probably heavy. Chicken broth is USDA's low-sodium canned row (38 kcal a cup)."
   },
   "pasta_e_fagioli": {
    "kcal": 349,
