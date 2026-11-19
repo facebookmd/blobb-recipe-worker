@@ -7,12 +7,12 @@ ID: bolognese_sauce
 AKA: Ragu alla bolognese", "Bolognese", "Bolognese meat sauce", "Ragu
 Servings: 12
 Serving size: 1/2 cup
-2 tbsp olive oil
-2 tbsp butter
+3 tbsp olive oil
+4 tbsp butter
 1 medium onion
 1 medium carrot
 1 stalk celery
-4 oz pancetta
+8 oz pancetta
 1.5 lb ground beef
 1 cup dry red wine
 1 cup whole milk
@@ -257,7 +257,7 @@ Servings: 4
 8 bone-in skin-on chicken thigh
 1 tsp salt
 1/2 tsp black pepper
-5 tbsp olive oil
+2 tbsp olive oil
 1 large onion
 1 medium red bell pepper
 1 medium carrot
@@ -332,7 +332,7 @@ Servings: 6
 --Braise
 1/4 cup olive oil
 1/2 cup dry red wine
-4 cup marinara sauce
+3.5 cup canned crushed tomatoes
 SOURCE: https://www.cucinabyelena.com/wprm_print/italian-beef-braciole-recipe, https://coleycooks.com/sunday-braciole/, https://www.themediterraneandish.com/italian-beef-braciole-stuffed-beef-rolls/
 
 
@@ -342,7 +342,8 @@ ID: sausage_and_peppers
 AKA: Italian sausage and peppers", "Salsiccia e peperoni", "Sausage peppers and onions
 Servings: 4
 1 lb Italian sausage
-1 tbsp olive oil
+2 tbsp olive oil
+2 tbsp butter
 1 medium onion
 1 medium red bell pepper
 1 medium yellow bell pepper
@@ -388,9 +389,9 @@ Calzone
 ID: calzone_
 AKA: Cheese calzone", "Calzoni
 Servings: 4
-1.5 lb pizza dough
+1 lb pizza dough
 1 cup ricotta cheese
-2 cup shredded mozzarella
+1.5 cup shredded mozzarella
 1/4 cup grated parmesan
 1 clove garlic
 1 tbsp olive oil
@@ -404,8 +405,8 @@ Frittata
 ID: frittata_
 AKA: Italian omelette", "Zucchini frittata", "Frittata di zucchine
 Servings: 4
-6 large egg
-1/4 cup grated parmesan
+8 large egg
+1/2 cup grated parmesan
 1 small onion
 1 medium zucchini
 2 tbsp olive oil
@@ -540,11 +541,11 @@ Panzanella
 ID: panzanella_
 AKA: Tuscan bread salad", "Bread and tomato salad
 Servings: 6
-9 cup cubed Italian bread
+6 cup cubed Italian bread
 4 medium tomato
 1 medium cucumber
 1/2 small red onion
-1/2 cup olive oil
+1/3 cup olive oil
 3 tbsp red wine vinegar
 1/4 cup chopped basil
 1/2 tsp salt
@@ -618,7 +619,7 @@ ID: spaghetti_and_meatballs
 AKA: Spaghetti with meatballs", "Spaghetti e polpette
 Servings: 4
 8 cup cooked spaghetti
-28 piece meatballs
+20 piece meatballs
 3.5 cup marinara sauce
 1/4 cup grated parmesan
 basil leaf for garnish
@@ -766,7 +767,7 @@ Shrimp Scampi
 ID: shrimp_scampi
 AKA: Shrimp scampi linguine", "Linguine with shrimp scampi", "Garlic butter shrimp pasta
 Servings: 4
-6 cup cooked linguine
+8 cup cooked linguine
 1 lb large shrimp
 4 tbsp butter
 2 tbsp olive oil
@@ -867,9 +868,9 @@ Panna Cotta
 ID: panna_cotta
 AKA: Vanilla panna cotta", "Pannacotta
 Servings: 6
-2 cup heavy cream
-1 cup whole milk
-4.5 tbsp sugar
+1.25 cup heavy cream
+1.5 cup whole milk
+1/4 cup sugar
 2 tsp unflavored gelatin
 1.5 tsp vanilla extract
 SOURCE: https://www.americastestkitchen.com/recipes/641-classic-panna-cotta, https://www.livewellbakeoften.com/panna-cotta/, https://www.laylita.com/recipes/wprm_print/how-to-make-panna-cotta

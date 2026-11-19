@@ -923,7 +923,7 @@
    "status": "ok",
    "url": "https://bitingatthebits.com/ragu-alla-bolognese/print/13294/",
    "basis": "369 per 4 oz (½ cup is ~4.4 oz)",
-   "note": "Ours 272 per ½ cup vs ~400 per ½ cup by the reference."
+   "note": "Pancetta 4 -> 8 oz, butter 2 -> 4 tbsp, oil 2 -> 3 tbsp since 19 Nov 2026 (Arianna), toward Biting at the Bits (11 oz pancetta, 1/2 cup butter, 4 tbsp oil), whose figure holds for its amounts (~400 per 1/2 cup)."
   },
   "italian_meatballs": {
    "kcal": 89,
@@ -986,7 +986,7 @@
    "status": "ok",
    "url": "https://natashaskitchen.com/wprm_print/classic-eggplant-parmesan-recipe",
    "basis": "mean of Natasha 458 (8) and Petite Cook 390 (6)",
-   "note": "Absorbed oil: 177 kcal a serving (12% breaded rate). Oil rates are Arianna's."
+   "note": "References count little or no frying oil: Natasha's 458 and Cup of Yum's 453 (16 g fat with 1/2 cup frying oil for 6) are below their own amounts with oil (checked 19 Nov 2026). Ours counts 177 kcal oil a serving at the 12% breaded rate. Oil rates are Arianna's."
   },
   "chicken_piccata": {
    "kcal": null,
@@ -1007,7 +1007,7 @@
    "status": "ok",
    "url": "https://www.onceuponachef.com/recipes/chicken-cacciatore.html",
    "basis": "4 servings: 8 bone-in skin-on thighs (skin removed before serving), 2 tbsp oil",
-   "note": "Two skin-on thighs a serving (853 kcal) and 5 tbsp olive oil for 4; Once Upon a Chef removes the skin before serving and uses 2 tbsp. Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
+   "note": "Olive oil 5 -> 2 tbsp since 19 Nov 2026 (Arianna), Once Upon a Chef's. Remaining gap is the skin: it trims the skin, ours keeps it (settled 16 Nov 2026)."
   },
   "saltimbocca_": {
    "kcal": null,
@@ -1028,21 +1028,21 @@
    "status": "ok",
    "url": "https://www.marcellinaincucina.com/authentic-italian-braciole-recipe/",
    "basis": "481 per serving of 4 (1½ lb top round, 1 cup pecorino, 4 tbsp oil, 28 oz tomatoes), rescaled to our 6",
-   "note": "Recipe amounts: ours adds ½ cup parmesan, pine nuts, raisins and 4 cups marinara to the same 1½ lb of beef."
+   "note": "4 cups marinara -> 3.5 cups canned crushed tomatoes since 19 Nov 2026 (Arianna), as Marcellina (28 oz tomatoes). Remaining gap: our pine nuts, raisins and dry breadcrumbs."
   },
   "sausage_and_peppers": {
    "kcal": 574,
    "status": "ok",
    "url": "https://www.spendwithpennies.com/sausage-and-peppers/",
    "basis": "4 servings: 1 lb Italian sausage, 2 tbsp olive oil and 2 tbsp butter",
-   "note": "Fat: Spend with Pennies adds 2 tbsp butter and 1 more tbsp oil (about 80 kcal a serving). Same 1 lb sausage for 4."
+   "note": "2 tbsp olive oil and 2 tbsp butter since 19 Nov 2026 (Arianna), Spend with Pennies' fats (was 1 tbsp oil). Same 1 lb sausage for 4."
   },
   "margherita_pizza": {
    "kcal": 173,
    "status": "ok",
    "url": "https://savvybites.co.uk/wprm_print/easy-margherita-pizza-with-homemade-pizza-dough",
    "basis": "692 per pizza ÷ 4 slices",
-   "note": "Slice size: ours is 1 of 8 slices from 2 pizzas' worth of dough; Savvy Bites' pizza ÷ 4. Matches right."
+   "note": "Reference low for its own amounts: Savvy Bites' dough (400 g flour, 2 tbsp oil), sauce and two mozzarellas are about 1,400 a pizza, not 692 (checked 19 Nov 2026). Sunset's 725 can't be checked (dough linked). No replacement found yet."
   },
   "pepperoni_pizza": {
    "kcal": 227,
@@ -1056,14 +1056,14 @@
    "status": "ok",
    "url": "https://sunset.com/recipe/flexible-calzones",
    "basis": "per calzone (4)",
-   "note": "6 oz dough per calzone (418). Recipe amount."
+   "note": "Dough 1.5 -> 1 lb (4 oz a calzone) and mozzarella 2 -> 1.5 cups since 19 Nov 2026 (Arianna), as Sunset (1 lb dough, 3/4 cup each ricotta and mozzarella, plus ham, for 4)."
   },
   "frittata_": {
    "kcal": 320,
    "status": "ok",
    "url": "https://hilltoprecipes.com/frittata/",
    "basis": "mean of Hilltop 368 and Recipes from Italy 271 (4 each)",
-   "note": "Recipe: 6 eggs for 4 with no potato; both references add potato or ricotta. Matches right."
+   "note": "8 eggs and 1/2 cup parmesan for 4 since 19 Nov 2026 (Arianna) (was 6 eggs, 1/4 cup), as Hilltop's 8 eggs; Hilltop also adds 7 cheese slices."
   },
   "mushroom_risotto": {
    "kcal": 555,
@@ -1084,7 +1084,7 @@
    "status": "serving_differs",
    "url": "https://www.christinascucina.com/arancini-di-riso-sicilian-italian-rice-balls/",
    "basis": "525 per serving of 2 (16 a batch) → 263 each",
-   "note": "Ours 409 per ball. Absorbed oil + 16 a batch; check yield."
+   "note": "Ours 409 per ball. Absorbed oil + 16 a batch; check yield. Bolognese sub-template richer since 19 Nov 2026: 409 -> 425."
   },
   "caprese_salad": {
    "kcal": 245,
@@ -1119,7 +1119,7 @@
    "status": "ok",
    "url": "https://www.spendwithpennies.com/easy-panzanella-salad/",
    "basis": "8 servings (Grantourismo 754 per 2)",
-   "note": "Olive oil: ¼ cup+ for 6 (168 kcal a serving) and 56 g bread each. Recipe amounts."
+   "note": "Bread 9 -> 6 cups and olive oil 1/2 -> 1/3 cup for 6 since 19 Nov 2026 (Arianna), nearer Spend with Pennies (8 oz bread, 7 tbsp oil for 8)."
   },
   "caponata_": {
    "kcal": 253,
@@ -1147,14 +1147,14 @@
    "status": "ok",
    "url": "https://wholesomepatisserie.com/wprm_print/30-minute-ground-beef-spaghetti-bolognese",
    "basis": "4 servings, 17.6 oz dry pasta",
-   "note": null
+   "note": "Bolognese sauce is a copied sub-template; its richer fats (19 Nov 2026: pancetta 8 oz, butter 4 tbsp, oil 3 tbsp) moved this 802 -> 909, now over the reference. Open: Arianna's call whether the sauce or this plate's sauce amount gives."
   },
   "spaghetti_and_meatballs": {
    "kcal": 824,
    "status": "ok",
    "url": "https://robinmillercooks.com/wprm_print/spaghetti-and-meatballs",
    "basis": "mean of Robin Miller 917 (4) and Once Upon a Chef 731 (6), 1 lb pasta",
-   "note": "Recipe amounts: 2 cups cooked spaghetti + 5.6 oz meat in meatballs a plate."
+   "note": "20 meatballs for 4 (5 a plate, about 4 oz meat) since 19 Nov 2026 (Arianna), was 28; both references use 1 lb meat and 1 lb pasta for 4-6."
   },
   "spaghetti_carbonara": {
    "kcal": 805,
@@ -1182,7 +1182,7 @@
    "status": "ok",
    "url": "https://www.melissassouthernstylekitchen.com/wprm_print/fettuccine-alfredo",
    "basis": "mean of Melissa's 621 and Eazy Peazy 677",
-   "note": "Cream: 1½ cups heavy cream for 4 (309) + butter + parmesan; 2.5 oz dry fettuccine. Recipe amounts."
+   "note": "Reference low for its own amounts: Melissa's 1/2 cup butter, 2 cups cream, 1 1/2 cups parmesan and 1 lb fettuccine for 6 are about 800 a serving, not 621 (checked 19 Nov 2026); ours is 805. No checkable replacement found yet (BigOven blocked)."
   },
   "penne_alla_vodka": {
    "kcal": 595,
@@ -1210,7 +1210,7 @@
    "status": "not_comparable",
    "url": "https://xoxobella.com/wprm_print/lasagna-alla-bolognese",
    "basis": "references disagree: 705 (12) vs 1080 (4)",
-   "note": "Ours 920 (8 pieces) sits between."
+   "note": "Ours 920 (8 pieces) sits between. Bolognese sub-template richer since 19 Nov 2026: 920 -> 1043."
   },
   "baked_ziti": {
    "kcal": null,
@@ -1224,7 +1224,7 @@
    "status": "ok",
    "url": "https://askchefdennis.com/wprm_print/classic-shrimp-scampi-recipe",
    "basis": "2 servings with ½ lb linguine (4 oz dry each)",
-   "note": "Pasta: ours is 3 oz dry linguine a plate, Chef Dennis 4 oz; plus less butter. Recipe amounts."
+   "note": "Linguine 6 -> 8 cups cooked (4 oz dry a plate, as Chef Dennis) since 19 Nov 2026 (Arianna). Chef Dennis also has twice the butter and Romano."
   },
   "linguine_alle_vongole": {
    "kcal": 703,
@@ -1266,7 +1266,7 @@
    "status": "ok",
    "url": "https://www.recipetineats.com/panna-cotta/",
    "basis": "per ½-cup panna cotta (6), no topping: 1¼ cups cream, 1½ cups milk (Christina's 252)",
-   "note": "Recipe amount: 2 cups heavy cream for 6, against 1¼-1½ cups in both references."
+   "note": "1 1/4 cups cream, 1 1/2 cups milk, 1/4 cup sugar for 6 since 19 Nov 2026 (Arianna), RecipeTin Eats' amounts (was 2 cups cream, 1 cup milk, 4.5 tbsp sugar); its 253 holds for them."
   },
   "cannoli_": {
    "kcal": 249,
