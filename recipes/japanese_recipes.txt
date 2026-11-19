@@ -158,7 +158,7 @@ Servings: 2
 2 tbsp soy sauce
 1.5 tbsp mirin
 1.5 tbsp rice wine
-1.5 tbsp sugar
+2 tsp sugar
 SOURCE: https://norecipes.com/shogayaki-japanese-ginger-pork/, https://tabemonomadness.com/buta-no-shougayaki-japanese-stir-fried-pork-with-ginger/, https://www.nippon.com/en/views/b08209/
 
 
@@ -223,7 +223,7 @@ Servings: 2
 1/3 cup dashi stock
 3 cup shredded cabbage
 2 stalk green onion
-5 oz thinly sliced skinless pork belly
+3 oz thinly sliced skinless pork belly
 2 tsp vegetable oil
 --Toppings
 2 tbsp okonomiyaki sauce
@@ -367,7 +367,7 @@ Oyakodon
 ID: oyakodon_
 AKA: Chicken and Egg Rice Bowl
 Servings: 2
-10 oz boneless skinless chicken thigh
+7 oz boneless skinless chicken thigh
 1/2 medium onion
 4 large egg
 1/2 cup dashi stock
@@ -376,7 +376,7 @@ Servings: 2
 1 tbsp rice wine
 2 tsp sugar
 1 stalk green onion
-2 2/3 cup cooked short grain white rice
+2 cup cooked short grain white rice
 SOURCE: https://www.justonecookbook.com/oyakodon/, https://www.americastestkitchen.com/recipes/17745-oyakodon-japanese-chicken-and-egg-rice-bowl, https://bittmanproject.com/recipe/oyakodon/
 
 
@@ -616,13 +616,13 @@ Japanese Potato Salad
 ID: japanese_potato_salad
 AKA: Potato sarada
 Servings: 4
-3 medium russet potato
+2 medium russet potato
 3/4 cup thinly sliced cucumber
 1/2 small onion
 1 small carrot
 2 oz ham
-2 large hard-boiled egg
-6 tbsp Japanese mayonnaise
+1 large hard-boiled egg
+3 tbsp Japanese mayonnaise
 1/2 tsp mustard
 1/2 tsp salt
 1/4 tsp black pepper

@@ -30,11 +30,11 @@
    "note": null
   },
   "miso_soup": {
-   "kcal": 100,
+   "kcal": 80,
    "status": "ok",
-   "url": "https://pickledplum.com/miso-soup-tofu-wakame/",
-   "basis": "4 servings: 4 cups dashi water, 3-4 tbsp miso, 8-10 oz silken tofu",
-   "note": "Recipe amounts: ours 3 tbsp miso and 7 oz silken tofu for 4 (about 15 kcal a serving less); the rest is the page's estimate."
+   "url": "https://www.kidneyfoods.com/recipe/iso-oup-akame-ofu",
+   "basis": "Kidneyfoods: dashi, 3 tbsp miso, silken tofu, wakame for 4 (other amounts not printed)",
+   "note": "Swapped 19 Nov 2026 (Arianna): Pickled Plum's 100 is above its own amounts (about 71) and its 9.5 g protein a bowl is more than its tofu and miso hold. Kidneyfoods' tofu and wakame amounts aren't printed."
   },
   "pork_and_vegetable_miso_soup": {
    "kcal": 340,
@@ -69,7 +69,7 @@
    "status": "ok",
    "url": "https://norecipes.com/shogayaki-japanese-ginger-pork/",
    "basis": "3 servings",
-   "note": "Recipe amount: 10 oz pork loin for 2 (5 oz each, 280 kcal); Norecipes splits a similar amount 3 ways. Matches are right."
+   "note": "Sugar 1.5 tbsp -> 2 tsp since 19 Nov 2026 (Arianna). Meat a serving is about Norecipes' (142 g loin vs 133 g rib chop); its 306 is below its own amounts (about 340), and ours keeps mirin and rice wine besides the sugar."
   },
   "shrimp_tempura": {
    "kcal": 198,
@@ -93,11 +93,11 @@
    "note": "Ours is per skewer (8); references serve 4-6 plates. Per-skewer not stated."
   },
   "okonomiyaki_": {
-   "kcal": 500,
+   "kcal": 483,
    "status": "ok",
-   "url": "https://norecipes.com/wprm_print/okonomiyaki-osaka-style",
-   "basis": "Norecipes 518 (3 servings), Chopstick Chronicles 483 (4)",
-   "note": "Pork belly: 5 oz skinless belly in 2 pancakes plus mayo; references make 3-4 pancakes from the same batter. Recipe amount/servings question. 736 -> 643 with the belly row. Skinless belly is USDA's Foundation belly (385 kcal/100 g) since 16 Nov 2026 (alias, USDA migration 20261116150000); it was the SR belly (518)."
+   "url": "https://www.chopstickchronicles.com/okonomiyaki/",
+   "basis": "Chopstick Chronicles: 160 g flour, 4 eggs, 160 g pork for 4 pancakes",
+   "note": "Belly 5 -> 3 oz for 2 pancakes since 19 Nov 2026 (Arianna): same flour and egg a pancake as Chopstick Chronicles, which has 40 g pork each. Norecipes' 518 dropped: its own 250 g belly for 3 gives about 630. Skinless belly is USDA's Foundation belly (385 kcal/100 g)."
   },
   "takoyaki_": {
    "kcal": 50,
@@ -153,7 +153,7 @@
    "status": "ok",
    "url": "https://oishibook.com/oyakodon/",
    "basis": "per bowl (own sources list none)",
-   "note": "Rice: 1⅓ cups cooked rice (322 kcal) and 5 oz thigh per bowl. Recipe amounts."
+   "note": "Chicken 10 -> 7 oz and rice 2 2/3 -> 2 cups for 2 since 19 Nov 2026 (Arianna), as Oishi Book (200 g thigh, 150 g dry rice for 2), whose 593 holds for its own amounts."
   },
   "gyudon_": {
    "kcal": 644,
@@ -258,14 +258,14 @@
    "status": "ok",
    "url": "https://www.chopstickchronicles.com/japanese-potato-salad/",
    "basis": "4 servings",
-   "note": "Recipe amounts: 3 medium russets (USDA 213 g each) and 6 tbsp mayo (141 kcal a serving) for 4. Matches are right."
+   "note": "Mayo 6 -> 3 tbsp, 3 -> 2 medium russets, 2 -> 1 egg since 19 Nov 2026 (Arianna), near Chopstick Chronicles (500 g potato, 3 tbsp mayo for 4; about 200 from its own amounts)."
   },
   "agedashi_tofu": {
-   "kcal": 117,
+   "kcal": 163,
    "status": "ok",
-   "url": "https://norecipes.com/wprm_print/agedashi-tofu",
-   "basis": "4 small portions",
-   "note": "Absorbed oil: 2 1/4 tbsp (68 kcal a serving), the 8% starch-dusted rate on 14 oz tofu; references count less oil. Two Japanese pages give fried tofu 6% (unverified). Oil rates are Arianna's."
+   "url": "https://cupofyum.com/recipes/agedashi-tofu",
+   "basis": "Cup of Yum 326 per serving of 2 from a 14 oz block, oil counted (19 g fat); ours serves 4 from the same block",
+   "note": "Swapped 19 Nov 2026 (Arianna): Norecipes' 117 prints 3 g fat, the tofu's own, so it counts no frying oil. Cup of Yum's 326 adds up from its 14 oz tofu, 4 tbsp starch and about 8 g absorbed oil a serving. Oil rates are Arianna's."
   },
   "braised_burdock_and_carrot": {
    "kcal": 118,
@@ -297,10 +297,10 @@
   },
   "tonkotsu_ramen": {
    "kcal": 1262,
-   "status": "ok",
+   "status": "serving_differs",
    "url": "https://glebekitchen.com/wprm_print/4251",
    "basis": "per bowl",
-   "note": "Chashu: 2 slices, 296 kcal (588 before the 24-slice cut and the belly row; ours was then 1,117, within 11%). The reference's own chashu and broth weren't compared. Skinless belly is USDA's Foundation belly (385 kcal/100 g) since 16 Nov 2026 (alias, USDA migration 20261116150000); it was the SR belly (518)."
+   "note": "Serving differs (19 Nov 2026 (Arianna)): Glebe Kitchen's bowl carries a quarter of 2 lb chashu (about 8 oz raw belly); ours has 2 slices (2.6 oz), about a shop's serving. Its 1,262 holds for its own amounts."
   },
   "yakisoba_": {
    "kcal": 567,
@@ -310,11 +310,11 @@
    "note": "633 -> 559 with the belly row. Skinless belly is USDA's Foundation belly (385 kcal/100 g) since 16 Nov 2026 (alias, USDA migration 20261116150000); it was the SR belly (518)."
   },
   "zaru_soba": {
-   "kcal": 422,
+   "kcal": 302,
    "status": "ok",
    "url": "https://www.chopstickchronicles.com/zaru-soba/",
-   "basis": "1 serving (about 100 g dry soba)",
-   "note": "Serving size: 2 cups cooked soba (228 g) per plate, less noodle than the reference's single serving. Recipe amount."
+   "basis": "Chopstick Chronicles 422 for 1 serving, less its 1 tbsp oil in the boiling water (~120, not eaten)",
+   "note": "Corrected 19 Nov 2026 (Arianna): the page's 15 g fat is the oil added to the noodle water. Ours: 2 cups cooked soba (228 g) a plate."
   },
   "mitarashi_dango": {
    "kcal": 135,
