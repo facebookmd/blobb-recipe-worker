@@ -607,8 +607,8 @@ Spaghetti Bolognese
 ID: spaghetti_bolognese
 AKA: Spaghetti alla bolognese", "Spag bol", "Spaghetti with meat sauce
 Servings: 4
-6 cup cooked spaghetti
-3.5 cup bolognese sauce
+8 cup cooked spaghetti
+2 cup bolognese sauce
 1/4 cup grated parmesan
 SOURCE: https://www.jamieoliver.com/recipes/pasta/family-spaghetti-bolognese/, https://wholesomepatisserie.com/wprm_print/30-minute-ground-beef-spaghetti-bolognese, https://www.kraftheinz.com/en-CA/lea-perrins/recipes/578718-spaghetti-bolognese
 
