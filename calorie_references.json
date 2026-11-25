@@ -919,11 +919,11 @@
    "note": "Reference implausible. Ours: 1.5 oz unsweetened chocolate (273) + sugar per cup."
   },
   "bolognese_sauce": {
-   "kcal": 406,
+   "kcal": 329,
    "status": "ok",
    "url": "https://bitingatthebits.com/ragu-alla-bolognese/print/13294/",
-   "basis": "369 per 4 oz (½ cup is ~4.4 oz)",
-   "note": "Pancetta 4 -> 8 oz, butter 2 -> 4 tbsp, oil 2 -> 3 tbsp since 19 Nov 2026 (Arianna), toward Biting at the Bits (11 oz pancetta, 1/2 cup butter, 4 tbsp oil), whose figure holds for its amounts (~400 per 1/2 cup)."
+   "basis": "mean of Biting at the Bits 406 per 1/2 cup (printed) and The Clever Carrot ~252 per 1/2 cup (its own amounts over its stated 5-6 cup yield; the page prints no nutrition)",
+   "note": "Pancetta 4 -> 8 oz, butter 2 -> 4 tbsp, oil 2 -> 3 tbsp since 19 Nov 2026 (Arianna), toward Biting at the Bits (11 oz pancetta, 1/2 cup butter, 4 tbsp oil), whose figure holds for its amounts (~400 per 1/2 cup). Second reference added 25 Nov 2026 (Arianna): The Clever Carrot's classic ragu (2 tbsp butter, 2 tbsp oil, 2 oz pancetta, 1 lb beef and pork, 1 cup milk, 1 cup wine, 28 oz tomatoes; 5-6 cups). Biting at the Bits is the richest version found (11 oz pancetta, 1/2 cup butter)."
   },
   "italian_meatballs": {
    "kcal": 89,
@@ -951,7 +951,7 @@
    "status": "ok",
    "url": "https://www.spendwithpennies.com/italian-wedding-soup/",
    "basis": "mean of Spend with Pennies 376 and Scarlati 330 (6 each)",
-   "note": "Meatballs use 90% lean beef and 96% lean pork since 19 Nov 2026 (Arianna), as Spend with Pennies specifies lean (was 80/20 and regular). Acini di pepe: the branded row has no cup, so a cup is estimated from its 56 g serving at 1 g/ml (236 g) — CHECK AMOUNT, probably heavy. Chicken broth is USDA's low-sodium canned row (38 kcal a cup)."
+   "note": "Meatballs use 90% lean beef and 96% lean pork since 19 Nov 2026 (Arianna), as Spend with Pennies specifies lean (was 80/20 and regular). Acini di pepe: the branded row has no cup, so a cup is estimated from its 56 g serving at 1 g/ml (236 g) — CHECK AMOUNT, probably heavy. Chicken broth is USDA's ready-to-serve row since 25 Nov 2026 (15 kcal a cup; was the low-sodium canned row, 38): 420 -> 385."
   },
   "pasta_e_fagioli": {
    "kcal": 349,
@@ -1143,10 +1143,10 @@
    "note": "Coating at the 3.5% dry-surface rate (1 tbsp flour and 1 tbsp semolina for 1 lb squid; was 1/2 cup each, 316 kcal). Squid rings have more surface per gram than the fish the rate was measured on, so this may undercount."
   },
   "spaghetti_bolognese": {
-   "kcal": 738,
+   "kcal": 728,
    "status": "ok",
    "url": "https://wholesomepatisserie.com/wprm_print/30-minute-ground-beef-spaghetti-bolognese",
-   "basis": "4 servings, 17.6 oz dry pasta",
+   "basis": "mean of Wholesome Patisserie 738 (4 servings, 17.6 oz dry pasta) and Once Upon a Chef 717 (6 servings with 1 lb pasta; its own amounts give 717)",
    "note": "Plate is 2 cups cooked spaghetti (4 oz dry) with 1/2 cup ragu since 24 Nov 2026 (Arianna; was 1 1/2 cups pasta, 7/8 cup ragu): 909 -> 757. The references are quick lean meat sauces (lean beef, 1 tbsp oil, no dairy) with more pasta; ours keeps the ragu (pancetta, butter, milk) and uses less of it, as ragu alla bolognese is served."
   },
   "spaghetti_and_meatballs": {
