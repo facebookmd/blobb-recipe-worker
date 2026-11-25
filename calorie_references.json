@@ -1,5 +1,5 @@
 {
- "_about": "Outside calorie references per template serving, checked by check_template_calories.py after every matcher run. kcal is the reference normalised to OUR serving (null when none is usable). status: ok (compare), serving_differs, not_comparable (the reason is in note), none. See RECIPE_RULES.md, 'Calorie reference'. First filled by the 11-13 Nov 2026 audit.",
+ "_about": "Outside calorie references per template serving, checked by check_template_calories.py after every matcher run. kcal is the reference normalised to OUR serving (null when none is usable). status: ok (a printed figure, divided to our serving: an independent check), recipe_match (a real recipe's own amounts run through our rows, or its printed figure rescaled to our main-ingredient amount: checks our amounts, not our calorie data), serving_differs, not_comparable (the reason is in note), none. See RECIPE_RULES.md, 'Calorie reference'. First filled by the 11-13 Nov 2026 audit; split into ok and recipe_match 25 Nov 2026 (Arianna).",
  "templates": {
   "dashi_stock": {
    "kcal": 12,
@@ -38,7 +38,7 @@
   },
   "pork_and_vegetable_miso_soup": {
    "kcal": 294,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://shop.yutaka.london/blogs/recipes/tonjiru-recipe",
    "basis": "Yutaka's own amounts for 4 (200 g pork belly, 60 g miso, 200 g daikon, 100 g each carrot, burdock and konnyaku, 120 g onion, 1 tsp sesame oil): ~294 with the Foundation belly; it prints 340",
    "note": "Reference corrected 25 Nov 2026 (Arianna): the printed 340 is above its own ingredients (likely the old SR belly). Same belly and miso as ours."
@@ -66,7 +66,7 @@
   },
   "ginger_pork": {
    "kcal": 431,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.justonecookbook.com/ginger-pork-shogayaki/",
    "basis": "Mean of two references' own amounts with our rows: Norecipes about 340 (prints 306) and Just One Cookbook about 522 for 2 (3/4 lb pork loin, 1 1/2 tbsp oil; prints 361)",
    "note": "Swapped 25 Nov 2026 (Arianna): both print below their own amounts. Ours is 10 oz loin and 2 tsp oil for 2, between the two."
@@ -171,7 +171,7 @@
   },
   "omurice_": {
    "kcal": 676,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://norecipes.com/wprm_print/omurice-recipe",
    "basis": "mean of Norecipes 552 (1 1/2 eggs a serving; holds for its own amounts) and Okonomi Kitchen's own amounts ~800 (3 eggs a serving, ketchup and butter; it prints 570)",
    "note": "Reference corrected 25 Nov 2026 (Arianna). Ours: 2 1/2 eggs a serving, 5 oz chicken thigh and 1 1/2 cups rice for 2."
@@ -367,17 +367,17 @@
   },
   "garlic_fried_rice": {
    "kcal": 287,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.recipesbynora.com/wprm_print/sinangag-recipe-garlic-fried-rice",
    "basis": "Recipes by Nora's own amounts (6 cups rice, 2 tbsp oil, 2 tbsp butter for 6): ~287; it prints 257",
    "note": "Reference corrected 25 Nov 2026 (Arianna)."
   },
   "beef_tapa": {
-   "kcal": null,
-   "status": "serving_differs",
-   "url": "https://thequirinokitchen.com/wprm_print/beef-tapa",
-   "basis": "228 per 100 g serving",
-   "note": "Ours is per slice (24 a batch, 1 oz sirloin each); reference per 100 g."
+   "kcal": 44,
+   "status": "ok",
+   "url": "https://www.kawalingpinoy.com/wprm_print/recipe/31341",
+   "basis": "Kawaling Pinoy: 3 lb sirloin for 6 (8 oz a serving), 354 printed; holds for its own amounts (~368). Our slice is 1 oz of the same sirloin and marinade: 354 x 1/8 = 44",
+   "note": "Rechecked 25 Nov 2026. Ours also counts 1/8 tbsp frying oil a slice (15 kcal), which Kawaling Pinoy's figure leaves out; under the 30 kcal floor."
   },
   "longganisa_": {
    "kcal": 125,
@@ -388,7 +388,7 @@
   },
   "chicken_adobo": {
    "kcal": 569,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://panlasangpinoy.com/wprm_print/easy-chicken-adobo-recipe",
    "basis": "Panlasang Pinoy's own amounts for 4 (one of our sources): 2 lb bone-in chicken pieces (about one USDA thigh a serving, as ours), 4 tbsp oil, chicken cube, soy sauce, vinegar; about 569 with our rows. It prints 661, counting the bone as meat",
    "note": "Swapped 25 Nov 2026 (Arianna): Foxy Folksy's 374 is 2 lb of chicken for 6, the lightest of the sources (about 365 by its amounts). Food Network: 4-5 lb thighs for 6-8, about 548 by its amounts (prints 611). Skin-on is how all of them cook it."
@@ -415,32 +415,32 @@
    "note": "Brown sugar is counted as an unpacked cup; a packed cup is about half as heavy again. Under 30 kcal off, so not flagged."
   },
   "pork_sinigang": {
-   "kcal": 632,
-   "status": "not_comparable",
+   "kcal": 549,
+   "status": "recipe_match",
    "url": "https://www.recipesbynora.com/sinigang-na-baboy-recipe/",
-   "basis": "mean of Nora 656 (6) and Hungry Huy 607 (8)",
-   "note": "Both references calculated from USDA's old SR pork belly: Nora's 1½ lb belly for 6 gives 60 g fat at 53% (page: 61 g); Hungry Huy's 1 lb belly + 1 lb ribs for 8 gives about 43 g (page: 45.6 g). Ours uses the skin-on Foundation belly: 549."
+   "basis": "Recipes by Nora's own amounts for 6 (1 1/2 lb pork belly, as ours, taro, radish, eggplant, okra, sitaw, bok choy, 1 tbsp oil) with our rows: ~549; it prints 656 from the old SR belly (518 kcal/100 g)",
+   "note": "Rechecked 25 Nov 2026. Hungry Huy (607) uses ribs and belly, so it isn't the same dish to scale."
   },
   "shrimp_sinigang": {
    "kcal": 145,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://panlasangpinoy.com/wprm_print/sinigang-na-hipon-recipe-2",
    "basis": "Panlasang Pinoy's own amounts for 4 with 1 lb head-on shrimp at 46% meat: ~145; it prints 212, counting all 1 lb as meat (27 g protein)",
    "note": "Reference corrected 25 Nov 2026 (Arianna). Head-on shrimp counted at 46% meat (USDA AH-102)."
   },
   "milkfish_sinigang": {
-   "kcal": null,
-   "status": "not_comparable",
-   "url": "https://www.recipesbynora.com/sinigang-na-bangus-recipe/",
-   "basis": "references disagree: 74 / 165 / 444",
-   "note": "Ours 246 sits inside the spread."
+   "kcal": 249,
+   "status": "recipe_match",
+   "url": "https://panlasangpinoy.com/wprm_print/sinigang-na-bangus-recipe",
+   "basis": "Panlasang Pinoy's own amounts for 3 (2 lb milkfish, edible share only) with our rows: ~366 (it prints 444, counting the bone as meat); with our 102 g fish a serving instead of its 181 g, 249",
+   "note": "Rechecked 25 Nov 2026. Nora (74) and Foxy Folksy (165) disagree with Panlasang Pinoy and each other."
   },
   "chicken_tinola": {
-   "kcal": null,
-   "status": "not_comparable",
-   "url": "https://www.recipesbynora.com/chicken-tinola-recipe/",
-   "basis": "references disagree: 240 vs 662 (both 6 servings)",
-   "note": "Ours 366 sits between the references. Thigh weight confirmed (see chicken_adobo). Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
+   "kcal": 421,
+   "status": "recipe_match",
+   "url": "https://panlasangpinoy.com/wprm_print/chicken-tinola-recipe-2",
+   "basis": "Panlasang Pinoy's own amounts for 6 (3 lb bone-in skin-on chicken, green papaya, oil) with our rows: ~561 (it prints 662, counting the bone as meat); with our 125 g edible chicken a serving instead of its 188 g, 421",
+   "note": "Rechecked 25 Nov 2026: ours is 13% under Panlasang Pinoy at our chicken, all of it from amounts: it has 1 cup green papaya and 1/2 tbsp oil a serving (6 cups, 3 tbsp for 6), ours 1/2 cup and 1/3 tbsp (-31 and -20 kcal). Nora's 240 and Panlasang Pinoy's printed 662 disagree. Thigh weight confirmed (see chicken_adobo). Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
   },
   "bulalo_": {
    "kcal": 342,
@@ -471,10 +471,10 @@
    "note": null
   },
   "pork_adobo": {
-   "kcal": 1211,
-   "status": "not_comparable",
+   "kcal": 903,
+   "status": "recipe_match",
    "url": "https://panlasangpinoy.com/wprm_print/47218",
-   "basis": "4 servings",
+   "basis": "Panlasang Pinoy's own amounts for 4 (2 lb pork belly, as ours) with our rows: ~903; it prints 1,211 from the old SR belly (518 kcal/100 g)",
    "note": "Reference calculated from USDA's old SR pork belly: Panlasang Pinoy's 2 lb belly for 4 at 518 kcal/100 g is 1,175 kcal and 120 g fat, the page prints 1,211 and 120 g. Ours uses the skin-on Foundation belly (385): 907."
   },
   "kare_kare": {
@@ -486,7 +486,7 @@
   },
   "beef_caldereta": {
    "kcal": 556,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.recipesbynora.com/wprm_print/beef-caldereta-recipe",
    "basis": "Recipes by Nora's own amounts for 8 (3 lb chuck, 1/4 cup liver spread, 28 oz tomato sauce, potatoes, olives, pickles): ~556; it prints 512",
    "note": "Liver spread 1/2 -> 1/4 cup and reference corrected 25 Nov 2026 (Arianna): same 6 oz chuck a serving as Nora."
@@ -507,7 +507,7 @@
   },
   "pork_menudo": {
    "kcal": 750,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://panlasangpinoy.com/wprm_print/filipino-pork-menudo-recipe-2",
    "basis": "Panlasang Pinoy's own amounts for 5 (2 lb shoulder, 4 oz liver, 3 hot dogs, 1/2 cup raisins, 3 tbsp oil): ~720-780; it prints 510",
    "note": "Reference corrected 25 Nov 2026 (Arianna): the printed 510 is well below its own ingredients."
@@ -528,17 +528,17 @@
   },
   "sisig_": {
    "kcal": 491,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.foxyfolksy.com/wprm_print/11969",
    "basis": "Foxy Folksy's own amounts for 4 (1 lb pork belly, 3 chicken livers) with the Foundation belly: ~491; it prints 605 from the old SR belly (518 kcal/100 g)",
    "note": "Reference corrected 25 Nov 2026 (Arianna). Lechon kawali sub-template: skin-on belly is the Foundation row."
   },
   "bicol_express": {
-   "kcal": null,
-   "status": "not_comparable",
-   "url": "https://panlasangpinoy.com/wprm_print/pork-bicol-express-recipe",
-   "basis": "289 for 1.25 lb pork belly + coconut milk per 4 is not possible (belly alone is ~730)",
-   "note": "Reference implausible (289 for 1.25 lb belly + coconut per 4). Ours: belly now skin-on Foundation, chilies now small peppers (1,182 → 948) + 1½ cups coconut milk and ⅔ cup cream for 4."
+   "kcal": 897,
+   "status": "recipe_match",
+   "url": "https://www.kawalingpinoy.com/wprm_print/bicol-express",
+   "basis": "Kawaling Pinoy's own amounts for 6 (2 lb pork belly, coconut milk and cream) with our rows: ~934 (it prints 1,102, the old SR belly); with our 142 g belly a serving instead of its 151 g, 897",
+   "note": "Rechecked 25 Nov 2026. Panlasang Pinoy's 289 for 1.25 lb belly per 4 is impossible (belly alone is ~730)."
   },
   "pork_barbecue": {
    "kcal": 226,
@@ -576,18 +576,18 @@
    "note": "Pork belly now the skin-on Foundation row (715 → 564). Remaining gap: pork amount."
   },
   "embutido_": {
-   "kcal": null,
-   "status": "serving_differs",
+   "kcal": 387,
+   "status": "ok",
    "url": "https://www.recipesbynora.com/wprm_print/embutido-recipe-filipino-meatloaf",
-   "basis": "773 per log (6 logs)",
-   "note": "Ours is per serving of 12 (2 a log) → 386 per half log would compare; ours 455."
+   "basis": "773 per log (Recipes by Nora: 3 lb ground pork, 6 logs); ours cuts each log in 2, so 387; holds for its own amounts (~837 a log)",
+   "note": "Rechecked 25 Nov 2026. Ours is about 18% over: it adds cheese and 2 cups breadcrumbs (Panlasang Pinoy style) to the same pork a log."
   },
   "pork_giniling": {
-   "kcal": null,
-   "status": "not_comparable",
-   "url": "https://www.foxyfolksy.com/wprm_print/22406",
-   "basis": "references disagree: 553 vs 138",
-   "note": "Ours 353 sits between."
+   "kcal": 373,
+   "status": "recipe_match",
+   "url": "https://www.kawalingpinoy.com/wprm_print/recipe/26972",
+   "basis": "Kawaling Pinoy for 6 (2 lb ground pork, potatoes, carrots, peas, raisins) prints 522 and holds for its own amounts (~539); with our 94 g pork a serving instead of its 151 g, the rest unchanged, 373",
+   "note": "Rechecked 25 Nov 2026. Foxy Folksy (553) and Bite My Bun (138) disagree with each other."
   },
   "kinilaw_": {
    "kcal": null,
@@ -598,7 +598,7 @@
   },
   "tortang_talong": {
    "kcal": 223,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.kawalingpinoy.com/tortang-talong/",
    "basis": "Kawaling Pinoy for 4: 4 eggplants, 4 eggs, 1/4 cup oil, so 1 eggplant, 1 egg and 1 tbsp oil a serving, as ours; with a long eggplant at our 123 g that is 223. It prints 301",
    "note": "Swapped 25 Nov 2026 (Arianna): Simply Bakings adds flour and sesame. Kawaling Pinoy's 301 (19 g fat: the whole tbsp of oil) fits one 458 g globe eggplant, USDA's only whole eggplant; Riverten Kitchen's 263 (1 Japanese eggplant, 1 egg, 2 tsp oil, 29 g carbs) does too. Tortang talong uses a long Asian eggplant."
@@ -619,7 +619,7 @@
   },
   "tocilog_": {
    "kcal": 608,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://norecipes.com/wprm_print/tosilog",
    "basis": "Norecipes 321 (tocino and 2 eggs; its 1 g carbs leaves out the garlic rice) + 1 cup sinangag at Recipes by Nora's own amounts (~287)",
    "note": "Reference corrected 25 Nov 2026 (Arianna): Norecipes' figure counts no rice. Ours: 3 oz tocino, 1 cup garlic rice, 1 egg."
@@ -654,7 +654,7 @@
   },
   "champorado_": {
    "kcal": 420,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.recipesbynora.com/filipino-champorado-recipe/",
    "basis": "Recipes by Nora's own amounts for 6 (1 cup glutinous rice, a can of coconut milk, 4 oz dark chocolate, 1/4 cup sugar): ~420; it prints 270",
    "note": "Reference corrected 25 Nov 2026 (Arianna)."
@@ -689,7 +689,7 @@
   },
   "laing_": {
    "kcal": 740,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://panlasangpinoy.com/wprm_print/48888",
    "basis": "Panlasang Pinoy's own amounts for 8 (6 cups coconut milk, 2 cups coconut cream, 1/2 cup shrimp paste, 1/2 lb pork shoulder, 3.5 oz dried taro leaves): ~740 with the same USDA rows; it prints 618",
    "note": "Reference corrected 25 Nov 2026 (Arianna): the printed 618 is below its own ingredients; Foxy Folksy's laing page (380) no longer exists. Ours: 3 cups coconut milk + 1 cup cream for 6. Dried taro leaves count as 6.3x their weight of fresh leaves since 25 Nov 2026 (Arianna; SR 11520 water, dried leaves at 10% water assumed): 746 -> 777."
@@ -829,7 +829,7 @@
   },
   "buko_pandan": {
    "kcal": 305,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.recipesbynora.com/buko-pandan/",
    "basis": "Recipes by Nora's own amounts for 6 (1 lb young coconut, 16 oz nata de coco, sago, 4 oz cream cheese, 1/2 cup condensed milk): ~305; it prints 451",
    "note": "Reference corrected 25 Nov 2026 (Arianna): its printed 34 g fat a serving is beyond 4 oz cream cheese and condensed milk for 6."
@@ -850,7 +850,7 @@
   },
   "taho_": {
    "kcal": 440,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://panlasangpinoy.com/filipino-street-food-homemade-taho-recipe/",
    "basis": "Panlasang Pinoy's own amounts: 22 oz silken tofu, 3/4 cup sago, 3/4 cup brown sugar for 3 (~440); it prints 605",
    "note": "Reference corrected 25 Nov 2026 (the printed 605 is above its own ingredients). Pearls 1/2 -> 3/4 cup and syrup 1 -> 1 1/2 cups for 3, Panlasang Pinoy's amounts (Arianna)."
@@ -871,7 +871,7 @@
   },
   "ginataang_bilo_bilo": {
    "kcal": 600,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.hawaiianelectric.com/recipes/find-a-recipe/ginataang-bilo-bilo-(sticky-rice-balls-in-coconut-milk)",
    "basis": "Hawaiian Electric's own amounts for 8 (3 cups glutinous rice, 2 cans lite coconut milk, 1 cup sugar, sweet potato, plantains, jackfruit, sago): ~600; it prints 400",
    "note": "1 cup coconut cream dropped and reference corrected 25 Nov 2026 (Arianna). Ours uses full-fat coconut milk; Hawaiian Electric uses lite."
@@ -906,7 +906,7 @@
   },
   "mango_shake": {
    "kcal": 350,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://simplybakings.com/wprm_print/filipino-mango-shake",
    "basis": "Simply Bakings' own amounts per glass (1 mango, 2 tbsp brown sugar, 2 tbsp evaporated milk): ~350; it prints 272",
    "note": "Reference corrected 25 Nov 2026 (Arianna)."
@@ -920,7 +920,7 @@
   },
   "bolognese_sauce": {
    "kcal": 329,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://bitingatthebits.com/ragu-alla-bolognese/print/13294/",
    "basis": "mean of Biting at the Bits 406 per 1/2 cup (printed) and The Clever Carrot ~252 per 1/2 cup (its own amounts over its stated 5-6 cup yield; the page prints no nutrition)",
    "note": "Pancetta 4 -> 8 oz, butter 2 -> 4 tbsp, oil 2 -> 3 tbsp since 19 Nov 2026 (Arianna), toward Biting at the Bits (11 oz pancetta, 1/2 cup butter, 4 tbsp oil), whose figure holds for its amounts (~400 per 1/2 cup). Second reference added 25 Nov 2026 (Arianna): The Clever Carrot's classic ragu (2 tbsp butter, 2 tbsp oil, 2 oz pancetta, 1 lb beef and pork, 1 cup milk, 1 cup wine, 28 oz tomatoes; 5-6 cups). Biting at the Bits is the richest version found (11 oz pancetta, 1/2 cup butter)."
@@ -983,7 +983,7 @@
   },
   "eggplant_parmesan": {
    "kcal": 520,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://natashaskitchen.com/wprm_print/classic-eggplant-parmesan-recipe",
    "basis": "Natasha's own amounts for 8 with our rows and our breaded frying rate (12%): 2 lb eggplant, 3 eggs, 3/4 cup flour, 1 1/2 cups breadcrumbs, 1/2 cup parmesan, 32 oz marinara, 16 oz mozzarella; about 520. It prints 458",
    "note": "Corrected 25 Nov 2026 (Arianna): Natasha's 458 counts about half the frying oil our 12% breaded rate does (checked against her own amounts). Cup of Yum's 453 does the same."
@@ -1004,7 +1004,7 @@
   },
   "chicken_cacciatore": {
    "kcal": 1218,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://grantourismotravels.com/chicken-cacciatore-recipe/",
    "basis": "Grantourismo's own amounts for 4 (one of our sources): 8 bone-in skin-on thighs, 5 tbsp olive oil, red wine, 14 oz crushed tomatoes, 14 oz purée, 1 cup olives; about 1,218 with our rows. It prints 860",
    "note": "Swapped 25 Nov 2026 (Arianna): Once Upon a Chef trims the skin. Grantourismo keeps it, with the same 8 thighs for 4 as ours; its 860 fits thighs of about 140 g, smaller than USDA's 193 g skin-on thigh. Chili Pepper Madness (2.5 lb of thighs for 4) comes to about 854 by its amounts and prints 478."
@@ -1417,21 +1417,21 @@
   },
   "pot_roast": {
    "kcal": 585,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.wellplated.com/crockpot-roast-recipe/",
    "basis": "Well Plated's own amounts for 6 (2 1/2 lb chuck, 1 1/2 tbsp oil, 1 lb potatoes, 1 lb carrots): ~585; it prints 428",
    "note": "Reference corrected 25 Nov 2026 (Arianna): same raw chuck a serving as ours (about 6.5 oz)."
   },
   "bbq_baby_back_ribs": {
    "kcal": 750,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.onceuponachef.com/recipes/baby-back-ribs-smoker-or-oven.html",
    "basis": "Once Upon a Chef's own amounts (2 racks for 4): ~750; its 1,298 and 103 g protein a serving are beyond half a rack of meat",
    "note": "Reference corrected 25 Nov 2026 (Arianna)."
   },
   "roast_chicken": {
    "kcal": 608,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.spendwithpennies.com/lemon-roasted-chicken/",
    "basis": "Spend with Pennies' own amounts (a 3 lb chicken, 2 tbsp oil, 2 tbsp butter for 4): ~608; it prints 532",
    "note": "Butter 4 -> 2 tbsp since 25 Nov 2026 (Arianna): 666 -> 615. '1 whole chicken' is USDA's broiler, meat and skin."
@@ -1501,7 +1501,7 @@
   },
   "philly_cheesesteak": {
    "kcal": 965,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://natashaskitchen.com/philly-cheesesteak/",
    "basis": "Natasha's own amounts for 4 (1 lb ribeye, 8 provolone, 4 hoagie rolls, 2 tbsp butter, mayo, 2 tbsp oil): ~965; it prints 732",
    "note": "Ribeye 1.5 -> 1 lb since 25 Nov 2026 (Arianna), Natasha's: 1,007 -> 869."
@@ -1536,7 +1536,7 @@
   },
   "jambalaya_": {
    "kcal": 673,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.onceuponachef.com/recipes/jambalaya.html",
    "basis": "Once Upon a Chef's own amounts for 6 (1 3/4 lb bone-in skin-on thighs, 13 oz andouille, 2 cups rice, 1 lb shrimp): ~673; it prints 785",
    "note": "1 3/4 lb bone-in skin-on thighs, 2 cups rice and 1 lb shrimp since 25 Nov 2026 (Arianna), the reference's amounts: 449 -> 706."
@@ -1592,7 +1592,7 @@
   },
   "hash_browns": {
    "kcal": 223,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://natashaskitchen.com/crispy-hash-browns-recipe/",
    "basis": "Natasha's own amounts (1 1/4 lb russets, 2 tbsp oil, 2 tbsp butter for 4): ~223; its printed 7 g fat is below its own 4 tbsp of fat",
    "note": "Reference corrected 25 Nov 2026 (Arianna)."
@@ -1627,7 +1627,7 @@
   },
   "pumpkin_pie": {
    "kcal": 290,
-   "status": "ok",
+   "status": "recipe_match",
    "url": "https://www.spendwithpennies.com/pumpkin-pie-recipe/",
    "basis": "Spend with Pennies' own amounts (crust, 15 oz pumpkin, 10 oz evaporated milk, 2 eggs, 3/4 cup sugar for 8): ~290; it prints 216",
    "note": "Reference corrected 25 Nov 2026 (Arianna): same filling as ours."

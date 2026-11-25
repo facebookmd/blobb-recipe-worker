@@ -62,13 +62,27 @@ def test_new_templates_and_uncomparable_references_are_listed_apart():
     assert result["flagged"] == []
 
 
+def test_recipe_matches_are_compared_but_counted_apart():
+    # A recipe's own amounts with our rows checks our amounts, not our
+    # calorie data, so it isn't counted as an independent check (25 Nov 2026).
+    templates = {"adobo": {"name": "Adobo", "kcal": 900},
+                 "tinola": {"name": "Tinola", "kcal": 300},
+                 "tapa": {"name": "Tapa", "kcal": 50}}
+    refs = {"adobo": {"kcal": 903, "status": "recipe_match"},
+            "tinola": {"kcal": 421, "status": "recipe_match"},
+            "tapa": {"kcal": 44, "status": "ok"}}
+    result = check.check(templates, refs)
+    assert (result["ok"], result["recipe_match"]) == (1, 1)
+    assert [(r["id"], r["status"]) for r in result["flagged"]] == [("tinola", "recipe_match")]
+
+
 def test_the_repo_references_name_real_templates_with_usable_fields():
     with open(check.DEFAULT_REFERENCES, encoding="utf-8") as f:
         refs = json.load(f)["templates"]
     assert refs, "calorie_references.json has no templates"
     for tid, ref in refs.items():
-        assert ref["status"] in {"ok", "serving_differs", "not_comparable", "none"}, tid
-        if ref["status"] == "ok":
+        assert ref["status"] in {"ok", "recipe_match", "serving_differs", "not_comparable", "none"}, tid
+        if ref["status"] in check.COMPARED:
             assert ref["kcal"] and ref["kcal"] > 0, tid
             assert ref["url"], tid
 
