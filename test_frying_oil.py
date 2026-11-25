@@ -140,8 +140,9 @@ def rows_for(tmp_path, monkeypatch, lines):
             if r.get("_type") in ("data", "note")]
 
 
-def test_karaage_keeps_8_percent_of_the_chicken(tmp_path, monkeypatch):
-    # Skinless: skin-on coated chicken keeps no net oil (below).
+def test_skinless_karaage_keeps_4_3_percent_of_the_chicken(tmp_path, monkeypatch):
+    # Skinless: skin-on coated chicken keeps no net oil (below). MEXT 2020
+    # Table 13: skinless thigh karaage +4.3 g per 100 g raw ("dusted meat").
     rows = rows_for(tmp_path, monkeypatch, [
         "Karaage", "Servings: 4",
         "2 bone-in skinless chicken thigh",
@@ -149,10 +150,10 @@ def test_karaage_keeps_8_percent_of_the_chicken(tmp_path, monkeypatch):
         "3 cups vegetable oil for frying",
     ])
     [oil] = [r for r in rows if r["section"] == matcher.ABSORBED_OIL_SECTION]
-    # 2 thighs (388 g) / 4 servings = 97 g; 8% = 7.76 g of oil = 0.57 tbsp.
-    assert oil["fry_type"] == "starch-dusted"
+    # 2 thighs (388 g) / 4 servings = 97 g; 4.3% = 4.2 g of oil = 0.31 tbsp.
+    assert oil["fry_type"] == "dusted meat"
     assert oil["unit_label"] == "tbsp"
-    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(97 * 0.08, rel=0.01)
+    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(97 * 0.043, rel=0.01)
     # Not the pot: 3 cups / 4 servings would be 163 g.
     assert oil["portion_amt"] * oil["unit_grams"] < 10
     # The chicken is what it's a share of; the starch isn't.
@@ -225,6 +226,28 @@ def test_skin_on_chicken_in_tempura_batter_keeps_its_rate(tmp_path, monkeypatch)
     assert oil["portion_amt"] > 0
 
 
+@pytest.mark.parametrize("lines, fry_type", [
+    # Meat dredged in buttermilk and flour, skinless: dusted meat too.
+    (["2 boneless skinless chicken thigh", "1 cup buttermilk", "1 cup all-purpose flour"],
+     "dusted meat"),
+    (["8 oz pork loin", "1/4 cup potato starch"], "dusted meat"),
+    # Fish, seafood and tofu keep the dusted rate (MEXT's small whole horse
+    # mackerel, flour-dusted: +9.7 g).
+    (["2 tilapia fillet", "1/4 cup potato starch"], "starch-dusted"),
+    # Meat with fish in the same oil: not all meat.
+    (["2 boneless skinless chicken thigh", "2 tilapia fillet", "1/4 cup potato starch"],
+     "starch-dusted"),
+    # A wet batter isn't a dusting.
+    (["2 boneless skinless chicken thigh", "1/2 cup tempura flour"], "battered"),
+])
+def test_dusted_meat_is_its_own_rate(tmp_path, monkeypatch, lines, fry_type):
+    rows = rows_for(tmp_path, monkeypatch, [
+        "Fried", "Servings: 2", *lines, "3 cups oil for frying"])
+    oil = oil_row(rows)
+    assert oil["fry_type"] == fry_type
+    assert oil["portion_amt"] > 0
+
+
 def test_nothing_to_fry_starts_at_no_oil(tmp_path, monkeypatch):
     rows = rows_for(tmp_path, monkeypatch, [
         "Starch crisps", "Servings: 2",
@@ -277,7 +300,7 @@ def test_a_bone_in_weight_fries_its_edible_part(tmp_path, monkeypatch):
     assert "bone 17% left out" in chicken["notes"]
     chicken_grams = chicken["portion_amt"] * chicken["unit_grams"]
     oil = oil_row(rows)
-    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(chicken_grams * 0.08, rel=0.01)
+    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(chicken_grams * 0.043, rel=0.01)
 
 
 def test_no_rates_means_no_guess(tmp_path, monkeypatch):

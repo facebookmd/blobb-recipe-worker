@@ -4233,15 +4233,33 @@ _SKIN_ON_CHICKEN_RE = re.compile(
     re.I)
 _WET_BATTER_RE = re.compile(
     r"\b(tempura|batter|beer|club\s+soda|sparkling\s+water|soda\s+water)\b", re.I)
+# Meat and poultry, dusted or dredged without skin, keep less than dusted
+# tofu, fish and seafood: MEXT 2020 Table 13's skinless thigh karaage gained
+# 4.3 g per 100 g raw, its small whole horse mackerel 9.7 g ("dusted meat",
+# 25 Nov 2026).
+_MEAT_RE = re.compile(
+    r"\b(chicken|beef|pork|lamb|mutton|goat|veal|turkey|duck)\b", re.I)
+
+
+def _dredged(fry_type: str, text: str) -> bool:
+    """Dusted in starch or flour, or dredged (flour, buttermilk, egg), not in
+    a wet batter."""
+    return fry_type == "starch-dusted" or (fry_type == "battered"
+                                           and not _WET_BATTER_RE.search(text))
 
 
 def _coated_skin_on_chicken(fry_type: str, text: str, rows: list[dict]) -> bool:
     """Every fried row is skin-on chicken, dusted or dredged (not in a wet
     batter): it keeps no net oil."""
-    dredged = fry_type == "starch-dusted" or (fry_type == "battered"
-                                               and not _WET_BATTER_RE.search(text))
-    return dredged and bool(rows) and all(
+    return _dredged(fry_type, text) and bool(rows) and all(
         _SKIN_ON_CHICKEN_RE.search(r["component_label"]) for r in rows)
+
+
+def _dusted_meat(fry_type: str, text: str, rows: list[dict]) -> bool:
+    """Every fried row is meat or poultry, dusted or dredged (not in a wet
+    batter): the "dusted meat" rate."""
+    return _dredged(fry_type, text) and bool(rows) and all(
+        _MEAT_RE.search(r["component_label"]) for r in rows)
 
 
 def _fry_type(ingredients: list[str]) -> str:
@@ -4283,7 +4301,7 @@ def _absorbed_oil(ingredients: list[str], fried: list[dict], pan_fried: bool = F
     Unbreaded fish in oil for pan-frying ([pan_fried]) is pan-fried fish.
     None found, unbreaded fatty cuts (they lose fat), or skin-on chicken
     dusted or dredged (no net oil, MEXT 2020) gives 0 tbsp and no rows: the
-    user picks in the app."""
+    user picks in the app. Other meat dusted or dredged is dusted meat."""
     fry_type = _fry_type(ingredients)
     if fry_type == "wrapped":
         rows = list(fried)
@@ -4296,6 +4314,8 @@ def _absorbed_oil(ingredients: list[str], fried: list[dict], pan_fried: bool = F
             rows = []
         elif _coated_skin_on_chicken(fry_type, " | ".join(ingredients), rows):
             rows = []
+        elif _dusted_meat(fry_type, " | ".join(ingredients), rows):
+            fry_type = "dusted meat"
     else:
         for kind, unbreaded_type in (("starchy", "thick-cut"),
                                      ("vegetable", "unbreaded veg")):
