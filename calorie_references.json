@@ -597,11 +597,11 @@
    "note": "Reference implausible (40 kcal for 1 lb fish per 4). Ours: 5 oz tuna (155) + Thai chili now counted as a serrano pepper (6.1 g; was 45 g)."
   },
   "tortang_talong": {
-   "kcal": 376,
+   "kcal": 223,
    "status": "ok",
-   "url": "https://simplybakings.com/classic-eggplant-omelette/",
-   "basis": "2 servings: 2 eggs, 2 tbsp oil, plus 2 tbsp flour and sesame seeds (Recipes by Nora 352 per 4, deep-fried)",
-   "note": "Recipe: Simply Bakings adds flour and sesame seeds (about 80 kcal a serving); ours is eggs, eggplant and 2 tbsp oil for 2."
+   "url": "https://www.kawalingpinoy.com/tortang-talong/",
+   "basis": "Kawaling Pinoy for 4: 4 eggplants, 4 eggs, 1/4 cup oil, so 1 eggplant, 1 egg and 1 tbsp oil a serving, as ours; with a long eggplant at our 123 g that is 223. It prints 301",
+   "note": "Swapped 25 Nov 2026 (Arianna): Simply Bakings adds flour and sesame. Kawaling Pinoy's 301 (19 g fat: the whole tbsp of oil) fits one 458 g globe eggplant, USDA's only whole eggplant; Riverten Kitchen's 263 (1 Japanese eggplant, 1 egg, 2 tsp oil, 29 g carbs) does too. Tortang talong uses a long Asian eggplant."
   },
   "ginisang_monggo": {
    "kcal": 410,
@@ -1038,11 +1038,11 @@
    "note": "2 tbsp olive oil and 2 tbsp butter since 19 Nov 2026 (Arianna), Spend with Pennies' fats (was 1 tbsp oil). Same 1 lb sausage for 4. 1/3 cup dry white wine added 25 Nov 2026 (Arianna), as Spend with Pennies: 499 -> 515. Ours now has all its ingredients; its 574 is above them (~520)."
   },
   "margherita_pizza": {
-   "kcal": 173,
+   "kcal": 210,
    "status": "ok",
-   "url": "https://savvybites.co.uk/wprm_print/easy-margherita-pizza-with-homemade-pizza-dough",
-   "basis": "692 per pizza ÷ 4 slices",
-   "note": "Reference low for its own amounts: Savvy Bites' dough (400 g flour, 2 tbsp oil), sauce and two mozzarellas are about 1,400 a pizza, not 692 (checked 19 Nov 2026). Sunset's 725 can't be checked (dough linked). No replacement found yet."
+   "url": "https://www.spendwithpennies.com/margherita-pizza/",
+   "basis": "8 slices: 12 oz pizza dough, 1 tbsp olive oil, 1/3 cup pizza sauce, 8 oz fresh mozzarella, basil; about 209 a slice with the same USDA rows",
+   "note": "Swapped 25 Nov 2026 (Arianna): Savvy Bites' 173 was half its own amounts. Same dough, cheese and slices as ours."
   },
   "pepperoni_pizza": {
    "kcal": 227,
@@ -1178,11 +1178,11 @@
    "note": null
   },
   "fettuccine_alfredo": {
-   "kcal": 649,
+   "kcal": 854,
    "status": "ok",
-   "url": "https://www.melissassouthernstylekitchen.com/wprm_print/fettuccine-alfredo",
-   "basis": "mean of Melissa's 621 and Eazy Peazy 677",
-   "note": "Reference low for its own amounts: Melissa's 1/2 cup butter, 2 cups cream, 1 1/2 cups parmesan and 1 lb fettuccine for 6 are about 800 a serving, not 621 (checked 19 Nov 2026); ours is 805. No checkable replacement found yet (BigOven blocked)."
+   "url": "https://www.allrecipes.com/recipe/23834/fettuccine-alfredo-v/",
+   "basis": "Allrecipes 'Fettuccine Alfredo' for 4: 10 oz fettuccine, 1/2 cup butter, 1 cup heavy cream, 2 cups parmesan, 1 egg yolk; its amounts come to about 800-950 depending on how densely the parmesan is packed",
+   "note": "Swapped 25 Nov 2026 (Arianna): Melissa's 621 was below its own amounts (about 800). Same pasta a plate as ours (2.5 oz dry); it has more butter and parmesan, ours more cream. Allrecipes' 'To Die For' (4 oz pasta a plate) prints 964."
   },
   "penne_alla_vodka": {
    "kcal": 595,
@@ -1287,7 +1287,7 @@
    "status": "ok",
    "url": "https://www.onceuponachef.com/recipes/affogato.html",
    "basis": "1 portion",
-   "note": null
+   "note": "Once Upon a Chef's 276 is the same 1/2 cup gelato and 2 tbsp espresso as ours plus its optional shaved chocolate and liqueur splash; Taming Twins' one scoop of ice cream and espresso prints 139. Ours counts FNDDS vanilla gelato (175 g a cup, denser than ice cream's 132 g). Checked 25 Nov 2026."
   },
   "cappuccino_": {
    "kcal": null,
@@ -1479,18 +1479,18 @@
    "note": null
   },
   "grilled_cheese_sandwich": {
-   "kcal": 499,
+   "kcal": 400,
    "status": "ok",
-   "url": "https://natashaskitchen.com/grilled-cheese-sandwich/",
-   "basis": "499 per sandwich (4)",
-   "note": "The reference uses 3 slices of cheese and thick Texas toast; ours 2 thin cheddar slices (17 g) on sandwich bread. Natasha's uses Texas toast and three cheeses; no classic two-slice reference could be fetched yet (25 Nov 2026)."
+   "url": "https://www.allrecipes.com/recipe/23891/grilled-cheese-sandwich/",
+   "basis": "1 sandwich: 2 slices white bread, 1 1/2 tbsp butter, 1 slice cheddar; adds up (about 380-420 by slice weight)",
+   "note": "Swapped 25 Nov 2026 (Arianna): Natasha's 499 was Texas toast and three cheeses. USDA FNDDS 2705804 (cheddar on white, 116 g a sandwich) is about 427."
   },
   "blt_sandwich": {
-   "kcal": 816,
+   "kcal": 439,
    "status": "ok",
-   "url": "https://www.spendwithpennies.com/how-to-make-the-perfect-blt/",
-   "basis": "816 per sandwich (2)",
-   "note": "4 slices bacon (was 3) since 25 Nov 2026 (Arianna), as Spend with Pennies: 469 -> 507. Its 816 is on big sourdough slices and its 66 g fat is beyond its own bacon and mayo (~515 with sandwich bread). No sandwich-bread reference could be fetched yet."
+   "url": "https://www.allrecipes.com/recipe/209578/blt/",
+   "basis": "1 sandwich: 4 slices bacon, 2 slices bread, 1 tbsp mayonnaise, lettuce, tomato; adds up (about 400-440)",
+   "note": "Swapped 25 Nov 2026 (Arianna): Spend with Pennies' 816 is big sourdough slices with fat beyond its own amounts. Same bacon and bread as ours; ours has 2 tbsp mayonnaise (+94 kcal). USDA FNDDS 2706979 is a smaller sandwich (105 g, about 243)."
   },
   "pulled_pork_sandwich": {
    "kcal": 670,
