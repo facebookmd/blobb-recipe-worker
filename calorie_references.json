@@ -86,11 +86,11 @@
    "note": "Eggplant is 1 1/2 cups sliced (123 g, about one Japanese eggplant) since 25 Nov 2026 (Arianna); '1 small eggplant' had matched USDA's only whole eggplant, a 500 g globe one. Oil at 15% of the 548 g of vegetables (6 tbsp; it had been 7, matching no rate) and batter at 11% (7 tbsp flour, 1 tbsp cornstarch, 1/2 cup water): 413 -> 324. ChefJa's 250 prints no fat, so it counts little or no frying oil. Checked 25 Nov 2026: ChefJa's recipe has about half again our vegetables, so its own amounts aren't a fair comparison; Allrecipes' sweet potato tempura counts frying oil (315, 14 g fat) but is one vegetable."
   },
   "yakitori_": {
-   "kcal": null,
-   "status": "serving_differs",
+   "kcal": 145,
+   "status": "ok",
    "url": "https://www.jocooks.com/wprm_print/chicken-yakitori",
-   "basis": "Refs give per plate (236/6, 290/4), not per skewer",
-   "note": "Ours is per skewer (8); references serve 4-6 plates. Per-skewer not stated."
+   "basis": "Jo Cooks: the same batch as ours (1 1/2 lb skinless thighs, 1/2 cup soy sauce, 1/4 cup each mirin and sake, brown sugar), 290 a serving for 4; ours threads it on 8 skewers, so 145. Holds for its own amounts (~295)",
+   "note": "Rechecked 25 Nov 2026. Ours has 3 tbsp brown sugar to its 2; under the 30 kcal floor."
   },
   "okonomiyaki_": {
    "kcal": 483,
@@ -107,11 +107,11 @@
    "note": null
   },
   "gyoza_": {
-   "kcal": null,
-   "status": "not_comparable",
+   "kcal": 45,
+   "status": "ok",
    "url": "https://norecipes.com/wprm_print/best-pork-gyoza",
-   "basis": "447 per serving of 8, yield in pieces not stated",
-   "note": "Per piece (30); references don't give pieces per serving."
+   "basis": "Norecipes: 80 gyoza for 8 servings (350 g pork, 1/4 cup oil for pan-frying), 447 a serving of 10, so 45 a gyoza. Holds for its own amounts (~458)",
+   "note": "Rechecked 25 Nov 2026. Same pork a gyoza as ours (about 4.5 g)."
   },
   "japanese_hamburger_steak": {
    "kcal": 290,
@@ -167,7 +167,7 @@
    "status": "not_comparable",
    "url": "https://grantourismotravels.com/wprm_print/katsudon-recipe-for-a-japanese-pork-cutlet-and-egg-rice-bowl",
    "basis": "Its 2201 per bowl looks like a batch total",
-   "note": "Only reference found is implausible."
+   "note": "Rechecked 25 Nov 2026. RecipeTin Japan and Norecipes print no nutrition; Chopstick Chronicles' 1,348 a bowl has 23 g fat, below its own tonkatsu. Earlier: Only reference found is implausible."
   },
   "omurice_": {
    "kcal": 676,
@@ -279,7 +279,7 @@
    "status": "not_comparable",
    "url": "https://pickledplum.com/light-udon-noodle-soup/",
    "basis": "references disagree: 96 (broth only?) vs 497",
-   "note": "Ours (one 250 g udon pack + dashi) sits between."
+   "note": "Rechecked 25 Nov 2026. Chopstick Chronicles' 96 (14 g carbs) leaves out the noodles. Earlier: Ours (one 250 g udon pack + dashi) sits between."
   },
   "shoyu_ramen": {
    "kcal": 782,
@@ -335,7 +335,7 @@
    "status": "not_comparable",
    "url": "https://pickledplum.com/dorayaki/",
    "basis": "references disagree: 367 per dorayaki (Pickled Plum) vs ~136 (Chopstick, 271 per 2)",
-   "note": "Ours 208 sits between."
+   "note": "Rechecked 25 Nov 2026. Chopstick Chronicles' 271 for 4 prints 218 g protein and is below its own amounts (~416). Earlier: Ours 208 sits between."
   },
   "taiyaki_": {
    "kcal": 278,
@@ -405,7 +405,7 @@
    "status": "none",
    "url": null,
    "basis": "Own sources list no nutrition (FatSecret-type listings 200-350 only)",
-   "note": null
+   "note": "Rechecked 25 Nov 2026. Kawaling Pinoy's 225 (34 g protein) is a whole bangus of unstated size, fried with unstated oil."
   },
   "brown_sugar_syrup": {
    "kcal": 79,
@@ -699,7 +699,7 @@
    "status": "not_comparable",
    "url": "https://tasty.co/recipe/filipino-home-style-chop-suey",
    "basis": "668 per 3 servings, recipe has more meat",
-   "note": "Only reference found is a meat-heavy version."
+   "note": "Rechecked 25 Nov 2026. Kawaling Pinoy's 236 for 4 (1/2 lb chicken thigh, 1/4 lb liver, 3 tbsp oil) is below its own amounts (~340); Panlasang Pinoy and Manila Spoon print none. Earlier: Only reference found is a meat-heavy version."
   },
   "tokwa_t_baboy": {
    "kcal": 532,
@@ -765,32 +765,32 @@
    "note": "Hot dogs 6 -> 4 and spaghetti 9.5 -> 8 cups since 25 Nov 2026 (Arianna), nearer The Unlikely Baker (1/2 lb hot dogs, 1 lb pasta for 6)."
   },
   "la_paz_batchoy": {
-   "kcal": null,
-   "status": "not_comparable",
-   "url": "https://panlasangpinoy.com/wprm_print/batchoy-recipe-2",
-   "basis": "1240 per bowl looks like a batch figure",
-   "note": "Reference implausible."
+   "kcal": 774,
+   "status": "ok",
+   "url": "https://www.bitemybun.com/wprm_print/recipe/9736",
+   "basis": "Bite My Bun for 6 (500 g fresh miki, 300 g pork belly, 150 g liver, 2 hearts, stocks, chicharon, an egg a bowl), 774; holds for its own amounts (~750-830)",
+   "note": "Rechecked 25 Nov 2026. Ours is about half: 3 1/2 cups cooked egg noodles for 6 (about 0.6 cup a bowl, Bite My Bun about twice that), no egg and no heart. Panlasang Pinoy's 1,240 (with 1 lb intestine) is beyond its own amounts."
   },
   "pancit_malabon": {
-   "kcal": null,
-   "status": "serving_differs",
+   "kcal": 585,
+   "status": "ok",
    "url": "https://www.recipesbynora.com/pancit-malabon-recipe/",
-   "basis": "329 per serving of 16",
-   "note": "Ours serves 9; Nora's 16 servings. Rice noodles were cooked white rice (fixed)."
+   "basis": "Recipes by Nora: 1 lb noodles, 1 lb ground pork, 1 lb shrimp, 8 oz squid, tinapa, 2 cups chicharon for 16, 329 a serving; the same size batch as ours, which serves 9, so 585. Holds for its own amounts (~297 for 16)",
+   "note": "Rechecked 25 Nov 2026. Ours is 18% under. Nora's own amounts with our rows give about 528 for 9 (ours -9%): it has 2 cups chicharon to our 1, and its printed figure is 10% above its amounts. River Ten Kitchen's 646 for 8 adds tofu and crab fat."
   },
   "leche_flan": {
-   "kcal": null,
-   "status": "not_comparable",
-   "url": "https://www.foxyfolksy.com/wprm_print/11696",
-   "basis": "81 per slice of 12 is too low for yolks + condensed milk",
-   "note": "Reference implausible."
+   "kcal": 239,
+   "status": "ok",
+   "url": "https://www.kawalingpinoy.com/wprm_print/leche-flan",
+   "basis": "Kawaling Pinoy for 12 (12 yolks, 14 oz condensed milk, 12 oz evaporated milk, 9 tbsp sugar), 239 a slice; holds for its own amounts (~234)",
+   "note": "Rechecked 25 Nov 2026. Ours is 14% under, from amounts: 10 yolks and 1 cup (about 11 oz) condensed milk for 12. Foxy Folksy's amounts, nearly ours (10 yolks, 10 oz condensed milk), come to about 193 with our rows; it prints 81."
   },
   "halo_halo": {
    "kcal": null,
    "status": "not_comparable",
    "url": "https://www.foxyfolksy.com/wprm_print/recipe/16282",
    "basis": "195 per tall glass with ice cream and milk looks low",
-   "note": "Reference doubtful; ours includes ½ cup ice cream (137) and ¼ cup evaporated milk."
+   "note": "Rechecked 25 Nov 2026. Kawaling Pinoy's 532 is below its own amounts (~777: 1/4 cup leche flan and 2 tbsp ube a glass); Foxy Folksy's 195 has no ice cream. Ours has 1/2 cup ice cream, 1 tbsp each flan and ube. Earlier: Reference doubtful; ours includes ½ cup ice cream (137) and ¼ cup evaporated milk."
   },
   "turon_": {
    "kcal": 194,
@@ -814,18 +814,18 @@
    "note": null
   },
   "bibingka_": {
-   "kcal": null,
-   "status": "serving_differs",
-   "url": "https://www.hungryhuy.com/bibingka/",
-   "basis": "621 per cake (4 a batch)",
-   "note": "Ours 6 a batch (smaller cakes)."
+   "kcal": 367,
+   "status": "ok",
+   "url": "https://panlasangpinoy.com/wprm_print/bibingka-recipe",
+   "basis": "Panlasang Pinoy for 3, the same ingredients and amounts as ours, 734 a serving; ours cuts the batch into 6, so 367. Holds for its own amounts (~818)",
+   "note": "Rechecked 25 Nov 2026."
   },
   "puto_": {
-   "kcal": null,
-   "status": "serving_differs",
-   "url": "https://www.hungryhuy.com/puto-filipino-steamed-rice-cakes/",
-   "basis": "45 per mini cake (24 a batch)",
-   "note": "Ours 18 a batch with ~1 tbsp+ rice flour each: bigger cakes."
+   "kcal": 118,
+   "status": "ok",
+   "url": "https://www.kawalingpinoy.com/wprm_print/puto",
+   "basis": "Kawaling Pinoy: 4 cups rice flour, 1 1/2 cups sugar, a can of coconut milk for 3 dozen, 1,421 a dozen, so 118 a cake; ours is half its batch in 18 cakes, the same size. Holds for its own amounts (~120)",
+   "note": "Rechecked 25 Nov 2026."
   },
   "buko_pandan": {
    "kcal": 305,
@@ -856,11 +856,11 @@
    "note": "Reference corrected 25 Nov 2026 (the printed 605 is above its own ingredients). Pearls 1/2 -> 3/4 cup and syrup 1 -> 1 1/2 cups for 3, Panlasang Pinoy's amounts (Arianna)."
   },
   "maja_blanca": {
-   "kcal": null,
-   "status": "not_comparable",
+   "kcal": 574,
+   "status": "ok",
    "url": "https://panlasangpinoy.com/wprm_print/maja-blanca",
-   "basis": "references disagree: 574 vs 93 (both 8)",
-   "note": "Ours 471 sits between."
+   "basis": "Panlasang Pinoy for 8 (4 cups coconut milk, 14 oz condensed milk, 3/4 cup each sugar, milk and cornstarch, 15 oz corn), 574; holds for its own amounts (~632)",
+   "note": "Rechecked 25 Nov 2026. Ours is 18% under, from amounts: 1/2 cup condensed milk (Panlasang Pinoy about 1 1/4 cups) and 3 1/2 cups coconut milk. Recipes by Nora uses no condensed milk; its amounts give about 330 (it prints 93)."
   },
   "kutsinta_": {
    "kcal": 45,
@@ -881,7 +881,7 @@
    "status": "serving_differs",
    "url": "https://panlasangpinoy.com/wprm_print/polvoron-recipe-2",
    "basis": "769 per serving of 8, pieces not stated",
-   "note": "Ours per piece (13). Toasted rice flakes (pinipig) match cooked rice (minor; see open items)."
+   "note": "Rechecked 25 Nov 2026. Panlasang Pinoy's 769 for 8 states no pieces. Its batch has 4 1/2 tbsp butter per cup of flour; ours has 10, so a piece of ours is richer whatever the count. Earlier: Ours per piece (13). Toasted rice flakes (pinipig) match cooked rice (minor; see open items)."
   },
   "sago_t_gulaman": {
    "kcal": 255,
@@ -968,11 +968,11 @@
    "note": null
   },
   "stracciatella_soup": {
-   "kcal": 149,
-   "status": "serving_differs",
-   "url": "https://www.recipesfromitaly.com/wprm_print/stracciatella-alla-romana-recipe",
-   "basis": "per 100 g serving (4)",
-   "note": "Serving size: reference's serving is 100 g; ours is 1½ cups broth + 1 egg + 2 tbsp parmesan."
+   "kcal": 174,
+   "status": "ok",
+   "url": "https://umamigirl.com/wprm_print/stracciatella-alla-romana-italian-egg-drop-soup/",
+   "basis": "Umami Girl for 2: 4 cups stock, 2 eggs, 1 1/2 tbsp semolina, 1/4 cup cheese, 5 oz spinach; a bowl is 2 cups stock, 1 egg and 2 tbsp cheese, ours 1 1/2 cups, 1 egg and 2 tbsp. 174; holds for its own amounts (~195)",
+   "note": "Rechecked 25 Nov 2026. Ours has no spinach."
   },
   "chicken_parmesan": {
    "kcal": 502,
@@ -993,7 +993,7 @@
    "status": "not_comparable",
    "url": "https://twopeasandtheirpod.com/wprm_print/chicken-piccata",
    "basis": "references disagree: 638 (4) vs 254 (6)",
-   "note": "Ours 394 sits between."
+   "note": "Rechecked 25 Nov 2026. Natasha's 254 prints 13 g protein for half a large breast, below its own amounts; Two Peas' 638 is breaded in panko and egg. Earlier: Ours 394 sits between."
   },
   "chicken_marsala": {
    "kcal": 530,
@@ -1073,11 +1073,11 @@
    "note": null
   },
   "risotto_alla_milanese": {
-   "kcal": null,
-   "status": "not_comparable",
-   "url": "https://www.giangiskitchen.com/risotto-milanese/",
-   "basis": "395 per serving of 4 from 2 cups arborio",
-   "note": "Giangi's 395 is below its own ingredients: 2 cups arborio alone is about 360 a serving before 4 tbsp butter and ½ cup parmesan."
+   "kcal": 528,
+   "status": "ok",
+   "url": "https://www.themediterraneandish.com/wprm_print/risotto-alla-milanese-saffron-risotto",
+   "basis": "The Mediterranean Dish: 1 1/2 cups rice, 3 tbsp olive oil, 1 tbsp butter, 1/2 cup cheese; 352 a serving at its 6 side servings, 528 at its 4 main servings, as ours. Holds for its own amounts (~327 for 6)",
+   "note": "Rechecked 25 Nov 2026. Ours is 13% over: 2 cups rice and 5 tbsp butter for 4. Giangi's 395 is below its own amounts."
   },
   "arancini_": {
    "kcal": null,
@@ -1094,11 +1094,11 @@
    "note": "Olive oil 3 -> 2 tbsp since 25 Nov 2026 (Arianna), Christina's: 277 -> 245."
   },
   "bruschetta_": {
-   "kcal": null,
-   "status": "serving_differs",
-   "url": "https://www.recipegirl.com/how-to-make-bruschetta/",
-   "basis": "204 per serving of 8",
-   "note": "Ours per piece (24)."
+   "kcal": 41,
+   "status": "ok",
+   "url": "https://www.thecookierookie.com/wprm_print/classic-bruschetta-recipe",
+   "basis": "The Cookie Rookie: 1 baguette, 3 tbsp olive oil, 3 lb tomatoes, 15 servings of 2 pieces, 81 a serving, so 41 a piece. Holds for its own amounts (~47)",
+   "note": "Rechecked 25 Nov 2026. Ours is almost three times this: '24 slice baguette' matches USDA's French bread slice (about 32 g, 87 kcal), a sandwich-loaf slice; a 1/2-inch baguette round is about a third of that. A matching problem, not a recipe amount."
   },
   "garlic_bread": {
    "kcal": 208,
@@ -1108,11 +1108,11 @@
    "note": "Swapped 25 Nov 2026 (Arianna): Simply Scratch's 287 had bigger slices and more butter."
   },
   "focaccia_": {
-   "kcal": null,
-   "status": "serving_differs",
-   "url": "https://www.italianrecipebook.com/traditional-focaccia/",
-   "basis": "296 per serving of 6",
-   "note": "Ours per piece of 10."
+   "kcal": 213,
+   "status": "ok",
+   "url": "https://houseofnasheats.com/wprm_print/easy-rosemary-focaccia-bread-2",
+   "basis": "House of Nash Eats: 3 cups flour, 1 1/2 cups water, 2 tbsp olive oil and 1/4 cup butter, 2 tbsp sugar, cut in 10, as ours; 213. Holds for its own amounts (~210)",
+   "note": "Rechecked 25 Nov 2026. Ours has 5 tbsp olive oil and no butter or sugar."
   },
   "panzanella_": {
    "kcal": 253,
@@ -1168,7 +1168,7 @@
    "status": "not_comparable",
    "url": "https://saltandwind.com/wprm_print/cacio-e-pepe-leonardo-vignolis-cacio-e-pepe-pasta-recipe",
    "basis": "4 servings, 1 lb pasta",
-   "note": "Reference too low for its own amounts: 1 lb dry spaghetti alone is ~400 kcal a serving before cheese. Ours (2 cups pasta + 1.4 oz pecorino) is plausible."
+   "note": "Rechecked 25 Nov 2026. Salt and Wind's 406 for 1 lb spaghetti and 2 cups pecorino for 4 (ours: the same amounts) is below its pasta alone. Earlier: Reference too low for its own amounts: 1 lb dry spaghetti alone is ~400 kcal a serving before cheese. Ours (2 cups pasta + 1.4 oz pecorino) is plausible."
   },
   "spaghetti_aglio_e_olio": {
    "kcal": 564,
@@ -1322,14 +1322,14 @@
    "status": "serving_differs",
    "url": "https://www.spendwithpennies.com/homemade-chicken-noodle-soup/",
    "basis": "352 per serving of 4",
-   "note": "Serves 4 from its batch; ours serves 6. Bowl size not stated."
+   "note": "Rechecked 25 Nov 2026. Spend with Pennies' 352 holds for its own amounts (~357), but its bowl has twice our noodles (6 oz dry for 4; ours about 4 oz for 6) and about the same chicken, so the bowls differ. Earlier: Serves 4 from its batch; ours serves 6. Bowl size not stated."
   },
   "beef_chili": {
    "kcal": null,
    "status": "serving_differs",
    "url": "https://cheerfulcook.com/chili-recipe/",
    "basis": "197 per serving of 4",
-   "note": "Serves 4; ours serves 6. Bowl size not stated."
+   "note": "Rechecked 25 Nov 2026. The Girl Who Ate Everything prints 147 with 3 g carbs for a chili with four cans of beans; Cheerful Cook no longer prints nutrition. Earlier: Serves 4; ours serves 6. Bowl size not stated."
   },
   "new_england_clam_chowder": {
    "kcal": 412,
@@ -1339,11 +1339,11 @@
    "note": "Butter dropped since 25 Nov 2026 (Arianna); Nutmeg Nanny uses none (its own amounts give ~440): 477 -> 443."
   },
   "broccoli_cheddar_soup": {
-   "kcal": null,
-   "status": "serving_differs",
-   "url": "https://www.tasteofhome.com/recipes/broccoli-cheddar-soup/",
-   "basis": "494 per 1 cup (2-serving batch)",
-   "note": "Per cup; ours is a quarter of the pot, size not stated."
+   "kcal": 477,
+   "status": "ok",
+   "url": "https://www.jocooks.com/recipes/broccoli-cheddar-soup/",
+   "basis": "Jo Cooks for 8 (6 cups broth, 2 cups half and half, 3 cups cheddar, 1 cup Velveeta, 6 tbsp butter): about 1 1/2 cups a bowl, as ours; 477. Holds for its own amounts (~438)",
+   "note": "Rechecked 25 Nov 2026. Ours is 14% under: milk, not half and half, and no Velveeta."
   },
   "tomato_soup": {
    "kcal": 222,
@@ -1388,11 +1388,11 @@
    "note": null
   },
   "biscuits_and_gravy": {
-   "kcal": null,
-   "status": "not_comparable",
-   "url": "https://www.tasteofhome.com/recipes/biscuits-and-sausage-gravy/",
-   "basis": "337 per 3/4 cup",
-   "note": "Label doesn't say whether the biscuit is counted; ours includes one."
+   "kcal": 510,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/biscuits-and-gravy-recipe/",
+   "basis": "Natasha's Kitchen for 8: 8 biscuits and gravy from 1 lb sausage and 2 1/2 cups milk, 510 a biscuit with its gravy; ours is a biscuit and 2 oz sausage in gravy, as hers. Holds for its own amounts (~512)",
+   "note": "Rechecked 25 Nov 2026. Ours has smaller biscuits (179) and more milk in the gravy."
   },
   "breakfast_burrito": {
    "kcal": 429,
@@ -1444,11 +1444,11 @@
    "note": null
   },
   "buffalo_wings": {
-   "kcal": null,
-   "status": "serving_differs",
-   "url": "https://cafedelites.com/crispy-buffalo-chicken-wings-baked/",
-   "basis": "496 per serving of 8",
-   "note": "Ours is per wing (24 from 2 lb); wings per serving not stated."
+   "kcal": 59,
+   "status": "ok",
+   "url": "https://natashaskitchen.com/buffalo-wings-recipe/",
+   "basis": "Natasha's Kitchen: 3 lb wings (bone in) with 1/4 cup butter for 8, 264 a serving, so 704 a pound of wings; ours is 2 lb with 3 tbsp butter in 24 pieces, so 59 a piece. Holds for its own amounts (~283)",
+   "note": "Rechecked 25 Nov 2026."
   },
   "chicken_tenders": {
    "kcal": null,
@@ -1528,11 +1528,11 @@
    "note": "Reference serves 6-8 (nutrition per 8); ours is a main-course quarter."
   },
   "chicken_caesar_salad": {
-   "kcal": null,
-   "status": "not_comparable",
-   "url": "https://www.recipetineats.com/chicken-caesar-salad/",
-   "basis": "396 per side serving of 5, no chicken or egg",
-   "note": "The reference leaves out the chicken."
+   "kcal": 897,
+   "status": "ok",
+   "url": "https://www.spendwithpennies.com/chicken-caesar-salad/",
+   "basis": "Spend with Pennies for 4: a chicken breast each (4), 1 cup mayonnaise in the dressing, 2 tbsp oil, croutons, parmesan; 897. Holds for its own amounts (~860)",
+   "note": "Rechecked 25 Nov 2026. Ours is 38% under, from amounts: 6 oz chicken and 2 tbsp mayonnaise a salad (its about 8 oz and 4 tbsp). RecipeTin's 396 is a side salad with no chicken."
   },
   "jambalaya_": {
    "kcal": 673,
@@ -1549,11 +1549,11 @@
    "note": "Reference serves 6-8 (nutrition per 8); ours serves 6."
   },
   "mashed_potatoes": {
-   "kcal": null,
-   "status": "serving_differs",
+   "kcal": 244,
+   "status": "recipe_match",
    "url": "https://www.spendwithpennies.com/how-to-make-mashed-potatoes/",
-   "basis": "209 per 1/2 cup",
-   "note": "Per 1/2 cup; our serving is a sixth of the batch, cups not stated."
+   "basis": "Spend with Pennies: 4 lb potatoes, 1/3 cup butter, 1 cup milk for 10, 209 a serving (2,090 a batch, 522 a pound of potatoes); ours is 6 medium russets (2.8 lb by USDA's medium), with about the same butter and milk a pound, so 244 a serving of 6. Holds for its own amounts (~212)",
+   "note": "Rechecked 25 Nov 2026. Rescaled through USDA's medium-russet weight, so it is a recipe match."
   },
   "potato_salad": {
    "kcal": 455,
