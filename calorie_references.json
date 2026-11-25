@@ -688,11 +688,11 @@
    "note": "Oil 2 -> 3 tbsp and serves 3 (was 4) since 25 Nov 2026 (Arianna), as Panlasang Pinoy."
   },
   "laing_": {
-   "kcal": 499,
+   "kcal": 740,
    "status": "ok",
    "url": "https://panlasangpinoy.com/wprm_print/48888",
-   "basis": "mean of Panlasang Pinoy 618 (8) and Foxy Folksy 380 (5)",
-   "note": "Coconut: 3 cups coconut milk + 1 cup cream for 6 (635 kcal a serving). Recipe amount. Dried taro leaves are counted as raw leaves (minor)."
+   "basis": "Panlasang Pinoy's own amounts for 8 (6 cups coconut milk, 2 cups coconut cream, 1/2 cup shrimp paste, 1/2 lb pork shoulder, 3.5 oz dried taro leaves): ~740 with the same USDA rows; it prints 618",
+   "note": "Reference corrected 25 Nov 2026 (Arianna): the printed 618 is below its own ingredients; Foxy Folksy's laing page (380) no longer exists. Ours: 3 cups coconut milk + 1 cup cream for 6. Dried taro leaves still count as fresh leaves (open item)."
   },
   "chop_suey": {
    "kcal": null,
