@@ -1490,7 +1490,7 @@
    "status": "ok",
    "url": "https://www.allrecipes.com/recipe/209578/blt/",
    "basis": "1 sandwich: 4 slices bacon, 2 slices bread, 1 tbsp mayonnaise, lettuce, tomato; adds up (about 400-440)",
-   "note": "Swapped 25 Nov 2026 (Arianna): Spend with Pennies' 816 is big sourdough slices with fat beyond its own amounts. Same bacon and bread as ours; ours has 2 tbsp mayonnaise (+94 kcal). USDA FNDDS 2706979 is a smaller sandwich (105 g, about 243)."
+   "note": "Swapped 25 Nov 2026 (Arianna): Spend with Pennies' 816 is big sourdough slices with fat beyond its own amounts. Same bacon and bread as ours; mayonnaise 2 -> 1 tbsp since 25 Nov 2026 (Arianna), as Allrecipes: 507 -> 413. USDA FNDDS 2706979 is a smaller sandwich (105 g, about 243)."
   },
   "pulled_pork_sandwich": {
    "kcal": 670,

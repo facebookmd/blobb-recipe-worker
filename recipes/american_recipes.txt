@@ -472,7 +472,7 @@ AKA: BLT", "Bacon lettuce and tomato sandwich
 Servings: 1
 2 slice white bread
 4 slice cooked bacon
-2 tbsp mayonnaise
+1 tbsp mayonnaise
 1 leaf lettuce
 1/2 large tomato
 1 pinch salt
