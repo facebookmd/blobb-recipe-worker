@@ -569,11 +569,11 @@
    "note": "Lechon kawali sub-template: skin-on belly now the Foundation row (886 → 685), within 1% of Nora's 680."
   },
   "dinuguan_": {
-   "kcal": 466,
-   "status": "ok",
-   "url": "https://panlasangpinoy.com/wprm_print/dinuguan-recipe",
-   "basis": "median of 779 / 466 / 376",
-   "note": "Pork belly now the skin-on Foundation row (715 → 564). Remaining gap: pork amount."
+   "kcal": 518,
+   "status": "recipe_match",
+   "url": "https://www.kawalingpinoy.com/wprm_print/dinuguan",
+   "basis": "Kawaling Pinoy's own amounts for 6 (2 lb pork belly, 10 oz blood, 1 cup vinegar, 1 tbsp oil) with our rows: ~663 (it prints 857, the old SR belly); with our 4 oz belly a serving instead of its 5 1/3 oz, 518",
+   "note": "Rechecked 25 Nov 2026 (Arianna): belly kept. Every source that names the cut uses belly (Kawaling Pinoy, Nora, Bite My Bun's liempo). Panlasang Pinoy's 466 (the old reference) says only '1 lb pork' and is below its own amounts with belly (~557, our recipe). Recipes by Nora (2 lb belly for 8 with a can of coconut milk) comes to ~604 with our rows (ours -8%); it prints 779."
   },
   "embutido_": {
    "kcal": 387,
