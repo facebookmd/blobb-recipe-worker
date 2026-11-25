@@ -1094,11 +1094,11 @@
    "note": "Olive oil 3 -> 2 tbsp since 25 Nov 2026 (Arianna), Christina's: 277 -> 245."
   },
   "bruschetta_": {
-   "kcal": 41,
+   "kcal": 68,
    "status": "ok",
-   "url": "https://www.thecookierookie.com/wprm_print/classic-bruschetta-recipe",
-   "basis": "The Cookie Rookie: 1 baguette, 3 tbsp olive oil, 3 lb tomatoes, 15 servings of 2 pieces, 81 a serving, so 41 a piece. Holds for its own amounts (~47)",
-   "note": "Bread is '1 baguette' since 25 Nov 2026: '24 slice baguette' had matched USDA's sandwich-size French bread slice (32 g, 87 kcal), about three times a baguette round; now FNDDS's 22-inch baguette (324 g) cut in 24: 115 -> 65. Still 58% over, from amounts: the reference cuts its (likely smaller) loaf into 30 and uses 3 tbsp olive oil (12 kcal a piece), ours 1/4 cup for 24 (21)."
+   "url": "https://www.recipegirl.com/how-to-make-bruschetta/",
+   "basis": "Recipe Girl (one of our sources): a 10 oz baguette, 6 tbsp olive oil, 1 1/2 lb tomatoes, 204 a serving for 8 (1,632 a batch); about the same batch as ours (one 11.4 oz baguette), cut in our 24, so 68. Holds for its own amounts (~1,608)",
+   "note": "Bread is '1 baguette' since 25 Nov 2026: '24 slice baguette' had matched USDA's sandwich-size French bread slice (32 g, 87 kcal), about three times a baguette round; now FNDDS's 22-inch baguette (324 g) cut in 24: 115 -> 65. Reference swapped 25 Nov 2026 (Arianna): The Cookie Rookie (41 a piece, 30 from a loaf with 3 tbsp oil, ~1,215 a batch) is the lean one; Allrecipes' Balsamic Bruschetta comes to about 1,576 a batch, close to ours (~1,560)."
   },
   "garlic_bread": {
    "kcal": 208,
