@@ -118,7 +118,13 @@ TILAPIA = matcher._build_supabase_usda_food(
      "description": "Fish, tilapia, raw", "display_name": "Tilapia, raw",
      "calories_100g": 96},
     0, {8: [{"label": "fillet", "grams": 116.0, "sequence_number": 1}]})
-FOODS = {"chicken": CHICKEN, "starch": STARCH, "oil": OIL, "potato": POTATO,
+SWEET_POTATO = matcher._build_supabase_usda_food(
+    {"id": 9, "fdc_id": 168482, "source_set": "sr_legacy",
+     "description": "Sweet potato, raw, unprepared",
+     "display_name": "Sweet potato, raw", "calories_100g": 86},
+    0, {9: [{"label": "medium", "grams": 130.0, "sequence_number": 1}]})
+# "sweet potato" before "potato": the first key in the line wins.
+FOODS = {"sweet potato": SWEET_POTATO, "chicken": CHICKEN, "starch": STARCH, "oil": OIL, "potato": POTATO,
          "eggplant": EGGPLANT, "wrapper": WRAPPER, "pork": PORK, "tilapia": TILAPIA,
          # Coatings only: their calories don't matter to the oil.
          "flour": STARCH, "buttermilk": STARCH}
@@ -272,6 +278,40 @@ def test_plain_fried_vegetables_keep_10_percent(tmp_path, monkeypatch):
     assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(229 * 0.10, rel=0.01)
     [eggplant] = [r for r in rows if "eggplant" in r["component_label"].lower()]
     assert eggplant.get("fried")
+
+
+def test_starchy_and_vegetables_fry_together(tmp_path, monkeypatch):
+    rows = rows_for(tmp_path, monkeypatch, [
+        "Fried sweet potato and eggplant", "Servings: 2",
+        "2 medium sweet potato",
+        "1 eggplant",
+        "2 cups oil for frying",
+    ])
+    oil = oil_row(rows)
+    # Both go in the oil; with a vegetable in the mix, unbreaded veg (10%):
+    # (260 g + 458 g) / 2 servings = 359 g a serving.
+    assert oil["fry_type"] == "unbreaded veg"
+    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(359 * 0.10, rel=0.01)
+    fried = {r["component_label"].lower() for r in rows if r.get("fried")}
+    assert any("sweet potato" in f for f in fried)
+    assert any("eggplant" in f for f in fried)
+
+
+def test_vegetable_tempura_batters_every_piece(tmp_path, monkeypatch):
+    rows = rows_for(tmp_path, monkeypatch, [
+        "Vegetable tempura", "Servings: 2",
+        "2 medium sweet potato",
+        "1 eggplant",
+        "1 cup tempura flour",
+        "2 cups oil for frying",
+    ])
+    oil = oil_row(rows)
+    # Battered (15%) on the sweet potato and the eggplant, not just the
+    # sweet potato: 359 g a serving.
+    assert oil["fry_type"] == "battered"
+    assert oil["portion_amt"] * oil["unit_grams"] == pytest.approx(359 * 0.15, rel=0.01)
+    fried = {r["component_label"].lower() for r in rows if r.get("fried")}
+    assert len(fried) == 2 and not any("flour" in f for f in fried)
 
 
 def test_meat_is_fried_before_vegetables(tmp_path, monkeypatch):

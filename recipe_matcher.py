@@ -4212,7 +4212,7 @@ _NOT_FRIED_FOOD_RE = re.compile(
 _STARCHY_FRIED_RE = re.compile(
     r"\b(potato(?:es)?|sweet\s+potato(?:es)?|plantains?|bananas?|saba|cassava|yuca|taro)\b",
     re.I)
-# Failing those, the vegetables are (vegetable tempura, su-age eggplant).
+# The vegetables are fried with it (vegetable tempura, su-age eggplant).
 # Watery vegetables keep about twice the oil lean meat does unbreaded.
 _VEGETABLE_FRIED_RE = re.compile(
     r"\b(eggplants?|aubergines?|shishito|bell\s+peppers?|sweet\s+peppers?|mushrooms?|shiitake|maitake|"
@@ -4297,7 +4297,7 @@ def _absorbed_oil(ingredients: list[str], fried: list[dict], pan_fried: bool = F
     frying oil. [fried] holds the recipe's possible fried rows so far, each
     with "_fried_kind" and "_fried_grams". A wrapped recipe fries the whole
     roll, wrapper and filling. Otherwise meat, fish and tofu are what's
-    fried; failing those, the starchy food; failing that, the vegetables.
+    fried; failing those, the starchy food and the vegetables together.
     Unbreaded fish in oil for pan-frying ([pan_fried]) is pan-fried fish.
     None found, unbreaded fatty cuts (they lose fat), or skin-on chicken
     dusted or dredged (no net oil, MEXT 2020) gives 0 tbsp and no rows: the
@@ -4317,13 +4317,17 @@ def _absorbed_oil(ingredients: list[str], fried: list[dict], pan_fried: bool = F
         elif _dusted_meat(fry_type, " | ".join(ingredients), rows):
             fry_type = "dusted meat"
     else:
-        for kind, unbreaded_type in (("starchy", "thick-cut"),
-                                     ("vegetable", "unbreaded veg")):
-            rows = [r for r in fried if r["_fried_kind"] == kind]
-            if rows:
-                if fry_type == "unbreaded":
-                    fry_type = unbreaded_type
-                break
+        # No protein: the starchy food and the vegetables all go in the oil
+        # (vegetable tempura with sweet potato, kabocha and eggplant).
+        # Unbreaded, starchy alone is thick-cut; any vegetable makes it
+        # unbreaded veg, the higher rate, since watery vegetables keep about
+        # twice what starchy pieces do (ABSORPTION_SOURCES.md: TMD eggplant
+        # ~14%, mushrooms ~20%, against Bognár fries 5%; 25 Nov 2026).
+        rows = [r for r in fried if r["_fried_kind"] in ("starchy", "vegetable")]
+        if rows and fry_type == "unbreaded":
+            fry_type = ("unbreaded veg"
+                        if any(r["_fried_kind"] == "vegetable" for r in rows)
+                        else "thick-cut")
     grams = sum(r["_fried_grams"] for r in rows)
     rates = fry_rates.rates()
     if fry_type not in rates:
