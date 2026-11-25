@@ -119,7 +119,9 @@ TILAPIA = matcher._build_supabase_usda_food(
      "calories_100g": 96},
     0, {8: [{"label": "fillet", "grams": 116.0, "sequence_number": 1}]})
 FOODS = {"chicken": CHICKEN, "starch": STARCH, "oil": OIL, "potato": POTATO,
-         "eggplant": EGGPLANT, "wrapper": WRAPPER, "pork": PORK, "tilapia": TILAPIA}
+         "eggplant": EGGPLANT, "wrapper": WRAPPER, "pork": PORK, "tilapia": TILAPIA,
+         # Coatings only: their calories don't matter to the oil.
+         "flour": STARCH, "buttermilk": STARCH}
 
 
 def rows_for(tmp_path, monkeypatch, lines):
@@ -139,9 +141,10 @@ def rows_for(tmp_path, monkeypatch, lines):
 
 
 def test_karaage_keeps_8_percent_of_the_chicken(tmp_path, monkeypatch):
+    # Skinless: skin-on coated chicken keeps no net oil (below).
     rows = rows_for(tmp_path, monkeypatch, [
         "Karaage", "Servings: 4",
-        "2 bone-in skin-on chicken thigh",
+        "2 bone-in skinless chicken thigh",
         "1/4 cup potato starch",
         "3 cups vegetable oil for frying",
     ])
@@ -191,6 +194,37 @@ def test_fatty_unbreaded_cut_starts_at_no_oil(tmp_path, monkeypatch):
     assert not any(r.get("fried") for r in rows)
 
 
+@pytest.mark.parametrize("coating", [
+    ["1/4 cup potato starch"],                         # karaage
+    ["1 cup buttermilk", "1.5 cup all-purpose flour"],  # Southern fried chicken
+])
+def test_coated_skin_on_chicken_starts_at_no_oil(tmp_path, monkeypatch, coating):
+    # MEXT 2020 Table 13: skin-on thigh karaage is -0.7 g fat per 100 g raw
+    # after frying; the skin's fat outweighs what the coating takes up.
+    rows = rows_for(tmp_path, monkeypatch, [
+        "Fried chicken", "Servings: 2",
+        "2 bone-in skin-on chicken thigh",
+        *coating,
+        "3 cups oil for frying",
+    ])
+    oil = oil_row(rows)
+    assert oil["portion_amt"] == 0
+    assert not any(r.get("fried") for r in rows)
+
+
+def test_skin_on_chicken_in_tempura_batter_keeps_its_rate(tmp_path, monkeypatch):
+    # MEXT measured no skin-on chicken in a wet batter: the batter rate stands.
+    rows = rows_for(tmp_path, monkeypatch, [
+        "Chicken tempura", "Servings: 2",
+        "2 bone-in skin-on chicken thigh",
+        "1/2 cup tempura flour",
+        "3 cups oil for frying",
+    ])
+    oil = oil_row(rows)
+    assert oil["fry_type"] == "battered"
+    assert oil["portion_amt"] > 0
+
+
 def test_nothing_to_fry_starts_at_no_oil(tmp_path, monkeypatch):
     rows = rows_for(tmp_path, monkeypatch, [
         "Starch crisps", "Servings: 2",
@@ -235,7 +269,7 @@ def test_a_bone_in_weight_fries_its_edible_part(tmp_path, monkeypatch):
     # follows the thigh's edible weight, not the bone (28 Oct 2026).
     rows = rows_for(tmp_path, monkeypatch, [
         "Karaage", "Servings: 4",
-        "1 lb bone-in skin-on chicken thigh",
+        "1 lb bone-in skinless chicken thigh",
         "1/4 cup potato starch",
         "3 cups vegetable oil for frying",
     ])

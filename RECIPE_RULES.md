@@ -202,7 +202,7 @@ For anything cooked in a liquid or fat that is mostly discarded, list only what 
 
 Sautés, stir-fries, stews and braises: list **all** the oil — it stays in the dish.
 
-Coated skin-on chicken (karaage, Southern fried chicken) keeps **no** frying oil: list no `--Absorbed oil` section. MEXT 2020 Table 13 weighed skin-on thigh karaage at −0.7 g fat per 100 g raw, coating included (the skin's rendered fat outweighs what the coating takes up); skinless thigh gained 4.3 g. Recipes only, since 25 Nov 2026 (Arianna): Convert recipe still gives these the starch-dusted rate.
+Coated skin-on chicken (karaage, Southern fried chicken) keeps **no** frying oil: list no `--Absorbed oil` section. MEXT 2020 Table 13 weighed skin-on thigh karaage at −0.7 g fat per 100 g raw, coating included (the skin's rendered fat outweighs what the coating takes up); skinless thigh gained 4.3 g. Since 25 Nov 2026 (Arianna), in recipes and Convert recipe alike.
 
 Battered, breaded or dusted food takes the rate on the food alone, not the food plus its coating: nobody knows how much batter clings (`16 large shrimp`, 112 g, wet-battered at 15% is 17 g, `1.25 tbsp`). The coating's own calories are its own lines.
 
@@ -210,7 +210,7 @@ These rates are fixed. Use them as they are; never change a rate or add a row wh
 
 The rates have one copy: the app project's `fry_types` table (blobbapp migration `20261028120000_create_fry_types.sql`). The table above is written from it by `sync_fry_rates.py`, never by hand; the worker reads it (`fry_rates.py`) and sends it to the app's editor, and blobb.app/sources is built from it. To change a rate, change the table, then run `sync_fry_rates.py` and rebuild the site. Sources for every rate: `ABSORPTION_SOURCES.md`.
 
-Convert recipe applies these rates to "oil for frying" lines as fry types, on the fried food's edible weight: wrapped when there's a wrapper (lumpia, spring roll, egg roll, wonton, gyoza; the whole roll, wrapper and filling), then breaded, battered, starch-dusted, else unbreaded (lean meat, fish, tofu), unbreaded veg, or thick-cut (starchy pieces, bananas). Unbreaded fish in oil "for pan-frying" or "shallow frying" is pan-fried fish; unbreaded fatty or skin-on cuts start at no oil. Thin-sliced and fatty cut are picked by the user. The user can change the type (any of the table's) and the rows it is a share of in the app.
+Convert recipe applies these rates to "oil for frying" lines as fry types, on the fried food's edible weight: wrapped when there's a wrapper (lumpia, spring roll, egg roll, wonton, gyoza; the whole roll, wrapper and filling), then breaded, battered, starch-dusted, else unbreaded (lean meat, fish, tofu), unbreaded veg, or thick-cut (starchy pieces, bananas). Unbreaded fish in oil "for pan-frying" or "shallow frying" is pan-fried fish; unbreaded fatty or skin-on cuts start at no oil, and so does skin-on chicken that's dusted or dredged (flour, starch or buttermilk, not a tempura or beer batter). Thin-sliced and fatty cut are picked by the user. The user can change the type (any of the table's) and the rows it is a share of in the app.
 
 ### Coating (flour, egg wash, crumbs)
 

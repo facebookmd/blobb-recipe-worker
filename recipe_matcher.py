@@ -4214,6 +4214,26 @@ _VEGETABLE_FRIED_RE = re.compile(
 # Unbreaded fatty or skin-on cuts lose fat in the fryer: nothing absorbed.
 _FATTY_CUT_RE = re.compile(
     r"\b(skin[\s-]*on|with\s+skin|belly|pata|wings?|chicharr?on)\b", re.I)
+# Coated skin-on chicken keeps no net oil either: MEXT 2020 Table 13 weighed
+# skin-on thigh karaage at -0.7 g fat per 100 g raw after frying, coating
+# included, the skin's rendered fat outweighing what the coating takes up
+# (skinless: +4.3 g). Applied to starch- or flour-dusted chicken and to a
+# buttermilk dredge, a coating of about the same weight; not to a tempura
+# or beer batter, which MEXT didn't measure on chicken (25 Nov 2026).
+_SKIN_ON_CHICKEN_RE = re.compile(
+    r"\bchicken\b.*\b(skin[\s-]*on|with\s+skin|wings?)\b|\b(skin[\s-]*on|with\s+skin)\b.*\bchicken\b",
+    re.I)
+_WET_BATTER_RE = re.compile(
+    r"\b(tempura|batter|beer|club\s+soda|sparkling\s+water|soda\s+water)\b", re.I)
+
+
+def _coated_skin_on_chicken(fry_type: str, text: str, rows: list[dict]) -> bool:
+    """Every fried row is skin-on chicken, dusted or dredged (not in a wet
+    batter): it keeps no net oil."""
+    dredged = fry_type == "starch-dusted" or (fry_type == "battered"
+                                               and not _WET_BATTER_RE.search(text))
+    return dredged and bool(rows) and all(
+        _SKIN_ON_CHICKEN_RE.search(r["component_label"]) for r in rows)
 
 
 def _fry_type(ingredients: list[str]) -> str:
@@ -4253,8 +4273,9 @@ def _absorbed_oil(ingredients: list[str], fried: list[dict], pan_fried: bool = F
     roll, wrapper and filling. Otherwise meat, fish and tofu are what's
     fried; failing those, the starchy food; failing that, the vegetables.
     Unbreaded fish in oil for pan-frying ([pan_fried]) is pan-fried fish.
-    None found, or unbreaded fatty cuts (they lose fat), gives 0 tbsp and no
-    rows: the user picks in the app."""
+    None found, unbreaded fatty cuts (they lose fat), or skin-on chicken
+    dusted or dredged (no net oil, MEXT 2020) gives 0 tbsp and no rows: the
+    user picks in the app."""
     fry_type = _fry_type(ingredients)
     if fry_type == "wrapped":
         rows = list(fried)
@@ -4264,6 +4285,8 @@ def _absorbed_oil(ingredients: list[str], fried: list[dict], pan_fried: bool = F
             fry_type = "pan-fried fish"
         elif fry_type == "unbreaded" and all(
                 _FATTY_CUT_RE.search(r["component_label"]) for r in rows):
+            rows = []
+        elif _coated_skin_on_chicken(fry_type, " | ".join(ingredients), rows):
             rows = []
     else:
         for kind, unbreaded_type in (("starchy", "thick-cut"),
