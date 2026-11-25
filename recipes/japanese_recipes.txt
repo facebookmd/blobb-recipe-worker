@@ -486,9 +486,9 @@ Tuna Mayo Onigiri
 ID: tuna_mayo_onigiri
 AKA: Tuna Mayo Rice Ball", "Tsuna mayo onigiri
 Servings: 4
-2 cup cooked short grain white rice
+2.25 cup cooked short grain white rice
 1/4 tsp salt
-2.5 oz canned tuna
+2.5 oz canned tuna in oil
 1.5 tbsp Japanese mayonnaise
 2 sheet nori
 SOURCE: https://www.kewpie.com/en/products/recipes/H-QP10008965/, https://pickledplum.com/conbini-style-tuna-mayo-onigiri/, https://www.flavournetwork.ca/recipe/easy-tuna-onigiri/

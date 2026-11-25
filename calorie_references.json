@@ -37,18 +37,18 @@
    "note": "Swapped 19 Nov 2026 (Arianna): Pickled Plum's 100 is above its own amounts (about 71) and its 9.5 g protein a bowl is more than its tofu and miso hold. Kidneyfoods' tofu and wakame amounts aren't printed."
   },
   "pork_and_vegetable_miso_soup": {
-   "kcal": 340,
+   "kcal": 294,
    "status": "ok",
    "url": "https://shop.yutaka.london/blogs/recipes/tonjiru-recipe",
-   "basis": "4 servings",
-   "note": "341 -> 276 with the belly row. Skinless belly is USDA's Foundation belly (385 kcal/100 g) since 16 Nov 2026 (alias, USDA migration 20261116150000); it was the SR belly (518)."
+   "basis": "Yutaka's own amounts for 4 (200 g pork belly, 60 g miso, 200 g daikon, 100 g each carrot, burdock and konnyaku, 120 g onion, 1 tsp sesame oil): ~294 with the Foundation belly; it prints 340",
+   "note": "Reference corrected 25 Nov 2026 (Arianna): the printed 340 is above its own ingredients (likely the old SR belly). Same belly and miso as ours."
   },
   "japanese_beef_and_potato_stew": {
-   "kcal": 337,
+   "kcal": 439,
    "status": "ok",
-   "url": "https://rasamalaysia.com/wprm_print/japanese-meat-and-potato-stew-nikujaga",
-   "basis": "3 servings (own sources list none)",
-   "note": "Yukon gold potato is now the general raw potato (live alias): 346 → 387."
+   "url": "https://www.slurrp.com/recipes/nikujaga-recipe-1622791674",
+   "basis": "Great British Chefs (via Slurrp), 1 serving: 100 g beef, 1 potato, onion, carrot, 1 tbsp sugar, soy, sake, mirin; holds for its own amounts (~480)",
+   "note": "Swapped 25 Nov 2026 (Arianna): Rasa Malaysia's page (337) now refuses fetches, so it can't be checked; Saymmm's 319 with 3 g fat is impossible for its 8 oz short ribs. Ours: 8 oz ribeye and 3 Yukon golds for 4. Yukon gold is the general raw potato (live alias)."
   },
   "chicken_karaage": {
    "kcal": 523,
@@ -170,11 +170,11 @@
    "note": "Only reference found is implausible."
   },
   "omurice_": {
-   "kcal": 561,
+   "kcal": 676,
    "status": "ok",
    "url": "https://norecipes.com/wprm_print/omurice-recipe",
-   "basis": "mean of Norecipes 552 and Okonomi Kitchen 570",
-   "note": null
+   "basis": "mean of Norecipes 552 (1 1/2 eggs a serving; holds for its own amounts) and Okonomi Kitchen's own amounts ~800 (3 eggs a serving, ketchup and butter; it prints 570)",
+   "note": "Reference corrected 25 Nov 2026 (Arianna). Ours: 2 1/2 eggs a serving, 5 oz chicken thigh and 1 1/2 cups rice for 2."
   },
   "japanese_fried_rice": {
    "kcal": null,
@@ -202,7 +202,7 @@
    "status": "ok",
    "url": "https://pickledplum.com/conbini-style-tuna-mayo-onigiri/",
    "basis": "per onigiri",
-   "note": null
+   "note": "Tuna in oil and rice 2 -> 2 1/4 cups for 4 since 25 Nov 2026 (Arianna), as Pickled Plum (oil-packed tuna, 25 oz rice for 7), whose 207 holds for its own amounts."
   },
   "california_roll": {
    "kcal": 32,
