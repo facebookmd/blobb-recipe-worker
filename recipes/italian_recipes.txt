@@ -499,7 +499,7 @@ Bruschetta
 ID: bruschetta_
 AKA: Tomato bruschetta", "Bruschetta al pomodoro
 Servings: 24
-24 slice baguette
+1 baguette
 1/4 cup olive oil
 3 clove garlic
 6 medium tomato

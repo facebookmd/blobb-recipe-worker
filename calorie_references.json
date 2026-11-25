@@ -1098,7 +1098,7 @@
    "status": "ok",
    "url": "https://www.thecookierookie.com/wprm_print/classic-bruschetta-recipe",
    "basis": "The Cookie Rookie: 1 baguette, 3 tbsp olive oil, 3 lb tomatoes, 15 servings of 2 pieces, 81 a serving, so 41 a piece. Holds for its own amounts (~47)",
-   "note": "Rechecked 25 Nov 2026. Ours is almost three times this: '24 slice baguette' matches USDA's French bread slice (about 32 g, 87 kcal), a sandwich-loaf slice; a 1/2-inch baguette round is about a third of that. A matching problem, not a recipe amount."
+   "note": "Bread is '1 baguette' since 25 Nov 2026: '24 slice baguette' had matched USDA's sandwich-size French bread slice (32 g, 87 kcal), about three times a baguette round; now FNDDS's 22-inch baguette (324 g) cut in 24: 115 -> 65. Still 58% over, from amounts: the reference cuts its (likely smaller) loaf into 30 and uses 3 tbsp olive oil (12 kcal a piece), ours 1/4 cup for 24 (21)."
   },
   "garlic_bread": {
    "kcal": 208,
