@@ -1336,7 +1336,7 @@
    "status": "ok",
    "url": "https://www.nutmegnanny.com/new-england-clam-chowder/",
    "basis": "412 per serving of 6",
-   "note": null
+   "note": "Butter dropped since 25 Nov 2026 (Arianna); Nutmeg Nanny uses none (its own amounts give ~440): 477 -> 443."
   },
   "broccoli_cheddar_soup": {
    "kcal": null,
@@ -1350,7 +1350,7 @@
    "status": "ok",
    "url": "https://natashaskitchen.com/tomato-soup-recipe/",
    "basis": "222 per 1-cup (344 g) serving of 8",
-   "note": null
+   "note": "2 onions, 1 tbsp sugar and 1/3 cup parmesan since 25 Nov 2026 (Arianna), Natasha's: 186 -> 218."
   },
   "beef_stew": {
    "kcal": 444,
@@ -1371,7 +1371,7 @@
    "status": "ok",
    "url": "https://www.spendwithpennies.com/fluffy-homemade-waffle-recipe/",
    "basis": "313 per serving of 6, plus 106 for our 2 tbsp pancake syrup",
-   "note": null
+   "note": "Butter 1/2 -> 1/3 cup since 25 Nov 2026 (Arianna), Spend with Pennies': 477 -> 432."
   },
   "french_toast": {
    "kcal": 260,
@@ -1399,7 +1399,7 @@
    "status": "ok",
    "url": "https://www.tasteofhome.com/recipes/sausage-breakfast-burritos/",
    "basis": "429 per burrito (8)",
-   "note": "Ours adds 2 cups hash browns, uses 1 1/2 cups cheddar (reference 1 cup) and a large tortilla (71 g, 217 kcal) where the reference uses 8-inch."
+   "note": "Medium flour tortillas (45 g, near Taste of Home's 8-inch) and 1 cup cheddar since 25 Nov 2026 (Arianna); hash browns kept: 576 -> 469."
   },
   "meatloaf_": {
    "kcal": 338,
@@ -1416,25 +1416,25 @@
    "note": "RecipeTin prints KFC's per-100 g figure, not its recipe. Coating at the 15% wet-surface rate (1.5 cups flour for 1.3 kg chicken); the buttermilk and egg soak at the 5% marinade rate."
   },
   "pot_roast": {
-   "kcal": 428,
+   "kcal": 585,
    "status": "ok",
    "url": "https://www.wellplated.com/crockpot-roast-recipe/",
-   "basis": "428 per serving of 6 (2-3 lb chuck)",
-   "note": "Raw choice chuck counted with its fat is 437 of our 547; the reference serves 6 from up to 3 lb chuck, so it must count leaner meat."
+   "basis": "Well Plated's own amounts for 6 (2 1/2 lb chuck, 1 1/2 tbsp oil, 1 lb potatoes, 1 lb carrots): ~585; it prints 428",
+   "note": "Reference corrected 25 Nov 2026 (Arianna): same raw chuck a serving as ours (about 6.5 oz)."
   },
   "bbq_baby_back_ribs": {
-   "kcal": 1298,
+   "kcal": 750,
    "status": "ok",
    "url": "https://www.onceuponachef.com/recipes/baby-back-ribs-smoker-or-oven.html",
-   "basis": "1298 per serving of 4 (2 racks)",
-   "note": "Same 2 racks for 4. The reference looks like whole rack weight counted as meat (4 lb x 277 kcal/100 g / 4 = 1257); ours takes the bone out."
+   "basis": "Once Upon a Chef's own amounts (2 racks for 4): ~750; its 1,298 and 103 g protein a serving are beyond half a rack of meat",
+   "note": "Reference corrected 25 Nov 2026 (Arianna)."
   },
   "roast_chicken": {
-   "kcal": 532,
+   "kcal": 608,
    "status": "ok",
    "url": "https://www.spendwithpennies.com/lemon-roasted-chicken/",
-   "basis": "532 per quarter of a 3 lb chicken",
-   "note": "'1 whole chicken' is USDA's broiler, meat and skin, raw: 2 x '0.5 chicken, bone removed' (460 g), 920 g a bird, about 495 kcal a quarter. The rest of the gap is the skin-on meat counted raw with all its fat. Was the roasting chicken with giblets (1509 g, 975 kcal) until 14 Nov 2026. Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
+   "basis": "Spend with Pennies' own amounts (a 3 lb chicken, 2 tbsp oil, 2 tbsp butter for 4): ~608; it prints 532",
+   "note": "Butter 4 -> 2 tbsp since 25 Nov 2026 (Arianna): 666 -> 615. '1 whole chicken' is USDA's broiler, meat and skin."
   },
   "chicken_pot_pie": {
    "kcal": 573,
@@ -1462,7 +1462,7 @@
    "status": "ok",
    "url": "https://www.tasteofhome.com/recipes/southern-shrimp-and-grits/",
    "basis": "699 per serving of 4",
-   "note": "The reference adds 8 thick bacon strips and uses 1/3 cup butter (ours 3 tbsp, no bacon)."
+   "note": "8 slices bacon and 1/3 cup butter since 25 Nov 2026 (Arianna), as Taste of Home (its own amounts give ~660): 480 -> 614."
   },
   "baked_salmon": {
    "kcal": 457,
@@ -1483,14 +1483,14 @@
    "status": "ok",
    "url": "https://natashaskitchen.com/grilled-cheese-sandwich/",
    "basis": "499 per sandwich (4)",
-   "note": "The reference uses 3 slices of cheese and thick Texas toast; ours 2 thin cheddar slices (17 g) on sandwich bread."
+   "note": "The reference uses 3 slices of cheese and thick Texas toast; ours 2 thin cheddar slices (17 g) on sandwich bread. Natasha's uses Texas toast and three cheeses; no classic two-slice reference could be fetched yet (25 Nov 2026)."
   },
   "blt_sandwich": {
    "kcal": 816,
    "status": "ok",
    "url": "https://www.spendwithpennies.com/how-to-make-the-perfect-blt/",
    "basis": "816 per sandwich (2)",
-   "note": "The reference uses 4 bacon slices on sourdough; ours 3 slices on sandwich bread, same 2 tbsp mayo."
+   "note": "4 slices bacon (was 3) since 25 Nov 2026 (Arianna), as Spend with Pennies: 469 -> 507. Its 816 is on big sourdough slices and its 66 g fat is beyond its own bacon and mayo (~515 with sandwich bread). No sandwich-bread reference could be fetched yet."
   },
   "pulled_pork_sandwich": {
    "kcal": 670,
@@ -1500,11 +1500,11 @@
    "note": null
   },
   "philly_cheesesteak": {
-   "kcal": 732,
+   "kcal": 965,
    "status": "ok",
    "url": "https://natashaskitchen.com/philly-cheesesteak/",
-   "basis": "732 per sandwich (4)",
-   "note": "Ours uses 1.5 lb ribeye for 4 (reference 1 lb, trimmed) plus 2 tbsp oil."
+   "basis": "Natasha's own amounts for 4 (1 lb ribeye, 8 provolone, 4 hoagie rolls, 2 tbsp butter, mayo, 2 tbsp oil): ~965; it prints 732",
+   "note": "Ribeye 1.5 -> 1 lb since 25 Nov 2026 (Arianna), Natasha's: 1,007 -> 869."
   },
   "sloppy_joes": {
    "kcal": 439,
@@ -1535,11 +1535,11 @@
    "note": "The reference leaves out the chicken."
   },
   "jambalaya_": {
-   "kcal": 785,
+   "kcal": 673,
    "status": "ok",
    "url": "https://www.onceuponachef.com/recipes/jambalaya.html",
-   "basis": "785 per serving of 6",
-   "note": "The reference uses 2 cups rice (ours 1 1/4), 1 3/4 lb skin-on thighs (ours 12 oz skinless), 13 oz andouille and 1 lb shrimp."
+   "basis": "Once Upon a Chef's own amounts for 6 (1 3/4 lb bone-in skin-on thighs, 13 oz andouille, 2 cups rice, 1 lb shrimp): ~673; it prints 785",
+   "note": "1 3/4 lb bone-in skin-on thighs, 2 cups rice and 1 lb shrimp since 25 Nov 2026 (Arianna), the reference's amounts: 449 -> 706."
   },
   "red_beans_and_rice": {
    "kcal": null,
@@ -1560,14 +1560,14 @@
    "status": "ok",
    "url": "https://www.jocooks.com/recipes/classic-potato-salad/",
    "basis": "455 per serving of 8",
-   "note": null
+   "note": "Mayonnaise 1 -> 1 1/2 cups since 25 Nov 2026 (Arianna), Jo Cooks': 382 -> 475."
   },
   "cornbread_": {
-   "kcal": 390,
+   "kcal": 298,
    "status": "ok",
-   "url": "https://www.tasteofhome.com/recipes/quick-buttermilk-cornbread/",
-   "basis": "390 per piece (9)",
-   "note": "The reference uses 3/4 cup oil and 1 cup sugar; ours 6 tbsp butter and 1/4 cup sugar."
+   "url": "https://cupofyum.com/recipes/buttermilk-cornbread-recipe/print",
+   "basis": "Cup of Yum butter cornbread for 9 (1/2 cup butter, 2/3 cup sugar, 2 eggs, 1 cup buttermilk, 1 cup each cornmeal and flour); holds for its own amounts (~283)",
+   "note": "Swapped 25 Nov 2026 (Arianna) from Taste of Home's 390 (3/4 cup oil, 1 cup sugar). Ours: 6 tbsp butter, 1/4 cup sugar."
   },
   "green_bean_casserole": {
    "kcal": 151,
@@ -1591,18 +1591,18 @@
    "note": null
   },
   "hash_browns": {
-   "kcal": 180,
+   "kcal": 223,
    "status": "ok",
    "url": "https://natashaskitchen.com/crispy-hash-browns-recipe/",
-   "basis": "180 per serving of 4",
-   "note": "Same 2 tbsp oil and 2 tbsp butter for 4. The reference's 7 g fat is less than half that; ours counts all the pan fat."
+   "basis": "Natasha's own amounts (1 1/4 lb russets, 2 tbsp oil, 2 tbsp butter for 4): ~223; its printed 7 g fat is below its own 4 tbsp of fat",
+   "note": "Reference corrected 25 Nov 2026 (Arianna)."
   },
   "macaroni_and_cheese": {
    "kcal": 621,
    "status": "ok",
    "url": "https://www.spendwithpennies.com/baked-mac-and-cheese/",
    "basis": "621 per serving of 8",
-   "note": "The reference uses 1 lb dry macaroni, 4 cups cheddar plus parmesan and cream; ours 5 cups cooked macaroni and 2 2/3 cups cheddar."
+   "note": "9 cups cooked macaroni, 4 cups cheddar, 1/2 cup parmesan and 5 tbsp butter since 25 Nov 2026 (Arianna), Spend with Pennies' 1 lb pasta and 1 lb cheese for 8: 377 -> 588."
   },
   "chocolate_chip_cookies": {
    "kcal": 160,
@@ -1616,7 +1616,7 @@
    "status": "ok",
    "url": "https://natashaskitchen.com/fudgy-brownie-recipe/",
    "basis": "526 per square of 12, so 395 for our 16 squares from one pan",
-   "note": null
+   "note": "Chocolate chips 1 1/3 -> 2 cups since 25 Nov 2026 (Arianna), toward Natasha's 16 oz: 319 -> 352."
   },
   "apple_pie": {
    "kcal": 380,
@@ -1626,18 +1626,18 @@
    "note": null
   },
   "pumpkin_pie": {
-   "kcal": 216,
+   "kcal": 290,
    "status": "ok",
    "url": "https://www.spendwithpennies.com/pumpkin-pie-recipe/",
-   "basis": "216 per slice (8)",
-   "note": "Same filling (15 oz pumpkin, 10 oz evaporated milk, 2 eggs, 3/4 cup sugar). The reference's 7 g fat is less than its own crust and evaporated milk carry, so its figure looks low."
+   "basis": "Spend with Pennies' own amounts (crust, 15 oz pumpkin, 10 oz evaporated milk, 2 eggs, 3/4 cup sugar for 8): ~290; it prints 216",
+   "note": "Reference corrected 25 Nov 2026 (Arianna): same filling as ours."
   },
   "peach_cobbler": {
    "kcal": 278,
    "status": "ok",
    "url": "https://www.spendwithpennies.com/peach-cobbler/",
    "basis": "278 per serving of 9",
-   "note": null
+   "note": "Butter 4 tbsp -> 1/2 cup since 25 Nov 2026 (Arianna), Spend with Pennies': 238 -> 284."
   },
   "cheesecake_": {
    "kcal": 549,
@@ -1658,7 +1658,7 @@
    "status": "ok",
    "url": "https://www.tasteofhome.com/recipes/best-ever-blueberry-muffins/",
    "basis": "224 per muffin",
-   "note": null
+   "note": "Butter 1/2 -> 1/4 cup since 25 Nov 2026 (Arianna), Taste of Home's: 261 -> 227."
   },
   "lemonade_": {
    "kcal": 155,

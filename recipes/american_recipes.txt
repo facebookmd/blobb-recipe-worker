@@ -77,7 +77,6 @@ ID: new_england_clam_chowder
 AKA: Clam chowder", "Clam chowder soup
 Servings: 6
 6 slice bacon
-2 tbsp butter
 1 medium onion
 2 stalk celery
 2 clove garlic
@@ -119,13 +118,14 @@ ID: tomato_soup
 AKA: Creamy tomato soup", "Cream of tomato soup
 Servings: 8
 4 tbsp butter
-1 large onion
+2 large onion
 2 clove garlic
 7 cup canned crushed tomatoes
 2 cup chicken broth
-1.5 tsp sugar
+1 tbsp sugar
 1 tsp dried basil
 1/2 cup heavy cream
+1/3 cup grated parmesan
 1 tsp salt
 1/2 tsp black pepper
 SOURCE: https://natashaskitchen.com/tomato-soup-recipe/, https://www.tasteofhome.com/recipes/the-best-ever-tomato-soup/, https://www.food.com/recipe/easy-creamy-tomato-soup-283591
@@ -183,7 +183,7 @@ Servings: 6
 1/2 tsp salt
 2 large egg
 1 2/3 cup whole milk
-1/2 cup butter
+1/3 cup butter
 1 tsp vanilla extract
 --Topping
 3/4 cup pancake syrup
@@ -249,8 +249,8 @@ Servings: 8
 6 large egg
 1/4 tsp salt
 1/8 tsp black pepper
-1.5 cup shredded cheddar cheese
-8 large flour tortilla
+1 cup shredded cheddar cheese
+8 medium flour tortilla
 SOURCE: https://www.tasteofhome.com/recipes/sausage-breakfast-burritos/, https://www.spendwithpennies.com/breakfast-burrito-freezer-friendly/, https://www.food.com/recipe/grilled-breakfast-burrito-241728
 
 
@@ -332,7 +332,7 @@ ID: roast_chicken
 AKA: Whole roast chicken", "Lemon garlic roast chicken", "Roasted chicken
 Servings: 4
 1 whole chicken
-4 tbsp butter
+2 tbsp butter
 2 tbsp olive oil
 1.5 tbsp lemon juice
 4 clove garlic
@@ -408,11 +408,12 @@ Servings: 4
 1.5 cup water
 1.5 cup whole milk
 3/4 cup uncooked grits
-3 tbsp butter
+1/3 cup butter
 1 cup shredded cheddar cheese
 3/4 tsp salt
 1/4 tsp black pepper
 --Shrimp
+8 slice cooked bacon
 1 lb shrimp
 1 tbsp olive oil
 2 clove garlic
@@ -472,7 +473,7 @@ ID: blt_sandwich
 AKA: BLT", "Bacon lettuce and tomato sandwich
 Servings: 1
 2 slice white bread
-3 slice cooked bacon
+4 slice cooked bacon
 2 tbsp mayonnaise
 1 leaf lettuce
 1/2 large tomato
@@ -505,7 +506,7 @@ Philly Cheesesteak
 ID: philly_cheesesteak
 AKA: Cheesesteak", "Philly cheese steak", "Cheesesteak sandwich
 Servings: 4
-1.5 lb thinly sliced beef ribeye
+1 lb thinly sliced beef ribeye
 2 tbsp vegetable oil
 1 tbsp butter
 1 large onion
@@ -608,7 +609,7 @@ ID: jambalaya_
 AKA: Chicken sausage and shrimp jambalaya", "Cajun jambalaya", "Creole jambalaya
 Servings: 6
 1 tbsp vegetable oil
-12 oz boneless skinless chicken thigh
+1.75 lb bone-in skin-on chicken thigh
 12 oz andouille sausage
 1 medium onion
 1 stalk celery
@@ -617,10 +618,10 @@ Servings: 6
 1 tbsp Cajun seasoning
 1.5 cup canned diced tomatoes
 2.5 cup chicken broth
-1 1/4 cup uncooked long grain white rice
+2 cup uncooked long grain white rice
 2 whole bay leaf
 1/2 tsp salt
-12 oz shrimp
+1 lb shrimp
 2 stalk green onion
 SOURCE: https://www.onceuponachef.com/recipes/jambalaya.html, https://www.jocooks.com/recipes/chicken-and-shrimp-jambalaya/, https://www.spendwithpennies.com/cajun-jambalaya/
 
@@ -669,7 +670,7 @@ ID: potato_salad
 AKA: Classic potato salad", "Southern potato salad", "Potato and egg salad
 Servings: 8
 6 medium russet potato
-1 cup mayonnaise
+1.5 cup mayonnaise
 1 tbsp yellow mustard
 2 tsp apple cider vinegar
 6 large hard-boiled egg
@@ -761,11 +762,12 @@ Macaroni and Cheese
 ID: macaroni_and_cheese
 AKA: Mac and cheese", "Baked mac and cheese", "Baked macaroni and cheese
 Servings: 8
-5 cup cooked elbow macaroni
-4 tbsp butter
+9 cup cooked elbow macaroni
+5 tbsp butter
 1/4 cup all-purpose flour
 2 2/3 cup whole milk
-2 2/3 cup shredded cheddar cheese
+4 cup shredded cheddar cheese
+1/2 cup grated parmesan
 1/2 tsp ground mustard
 1/2 tsp salt
 1/4 tsp black pepper
@@ -804,7 +806,7 @@ Servings: 16
 1/2 tsp baking powder
 1 cup all-purpose flour
 3/4 cup unsweetened cocoa powder
-1 1/3 cup semisweet chocolate chips
+2 cup semisweet chocolate chips
 SOURCE: https://natashaskitchen.com/fudgy-brownie-recipe/, https://www.kingarthurbaking.com/recipes/fudge-brownies-recipe, https://cafedelites.com/worlds-best-fudgiest-brownies/
 
 
@@ -860,7 +862,7 @@ Servings: 9
 1.5 tsp baking powder
 1/4 tsp salt
 3/4 cup whole milk
-4 tbsp butter
+1/2 cup butter
 SOURCE: https://www.spendwithpennies.com/peach-cobbler/, https://www.bettycrocker.com/recipes/fresh-peach-cobbler/f3f923ca-9a9b-443d-8085-377794669381, https://www.tasteofhome.com/recipes/iva-s-peach-cobbler/
 
 
@@ -911,7 +913,7 @@ Servings: 12
 1/4 tsp salt
 2 large egg
 1 cup whole milk
-1/2 cup butter
+1/4 cup butter
 1.5 tsp vanilla extract
 1.5 cup blueberries
 SOURCE: https://www.tasteofhome.com/recipes/best-ever-blueberry-muffins/, https://www.jocooks.com/recipes/blueberry-muffins/, https://www.food.com/recipe/old-fashioned-blueberry-muffins-94532
