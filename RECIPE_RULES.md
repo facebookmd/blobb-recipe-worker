@@ -267,7 +267,7 @@ Use commonly known ratios; do not reproduce any published recipe verbatim. Compa
 
 ## Calorie reference
 
-Every recipe gets an outside calorie figure in `calorie_references.json`, keyed by its ID. The matcher checks each template against it after every run (`check_template_calories.py`) and lists the ones more than 20% and 30 kcal off. A new recipe without one is listed too.
+Every recipe gets an outside calorie figure in `calorie_references.json`, keyed by its ID. The matcher checks each template against it after every run (`check_template_calories.py`) and lists the ones more than 13% and 30 kcal off (20% until 25 Nov 2026). A new recipe without one is listed too.
 
 * **kcal**: calories per serving printed on one of the recipe's SOURCE pages (its nutrition box), **normalised to our serving**: per piece, per skewer, per ½ cup, or the batch ÷ our `Servings:`, using the page's own yield. If no source prints one, use another real recipe page for the dish that does (the same source rules apply). Never estimate calories yourself.
 * **url**: the page the figure is from. **basis**: one line on how it was normalised ("447 per serving of 8, 6 pieces each").

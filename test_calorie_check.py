@@ -1,5 +1,5 @@
 """The calorie check after each matcher run (13 Nov 2026): templates more
-than 20% and 30 kcal from their outside reference, and new templates with
+than 13% (20% until 25 Nov 2026) and 30 kcal from their outside reference, and new templates with
 no reference, are listed; references that can't be compared are skipped.
 
 Run: .venv/bin/python -m pytest -q
@@ -40,6 +40,14 @@ def test_off_needs_both_the_share_and_the_calories():
     result = check.check(templates, refs)
     assert [r["id"] for r in result["flagged"]] == ["stew", "cake"]
     assert result["ok"] == 2
+
+
+def test_the_line_is_13_percent():
+    templates = {"pasta": {"name": "Pasta", "kcal": 700}, "risotto": {"name": "Risotto", "kcal": 560}}
+    refs = {"pasta": {"kcal": 610, "status": "ok"},    # +14.8%, +90 kcal: off since 25 Nov 2026
+            "risotto": {"kcal": 500, "status": "ok"}}  # +12%: fine
+    result = check.check(templates, refs)
+    assert [r["id"] for r in result["flagged"]] == ["pasta"]
 
 
 def test_new_templates_and_uncomparable_references_are_listed_apart():

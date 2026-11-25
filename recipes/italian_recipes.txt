@@ -245,6 +245,7 @@ Servings: 4
 2 clove garlic
 2/3 cup marsala wine
 3/4 cup chicken broth
+1/2 cup heavy cream
 2 tbsp chopped parsley
 SOURCE: https://www.daringgourmet.com/wprm_print/chicken-marsala, https://iamhomesteader.com/wprm_print/chicken-marsala, https://easychickenrecipes.com/wprm_print/easy-chicken-marsala-recipe
 
@@ -292,7 +293,7 @@ Osso Buco
 ID: osso_buco
 AKA: Ossobuco", "Ossobuco alla milanese", "Braised veal shanks
 Servings: 4
-2.5 lb veal shank
+3.5 lb veal shank
 1 tsp salt
 1/4 tsp black pepper
 1/4 cup all-purpose flour
@@ -379,7 +380,8 @@ AKA: Pizza with pepperoni
 Servings: 8
 12 oz pizza dough
 1/2 cup pizza sauce
-1.5 cup shredded mozzarella
+2 cup shredded mozzarella
+1/4 cup grated parmesan
 2 oz pepperoni
 SOURCE: https://onmykidsplate.com/wprm_print/homemade-pepperoni-pizza, https://www.chiselandfork.com/homemade-pepperoni-pizza/, https://lilluna.com/pepperoni-pizza/
 
@@ -485,7 +487,7 @@ Servings: 4
 2 large tomato
 8 oz fresh mozzarella
 10 leaf basil
-3 tbsp olive oil
+2 tbsp olive oil
 1/4 tsp salt
 1/8 tsp black pepper
 SOURCE: https://www.christinascucina.com/wprm_print/caprese-salad-recipe-or-tomato-basil-and-mozzarella-salad, https://www.surlatable.com/print/recipe/caprese-salad/REC-320526, https://steenbergs.co.uk/recipes/insalata-caprese-caprese-salad-recipe/
@@ -632,7 +634,7 @@ ID: spaghetti_carbonara
 AKA: Carbonara", "Spaghetti alla carbonara", "Pasta carbonara
 Servings: 4
 6.5 cup cooked spaghetti
-5 oz guanciale
+6 oz guanciale
 1 tsp olive oil
 4 large egg yolk
 1.25 cup grated pecorino romano
@@ -706,11 +708,11 @@ Penne Arrabbiata
 ID: penne_arrabbiata
 AKA: Penne all'arrabbiata", "Arrabbiata", "Spicy tomato pasta
 Servings: 4
-6 cup cooked penne
+7 cup cooked penne
 1/4 cup olive oil
 3 clove garlic
 1 whole red chili pepper
-2.25 cup canned crushed tomatoes
+3.5 cup canned crushed tomatoes
 1 tsp salt
 1 tbsp chopped parsley
 1/4 cup grated parmesan
@@ -723,7 +725,7 @@ ID: pesto_pasta
 AKA: Pasta al pesto", "Pesto spaghetti", "Pasta with pesto
 Servings: 4
 6 cup cooked spaghetti
-1 cup pesto sauce
+3/4 cup pesto sauce
 1/4 cup grated parmesan
 SOURCE: https://kitchenfunwithmy3sons.com/wprm_print/pesto-pasta, https://themodernproper.com/print/pesto-spaghetti, https://yourguardianchef.com/the-classic-pasta-with-pesto-recipe/
 
@@ -843,7 +845,7 @@ Servings: 4
 4 clove garlic
 2 cup tomato puree
 1/2 tsp salt
-8 oz fresh mozzarella
+4 oz fresh mozzarella
 1/3 cup grated parmesan
 8 leaf basil
 SOURCE: https://www.recipesfromitaly.com/wprm_print/gnocchi-alla-sorrentina-baked-gnocchi-with-tomato-mozzarella, https://www.krumpli.co.uk/gnocchi-alla-sorrentina/, https://www.fattiretours.com/travel-to-eat/gnocchi-alla-sorrentina-recipe/
@@ -882,8 +884,8 @@ ID: cannoli_
 AKA: Cannoli siciliani", "Sicilian cannoli", "Cannolo
 Servings: 12
 12 cannoli shell
-1.5 cup ricotta cheese
-6 tbsp powdered sugar
+2.5 cup ricotta cheese
+10 tbsp powdered sugar
 1/2 tsp vanilla extract
 1/2 tsp orange zest
 1/3 cup mini semisweet chocolate chips

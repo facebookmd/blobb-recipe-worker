@@ -1000,7 +1000,7 @@
    "status": "ok",
    "url": "https://www.onceuponachef.com/recipes/chicken-marsala.html",
    "basis": "mean of Once Upon a Chef 537 and RecipeTin 524, 4 servings each, both with cream",
-   "note": null
+   "note": "1/2 cup heavy cream added since 25 Nov 2026 (Arianna), as both references finish the sauce with cream: 441 -> 543."
   },
   "chicken_cacciatore": {
    "kcal": 790,
@@ -1021,7 +1021,7 @@
    "status": "ok",
    "url": "https://www.jocooks.com/recipes/osso-buco/",
    "basis": "4 veal shanks, 3 tbsp oil (RecipeTin 549 per 516 g, worked out with beef chuck)",
-   "note": null
+   "note": "Veal shank 2.5 -> 3.5 lb for 4 (about 14 oz a shank) since 25 Nov 2026 (Arianna), as Jo Cooks' 2-inch shanks (48 g protein a serving): 415 -> 477."
   },
   "beef_braciole": {
    "kcal": 321,
@@ -1049,7 +1049,7 @@
    "status": "ok",
    "url": "https://www.chiselandfork.com/homemade-pepperoni-pizza/",
    "basis": "per slice (8)",
-   "note": null
+   "note": "Mozzarella 1.5 -> 2 cups (8 oz) and 1/4 cup parmesan since 25 Nov 2026 (Arianna), as Chisel & Fork: 197 -> 230."
   },
   "calzone_": {
    "kcal": 555,
@@ -1091,7 +1091,7 @@
    "status": "ok",
    "url": "https://www.christinascucina.com/wprm_print/caprese-salad-recipe-or-tomato-basil-and-mozzarella-salad",
    "basis": "4 servings",
-   "note": null
+   "note": "Olive oil 3 -> 2 tbsp since 25 Nov 2026 (Arianna), Christina's: 277 -> 245."
   },
   "bruschetta_": {
    "kcal": null,
@@ -1161,7 +1161,7 @@
    "status": "ok",
    "url": "https://www.christinascucina.com/wprm_print/spaghetti-alla-carbonara-authentic-roman-recipe",
    "basis": "5 servings, 1 lb pasta (Culinary Ginger 480 uses ½ lb for 4)",
-   "note": null
+   "note": "Guanciale 5 -> 6 oz since 25 Nov 2026 (Arianna): 699 -> 742. Christina's 805 is above its own amounts (about 750 for 1 lb pasta, 7 oz guanciale, 5 yolks, 5 oz pecorino for 5)."
   },
   "cacio_e_pepe": {
    "kcal": 406,
@@ -1196,14 +1196,14 @@
    "status": "ok",
    "url": "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
    "basis": "mean of RecipeTin 567 and Christina's 510",
-   "note": null
+   "note": "Penne 6 -> 7 cups cooked and crushed tomatoes 2.25 -> 3.5 cups since 25 Nov 2026 (Arianna), near RecipeTin (400 g pasta, 800 g tomatoes for 4): 460 -> 527."
   },
   "pesto_pasta": {
    "kcal": 589,
    "status": "ok",
    "url": "https://www.onceuponachef.com/recipes/pesto-pasta.html",
    "basis": "6 servings from 1 lb pasta, ⅔ cup oil in the pesto",
-   "note": null
+   "note": "Pesto 1 -> 3/4 cup for 4 since 25 Nov 2026 (Arianna), near Once Upon a Chef's (about 3 tbsp a plate): 697 -> 604."
   },
   "lasagna_bolognese": {
    "kcal": null,
@@ -1252,7 +1252,7 @@
    "status": "ok",
    "url": "https://www.krumpli.co.uk/gnocchi-alla-sorrentina/",
    "basis": "893 per 2 with 500 g gnocchi, rescaled to our 113 g gnocchi a plate",
-   "note": null
+   "note": "Mozzarella 8 -> 4 oz for 1 lb gnocchi since 25 Nov 2026 (Arianna), Krumpli's 4:1 gnocchi to mozzarella: 512 -> 427."
   },
   "tiramisu_": {
    "kcal": 463,
@@ -1273,7 +1273,7 @@
    "status": "ok",
    "url": "https://anitalianinmykitchen.com/baked-cannoli/",
    "basis": "per pastry (15), with chocolate coating",
-   "note": null
+   "note": "Ricotta 1.5 -> 2.5 cups and powdered sugar 6 -> 10 tbsp for 12 since 25 Nov 2026 (Arianna), near the reference's 3 cups for 15: 212 -> 251. No chocolate coating (the reference has one)."
   },
   "biscotti_": {
    "kcal": 53,

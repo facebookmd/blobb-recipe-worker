@@ -26,9 +26,9 @@ from collections import OrderedDict
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_REFERENCES = os.path.join(HERE, "calorie_references.json")
 
-# Flagged when both hold: 20% off and 30 kcal off (11 Nov 2026 audit), so a
-# 27 kcal salad 7 kcal off isn't a flag.
-MAX_SHARE_OFF = 0.20
+# Flagged when both hold: 13% off (Arianna, 25 Nov 2026; was 20% from the
+# 11 Nov audit) and 30 kcal off, so a 27 kcal salad 7 kcal off isn't a flag.
+MAX_SHARE_OFF = 0.13
 MIN_KCAL_OFF = 30.0
 
 COMPARED = "ok"
@@ -89,7 +89,7 @@ def report(result: dict, out=sys.stdout) -> None:
           f"{len(flagged)} off, {len(missing)} without a reference, "
           f"{len(unchecked)} with a reference that can't be compared.", file=out)
     if flagged:
-        print("    Off by more than 20% and 30 kcal (look for the cause before importing):", file=out)
+        print(f"    Off by more than {MAX_SHARE_OFF:.0%} and {MIN_KCAL_OFF:.0f} kcal (look for the cause before importing):", file=out)
         for r in flagged:
             print(f"      {r['id']}: ours {r['ours']} kcal, reference {r['reference']} "
                   f"({r['share_off']:+.0%})", file=out)
