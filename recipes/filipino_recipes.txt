@@ -317,7 +317,7 @@ Servings: 6
 4 cup water
 3 bay leaf
 1/2 tsp red pepper flakes
-1/2 cup liver spread
+1/4 cup liver spread
 2 medium potato
 2 medium carrot
 1 red bell pepper
@@ -511,7 +511,7 @@ Pinakbet
 ID: pinakbet_
 AKA: Pakbet", "Pinakbet Tagalog", "Vegetable stew with shrimp paste
 Servings: 4
-4 oz pork belly
+8 oz pork belly
 1 tbsp vegetable oil
 4 clove garlic
 1 small onion
@@ -706,10 +706,10 @@ Adobo Fried Rice
 ID: adobo_fried_rice
 AKA: Adobo rice", "Chicken adobo fried rice
 Servings: 4
-2.5 piece chicken adobo
+1.5 piece chicken adobo
 1.5 tbsp vegetable oil
 2 clove garlic
-4.5 cup cooked long grain white rice
+3 cup cooked long grain white rice
 1 tbsp soy sauce
 1/2 tsp salt
 2 tbsp chopped green onion
@@ -721,7 +721,7 @@ Arroz Caldo
 ID: arroz_caldo
 AKA: Chicken arroz caldo", "Chicken rice porridge", "Filipino chicken congee", "Lugaw with chicken
 Servings: 6
-1.5 lb bone-in skin-on chicken thigh
+1 lb bone-in skin-on chicken thigh
 2 tbsp vegetable oil
 9 clove garlic
 1 medium onion
@@ -807,8 +807,8 @@ SOURCE: https://lemonsandanchovies.com/wprm_print/atchara-filipino-pickled-green
 Water Spinach Adobo
 ID: water_spinach_adobo
 AKA: Adobong kangkong", "Kangkong adobo
-Servings: 4
-2 tbsp vegetable oil
+Servings: 3
+3 tbsp vegetable oil
 4 clove garlic
 1 small onion
 8 cup chopped water spinach
@@ -898,12 +898,13 @@ SOURCE: https://panlasangpinoy.com/wprm_print/kwek-kwek-recipe, https://www.iank
 Lumpiang Sariwa
 ID: lumpiang_sariwa
 AKA: Fresh lumpia", "Fresh spring rolls", "Filipino fresh lumpia
-Servings: 12
+Servings: 10
 --Filling
 3 tbsp vegetable oil
 1 medium onion
 2 clove garlic
 4 oz shrimp
+10 oz firm tofu
 1 cup diced carrot
 1.5 cup diced sweet potato
 1 cup cut green beans
@@ -966,8 +967,8 @@ Servings: 6
 4 tbsp vegetable oil
 5 clove garlic
 1 medium onion
-8 oz boneless skinless chicken thigh
-4 oz shrimp
+12 oz boneless skinless chicken thigh
+8 oz shrimp
 2 stalk celery
 3/4 cup julienned carrot
 2 cup cut green beans
@@ -986,7 +987,7 @@ ID: pancit_canton
 AKA: Canton", "Pancit canton guisado", "Filipino stir-fried egg noodles
 Servings: 6
 2 tbsp vegetable oil
-8 oz pork belly
+4 oz pork belly
 4 oz shrimp
 3 clove garlic
 1 small onion
@@ -1008,7 +1009,7 @@ AKA: Palabok", "Rice noodles with shrimp sauce", "Pancit luglug
 Servings: 6
 3 cup cooked rice vermicelli
 --Sauce
-4 tbsp vegetable oil
+2 tbsp vegetable oil
 1/3 cup minced garlic
 1/3 cup minced onion
 1 tsp annatto powder
@@ -1017,7 +1018,7 @@ Servings: 6
 2.5 tbsp cornstarch
 2 tsp fish sauce
 --Toppings
-8 oz pork belly
+8 oz ground pork
 7 oz shrimp
 1.5 oz smoked fish
 3/4 cup crushed pork rinds
@@ -1033,7 +1034,7 @@ ID: filipino_spaghetti
 AKA: Sweet spaghetti", "Pinoy spaghetti", "Filipino-style spaghetti
 Servings: 6
 2 tbsp vegetable oil
-6 hot dog
+4 hot dog
 1 large onion
 4 clove garlic
 1.25 lb ground pork
@@ -1043,7 +1044,7 @@ Servings: 6
 1 tbsp brown sugar
 1 tsp salt
 1/2 tsp black pepper
-9.5 cup cooked spaghetti
+8 cup cooked spaghetti
 1 cup shredded cheddar cheese
 SOURCE: https://tarasmulticulturaltable.com/wprm_print/filipino-spaghetti, https://theunlikelybaker.com/wprm_print/filipino-style-spaghetti, https://www.marionskitchen.com/filipino-spaghetti/
 
@@ -1254,8 +1255,8 @@ ID: taho_
 AKA: Silken tofu with sago and syrup", "Filipino tofu pudding", "Taho dessert
 Servings: 3
 22 oz silken tofu
-1/2 cup small pearl tapioca
-1 cup brown sugar syrup
+3/4 cup small pearl tapioca
+1.5 cup brown sugar syrup
 SOURCE: https://panlasangpinoy.com/filipino-street-food-homemade-taho-recipe/, https://www.hungryhuy.com/filipino-taho-recipe/, https://www.iankewks.com/taho-filipino-tofu-dessert/
 
 
@@ -1297,7 +1298,6 @@ Servings: 8
 2.5 cup glutinous rice flour
 1 cup water
 4 cup coconut milk
-1 cup coconut cream
 1 cup sugar
 1 cup sliced jackfruit
 2 cup cubed sweet potato
@@ -1324,8 +1324,8 @@ Sago't Gulaman
 ID: sago_t_gulaman
 AKA: Sago at gulaman", "Sago gulaman", "Samalamig
 Servings: 6
-1.25 cup brown sugar syrup
-2/3 cup small pearl tapioca
+1.75 cup brown sugar syrup
+1 cup small pearl tapioca
 --Gulaman
 1.5 cup water
 1 tbsp agar powder

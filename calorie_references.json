@@ -366,11 +366,11 @@
    "note": null
   },
   "garlic_fried_rice": {
-   "kcal": 257,
+   "kcal": 287,
    "status": "ok",
    "url": "https://www.recipesbynora.com/wprm_print/sinangag-recipe-garlic-fried-rice",
-   "basis": "6 servings (~1 cup)",
-   "note": null
+   "basis": "Recipes by Nora's own amounts (6 cups rice, 2 tbsp oil, 2 tbsp butter for 6): ~287; it prints 257",
+   "note": "Reference corrected 25 Nov 2026 (Arianna)."
   },
   "beef_tapa": {
    "kcal": null,
@@ -422,11 +422,11 @@
    "note": "Both references calculated from USDA's old SR pork belly: Nora's 1½ lb belly for 6 gives 60 g fat at 53% (page: 61 g); Hungry Huy's 1 lb belly + 1 lb ribs for 8 gives about 43 g (page: 45.6 g). Ours uses the skin-on Foundation belly: 549."
   },
   "shrimp_sinigang": {
-   "kcal": 212,
+   "kcal": 145,
    "status": "ok",
    "url": "https://panlasangpinoy.com/wprm_print/sinigang-na-hipon-recipe-2",
-   "basis": "4 servings (Bite My Bun 471/5)",
-   "note": "Head-on shrimp: 1 lb head-on is counted at 46% meat (USDA AH-102), 52 g a serving. Amount is the recipe's."
+   "basis": "Panlasang Pinoy's own amounts for 4 with 1 lb head-on shrimp at 46% meat: ~145; it prints 212, counting all 1 lb as meat (27 g protein)",
+   "note": "Reference corrected 25 Nov 2026 (Arianna). Head-on shrimp counted at 46% meat (USDA AH-102)."
   },
   "milkfish_sinigang": {
    "kcal": null,
@@ -485,18 +485,18 @@
    "note": "Serves 8 since 19 Nov 2026 (was 6; Arianna), like Hungry Huy's 2 lb of meat for 8. Foxy Folksy's 865 dropped: it prints 81 g protein a serving (~490 g a pot) but its oxtail, tripe and peanut butter give ~270 g; from its own amounts it is ~625. Oxtail is counted at USDA's 0.56 bone-and-cooking yield (settled 28 Oct)."
   },
   "beef_caldereta": {
-   "kcal": 512,
+   "kcal": 556,
    "status": "ok",
    "url": "https://www.recipesbynora.com/wprm_print/beef-caldereta-recipe",
-   "basis": "8 servings",
-   "note": null
+   "basis": "Recipes by Nora's own amounts for 8 (3 lb chuck, 1/4 cup liver spread, 28 oz tomato sauce, potatoes, olives, pickles): ~556; it prints 512",
+   "note": "Liver spread 1/2 -> 1/4 cup and reference corrected 25 Nov 2026 (Arianna): same 6 oz chuck a serving as Nora."
   },
   "beef_mechado": {
-   "kcal": 529,
+   "kcal": 697,
    "status": "ok",
    "url": "https://www.foxyfolksy.com/wprm_print/17539",
-   "basis": "mean of Foxy Folksy 697 (4) and Panlasang Pinoy 361 (6)",
-   "note": null
+   "basis": "Foxy Folksy 697 (4 servings: 1 lb beef, 100 g fatback, 3 tbsp oil); its own amounts give ~716",
+   "note": "Panlasang Pinoy's 361 dropped 25 Nov 2026 (Arianna): its page no longer loads the recipe."
   },
   "chicken_afritada": {
    "kcal": 583,
@@ -506,11 +506,11 @@
    "note": null
   },
   "pork_menudo": {
-   "kcal": 510,
+   "kcal": 750,
    "status": "ok",
    "url": "https://panlasangpinoy.com/wprm_print/filipino-pork-menudo-recipe-2",
-   "basis": "5 servings (Krumpli 846 per 2)",
-   "note": "Pork shoulder 2.25 lb for 6 (331 kcal each, via the braised-butt alias at 0.73 yield ≈ raw). Recipe amount."
+   "basis": "Panlasang Pinoy's own amounts for 5 (2 lb shoulder, 4 oz liver, 3 hot dogs, 1/2 cup raisins, 3 tbsp oil): ~720-780; it prints 510",
+   "note": "Reference corrected 25 Nov 2026 (Arianna): the printed 510 is well below its own ingredients."
   },
   "bistek_tagalog": {
    "kcal": 234,
@@ -527,11 +527,11 @@
    "note": null
   },
   "sisig_": {
-   "kcal": 605,
+   "kcal": 491,
    "status": "ok",
    "url": "https://www.foxyfolksy.com/wprm_print/11969",
-   "basis": "4 servings",
-   "note": "Lechon kawali sub-template: skin-on belly now the Foundation row (679 → 528)."
+   "basis": "Foxy Folksy's own amounts for 4 (1 lb pork belly, 3 chicken livers) with the Foundation belly: ~491; it prints 605 from the old SR belly (518 kcal/100 g)",
+   "note": "Reference corrected 25 Nov 2026 (Arianna). Lechon kawali sub-template: skin-on belly is the Foundation row."
   },
   "bicol_express": {
    "kcal": null,
@@ -559,7 +559,7 @@
    "status": "ok",
    "url": "https://www.foxyfolksy.com/pinakbet/",
    "basis": "4 servings with 8 oz pork belly and 1 tbsp oil",
-   "note": "Pork: ours 4 oz pork belly for 4, Foxy Folksy 8 oz. Recipe amount."
+   "note": "Pork belly 4 -> 8 oz since 25 Nov 2026 (Arianna), Foxy Folksy's 1/2 lb."
   },
   "lechon_paksiw": {
    "kcal": 680,
@@ -618,11 +618,11 @@
    "note": null
   },
   "tocilog_": {
-   "kcal": 321,
+   "kcal": 608,
    "status": "ok",
    "url": "https://norecipes.com/wprm_print/tosilog",
-   "basis": "per plate",
-   "note": "Tocino 3 oz since 19 Nov 2026 (was 5 oz, 658 a plate; Arianna's call): a store pack of about 450 g serves 5-6. Plus 1 cup garlic rice and a fried egg; Norecipes serves less rice."
+   "basis": "Norecipes 321 (tocino and 2 eggs; its 1 g carbs leaves out the garlic rice) + 1 cup sinangag at Recipes by Nora's own amounts (~287)",
+   "note": "Reference corrected 25 Nov 2026 (Arianna): Norecipes' figure counts no rice. Ours: 3 oz tocino, 1 cup garlic rice, 1 egg."
   },
   "longsilog_": {
    "kcal": 682,
@@ -643,21 +643,21 @@
    "status": "ok",
    "url": "https://www.recipesbynora.com/wprm_print/filipino-adobo-fried-rice",
    "basis": "4 servings",
-   "note": "Skin-on thigh meat (121 g, 267 kcal) + 1⅛ cups rice; the gap is skin and amounts (see chicken_adobo). Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
+   "note": "Rice 4.5 -> 3 cups and chicken adobo 2.5 -> 1.5 pieces for 4 since 25 Nov 2026 (Arianna), as Nora (3 cups rice, 1 1/2 cups adobo)."
   },
   "arroz_caldo": {
    "kcal": 408,
    "status": "ok",
    "url": "https://norecipes.com/wprm_print/arroz-caldo-filipino-chicken-porridge",
    "basis": "6 servings",
-   "note": null
+   "note": "Chicken 1.5 -> 1 lb bone-in since 25 Nov 2026 (Arianna); Norecipes uses 250 g boneless for 6."
   },
   "champorado_": {
-   "kcal": 324,
+   "kcal": 420,
    "status": "ok",
    "url": "https://www.recipesbynora.com/filipino-champorado-recipe/",
-   "basis": "270 per serving of 6 (1 cup glutinous rice, coconut milk, 4 oz dark chocolate), rescaled to our 5",
-   "note": "Recipe amounts: 5 oz unsweetened chocolate (182 a serving), ½ cup sugar and 5 tbsp condensed milk for 5. Hungry Huy's cocoa version is 585 per 2."
+   "basis": "Recipes by Nora's own amounts for 6 (1 cup glutinous rice, a can of coconut milk, 4 oz dark chocolate, 1/4 cup sugar): ~420; it prints 270",
+   "note": "Reference corrected 25 Nov 2026 (Arianna)."
   },
   "lumpia_shanghai": {
    "kcal": null,
@@ -685,7 +685,7 @@
    "status": "ok",
    "url": "https://panlasangpinoy.com/wprm_print/adobong-kangkong-recipe",
    "basis": "3 servings",
-   "note": "Recipe amount: 2 tbsp oil for 4 (60 kcal each) is most of it; Panlasang Pinoy splits a similar pan 3 ways. Small absolute gap."
+   "note": "Oil 2 -> 3 tbsp and serves 3 (was 4) since 25 Nov 2026 (Arianna), as Panlasang Pinoy."
   },
   "laing_": {
    "kcal": 499,
@@ -720,7 +720,7 @@
    "status": "ok",
    "url": "https://panlasangpinoy.com/wprm_print/lumpiang-sariwa-with-fresh-lumpia-wrapper",
    "basis": "8 servings (~1 roll each)",
-   "note": "Cut green beans fixed (canned → raw)."
+   "note": "10 oz firm tofu added and 10 rolls (was 12) since 25 Nov 2026 (Arianna); Panlasang Pinoy's filling has tofu."
   },
   "ginataang_kalabasa_at_sitaw": {
    "kcal": 512,
@@ -741,28 +741,28 @@
    "status": "ok",
    "url": "https://www.hawaiianelectric.com/recipes/find-a-recipe/pancit-bihon-(for-long-life-and-good-luck)",
    "basis": "mean of Hawaiian Electric 280 (8 oz bihon, 1/2 lb ground pork, no oil, 6) and Cup of Yum 497 (8 oz bihon, 3 tbsp oil, 1/2 lb pork belly, 1/2 lb shrimp, 6; https://cupofyum.com/recipes/pancit-bihon/print)",
-   "note": "Swapped 19 Nov 2026 (Arianna); was Panlasang Pinoy/Quirino mean 172. Same noodle amount as ours; ours sits between (oil over Hawaiian Electric, less meat than Cup of Yum). Cup of Yum's other bihon page (240) is below its own 1 lb noodles and 1 lb meat."
+   "note": "Chicken thigh 8 -> 12 oz and shrimp 4 -> 8 oz since 25 Nov 2026 (Arianna)."
   },
   "pancit_canton": {
-   "kcal": 279,
+   "kcal": 310,
    "status": "ok",
    "url": "https://www.recipesbynora.com/wprm_print/pancit-canton-recipe-filipino-stir-fried-noodles",
-   "basis": "mean of Nora 310 (8) and Quirino 248 (4)",
-   "note": "Pork belly now skin-on Foundation (471 → 421). Recipe amounts: belly 1.5 oz raw + 1 cup egg noodles a serving."
+   "basis": "Recipes by Nora 310 (8 servings: 1 lb dry noodles, 2 Chinese sausages, 8 oz shrimp); holds for its own amounts",
+   "note": "Pork belly 8 -> 4 oz since 25 Nov 2026 (Arianna); Quirino's unchecked 248 dropped."
   },
   "pancit_palabok": {
    "kcal": 400,
    "status": "ok",
    "url": "https://www.hungryhuy.com/pancit-palabok/",
    "basis": "6 servings",
-   "note": "Rice vermicelli fixed (→ Rice noodles, cooked) and pork belly now skin-on Foundation: 517 → 460."
+   "note": "Pork belly -> 8 oz ground pork (as Hungry Huy) and oil 4 -> 2 tbsp since 25 Nov 2026 (Arianna)."
   },
   "filipino_spaghetti": {
    "kcal": 761,
    "status": "ok",
    "url": "https://theunlikelybaker.com/wprm_print/filipino-style-spaghetti",
    "basis": "6 servings",
-   "note": "Recipe amounts: a whole hot dog (177), 3.3 oz ground pork (248) and 1¼ cups spaghetti a plate."
+   "note": "Hot dogs 6 -> 4 and spaghetti 9.5 -> 8 cups since 25 Nov 2026 (Arianna), nearer The Unlikely Baker (1/2 lb hot dogs, 1 lb pasta for 6)."
   },
   "la_paz_batchoy": {
    "kcal": null,
@@ -828,11 +828,11 @@
    "note": "Ours 18 a batch with ~1 tbsp+ rice flour each: bigger cakes."
   },
   "buko_pandan": {
-   "kcal": 451,
+   "kcal": 305,
    "status": "ok",
    "url": "https://www.recipesbynora.com/buko-pandan/",
-   "basis": "6 servings: 1 lb young coconut, 16 oz nata de coco, sago, 4 oz cream cheese, ½ cup condensed milk",
-   "note": "Recipe: Nora adds nata de coco and sago. Ours is coconut, cream and condensed milk; all-purpose cream is Nestlé Media Crema table cream (267 kcal/100 g; alias, USDA migration 20261116140000; was heavy whipping cream, 351 -> 309)."
+   "basis": "Recipes by Nora's own amounts for 6 (1 lb young coconut, 16 oz nata de coco, sago, 4 oz cream cheese, 1/2 cup condensed milk): ~305; it prints 451",
+   "note": "Reference corrected 25 Nov 2026 (Arianna): its printed 34 g fat a serving is beyond 4 oz cream cheese and condensed milk for 6."
   },
   "cassava_cake": {
    "kcal": 409,
@@ -849,11 +849,11 @@
    "note": null
   },
   "taho_": {
-   "kcal": 605,
+   "kcal": 440,
    "status": "ok",
    "url": "https://panlasangpinoy.com/filipino-street-food-homemade-taho-recipe/",
-   "basis": "3 servings (Hungry Huy 747 per 2 glasses)",
-   "note": "References use more syrup and pearls per glass. Ours: 208 g silken tofu, 2 tbsp dry pearls, 3 tbsp syrup."
+   "basis": "Panlasang Pinoy's own amounts: 22 oz silken tofu, 3/4 cup sago, 3/4 cup brown sugar for 3 (~440); it prints 605",
+   "note": "Reference corrected 25 Nov 2026 (the printed 605 is above its own ingredients). Pearls 1/2 -> 3/4 cup and syrup 1 -> 1 1/2 cups for 3, Panlasang Pinoy's amounts (Arianna)."
   },
   "maja_blanca": {
    "kcal": null,
@@ -870,11 +870,11 @@
    "note": null
   },
   "ginataang_bilo_bilo": {
-   "kcal": 400,
+   "kcal": 600,
    "status": "ok",
    "url": "https://www.hawaiianelectric.com/recipes/find-a-recipe/ginataang-bilo-bilo-(sticky-rice-balls-in-coconut-milk)",
-   "basis": "8 servings",
-   "note": "Recipe amounts: 4 cups coconut milk + 1 cup cream + ¾ cup sugar for 8 (467 kcal from those). Matches right."
+   "basis": "Hawaiian Electric's own amounts for 8 (3 cups glutinous rice, 2 cans lite coconut milk, 1 cup sugar, sweet potato, plantains, jackfruit, sago): ~600; it prints 400",
+   "note": "1 cup coconut cream dropped and reference corrected 25 Nov 2026 (Arianna). Ours uses full-fat coconut milk; Hawaiian Electric uses lite."
   },
   "polvoron_": {
    "kcal": null,
@@ -888,7 +888,7 @@
    "status": "ok",
    "url": "https://panlasangpinoy.com/wprm_print/sago-at-gulaman-recipe",
    "basis": "6 servings",
-   "note": "Recipe amounts: 2 tbsp dry pearls and about 2 tbsp brown sugar syrup a glass; Panlasang Pinoy is sweeter."
+   "note": "Pearls 2/3 -> 1 cup and syrup 1 1/4 -> 1 3/4 cups for 6 since 25 Nov 2026 (Arianna), near Panlasang Pinoy (1 cup pearls, 1 cup brown sugar)."
   },
   "calamansi_juice": {
    "kcal": 128,
@@ -905,11 +905,11 @@
    "note": null
   },
   "mango_shake": {
-   "kcal": 272,
+   "kcal": 350,
    "status": "ok",
    "url": "https://simplybakings.com/wprm_print/filipino-mango-shake",
-   "basis": "2 servings",
-   "note": "One whole mango (336 g) + 2 tbsp sugar in one shake; Simply Bakings splits a similar blend in 2."
+   "basis": "Simply Bakings' own amounts per glass (1 mango, 2 tbsp brown sugar, 2 tbsp evaporated milk): ~350; it prints 272",
+   "note": "Reference corrected 25 Nov 2026 (Arianna)."
   },
   "tsokolate_": {
    "kcal": null,
