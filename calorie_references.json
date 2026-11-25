@@ -65,11 +65,11 @@
    "note": null
   },
   "ginger_pork": {
-   "kcal": 306,
+   "kcal": 431,
    "status": "ok",
-   "url": "https://norecipes.com/shogayaki-japanese-ginger-pork/",
-   "basis": "3 servings",
-   "note": "Sugar 1.5 tbsp -> 2 tsp since 19 Nov 2026 (Arianna). Meat a serving is about Norecipes' (142 g loin vs 133 g rib chop); its 306 is below its own amounts (about 340), and ours keeps mirin and rice wine besides the sugar."
+   "url": "https://www.justonecookbook.com/ginger-pork-shogayaki/",
+   "basis": "Mean of two references' own amounts with our rows: Norecipes about 340 (prints 306) and Just One Cookbook about 522 for 2 (3/4 lb pork loin, 1 1/2 tbsp oil; prints 361)",
+   "note": "Swapped 25 Nov 2026 (Arianna): both print below their own amounts. Ours is 10 oz loin and 2 tsp oil for 2, between the two."
   },
   "shrimp_tempura": {
    "kcal": 198,
@@ -83,7 +83,7 @@
    "status": "ok",
    "url": "https://chefjacooks.com/en/wprm_print/the-best-japanese-vegetable-tempura-recipe",
    "basis": "4 servings",
-   "note": "Eggplant is 1 1/2 cups sliced (123 g, about one Japanese eggplant) since 25 Nov 2026 (Arianna); '1 small eggplant' had matched USDA's only whole eggplant, a 500 g globe one. Oil at 15% of the 548 g of vegetables (6 tbsp; it had been 7, matching no rate) and batter at 11% (7 tbsp flour, 1 tbsp cornstarch, 1/2 cup water): 413 -> 324. ChefJa's 250 prints no fat, so it counts little or no frying oil."
+   "note": "Eggplant is 1 1/2 cups sliced (123 g, about one Japanese eggplant) since 25 Nov 2026 (Arianna); '1 small eggplant' had matched USDA's only whole eggplant, a 500 g globe one. Oil at 15% of the 548 g of vegetables (6 tbsp; it had been 7, matching no rate) and batter at 11% (7 tbsp flour, 1 tbsp cornstarch, 1/2 cup water): 413 -> 324. ChefJa's 250 prints no fat, so it counts little or no frying oil. Checked 25 Nov 2026: ChefJa's recipe has about half again our vegetables, so its own amounts aren't a fair comparison; Allrecipes' sweet potato tempura counts frying oil (315, 14 g fat) but is one vegetable."
   },
   "yakitori_": {
    "kcal": null,
@@ -387,18 +387,18 @@
    "note": null
   },
   "chicken_adobo": {
-   "kcal": 374,
+   "kcal": 569,
    "status": "ok",
-   "url": "https://www.foxyfolksy.com/chicken-adobo-with-browned-garlic/",
-   "basis": "6 servings (Panlasang Pinoy 661 per 4)",
-   "note": "Skin-on thigh, one a piece: USDA 193 g (426 kcal), matching AUSNUT 2023's medium thigh with skin (195 g). Skin is about half its calories (skinless ≈ 180); Foxy Folksy's 374 points to smaller or skinless pieces. Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
+   "url": "https://panlasangpinoy.com/wprm_print/easy-chicken-adobo-recipe",
+   "basis": "Panlasang Pinoy's own amounts for 4 (one of our sources): 2 lb bone-in chicken pieces (about one USDA thigh a serving, as ours), 4 tbsp oil, chicken cube, soy sauce, vinegar; about 569 with our rows. It prints 661, counting the bone as meat",
+   "note": "Swapped 25 Nov 2026 (Arianna): Foxy Folksy's 374 is 2 lb of chicken for 6, the lightest of the sources (about 365 by its amounts). Food Network: 4-5 lb thighs for 6-8, about 548 by its amounts (prints 611). Skin-on is how all of them cook it."
   },
   "lechon_kawali": {
-   "kcal": 315,
+   "kcal": 238,
    "status": "ok",
-   "url": "https://www.bitemybun.com/lechon-kawali/",
-   "basis": "630 per 8 servings = 315 per slice at our 16 slices",
-   "note": "Skin-on pork belly is now USDA's Foundation belly with skin (385 kcal/100 g; was the old SR belly at 518): 297 → 222. Bite My Bun's figure was likely calculated from the old 518 value."
+   "url": "https://www.kawalingpinoy.com/lechon-kawali/",
+   "basis": "Kawaling Pinoy: 4 lb pork belly for 8, 951 a serving (227 g raw belly); scaled to our slice (2 lb for 16, 57 g) that is 238. Its amounts come to about 881 with our skin-on belly row",
+   "note": "Swapped 25 Nov 2026 (Arianna): Bite My Bun's 315 was likely from USDA's old 518 kcal/100 g belly."
   },
   "daing_na_bangus": {
    "kcal": null,
@@ -447,7 +447,7 @@
    "status": "ok",
    "url": "https://www.recipesbynora.com/wprm_print/bulalo-recipe-filipino-beef-shank-soup",
    "basis": "8 servings",
-   "note": "1 large potato and a second ear of corn added 19 Nov 2026 (Arianna), as in Recipes by Nora (2 large potatoes, 2 ears for 8). Remaining gap: USDA has only \"Beef shank crosscuts, lean only\" (128 kcal/100 g) and no beef bone marrow row; Nora prints 18 g fat a serving. Cut green beans fixed (canned -> raw)."
+   "note": "1 large potato and a second ear of corn added 19 Nov 2026 (Arianna), as in Recipes by Nora (2 large potatoes, 2 ears for 8). Remaining gap: USDA has only \"Beef shank crosscuts, lean only\" (128 kcal/100 g) and no beef bone marrow row; Nora prints 18 g fat a serving. Cut green beans fixed (canned -> raw). Checked 25 Nov 2026: Nora's amounts (3 lb shank for 8, as ours) come to about 238 with our rows; its 342 and 18 g fat include the marrow. Kawaling Pinoy (3 lb shank for 4, twice ours) prints 310 and adds up (about 320)."
   },
   "beef_nilaga": {
    "kcal": 390,
@@ -552,7 +552,7 @@
    "status": "ok",
    "url": "https://www.hungryhuy.com/chicken-inasal/",
    "basis": "5 servings",
-   "note": "One skin-on leg quarter a serving: USDA's \"1 leg with skin\" is 344 g (thigh, drumstick and back), 736 kcal, consistent with the thigh weight. Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
+   "note": "One skin-on leg quarter a serving: USDA's \"1 leg with skin\" is 344 g (thigh, drumstick and back), 736 kcal, consistent with the thigh weight. Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless. Checked 25 Nov 2026: Hungry Huy's 694 adds up (about 720 by its own amounts); it is 3 1/2 lb of legs for 5 (about 230 g of meat and skin a serving), ours one USDA leg quarter (344 g). Kawaling Pinoy's quarter of a 3-4 lb chicken is about 275 g."
   },
   "pinakbet_": {
    "kcal": 308,
@@ -793,11 +793,11 @@
    "note": "Reference doubtful; ours includes ½ cup ice cream (137) and ¼ cup evaporated milk."
   },
   "turon_": {
-   "kcal": 114,
+   "kcal": 194,
    "status": "ok",
-   "url": "https://www.hungryhuy.com/turon-recipe/",
-   "basis": "per piece (12)",
-   "note": "Absorbed oil 7 -> 4.25 tbsp since 25 Nov 2026: it had been written at the old 12% wrapper rate; 8% of the whole roll (wrapper, banana, jackfruit, brown sugar, about 59 g) is 4.25 tbsp for 12. 196 -> 168. Hungry Huy's 114 counts no frying oil (0.4 g fat); ours without oil is 126."
+   "url": "https://www.foxyfolksy.com/turon-recipe-banana-lumpia/",
+   "basis": "10 rolls: 5 saba bananas, 1 cup brown sugar, 1 cup jackfruit, 10 wrappers; 4 g fat a roll, so it counts about 3.5 g of frying oil. Its amounts come to about 179 with our rows",
+   "note": "Swapped 25 Nov 2026 (Arianna): Hungry Huy's 114 counted no frying oil. Absorbed oil 7 -> 4.25 tbsp since 25 Nov 2026 (8% wrapper rate): 196 -> 168. Foxy's rolls are a little bigger (half a banana each)."
   },
   "banana_cue": {
    "kcal": 350,
@@ -982,11 +982,11 @@
    "note": "Chicken Milanese base: 1¼ cutlets a serving (5 oz chicken) with their absorbed frying oil (158 kcal, 12% breaded rate). Natasha's Kitchen pan-fries in 2 tbsp for 4. Oil rates are Arianna's."
   },
   "eggplant_parmesan": {
-   "kcal": 424,
+   "kcal": 520,
    "status": "ok",
    "url": "https://natashaskitchen.com/wprm_print/classic-eggplant-parmesan-recipe",
-   "basis": "mean of Natasha 458 (8) and Petite Cook 390 (6)",
-   "note": "References count little or no frying oil: Natasha's 458 and Cup of Yum's 453 (16 g fat with 1/2 cup frying oil for 6) are below their own amounts with oil (checked 19 Nov 2026). Ours counts 177 kcal oil a serving at the 12% breaded rate. Oil rates are Arianna's."
+   "basis": "Natasha's own amounts for 8 with our rows and our breaded frying rate (12%): 2 lb eggplant, 3 eggs, 3/4 cup flour, 1 1/2 cups breadcrumbs, 1/2 cup parmesan, 32 oz marinara, 16 oz mozzarella; about 520. It prints 458",
+   "note": "Corrected 25 Nov 2026 (Arianna): Natasha's 458 counts about half the frying oil our 12% breaded rate does (checked against her own amounts). Cup of Yum's 453 does the same."
   },
   "chicken_piccata": {
    "kcal": null,
@@ -1003,11 +1003,11 @@
    "note": "1/2 cup heavy cream added since 25 Nov 2026 (Arianna), as both references finish the sauce with cream: 441 -> 543."
   },
   "chicken_cacciatore": {
-   "kcal": 790,
+   "kcal": 1218,
    "status": "ok",
-   "url": "https://www.onceuponachef.com/recipes/chicken-cacciatore.html",
-   "basis": "4 servings: 8 bone-in skin-on thighs (skin removed before serving), 2 tbsp oil",
-   "note": "Olive oil 5 -> 2 tbsp since 19 Nov 2026 (Arianna), Once Upon a Chef's. Remaining gap is the skin: it trims the skin, ours keeps it (settled 16 Nov 2026)."
+   "url": "https://grantourismotravels.com/chicken-cacciatore-recipe/",
+   "basis": "Grantourismo's own amounts for 4 (one of our sources): 8 bone-in skin-on thighs, 5 tbsp olive oil, red wine, 14 oz crushed tomatoes, 14 oz purée, 1 cup olives; about 1,218 with our rows. It prints 860",
+   "note": "Swapped 25 Nov 2026 (Arianna): Once Upon a Chef trims the skin. Grantourismo keeps it, with the same 8 thighs for 4 as ours; its 860 fits thighs of about 140 g, smaller than USDA's 193 g skin-on thigh. Chili Pepper Madness (2.5 lb of thighs for 4) comes to about 854 by its amounts and prints 478."
   },
   "saltimbocca_": {
    "kcal": null,
@@ -1024,11 +1024,11 @@
    "note": "Veal shank 2.5 -> 3.5 lb for 4 (about 14 oz a shank) since 25 Nov 2026 (Arianna), as Jo Cooks' 2-inch shanks (48 g protein a serving): 415 -> 477."
   },
   "beef_braciole": {
-   "kcal": 321,
+   "kcal": 405,
    "status": "ok",
-   "url": "https://www.marcellinaincucina.com/authentic-italian-braciole-recipe/",
-   "basis": "481 per serving of 4 (1½ lb top round, 1 cup pecorino, 4 tbsp oil, 28 oz tomatoes), rescaled to our 6",
-   "note": "4 cups marinara -> 3.5 cups canned crushed tomatoes since 19 Nov 2026 (Arianna), as Marcellina (28 oz tomatoes). Remaining gap: our pine nuts, raisins and dry breadcrumbs."
+   "url": "https://www.allrecipes.com/recipe/234352/chef-johns-beef-braciole/",
+   "basis": "Chef John's for 4: 1 lb top sirloin (4 oz a serving, as ours), breadcrumbs, raisins, parmesan, egg, 3 tbsp olive oil, 1 1/2 cups tomato sauce; about 394 with our rows",
+   "note": "Swapped 25 Nov 2026 (Arianna): Marcellina's 481 for 4, rescaled to 6, was a guess at its serving. Chef John's has raisins too; ours adds pine nuts and pecorino."
   },
   "sausage_and_peppers": {
    "kcal": 574,
@@ -1101,11 +1101,11 @@
    "note": "Ours per piece (24)."
   },
   "garlic_bread": {
-   "kcal": 287,
+   "kcal": 208,
    "status": "ok",
-   "url": "https://www.simplyscratch.com/wprm_print/67179",
-   "basis": "per slice (10)",
-   "note": "Slice size: 16 Italian bread slices (29 g, USDA) for 10 servings; Simply Scratch's slices are bigger with more butter."
+   "url": "https://www.onceuponachef.com/recipes/garlic-bread.html",
+   "basis": "Once Upon a Chef: 1 lb loaf, 6 tbsp butter and 2 tbsp olive oil, 346 a serving for 6; cut into 10, as ours (16 slices from about 1 lb), 208. Its amounts come to about 199 for 10 with our rows",
+   "note": "Swapped 25 Nov 2026 (Arianna): Simply Scratch's 287 had bigger slices and more butter."
   },
   "focaccia_": {
    "kcal": null,
@@ -1220,11 +1220,11 @@
    "note": "Spend with Pennies and RecipeTin both add meat; without Spend with Pennies' sausage (about 165 kcal a serving) it is about 477, close to ours."
   },
   "shrimp_scampi": {
-   "kcal": 910,
+   "kcal": 767,
    "status": "ok",
-   "url": "https://askchefdennis.com/wprm_print/classic-shrimp-scampi-recipe",
-   "basis": "2 servings with ½ lb linguine (4 oz dry each)",
-   "note": "Linguine 6 -> 8 cups cooked (4 oz dry a plate, as Chef Dennis) since 19 Nov 2026 (Arianna). Chef Dennis also has twice the butter and Romano."
+   "url": "https://www.allrecipes.com/recipe/229960/shrimp-scampi-with-pasta/",
+   "basis": "Allrecipes: 1 lb linguine and 1 lb shrimp (as ours) with 2 tbsp butter and 2 tbsp oil, 511 a serving for 6; for 4 servings, as ours, 767. Its amounts come to about 660 for 4 with our rows",
+   "note": "Swapped 25 Nov 2026 (Arianna): Chef Dennis' 910 was 2 servings from 1/2 lb linguine, twice the butter and Romano. Linguine 6 -> 8 cups cooked since 19 Nov 2026."
   },
   "linguine_alle_vongole": {
    "kcal": 703,
