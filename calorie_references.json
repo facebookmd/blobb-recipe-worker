@@ -83,7 +83,7 @@
    "status": "ok",
    "url": "https://chefjacooks.com/en/wprm_print/the-best-japanese-vegetable-tempura-recipe",
    "basis": "4 servings",
-   "note": "Absorbed oil: 210 of 413 kcal, 7 tbsp at 15% (wet-battered) of the ~925 g of vegetables; reference counts much less oil. Batter at the 11% rate (3/4 cup flour, 1 tbsp cornstarch). \"1 small eggplant\" is USDA's only eggplant, 500 g."
+   "note": "Eggplant is 1 1/2 cups sliced (123 g, about one Japanese eggplant) since 25 Nov 2026 (Arianna); '1 small eggplant' had matched USDA's only whole eggplant, a 500 g globe one. Oil at 15% of the 548 g of vegetables (6 tbsp; it had been 7, matching no rate) and batter at 11% (7 tbsp flour, 1 tbsp cornstarch, 1/2 cup water): 413 -> 324. ChefJa's 250 prints no fat, so it counts little or no frying oil."
   },
   "yakitori_": {
    "kcal": null,
@@ -804,7 +804,7 @@
    "status": "ok",
    "url": "https://www.snapcalorie.com/nutrition/banana_cue_nutrition.html",
    "basis": "SnapCalorie 250 per 150 g (167/100 g), scaled to our ~210 g skewer (2 saba, 1/6 cup brown sugar, absorbed oil)",
-   "note": "Swapped 19 Nov 2026 (Arianna). Foxy Folksy's 150 (same amounts: 12 saba, 1 cup brown sugar for 6) is below its own bananas and sugar (~284 before oil); Cup of Yum repeats it. SnapCalorie is an estimate, the only figure found that counts the sugar."
+   "note": "Swapped 19 Nov 2026 (Arianna). Foxy Folksy's 150 (same amounts: 12 saba, 1 cup brown sugar for 6) is below its own bananas and sugar (~284 before oil); Cup of Yum repeats it. SnapCalorie is an estimate, the only figure found that counts the sugar. Absorbed oil 4.5 -> 3.5 tbsp since 25 Nov 2026 (Arianna): 5% (thick starchy) of the bananas alone (972 g), not bananas plus sugar: 374 -> 354."
   },
   "biko_": {
    "kcal": 538,
