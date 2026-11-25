@@ -445,7 +445,7 @@ AKA: Saffron risotto", "Risotto milanese", "Risotto allo zafferano
 Servings: 4
 5 tbsp butter
 1 small onion
-2 cup uncooked arborio rice
+1.5 cup uncooked arborio rice
 1/2 cup dry white wine
 5 cup chicken broth
 1/2 tsp saffron threads

@@ -9,11 +9,11 @@
    "note": null
   },
   "chashu_pork": {
-   "kcal": 190,
-   "status": "ok",
+   "kcal": null,
+   "status": "not_comparable",
    "url": "https://orwhateveryoudo.com/2018/11/chashu-pork-belly-recipe.html",
-   "basis": "379 per serving; Biting at the Bits serves 2 slices, so ~190 per slice",
-   "note": "24 slices from 2 lb skinless belly (16 Nov 2026; was 16 slices): 1.3 oz raw belly a slice, with none of the rendered fat lost. 298 -> 198 (slices) -> 148 (belly row). Skinless belly is USDA's Foundation belly (385 kcal/100 g) since 16 Nov 2026 (alias, USDA migration 20261116150000); it was the SR belly (518). Kept at 24 slices after the belly change (Arianna, 16 Nov 2026), 22% under the reference; the reference's belly figure wasn't checked."
+   "basis": "Or Whatever You Do 379 a serving (1 lb skin-on belly for 8) and Caroline's Cooking 1,378 (2 lb belly for 4) both count the whole braising liquid as eaten",
+   "note": "Checked 25 Nov 2026: both references count all the braise (sugar, mirin, sake; 37-39 g carbs a serving), which ours leaves in the pot (absorbed marinade only), and Caroline's also uses USDA's old SR belly (518 kcal/100 g). The meat itself matches: Caroline's 2 lb belly, the same as ours, comes to 146 a slice in our 24 with our rows; ours is 148. Skinless belly is USDA's Foundation belly (385 kcal/100 g) since 16 Nov 2026."
   },
   "ramen_egg": {
    "kcal": 82,
@@ -83,7 +83,7 @@
    "status": "ok",
    "url": "https://chefjacooks.com/en/wprm_print/the-best-japanese-vegetable-tempura-recipe",
    "basis": "4 servings",
-   "note": "Eggplant is 1 1/2 cups sliced (123 g, about one Japanese eggplant) since 25 Nov 2026 (Arianna); '1 small eggplant' had matched USDA's only whole eggplant, a 500 g globe one. Oil at 15% of the 548 g of vegetables (6 tbsp; it had been 7, matching no rate) and batter at 11% (7 tbsp flour, 1 tbsp cornstarch, 1/2 cup water): 413 -> 324. ChefJa's 250 prints no fat, so it counts little or no frying oil. Checked 25 Nov 2026: ChefJa's recipe has about half again our vegetables, so its own amounts aren't a fair comparison; Allrecipes' sweet potato tempura counts frying oil (315, 14 g fat) but is one vegetable."
+   "note": "Eggplant is 1 1/2 cups sliced (123 g, about one Japanese eggplant) since 25 Nov 2026 (Arianna); '1 small eggplant' had matched USDA's only whole eggplant, a 500 g globe one. Oil at 15% of the 548 g of vegetables (6 tbsp; it had been 7, matching no rate) and batter at 11% (7 tbsp flour, 1 tbsp cornstarch, 1/2 cup water): 413 -> 324. ChefJa's 250 prints no fat, so it counts little or no frying oil. Checked 25 Nov 2026: ChefJa's recipe has about half again our vegetables, so its own amounts aren't a fair comparison; Allrecipes' sweet potato tempura counts frying oil (315, 14 g fat) but is one vegetable. Checked again 25 Nov 2026: Allrecipes' vegan tempura veggies (246 for 4, 9 g fat) counts about 7 g oil a serving; our 15% oil rate on the vegetables gives 21 g. The gap is the oil rate, not a matching error."
   },
   "yakitori_": {
    "kcal": 145,
@@ -440,7 +440,7 @@
    "status": "recipe_match",
    "url": "https://panlasangpinoy.com/wprm_print/chicken-tinola-recipe-2",
    "basis": "Panlasang Pinoy's own amounts for 6 (3 lb bone-in skin-on chicken, green papaya, oil) with our rows: ~561 (it prints 662, counting the bone as meat); with our 125 g edible chicken a serving instead of its 188 g, 421",
-   "note": "Rechecked 25 Nov 2026: ours is 13% under Panlasang Pinoy at our chicken, all of it from amounts: it has 1 cup green papaya and 1/2 tbsp oil a serving (6 cups, 3 tbsp for 6), ours 1/2 cup and 1/3 tbsp (-31 and -20 kcal). Nora's 240 and Panlasang Pinoy's printed 662 disagree. Thigh weight confirmed (see chicken_adobo). Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
+   "note": "Green papaya 3 -> 6 cups for 6 (1 cup a bowl) since 25 Nov 2026 (Arianna), as Panlasang Pinoy: 366 -> 397. The rest of the gap is its 1/2 tbsp oil a bowl to our 1/3. Nora's 240 and Panlasang Pinoy's printed 662 disagree. Thigh weight confirmed (see chicken_adobo). Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless."
   },
   "bulalo_": {
    "kcal": 342,
@@ -769,7 +769,7 @@
    "status": "ok",
    "url": "https://www.bitemybun.com/wprm_print/recipe/9736",
    "basis": "Bite My Bun for 6 (500 g fresh miki, 300 g pork belly, 150 g liver, 2 hearts, stocks, chicharon, an egg a bowl), 774; holds for its own amounts (~750-830)",
-   "note": "Rechecked 25 Nov 2026. Ours is about half: 3 1/2 cups cooked egg noodles for 6 (about 0.6 cup a bowl, Bite My Bun about twice that), no egg and no heart. Panlasang Pinoy's 1,240 (with 1 lb intestine) is beyond its own amounts."
+   "note": "Cooked egg noodles 3 1/2 -> 6 cups for 6 (1 cup a bowl) since 25 Nov 2026 (Arianna): 398 -> 490. Still under Bite My Bun, whose bowl has more noodles (500 g fresh miki for 6), an egg and pork heart; the egg is left out of ours (an optional topping). Panlasang Pinoy's 1,240 (with 1 lb intestine) is beyond its own amounts."
   },
   "pancit_malabon": {
    "kcal": 585,
@@ -783,7 +783,7 @@
    "status": "ok",
    "url": "https://www.kawalingpinoy.com/wprm_print/leche-flan",
    "basis": "Kawaling Pinoy for 12 (12 yolks, 14 oz condensed milk, 12 oz evaporated milk, 9 tbsp sugar), 239 a slice; holds for its own amounts (~234)",
-   "note": "Rechecked 25 Nov 2026. Ours is 14% under, from amounts: 10 yolks and 1 cup (about 11 oz) condensed milk for 12. Foxy Folksy's amounts, nearly ours (10 yolks, 10 oz condensed milk), come to about 193 with our rows; it prints 81."
+   "note": "Condensed milk 1 -> 1 1/4 cups (a 14 oz can) since 25 Nov 2026 (Arianna), as Kawaling Pinoy and most Filipino flans: 205 -> 225. It has 12 yolks to our 10 (Foxy Folksy's 10). Foxy Folksy's amounts come to about 193 with our rows; it prints 81."
   },
   "halo_halo": {
    "kcal": null,
@@ -1077,7 +1077,7 @@
    "status": "ok",
    "url": "https://www.themediterraneandish.com/wprm_print/risotto-alla-milanese-saffron-risotto",
    "basis": "The Mediterranean Dish: 1 1/2 cups rice, 3 tbsp olive oil, 1 tbsp butter, 1/2 cup cheese; 352 a serving at its 6 side servings, 528 at its 4 main servings, as ours. Holds for its own amounts (~327 for 6)",
-   "note": "Rechecked 25 Nov 2026. Ours is 13% over: 2 cups rice and 5 tbsp butter for 4. Giangi's 395 is below its own amounts."
+   "note": "Arborio 2 -> 1 1/2 cups for 4 since 25 Nov 2026 (Arianna), as The Mediterranean Dish: 599 -> 509. Ours has 5 tbsp butter to its 3 tbsp oil and 1 butter. Giangi's 395 is below its own amounts."
   },
   "arancini_": {
    "kcal": null,
@@ -1284,10 +1284,10 @@
   },
   "affogato_": {
    "kcal": 276,
-   "status": "ok",
+   "status": "not_comparable",
    "url": "https://www.onceuponachef.com/recipes/affogato.html",
    "basis": "1 portion",
-   "note": "Once Upon a Chef's 276 is the same 1/2 cup gelato and 2 tbsp espresso as ours plus its optional shaved chocolate and liqueur splash; Taming Twins' one scoop of ice cream and espresso prints 139. Ours counts FNDDS vanilla gelato (175 g a cup, denser than ice cream's 132 g). Checked 25 Nov 2026."
+   "note": "Checked 25 Nov 2026: Once Upon a Chef's 276 is the same 1/2 cup gelato and 2 tbsp espresso as ours plus its optional shaved chocolate and liqueur; Allrecipes' 159 for 5.5 oz gelato is below the gelato alone; Taming Twins' 139 is one scoop of ice cream, not gelato. Ours counts FNDDS vanilla gelato (175 g a cup), about 220 for 1/2 cup."
   },
   "cappuccino_": {
    "kcal": null,
