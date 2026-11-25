@@ -693,6 +693,8 @@ def parse_ingredient_line(raw: str) -> dict | None:
 # matcher counts the edible share (recipe_matcher.EDIBLE_SHARE). Counts never
 # need it: USDA's count portions ("1 thigh", "1 large" shrimp) are edible
 # weights already (SR28 documentation, "Weights and Measures").
+# A dried weight is the other way round: it stands for more fresh food when
+# the matcher's only food is the fresh one ("dried taro leaves", 25 Nov 2026).
 WEIGHT_UNITS = {"g", "kg", "oz", "lb"}
 AS_BOUGHT_SAID = (
     ("bone-in", re.compile(r"(?i)\bbone[- ]?in\b")),
@@ -717,8 +719,8 @@ FISH_FLESH_RE = re.compile(
 
 def as_bought(unit: str, ingredient: str) -> str:
     """How a weight line's food was bought when it isn't all food:
-    "bone-in", "head-on", "shell-on" or "whole" (fish); "" for anything
-    else, and for counts and volumes."""
+    "bone-in", "head-on", "shell-on" or "whole" (fish), or "dried"; "" for
+    anything else, and for counts and volumes."""
     if unit not in WEIGHT_UNITS:
         return ""
     if re.search(r"(?i)\bboneless\b", ingredient) or NOT_THE_CUT_RE.search(ingredient):
@@ -730,6 +732,8 @@ def as_bought(unit: str, ingredient: str) -> str:
         return "whole"
     if ALWAYS_BONE_IN_RE.search(ingredient):
         return "bone-in"
+    if re.search(r"(?i)\bdried\b", ingredient):
+        return "dried"
     return ""
 
 

@@ -4024,6 +4024,12 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
 # in shell to peeled 81%. Whole milkfish is about 60% flesh in published
 # yield studies; there is no USDA figure (Arianna). Not FNRI's figures:
 # FNRI declined reuse.
+# A dried weight counts as the fresh food it came from when USDA has only the
+# fresh one, so its share is above 1. Dried taro leaves (laing): USDA has
+# none; raw taro leaves (SR 11520) are 85.66 g water per 100 g, 14.34 g
+# solids. Dried leaves are taken as 10% water, an assumption, not a
+# measurement: 0.90 / 0.1434 = 6.3 g fresh per g dried, about 260 kcal per
+# 100 g dried (Arianna, 25 Nov 2026).
 EDIBLE_SHARE = (
     ("bone-in", r"\bveal shank separable\b", 0.51, "bone", "SR 17435"),
     ("bone-in", r"\bveal shank fore and hind\b", 0.71, "bone", "SR 17276"),
@@ -4043,6 +4049,8 @@ EDIBLE_SHARE = (
     ("head-on", r"\bshrimp\b", 0.57 * 0.81, "head and shell", "USDA AH-102"),
     ("shell-on", r"\bshrimp\b", 0.81, "shell", "USDA AH-102"),
     ("whole", r"\bmilkfish\b", 0.60, "head, bones and fins", "published yields"),
+    ("dried", r"\btaro leaves\b", 6.3, "dried, counted as fresh",
+     "SR 11520 water, dried at 10% assumed"),
 )
 
 
@@ -4820,9 +4828,10 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
             bone_tag = ""
             edible = _edible_share(food, as_bought)
             if edible is not None and section != ABSORBED_OIL_SECTION:
-                share, what, source = edible
+                share, what, share_source = edible
                 portion_amt *= share
-                bone_tag = f" [{what} {1 - share:.0%} left out, {source}]"
+                bone_tag = (f" [{what} {1 - share:.0%} left out, {share_source}]" if share < 1
+                            else f" [{what} x{share:g}, {share_source}]")
 
             cal_tot_formula=round(cal_formula * portion_amt, 1) if isinstance(cal_formula, float) else ""
             source_tag=" [BRANDED]" if source=="branded" else ""

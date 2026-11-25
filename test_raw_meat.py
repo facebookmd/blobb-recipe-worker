@@ -103,6 +103,18 @@ def test_milkfish_by_weight_is_the_whole_fish(line, share):
     assert (got and got[0]) == (pytest.approx(share) if share else None)
 
 
+@pytest.mark.parametrize("line, share", [
+    ("3 oz dried taro leaves", 6.3),        # counted as the fresh leaves
+    ("1 lb taro leaves", None),             # fresh already
+    ("1 cup dried taro leaves", None),      # a volume: no share
+])
+def test_dried_taro_leaves_count_as_fresh(line, share):
+    taro = usda("168487", "Taro leaves, raw", [portion(1, "1 cup", 28.0)], 42.0, raw=True)
+    parsed = parser.parse_ingredient_line(line)
+    got = matcher._edible_share(taro, parsed["as_bought"])
+    assert (got and got[0]) == (pytest.approx(share) if share else None)
+
+
 def test_pork_hock_takes_the_fresh_shank_half_s_share():
     # The alias is the fresh leg's shank half (SR 10016, 28% refuse); the
     # cured FNDDS ham hock has no SR refuse, so no share (28 Oct 2026).
