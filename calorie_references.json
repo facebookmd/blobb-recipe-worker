@@ -55,7 +55,7 @@
    "status": "ok",
    "url": "https://japan.recipetineats.com/wprm_print/japanese-fried-chicken-karaage-chicken",
    "basis": "217 g serving",
-   "note": null
+   "note": "No frying oil since 25 Nov 2026 (Arianna): MEXT 2020 Table 13 weighed skin-on thigh karaage at -0.7 g fat per 100 g raw. Coating capped at 11%, the most its sources set out (Tasting Table: 3 tbsp flour, 3 tbsp potato starch for 1 lb): 4.5 tbsp starch, 3 tbsp flour. 610 -> 468."
   },
   "teriyaki_chicken": {
    "kcal": 446,
@@ -1413,7 +1413,7 @@
    "status": "not_comparable",
    "url": "https://www.recipetineats.com/fried-chicken/",
    "basis": "280 per 100 g boneless (KFC figure)",
-   "note": "RecipeTin prints KFC's per-100 g figure, not its recipe. Coating at the 15% wet-surface rate (1.5 cups flour for 1.3 kg chicken); the buttermilk and egg soak at the 5% marinade rate."
+   "note": "RecipeTin prints KFC's per-100 g figure, not its recipe. Coating at the 15% wet-surface rate (1.5 cups flour for 1.3 kg chicken); the buttermilk and egg soak at the 5% marinade rate. No frying oil since 25 Nov 2026 (coated skin-on chicken, MEXT 2020 Table 13): 519 -> 414. Coating stays 15%: its sources set out 30-40%."
   },
   "pot_roast": {
    "kcal": 585,

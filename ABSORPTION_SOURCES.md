@@ -79,6 +79,10 @@ A wet surface holds four times the flour of a dry one. Meat and fish
 differed little next to the spread between cooks (Nawata), so the rates
 aren't split by food.
 
+**MEXT 2020 (eighth edition), Table 13** (揚げ物等における衣の割合及び脂質量の増減, checked 25 Nov 2026) repeats the 2015 karaage rows: chicken thigh with karaage mix (から揚げ粉), coating 14.3 g (skin-on) and 15.6 g (skinless) per 100 g raw; small horse mackerel with flour 3.5 g. It still has no row for plain potato starch or flour on marinated meat. Its fat column is the one that matters for fried chicken: skin-on thigh karaage **−0.7 g** per 100 g raw (no net oil), skinless **+4.3 g**, horse mackerel +9.7 g. So coated skin-on chicken takes no frying oil in the recipes (RECIPE_RULES.md). [PDF](https://www.mext.go.jp/content/20201225-mxt_kagsei-mext_01110_011.pdf), pp. 58–59.
+
+**Cap.** Recipes set out less than 15% for plain-starch karaage: RecipeTin Japan 20 g cornstarch for 350 g (5.7%), Just One Cookbook 2 tbsp flour + 2 tbsp starch for 1½ lb (about 5%), Tasting Table 3 tbsp + 3 tbsp for 1 lb (about 11%). A coating that the cook didn't set out can't stick, so the rate is capped at the most a recipe's sources set out per gram of food. Southern fried chicken's sources set out 30–40% (RecipeTin Eats 2¼ cups flour and ¾ cup cornstarch for 1.8 kg; Jo Cooks 2 cups for 2 lb), so 15% stands there.
+
 Not found: a measurement of plain flour on buttermilk-soaked chicken, or of
 home dredging in English. Food-science papers on industrial batters and
 breadings report 11–36% pickup ([Effect of breading particle size on coating

@@ -202,6 +202,8 @@ For anything cooked in a liquid or fat that is mostly discarded, list only what 
 
 Sautés, stir-fries, stews and braises: list **all** the oil — it stays in the dish.
 
+Coated skin-on chicken (karaage, Southern fried chicken) keeps **no** frying oil: list no `--Absorbed oil` section. MEXT 2020 Table 13 weighed skin-on thigh karaage at −0.7 g fat per 100 g raw, coating included (the skin's rendered fat outweighs what the coating takes up); skinless thigh gained 4.3 g. Recipes only, since 25 Nov 2026 (Arianna): Convert recipe still gives these the starch-dusted rate.
+
 Battered, breaded or dusted food takes the rate on the food alone, not the food plus its coating: nobody knows how much batter clings (`16 large shrimp`, 112 g, wet-battered at 15% is 17 g, `1.25 tbsp`). The coating's own calories are its own lines.
 
 These rates are fixed. Use them as they are; never change a rate or add a row while writing recipes. Changing one is Arianna's call.
@@ -223,7 +225,7 @@ Coating set out in a bowl is mostly left there. List only what sticks: the rate 
 | Flour or starch on a wet surface (marinated, buttermilk-soaked: karaage, Southern fried chicken) | 15% |
 | Wet batter (tempura, kwek-kwek): its flour and starch | 11% |
 
-The liquid the food soaked in follows the marinade rule below. For a wet batter, scale its egg, water and seasoning by the same share as its flour (`16 large shrimp`, 112 g: 1.5 tbsp flour, 1/6 egg, 1.5 tbsp water). These rates are fixed: use them as they are; changing one is Arianna's call. Sources: `ABSORPTION_SOURCES.md`, "Coatings".
+A coating never counts more per gram of food than the most any of the recipe's sources sets out: karaage's sources set out 5–11% (Tasting Table: 3 tbsp flour and 3 tbsp potato starch for 1 lb thighs), so it lists 11%, not 15% (25 Nov 2026, Arianna). The liquid the food soaked in follows the marinade rule below. For a wet batter, scale its egg, water and seasoning by the same share as its flour (`16 large shrimp`, 112 g: 1.5 tbsp flour, 1/6 egg, 1.5 tbsp water). These rates are fixed: use them as they are; changing one is Arianna's call. Sources: `ABSORPTION_SOURCES.md`, "Coatings".
 
 ### Marinades (`--Absorbed marinade`)
 
