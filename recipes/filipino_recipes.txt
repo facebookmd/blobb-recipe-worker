@@ -112,7 +112,7 @@ Pork Sinigang
 ID: pork_sinigang
 AKA: Sinigang na baboy", "Sinigang", "Pork sinigang sa sampalok
 Servings: 6
-1.5 lb pork belly
+3.5 cup cooked pork belly
 1 tbsp vegetable oil
 1 medium onion
 4 clove garlic
@@ -128,6 +128,8 @@ Servings: 6
 1 packet tamarind soup mix
 1 tbsp fish sauce
 1 tbsp salt
+--Drippings
+3.5 tbsp animal fat or drippings
 SOURCE: https://www.knorr.com/ph/r/sinigang-na-baboy-by-mommy-beauty.html/216156, https://www.hungryhuy.com/sinigang-na-baboy/, https://www.recipesbynora.com/sinigang-na-baboy-recipe/
 
 
@@ -232,7 +234,7 @@ Sopas
 ID: sopas_
 AKA: Chicken sopas", "Chicken macaroni soup", "Filipino chicken macaroni soup
 Servings: 6
-1 lb boneless skinless chicken breast
+2.25 cup stewed skinless chicken breast
 3 tbsp vegetable oil
 1 medium onion
 4 clove garlic
@@ -245,6 +247,8 @@ Servings: 6
 1.5 cup evaporated milk
 1 tbsp fish sauce
 1/4 tsp black pepper
+--Drippings
+0.5 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/creamy-chicken-sopas, https://iankewks.com/chicken-sopas-recipe/, https://www.bitemybun.com/filipino-creamy-chicken-sopas-recipe/
 
 
@@ -253,7 +257,7 @@ Sotanghon Soup
 ID: sotanghon_soup
 AKA: Chicken sotanghon", "Chicken sotanghon soup", "Glass noodle soup
 Servings: 4
-1.25 lb boneless skinless chicken breast
+3 cup stewed skinless chicken breast
 2.5 tbsp vegetable oil
 1 medium onion
 4 clove garlic
@@ -265,6 +269,8 @@ Servings: 4
 1.5 cup shredded cabbage
 1 tbsp fish sauce
 2 tbsp chopped green onion
+--Drippings
+0.25 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/chicken-sotanghon-soup-2, https://www.thelittleepicurean.com/wprm_print/chicken-sotanghon-soup, https://www.sbs.com.au/food/recipes/filipino-chicken-noodle-soup-sotanghon
 
 
@@ -290,7 +296,7 @@ Kare-Kare
 ID: kare_kare
 AKA: Kare kare", "Oxtail kare-kare", "Oxtail peanut stew
 Servings: 8
-2 lb oxtail
+3.75 cup cooked oxtail
 6 cup water
 2 tbsp vegetable oil
 1 tbsp annatto powder
@@ -339,7 +345,7 @@ Beef Mechado
 ID: beef_mechado
 AKA: Mechado", "Mechadong baka
 Servings: 6
-1.75 lb beef chuck
+4.25 cup cooked beef stew meat
 4 oz pork fatback
 1/3 cup soy sauce
 3 tbsp lemon juice
@@ -354,6 +360,8 @@ Servings: 6
 1 red bell pepper
 1 green bell pepper
 1/2 tsp black pepper
+--Drippings
+4.25 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/beef-mechado-recipe, https://tarasmulticulturaltable.com/wprm_print/mechadong-baka-filipino-beef-mechado, https://www.foxyfolksy.com/wprm_print/17539
 
 
@@ -383,7 +391,7 @@ Pork Menudo
 ID: pork_menudo
 AKA: Menudo", "Filipino menudo
 Servings: 6
-2.25 lb boneless pork shoulder
+5.25 cup cooked pork roast
 8 oz pork liver
 3 tbsp vegetable oil
 1 medium onion
@@ -397,6 +405,8 @@ Servings: 6
 1 large carrot
 3 hot dog
 1/2 cup raisins
+--Drippings
+6 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/filipino-pork-menudo-recipe-2, https://www.krumpli.co.uk/wprm_print/filipino-pork-menudo-recipe, https://www.rivertenkitchen.com/wprm_print/pork-menudo-filipino-recipe
 
 
@@ -456,7 +466,7 @@ Bicol Express
 ID: bicol_express
 AKA: Pork bicol express", "Pork in spicy coconut milk", "Sinilihan
 Servings: 4
-1.25 lb pork belly
+3 cup cooked pork belly
 1 tbsp vegetable oil
 1 small onion
 4 clove garlic
@@ -466,6 +476,8 @@ Servings: 4
 1.5 cup water
 4 long green chili pepper
 8 Thai chili pepper
+--Drippings
+5.5 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/pork-bicol-express-recipe, https://www.kawalingpinoy.com/wprm_print/bicol-express, https://www.pepper.ph/recipes/bicol-express
 
 
@@ -517,7 +529,7 @@ Pinakbet
 ID: pinakbet_
 AKA: Pakbet", "Pinakbet Tagalog", "Vegetable stew with shrimp paste
 Servings: 4
-8 oz pork belly
+1.125 cup cooked pork belly
 1 tbsp vegetable oil
 4 clove garlic
 1 small onion
@@ -530,6 +542,8 @@ Servings: 4
 8 whole okra
 1 cup cut yardlong beans
 1 cup water
+--Drippings
+2.5 tbsp animal fat or drippings
 SOURCE: https://pepper.ph/recipes/best-pinakbet-with-chicharon, https://thequirinokitchen.com/wprm_print/pinakbet-filipino-vegetable-stew-in-shrimp-paste, https://www.rivertenkitchen.com/wprm_print/pinakbet-tagalog-recipe
 
 
@@ -556,7 +570,7 @@ Dinuguan
 ID: dinuguan_
 AKA: Pork blood stew", "Chocolate meat", "Dinardaraan
 Servings: 4
-1 lb pork belly
+2.25 cup cooked pork belly
 2 tbsp vegetable oil
 1 small onion
 3 clove garlic
@@ -567,6 +581,8 @@ Servings: 4
 2 tsp brown sugar
 1 tbsp fish sauce
 1/2 tsp salt
+--Drippings
+2.5 tbsp animal fat or drippings
 SOURCE: https://www.recipesbynora.com/wprm_print/dinuguan-recipe-pork-blood-stew, https://panlasangpinoy.com/wprm_print/dinuguan-recipe, https://www.bitemybun.com/wprm_print/pork-dinuguan-recipe
 
 
@@ -594,7 +610,7 @@ Pork Giniling
 ID: pork_giniling
 AKA: Giniling", "Giniling na baboy", "Ground pork with potatoes
 Servings: 6
-1.25 lb ground pork
+3.25 cup cooked ground pork
 1 tbsp vegetable oil
 1 small onion
 2 clove garlic
@@ -607,6 +623,8 @@ Servings: 6
 1/4 cup raisins
 1/2 tsp salt
 1/4 tsp black pepper
+--Drippings
+2.75 tbsp animal fat or drippings
 SOURCE: https://www.foxyfolksy.com/wprm_print/22406, https://www.bitemybun.com/pork-giniling-recipe/, https://www.kawalingpinoy.com/wprm_print/recipe/26972
 
 
@@ -645,7 +663,7 @@ ID: ginisang_monggo
 AKA: Monggo", "Munggo", "Mung bean stew", "Monggo guisado
 Servings: 6
 1.25 cup dried mung beans
-8 oz pork belly
+1.125 cup cooked pork belly
 2 tbsp vegetable oil
 4 clove garlic
 1 medium onion
@@ -656,6 +674,8 @@ Servings: 6
 1 cup moringa leaves
 1 cup spinach
 1/2 cup crushed pork rinds
+--Drippings
+2.5 tbsp animal fat or drippings
 SOURCE: https://www.knorr.com/ph/r/ginisang-monggo-recipe.html/175486, https://www.bitemybun.com/wprm_print/easy-ginisang-munggo-mung-bean-stew-recipe, https://panlasangpinoy.com/wprm_print/ginisang-monggo-with-kalabasa
 
 
@@ -727,7 +747,7 @@ Arroz Caldo
 ID: arroz_caldo
 AKA: Chicken arroz caldo", "Chicken rice porridge", "Filipino chicken congee", "Lugaw with chicken
 Servings: 6
-1 lb bone-in skin-on chicken thigh
+3 stewed skin-on chicken thigh
 2 tbsp vegetable oil
 9 clove garlic
 1 medium onion
@@ -738,6 +758,8 @@ Servings: 6
 3 large hard-boiled egg
 1/4 cup chopped green onion
 lemon wedge for serving
+--Drippings
+1 tbsp animal fat or drippings
 SOURCE: https://theforkedspoon.com/wprm_print/arroz-caldo-recipe-filipino-chicken-and-rice-porridge, https://norecipes.com/wprm_print/arroz-caldo-filipino-chicken-porridge, https://www.rivertenkitchen.com/wprm_print/easy-chicken-arroz-caldo
 
 
@@ -834,11 +856,13 @@ Servings: 6
 4.75 cup coconut milk
 1.5 cup coconut cream
 1/3 cup sauteed shrimp paste
-6 oz pork shoulder
+0.875 cup cooked pork roast
 1 medium onion
 6 clove garlic
 1/3 cup sliced ginger
 6 Thai chili pepper
+--Drippings
+1 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/48888, https://www.foxyfolksy.com/wprm_print/11486, https://www.bitemybun.com/laing-recipe-taro-leaves-in-coconut-milk/
 
 
@@ -847,7 +871,7 @@ Chop Suey
 ID: chop_suey
 AKA: Chopsuey", "Filipino chop suey", "Filipino chopsuey
 Servings: 4
-10 oz pork shoulder
+1.5 cup cooked pork roast
 2 tbsp vegetable oil
 1 medium onion
 4 clove garlic
@@ -860,6 +884,8 @@ Servings: 4
 2 tsp soy sauce
 3/4 cup water
 1 tbsp cornstarch
+--Drippings
+1.5 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/chopsuey-with-quail-eggs, https://www.manilaspoon.com/wprm_print/how-to-cook-chopsuey, https://tasty.co/recipe/filipino-home-style-chop-suey
 
 
@@ -938,7 +964,7 @@ Ginataang Kalabasa at Sitaw
 ID: ginataang_kalabasa_at_sitaw
 AKA: Squash and long beans in coconut milk", "Ginataang sitaw at kalabasa", "Ginataang gulay
 Servings: 4
-3 oz pork belly
+0.5 cup cooked pork belly
 2 tbsp vegetable oil
 1 small onion
 3 clove garlic
@@ -947,6 +973,8 @@ Servings: 4
 2 cup cut yardlong beans
 1/2 tsp salt
 1/4 tsp black pepper
+--Drippings
+0.5 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/ginataang-kalabasa-at-sitaw, https://www.bitemybun.com/ginataang-sitaw-at-kalabasa-recipe, https://www.knorr.com/ph/r/ginataang-sitaw-at-kalabasa-recipe.html/214415
 
 
@@ -973,7 +1001,7 @@ Servings: 6
 4 tbsp vegetable oil
 5 clove garlic
 1 medium onion
-12 oz boneless skinless chicken thigh
+1.75 cup stewed skinless chicken thigh
 8 oz shrimp
 2 stalk celery
 3/4 cup julienned carrot
@@ -984,6 +1012,8 @@ Servings: 6
 3.5 cup cooked rice vermicelli
 1/4 tsp black pepper
 lemon wedge for serving
+--Drippings
+1 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/51154, https://thequirinokitchen.com/wprm_print/pancit-bihon-guisado, https://www.krumpli.co.uk/pancit-bihon/
 
 
@@ -993,7 +1023,7 @@ ID: pancit_canton
 AKA: Canton", "Pancit canton guisado", "Filipino stir-fried egg noodles
 Servings: 6
 2 tbsp vegetable oil
-4 oz pork belly
+0.625 cup cooked pork belly
 4 oz shrimp
 3 clove garlic
 1 small onion
@@ -1005,6 +1035,8 @@ Servings: 6
 2 tsp fish sauce
 5 cup cooked egg noodles
 lemon wedge for serving
+--Drippings
+1 tbsp animal fat or drippings
 SOURCE: https://www.recipesbynora.com/wprm_print/pancit-canton-recipe-filipino-stir-fried-noodles, https://thequirinokitchen.com/filipino-pancit-canton-thick-egg-noodles-sauteed-with-chicken-and-vegetables/, https://www.manilaspoon.com/wprm_print/how-to-make-pancit-canton-easy-recipe
 
 
@@ -1024,13 +1056,15 @@ Servings: 6
 2.5 tbsp cornstarch
 2 tsp fish sauce
 --Toppings
-8 oz ground pork
+1.25 cup cooked ground pork
 7 oz shrimp
 1.5 oz smoked fish
 3/4 cup crushed pork rinds
 3 large hard-boiled egg
 3 stalk green onion
 lemon wedge for serving
+--Drippings
+1.25 tbsp animal fat or drippings
 SOURCE: https://www.hungryhuy.com/pancit-palabok/, https://pepper.ph/recipes/best-pancit-palabok, https://www.rivertenkitchen.com/wprm_print/pancit-palabok-with-easy-sauce-recipe
 
 
@@ -1043,7 +1077,7 @@ Servings: 6
 4 hot dog
 1 large onion
 4 clove garlic
-1.25 lb ground pork
+3.25 cup cooked ground pork
 3 cup tomato sauce
 1/4 cup tomato paste
 1 cup banana ketchup
@@ -1052,6 +1086,8 @@ Servings: 6
 1/2 tsp black pepper
 8 cup cooked spaghetti
 1 cup shredded cheddar cheese
+--Drippings
+2.75 tbsp animal fat or drippings
 SOURCE: https://tarasmulticulturaltable.com/wprm_print/filipino-spaghetti, https://theunlikelybaker.com/wprm_print/filipino-style-spaghetti, https://www.marionskitchen.com/filipino-spaghetti/
 
 
@@ -1060,7 +1096,7 @@ La Paz Batchoy
 ID: la_paz_batchoy
 AKA: Batchoy", "Batsoy", "Pork noodle soup
 Servings: 6
-1 lb boneless pork shoulder
+2.25 cup cooked pork roast
 4 oz pork liver
 2 tbsp vegetable oil
 1 medium onion
@@ -1072,6 +1108,8 @@ Servings: 6
 6 cup cooked egg noodles
 1 cup crushed pork rinds
 3 tbsp chopped green onion
+--Drippings
+1.5 tbsp animal fat or drippings
 SOURCE: https://www.bitemybun.com/wprm_print/recipe/9736, https://www.saveur.com/filipino-pork-noodle-soup-recipe, https://panlasangpinoy.com/wprm_print/batchoy-recipe-2
 
 
@@ -1086,7 +1124,7 @@ Servings: 9
 1 tbsp annatto powder
 10 clove garlic
 1 medium onion
-1 lb ground pork
+2.5 cup cooked ground pork
 6 cup water
 1 shrimp bouillon cube
 1/4 cup cornstarch
@@ -1100,6 +1138,8 @@ Servings: 9
 3 large hard-boiled egg
 1/4 cup chopped green onion
 lemon wedge for serving
+--Drippings
+2.5 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/pancit-malabon, https://www.recipesbynora.com/pancit-malabon-recipe/, https://www.rivertenkitchen.com/wprm_print/pancit-malabon
 
 

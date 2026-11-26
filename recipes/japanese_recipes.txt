@@ -14,9 +14,9 @@ SOURCE: https://www.justonecookbook.com/dashi-powder/, https://www.americastestk
 Chashu Pork
 ID: chashu_pork
 AKA: Chashu", "Ramen pork
-Servings: 24
+Servings: 21
 Serving size: 1 slice
-2 lb skinless pork belly
+21 slice cooked pork belly
 2 stalk green onion
 1 tbsp sliced ginger
 3 clove garlic
@@ -79,7 +79,7 @@ Pork and Vegetable Miso Soup
 ID: pork_and_vegetable_miso_soup
 AKA: Tonjiru", "Butajiru
 Servings: 4
-7 oz thinly sliced skinless pork belly
+1 cup cooked pork belly
 1 tsp sesame oil
 1/2 medium onion
 1.5 cup sliced daikon
@@ -90,6 +90,8 @@ Servings: 4
 4 cup dashi stock
 3.5 tbsp miso
 2 stalk green onion
+--Drippings
+2.25 tbsp animal fat or drippings
 SOURCE: https://noobcook.com/tonjiru/print/, https://kokorocares.com/blogs/recipes/recipe-tonjiru-pork-miso-soup, https://shop.yutaka.london/blogs/recipes/tonjiru-recipe
 
 
@@ -221,7 +223,7 @@ Servings: 2
 1/3 cup dashi stock
 3 cup shredded cabbage
 2 stalk green onion
-3 oz thinly sliced skinless pork belly
+0.5 cup cooked pork belly
 2 tsp vegetable oil
 --Toppings
 2 tbsp okonomiyaki sauce
@@ -229,6 +231,8 @@ Servings: 2
 1 tbsp bonito flakes
 1 tsp dried seaweed flakes
 1 tbsp pickled red ginger
+--Drippings
+0.5 tbsp animal fat or drippings
 SOURCE: https://norecipes.com/wprm_print/okonomiyaki-osaka-style, https://oishibook.com/wprm_print/basic-okonomiyaki, https://www.chopstickchronicles.com/okonomiyaki/
 
 
@@ -330,7 +334,7 @@ Japanese Chicken Curry
 ID: japanese_chicken_curry
 AKA: Chicken curry rice", "Kare raisu", "Japanese curry
 Servings: 4
-8 oz boneless skinless chicken thigh
+1.125 cup stewed skinless chicken thigh
 1 tbsp vegetable oil
 1 medium onion
 1 medium yukon gold potato
@@ -339,6 +343,8 @@ Servings: 4
 4 block boxed Japanese curry roux
 --Rice
 4 cup cooked short grain white rice
+--Drippings
+0.75 tbsp animal fat or drippings
 SOURCE: https://oishibook.com/wprm_print/basic-japanese-curry, https://littlehousebigalaska.com/wprm_print/japanese-chicken-curry, https://www.chopstickchronicles.com/wprm_print/japanese-curry-rice-%e3%82%ab%e3%83%ac%e3%83%bc%e3%83%a9%e3%82%a4%e3%82%b9
 
 
@@ -347,7 +353,7 @@ Japanese Beef Curry
 ID: japanese_beef_curry
 AKA: Beef curry rice", "Beef kare raisu
 Servings: 4
-1 lb beef chuck
+2.25 cup cooked beef stew meat
 1 tbsp vegetable oil
 1 medium onion
 1 clove garlic
@@ -357,6 +363,8 @@ Servings: 4
 4 block boxed Japanese curry roux
 --Rice
 4 cup cooked short grain white rice
+--Drippings
+3 tbsp animal fat or drippings
 SOURCE: https://www.closetcooking.com/japanese-curry/, https://www.foodologygeek.com/japanese-beef-curry/, https://cookinginchinglish.com/?p=5908
 
 
@@ -365,7 +373,7 @@ Oyakodon
 ID: oyakodon_
 AKA: Chicken and Egg Rice Bowl
 Servings: 2
-7 oz boneless skinless chicken thigh
+1 cup stewed skinless chicken thigh
 1/2 medium onion
 4 large egg
 1/2 cup dashi stock
@@ -375,6 +383,8 @@ Servings: 2
 2 tsp sugar
 1 stalk green onion
 2 cup cooked short grain white rice
+--Drippings
+0.5 tbsp animal fat or drippings
 SOURCE: https://www.justonecookbook.com/oyakodon/, https://www.americastestkitchen.com/recipes/17745-oyakodon-japanese-chicken-and-egg-rice-bowl, https://bittmanproject.com/recipe/oyakodon/
 
 
@@ -419,7 +429,7 @@ ID: omurice_
 AKA: Omelette Rice", "Omuraisu
 Servings: 2
 --Ketchup rice
-5 oz boneless skinless chicken thigh
+0.75 cup stewed skinless chicken thigh
 1/2 medium onion
 1/4 cup diced carrot
 1 tbsp butter
@@ -434,6 +444,8 @@ Servings: 2
 1 tbsp butter
 --Topping
 2 tbsp ketchup
+--Drippings
+0.25 tbsp animal fat or drippings
 SOURCE: https://norecipes.com/wprm_print/omurice-recipe, https://tarasmulticulturaltable.com/wprm_print/omurice-japanese-omelette-rice, https://www.okonomikitchen.com/omurice-japanese-omlette-rice/
 
 
@@ -558,7 +570,7 @@ Servings: 4
 1 tsp soy sauce
 1 tsp mirin
 1/4 tsp salt
-3 oz boneless skinless chicken breast
+0.5 cup stewed skinless chicken breast
 4 slice kamaboko
 2 whole shiitake mushroom
 4 large shrimp
@@ -704,7 +716,7 @@ Servings: 2
 2 tsp sesame oil
 1 clove garlic
 1 tsp grated ginger
-4 oz ground pork
+0.625 cup cooked ground pork
 2 tbsp miso
 1 tsp soy sauce
 3 cup chicken broth
@@ -712,6 +724,8 @@ Servings: 2
 2/3 cup bean sprouts
 2 tbsp corn kernels
 2 tbsp chopped green onion
+--Drippings
+0.75 tbsp animal fat or drippings
 SOURCE: https://barrettandtheboys.substack.com/p/miso-ramen, https://kikkomanusa.com/foodservice/recipes/miso-corn-butter-ramen, https://www.laurainthekitchen.com/recipes/miso-ramen/
 
 
@@ -737,7 +751,7 @@ Yakisoba
 ID: yakisoba_
 AKA: Stir-Fried Noodles", "Pork yakisoba
 Servings: 4
-8 oz thinly sliced skinless pork belly
+1.125 cup cooked pork belly
 3 tbsp vegetable oil
 1/2 medium onion
 1/3 cup carrot matchsticks
@@ -751,6 +765,8 @@ Servings: 4
 --Toppings
 1 tsp dried seaweed flakes
 1 tbsp pickled red ginger
+--Drippings
+2.5 tbsp animal fat or drippings
 SOURCE: https://www.americastestkitchen.com/recipes/17721-pork-and-cabbage-yakisoba, https://noobcook.com/pork-yakisoba/print/, https://www.lafujimama.com/yakisoba/print/
 
 
