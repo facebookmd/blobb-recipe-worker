@@ -485,11 +485,11 @@
    "note": "Serves 8 since 19 Nov 2026 (was 6; Arianna), like Hungry Huy's 2 lb of meat for 8. Foxy Folksy's 865 dropped: it prints 81 g protein a serving (~490 g a pot) but its oxtail, tripe and peanut butter give ~270 g; from its own amounts it is ~625. Oxtail is counted at USDA's 0.56 bone-and-cooking yield (settled 28 Oct)."
   },
   "beef_caldereta": {
-   "kcal": 556,
+   "kcal": 501,
    "status": "recipe_match",
    "url": "https://www.recipesbynora.com/wprm_print/beef-caldereta-recipe",
-   "basis": "Recipes by Nora's own amounts for 8 (3 lb chuck, 1/4 cup liver spread, 28 oz tomato sauce, potatoes, olives, pickles): ~556; it prints 512",
-   "note": "Liver spread 1/2 -> 1/4 cup and reference corrected 25 Nov 2026 (Arianna): same 6 oz chuck a serving as Nora."
+   "basis": "Recipes by Nora's own amounts for 8 (3 lb chuck, 1/4 cup liver spread, 28 oz tomato sauce, potatoes, olives, pickles) with our rows, half the drippings skimmed as Nora says: ~501 (556 with all the fat kept, as raw chuck counts it); it prints 512",
+   "note": "Liver spread 1/2 -> 1/4 cup and reference corrected 25 Nov 2026 (Arianna): same 6 oz chuck a serving as Nora. Drippings half kept since 26 Nov 2026 (RECIPE_RULES.md, Drippings): Nora skims the extra fat, Bite My Bun keeps it. The reference skims the same half, 3.25 tbsp x 101 kcal / 6 = ~55 a serving: 556 -> 501. Ours went 584 -> 532 with the same half, so the gap stays about +6% (was +5%)."
   },
   "beef_mechado": {
    "kcal": 697,
