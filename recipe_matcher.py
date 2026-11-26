@@ -1545,13 +1545,113 @@ def _layer1_rank(search: str, food: dict) -> tuple:
 
 def _names_other_variant(search: str, food: dict) -> bool:
     """A USDA row naming a variant *search* doesn't (layer 1's variant
-    words), or cooked: never one to borrow a volume from ("Lite" syrup)."""
+    words), or cooked: never one to borrow a volume from ("Lite" syrup).
+    An FNDDS meat or fish row is cooked though most don't say so
+    (_is_as_eaten_meat): "Pork, ground" is no raw line's food."""
     query = food_name_search.Query.parse(search)
     return bool(food_name_search.usda_variant_count(query, food.get("raw_description") or "")
-                or _recipe_variant_delta(query, _as_row(food), False, None) > 0)
+                or _recipe_variant_delta(query, _as_row(food), False, None) > 0
+                or (_is_as_eaten_meat(food) and not COOKING_WORD_RE.search(normalise(search))))
 
 
-def _volume_unit_fallback(food, foods, unit, search, query_tokens):
+# Meat and seafood words, for FNDDS's as-eaten rows (_is_as_eaten_meat).
+_MEAT_OR_SEAFOOD_RE = re.compile(
+    r"\b(?:beef|pork|lamb|mutton|veal|goat|chicken|turkey|duck|ham|bacon|sausages?|"
+    r"oxtails?|shrimps?|prawns?|squid|calamari|octopus|crabs?|lobsters?|clams?|"
+    r"mussels?|scallops?|oysters?)\b")
+# Cut words a row of another dataset may not leave out: "Chicken, with skin,
+# stewed" isn't the thigh, "Beef flank steak" isn't the shank (26 Nov 2026).
+MEAT_CUT_WORDS = {"thigh", "drumstick", "breast", "wing", "leg", "belly", "shoulder",
+                  "loin", "chuck", "shank", "rib", "sirloin", "flank", "ribeye",
+                  "brisket", "tenderloin", "hock", "oxtail", "liver"}
+
+
+def _food_text(food: dict) -> str:
+    return normalise(f"{food.get('raw_description') or ''} {food.get('display_name') or ''}")
+
+
+def _is_as_eaten_meat(food: dict) -> bool:
+    """An FNDDS meat or fish row that doesn't say raw. FNDDS describes food
+    as eaten, so it's cooked whether or not its name says so: "Pork, ground"
+    (299 kcal per 100 g, 125 g a cup) is cooked ground pork; the raw is 263
+    kcal and no cup. A raw line never takes its cup or count, and a cooked
+    line's cooked row is the same food as it (Arianna, 25 Nov 2026: what's
+    shown is what it is)."""
+    if food.get("source") not in ("usda", None):
+        return False
+    if "fndds" not in str(food.get("data_type") or "").lower():
+        return False
+    text = _food_text(food)
+    if food.get("is_raw") or re.search(r"\braw\b", text):
+        return False
+    return bool(_MEAT_OR_SEAFOOD_RE.search(text) or _is_fish_or_seafood_name(text))
+
+
+def _skin_conflicts(skinless: bool | None, food: dict) -> bool:
+    """Whether *food* has the other skin than a line that says (or, for a
+    chicken cut, means) skinless or skin-on: a skinless thigh's count is
+    never the skin-on thigh's."""
+    if skinless is None:
+        return False
+    text = _food_text(food)
+    return bool(_SKIN_ROW_RE.search(text) if skinless else _SKINLESS_ROW_RE.search(text))
+
+
+def _carries_tokens(food: dict, query_tokens) -> bool:
+    """Whether *food*'s name carries every word of the line; an FNDDS meat
+    or fish row carries "cooked" without saying it (_is_as_eaten_meat)."""
+    label_tokens = (set(normalise(food["display_name"]).split())
+                    | set(normalise(food.get("raw_description", "")).split()))
+    as_eaten = _is_as_eaten_meat(food)
+    return all(_token_in_label(tok, label_tokens) or (as_eaten and tok == "cooked")
+               for tok in query_tokens)
+
+
+def _cut_portion(food: dict, cut: str | None) -> dict | None:
+    """*food*'s count portion named after the line's chicken cut ("thigh
+    without skin", "1 thigh with skin"), for a line counted in pieces."""
+    if not cut:
+        return None
+    for p in food.get("portions", []):
+        if (p.get("gram_weight") and not _is_basis_portion(p)
+                and re.search(rf"\b{re.escape(cut)}s?\b", (p.get("label") or "").lower())):
+            return p
+    return None
+
+
+# USDA's only raw meat and fish rows with a cup of their own (live data,
+# 25 Nov 2026: none of the 981 raw rows in SR's and Foundation's meat,
+# poultry and finfish groups has one): FNDDS "Beef, ground, raw" (225 g)
+# and "Fish, raw" (135 g).
+RAW_GROUND_MEAT_CUP_FDC = "2705853"
+RAW_FISH_CUP_FDC = "2706223"
+
+
+def _raw_meat_density(food: dict, search: str) -> tuple[dict | None, dict | None]:
+    """A raw cup of ground meat or fish when the food has none: the raw
+    relative's cup converts the amount, never a cooked row's ("2 cup ground
+    pork" was FNDDS's cooked "Pork, ground", 125 g a cup, for a raw cup's
+    225). As any borrowed cup, it only converts: the line keeps its food's
+    own servings (Arianna, 26 Nov 2026). (None, None) for anything else,
+    which stays unmeasured."""
+    text = normalise(search)
+    if COOKING_WORD_RE.search(text) or food.get("source") != "usda" or _is_as_eaten_meat(food):
+        return None, None
+    words = set(text.split())
+    if "ground" in words and words & GROUND_MEAT_WORDS:
+        fdc = RAW_GROUND_MEAT_CUP_FDC
+    elif _is_fish_or_seafood_name(text) and "seafood" not in words:
+        fdc = RAW_FISH_CUP_FDC
+    else:
+        return None, None
+    relative = _fetch_food_by_fdc_id(fdc)
+    if relative is None:
+        return None, None
+    portion = _density_portion(relative, "cup", search)
+    return (relative, portion) if portion is not None else (None, None)
+
+
+def _volume_unit_fallback(food, foods, unit, search, query_tokens, cut=None, skinless=None):
     """
     For a cup/tbsp/tsp recipe amount, a food with no volume portion can't be
     measured: "1.5 cups" became 1.5 × its "RACC" serving (flour: 45 g, not
@@ -1568,6 +1668,14 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens):
     SR Legacy's, with its "1 cup" (Arianna, 27 Oct 2026). A volume line
     takes another food's cup as a density only. Keeps *food* unchanged
     when no candidate qualifies.
+
+    A candidate has the line's skin (*skinless*, _skin_conflicts) and, for
+    a count, the line's state: a raw line's count is never a cooked FNDDS
+    row's (_names_other_variant). A count measured by another row moves to
+    it only when that row has every word of the line: "4 boneless skinless
+    chicken thigh" had become the breast (its "piece"), "2 beef shank" flank
+    steak, a relative's dropped word (26 Nov 2026). A chicken cut counted in
+    pieces is measured by the cut's own portion (_cut_portion).
     """
     # ml already converts to grams (1 ml ≈ 1 g), so only spoons and cups
     # depend on the food having a volume portion; counts ("1 medium", "2
@@ -1585,27 +1693,44 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens):
         if same:
             return {**max(same, key=lambda c: _layer1_rank(search, c)), "_same_food_as": food["fdc_id"]}
     food_tokens = set(normalise(food.get("raw_description") or food["display_name"]).split())
+    volumetric = unit.lower() in VOLUMETRIC_UNITS
+    candidates = list(foods)
+    if not volumetric and cut:
+        # The line's own search past the re-ranked rows: "Chicken dark meat,
+        # thigh, skinless, raw" is 31st for "chicken thigh".
+        seen = {c["fdc_id"] for c in candidates}
+        candidates += [c for c in _search_usda_for_ingredient(search) if c["fdc_id"] not in seen]
     best, best_key, best_portion = None, None, None
-    for cand in foods:
+    for cand in candidates:
         if cand is food or not cand.get("energy_kcal"):
             continue
-        portion = _density_portion(cand, unit, search)
+        portion = (None if volumetric else _cut_portion(cand, cut)) or _density_portion(cand, unit, search)
         if portion is None:
             continue
         if _names_other_variant(search, cand) or _is_dish_category(cand):
             continue
-        label_tokens = (set(normalise(cand["display_name"]).split())
-                        | set(normalise(cand.get("raw_description", "")).split()))
-        if not all(_token_in_label(tok, label_tokens) for tok in query_tokens):
+        if _skin_conflicts(skinless, cand):
+            continue
+        if not _carries_tokens(cand, query_tokens):
             continue
         overlap = len(food_tokens & set(normalise(cand.get("raw_description") or cand["display_name"]).split()))
         key = (overlap, _layer1_rank(search, cand))
         if best is None or key > best_key:
             best, best_key, best_portion = cand, key, portion
-    if best is None:
+    # Raw meat or fish by the cup takes a raw relative's cup or none: a
+    # relative of its group or head word was cooked or another part ("2 cup
+    # ground pork" took braised pork heart's 145 g, 26 Nov 2026).
+    raw_meat = (volumetric and bool(_MEAT_OR_SEAFOOD_RE.search(_food_text(food))
+                                    or _is_fish_or_seafood_name(_food_text(food)))
+                and not COOKING_WORD_RE.search(normalise(search)) and not _is_as_eaten_meat(food))
+    if best is None and raw_meat:
+        best, best_portion = _raw_meat_density(food, search)
+    elif best is None:
         best, best_portion = _density_relative(food, foods, unit, search, query_tokens)
-    if best is None and unit.lower() in VOLUMETRIC_UNITS:
-        best, best_portion = _density_from_head_food(food, unit, search)
+        if best is not None and _skin_conflicts(skinless, best):
+            best, best_portion = None, None
+        if best is None and volumetric:
+            best, best_portion = _density_from_head_food(food, unit, search)
     if best is None:
         return food
     # A volume line keeps the food's own servings (Arianna, 27 Oct 2026):
@@ -1632,6 +1757,8 @@ def _volume_unit_fallback(food, foods, unit, search, query_tokens):
                       and unit.lower() not in PACKET_UNITS)
     if is_piece_count and not any(_is_counted_portion(re.sub(r"\([^)]*\)", " ", p.get("label") or ""))
                                   for p in food.get("portions", []) if not _is_basis_portion(p)):
+        if not _carries_tokens(best, query_tokens):
+            return food
         return {**best, **{k: v for k, v in food.items() if k.startswith("_")},
                 "_count_from": food["fdc_id"]}
     borrowed = {**best_portion,
@@ -1700,21 +1827,34 @@ def _same_usda_food(food: dict, cand: dict) -> bool:
         # SR "Wheat flour, whole-grain" is Foundation "Flour, whole wheat".
         return WHOLE_GRAIN_WORD_RE.sub("whole", text).split()
     def kind(f):
+        # FNDDS's "skin eaten" says how it was eaten, not another food.
         return {_canonical_token(w) for w in words(f)
-                if w not in ROW_LABELLING_WORDS and w not in food_name_search.STATE_WORDS}
+                if w not in ROW_LABELLING_WORDS and w not in food_name_search.STATE_WORDS
+                and w != "eaten"}
     # The same state too, raw or unsaid alike: "Tomatoes, raw" isn't
     # "Whole tomatoes, canned" (3 Nov 2026).
     def state(f):
-        return {w for w in words(f) if w in food_name_search.STATE_WORDS} - food_name_search.FRESH_IS_RAW
+        said = {w for w in words(f) if w in food_name_search.STATE_WORDS} - food_name_search.FRESH_IS_RAW
+        # FNDDS meat and fish are as eaten: "Pork, ground" is cooked, the
+        # same food as SR's "Ground pork, cooked" and not the raw row
+        # (_is_as_eaten_meat, 26 Nov 2026).
+        if _is_as_eaten_meat(f) and not said & COOKED_STATE_WORDS:
+            said |= {"cooked"}
+        return said
     if state(cand) != state(food):
         return False
     food_only, cand_only = kind(food) - kind(cand), kind(cand) - kind(food)
+    # Neither row may leave out the other's cut of meat.
+    if (food_only | cand_only) & MEAT_CUT_TOKENS:
+        return False
     # A row may add only the everyday kind ("white" flour) to the food,
     # and only when it lacks none of the food's words.
     return not cand_only or (not food_only and cand_only <= EVERYDAY_KINDS)
 
 
 EVERYDAY_KINDS = {_canonical_token(w) for w in food_name_search.EVERYDAY_WORDS}
+MEAT_CUT_TOKENS = {_canonical_token(w) for w in MEAT_CUT_WORDS}
+COOKED_STATE_WORDS = set(SEARCH_RULES["cooking_words"]["words"])
 # Labelling either way: whole-grain flour is "unenriched" because nothing
 # is added, the same food as one that doesn't say (9 Nov 2026).
 ROW_LABELLING_WORDS = food_name_search.LABELLING_WORDS | {
@@ -2136,8 +2276,13 @@ def _lacking_order(lacked: list[str], row: dict) -> tuple[int, int]:
 def _food_words_lacked(query, row: dict) -> list[str]:
     """The words of the line naming the food (not NOT_THE_FOOD_WORDS) that a
     foods row doesn't say ([_names_word])."""
+    # An FNDDS meat or fish row is cooked without saying it
+    # (_is_as_eaten_meat): "cooked pork belly" is "Pork, belly", not a
+    # branded "Fully Cooked Pork Belly" (26 Nov 2026).
+    as_eaten = _is_as_eaten_meat(row)
     return [w for w in query.tokens
-            if w.strip() and w not in NOT_THE_FOOD_WORDS and not _names_word(w, row)]
+            if w.strip() and w not in NOT_THE_FOOD_WORDS and not _names_word(w, row)
+            and not (as_eaten and w == "cooked")]
 
 
 def _recipe_rows(text: str):
@@ -2496,6 +2641,14 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
                # Fewer of the line's food words lacked, then a USDA row
                # (_lacking_order).
                *(-x for x in _lacking_order(lacked, row)),
+               # Cooked meat or fish counted or by the cup: a USDA row before
+               # a product that says "cooked"; FNDDS rows are cooked without
+               # saying so ("4 slice cooked pork belly" is "Pork, belly", 30 g
+               # a slice, not "Fully Cooked Pork Belly", 26 Nov 2026).
+               not (line_cooked and unit.strip() and unit.lower() not in WEIGHT_TO_G
+                    and food.get("source") == "branded"
+                    and bool(_MEAT_OR_SEAFOOD_RE.search(_food_text(food))
+                             or _is_fish_or_seafood_name(_food_text(food)))),
                rank.tier,
                # Meat bought by weight is raw: an uncooked row before a cooked
                # one measured by a generic yield ("pork shoulder" found a
@@ -2550,7 +2703,10 @@ def _match_ingredient_once(ingredient, boost_rules=None, threshold=0.45,
             food = _typical_branded(same, "oz" if cooked_pasta else unit)
     # A volume is borrowed from a USDA row only, as the matcher does.
     foods = [f for _, f, _, _ in ranked if f.get("source") == "usda"]
-    food = _volume_unit_fallback(food, foods, unit, query.normalized, list(query.tokens))
+    line_skinless = (skinless if cut else True if SKINLESS_LINE_RE.search(ingredient)
+                     else False if skin_on_line else None)
+    food = _volume_unit_fallback(food, foods, unit, query.normalized, list(query.tokens),
+                                 cut=cut, skinless=line_skinless)
     food = dict(food)
     if cut:
         food["_cut_keyword"] = cut  # used by pick_best_portion
@@ -2613,6 +2769,12 @@ def match_ingredient(ingredient, boost_rules=None, threshold=0.45,
     # shrimp. Shrimp by weight keeps the raw row (Arianna, 16 Nov 2026).
     if (unit.lower() in ("piece", "pieces", "whole")
             and re.fullmatch(r"(?i)(?:peeled\s+|deveined\s+|raw\s+)*shrimps?", ingredient.strip())):
+        ingredient = "boiled shrimp"
+    # Cooked shrimp by the cup is the same FNDDS row, by its 135 g cup: SR's
+    # "Shrimp, cooked" has no cup (26 Nov 2026).
+    if (unit.lower() in VOLUMETRIC_UNITS
+            and re.fullmatch(r"(?i)(?:peeled\s+|deveined\s+)*cooked\s+(?:peeled\s+|deveined\s+)*shrimps?",
+                             ingredient.strip())):
         ingredient = "boiled shrimp"
     respelled = _respelled(ingredient, boost_rules, category)
     if respelled != ingredient:
@@ -4567,8 +4729,14 @@ def build_output_rows(recipes_path, boost_rules=None, threshold=0.45,
                             ingredient, boost_rules, threshold, category, unit,
                             is_cooked=is_cooked)
                     fitted = match_cache[match_key][0]
+                    # Also the row a count moved to from the alias's food,
+                    # which has every word and the state of the line
+                    # (_volume_unit_fallback): "4 slice cooked pork belly" is
+                    # FNDDS's belly by the slice, not 1 RACC of the raw
+                    # belly (26 Nov 2026).
                     if fitted is not None and str(food["fdc_id"]) in (
-                            str(fitted["fdc_id"]), str(fitted.get("_same_food_as"))):
+                            str(fitted["fdc_id"]), str(fitted.get("_same_food_as")),
+                            str(fitted.get("_count_from"))):
                         food = fitted
             elif match_key in match_cache:
                 food, score, confidence, matched_alt = match_cache[match_key]
@@ -4974,9 +5142,19 @@ def _unmeasured_reason(portion, unit: str, is_countable: bool, vol_mismatch: boo
     if (is_countable or not u) and u not in PACKET_UNITS and u not in ("serving", "servings") and (
             _portion_label_unit(portion.get("label", "")) in VOLUME_TO_TSP
             or CONTAINER_LABEL_RE.search(portion.get("label", ""))
-            or UNMEASURABLE_PORTION_RE.search(portion.get("label", ""))):
-        return f"no {unit} portion, measured by '{portion['label']}'"
+            or UNMEASURABLE_PORTION_RE.search(portion.get("label", ""))
+            # A count measured by a weight is a guess too: "2 beef shank"
+            # went in as 2 oz, "1 milkfish" as 3 oz, unflagged (26 Nov 2026).
+            or COUNT_BY_WEIGHT_LABEL_RE.match(portion.get("label", ""))):
+        return f"no {unit or 'piece'} portion, measured by '{portion['label']}'"
     return ""
+
+
+# A portion that is a weight, not a piece: "4 oz", "1 lb", "100 g", "oz,
+# boneless", a branded "1 ONZ" or "85 GRM". (WEIGHT_PORTION_LABEL_RE wants
+# the number.)
+COUNT_BY_WEIGHT_LABEL_RE = re.compile(
+    r"(?i)^\s*(?:[\d.,/]+\s*)?(?:oz|ounces?|onz|lbs?|pounds?|g|grams?|grm|kg)\b")
 
 
 def _with_display_unit(row: dict) -> dict:

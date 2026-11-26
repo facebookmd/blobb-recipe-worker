@@ -204,7 +204,9 @@ def test_a_regular_one_is_a_medium_one():
     ("1 can", "fillet", True),
     ("1 RACC", "piece", True),
     ("1 anchovy", "fillet", False),
-    ("4 oz", "piece", False),
+    # A piece measured by a weight is a guess too (Arianna, 26 Nov 2026):
+    # "2 beef shank" went in as 2 oz unflagged.
+    ("4 oz", "piece", True),
     ("1 cup", "cup", False),
 ])
 def test_a_count_measured_by_something_else_is_flagged(label, unit, flagged):
