@@ -217,3 +217,19 @@ def test_a_counted_line_on_a_weight_only_food_is_flagged(tmp_path, monkeypatch):
     [row] = [r for r in matcher.build_output_rows(str(csv), [], 0.0) if r.get("_type") == "data"]
     assert row["_unmeasured"].startswith("no piece portion, measured by")
     assert row["notes"].startswith("CHECK AMOUNT")
+
+
+FNDDS_THIGH_SIZES = usda(15, 2706037, *FNDDS, "Chicken thigh, stewed, skin eaten",
+                         "Chicken thigh, stewed, skin eaten", 227,
+                         [("cup, cooked, diced", 135.0), ("small thigh", 80.0), ("medium thigh", 90.0),
+                          ("large thigh", 110.0), ("thigh", 90.0)])
+
+
+@pytest.mark.parametrize("line, grams", [
+    ("stewed skin-on chicken thigh", 90.0),   # unsaid: not the small one listed first
+    ("small stewed skin-on chicken thigh", 80.0),
+    ("large stewed skin-on chicken thigh", 110.0),
+])
+def test_a_counted_cut_takes_the_size_the_line_says_else_medium(line, grams):
+    food = {**FNDDS_THIGH_SIZES, "_cut_keyword": "thigh"}
+    assert matcher.pick_best_portion(food, "piece", None, 6.0, line)["gram_weight"] == grams

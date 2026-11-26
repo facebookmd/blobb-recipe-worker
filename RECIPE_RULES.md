@@ -94,8 +94,11 @@ Write amounts the way a home cook would read them. **Never grams**: a user readi
 * **Cups, tbsp, tsp** for liquids, grains, cooked starches, flours, sugars, sauces, pastes, and chopped, sliced or grated produce (`1/2 cup chopped onion`, `2 tbsp sugar`).
 * **Counts** (whole, piece, clove, stalk, sheet, slice, fillet, chop, thigh, drumstick, leaf, block) for anything naturally counted, with size where it varies (`1 large onion`, `2 whole medium tomato`). Without a size the matcher assumes medium. The cut can follow the food (`2 boneless pork loin chop`, `2 bread slice`); it is still the unit.
 * **Leafy greens sold by the bunch** by the bunch (`1 bunch spinach`), not oz or cups, when the database food has a `bunch` portion (raw spinach's is 340 g; in cups it read as "11 cups"). Without one, use the usual units.
-* **Meat** by count (`2 boneless skinless chicken thigh`) or, when it is sold by weight, **oz or lb** (`8 oz ground beef`, `1.5 lb oxtail`). Never cups of meat: the matcher can't convert them and logs the wrong weight.
-  * Beef in a soup the bowl is served from (nilaga, so far) is FNDDS's cooked "Beef, stew meat" by the cup, so a bowl shows a measure people can see (`3/4 cup`, about 6 one-inch cubes) instead of a raw weight. Convert the bought weight with that food's own "1 oz yields" (20 g cooked from 1 oz raw, 0.705) and its 135 g cup: 2 lb raw is `4.75 cup cooked beef stew meat`. Elsewhere beef by weight stays raw (19 Nov 2026).
+* **Meat** by count or by the cup first, a weight only when the food has neither (Arianna, 25 Nov 2026: users can't estimate a weight). What a line shows is what it is: the food's name, unit and calories come from one USDA row.
+  * A raw count is the raw row's own count (`6 bone-in skin-on chicken thigh`, `4 boneless pork loin chop`, `1 Italian sausage`).
+  * Meat served in pieces from a pot (braises, stews, soups) is the cooked meat as eaten, by FNDDS's cooked row's cup or count, and the line says `cooked` (or the cooking word): `4.75 cup cooked pork belly`, `5.25 cup cooked beef stew meat`, `6 stewed skin-on chicken thigh`. Without the word the matcher reads a cup of meat as raw. Convert the bought weight with the cooked row's own "1 oz yields" (20 g cooked from 1 oz raw, 0.705 for most FNDDS meat), the bone share left out first, then divide by its cup (135 g; ground meat 125 g) or piece (medium thigh 90 g). 2 lb raw belly is 4.75 cups. Add the drippings that stay in the dish (Drippings, below).
+  * Fried meat stays raw (raw count, else weight): the oil and coating rates are a share of the raw edible weight.
+  * By weight when no row has a count or cup that fits: `1.5 lb bone-in beef shank` (bulalo), milkfish, pork liver, pancetta.
   * Shrimp counted (`16 large shrimp`, tempura) is FNDDS's boiled shrimp by its piece weight (large/jumbo 15 g as eaten, about 17.5 g raw); the batter and oil rates take the raw weight. Shrimp by weight (`8 oz shrimp`) keeps the raw row. The raw rows' own "large" is 7 g, half a store's large shrimp (16 Nov 2026).
 * **Packaged items** by the package (`1 packet tamarind soup mix`, `4 block boxed Japanese curry roux`).
 * Sources disagree on units → use the unit most of them use. The ratios still come from all three.
@@ -237,6 +240,14 @@ A coating never counts more per gram of food than the most any of the recipe's s
 | Same, thin slices (tapa, bulgogi, yakiniku) | 8% of raw meat weight |
 | Marinade cooked down with the meat or used as basting/sauce (adobo, bistek, tocino, teriyaki glaze) | The full marinade amount, no section needed |
 
+### Drippings (`--Drippings`)
+
+FNDDS's cooked meat is counted as eaten with its drippings gone: 2 lb of belly is 3,490 kcal raw but 2,590 as `4.75 cup cooked pork belly`. When the dish keeps that fat (it stays in the sauce or broth), list it as `animal fat or drippings` (FNDDS "Animal fat or drippings", 12 g a tbsp, 101 kcal) in a `--Drippings` section: the raw meat's calories less the cooked row's, times the share that stays, ÷ 101, in tbsp.
+
+* The share comes from the recipe's sources, as the frying oil does. All of it when they keep the fat (no draining, no skimming). Half when they split or only skim the extra fat. None when they drain it, pour it off or grill it away.
+* Pilot dishes (26 Nov 2026): adobo all (Panlasang Pinoy and Pepper.ph keep it), 9 tbsp for 4; caldereta half (Nora skims the extra fat, Bite My Bun keeps it), 3.25 tbsp for 6; tinola all (Panlasang Pinoy and Nora keep it), 4.25 tbsp for 6.
+* Raw meat by weight or raw count never has drippings: its raw calories already include the fat.
+
 ### Brines and pickles (`--Absorbed brine`)
 
 Vegetables equilibrate with the brine. List the brine solutes (sugar, salt, vinegar) scaled by `vegetable water ÷ (vegetable water + brine liquid)`, where vegetable water ≈ 90% of the vegetables' weight. Typically 40–55%.
@@ -293,7 +304,7 @@ Example:
 * Every use of a base template comes after its definition, uses its exact name or an AKA, and is in the same kind of unit as its serving size.
 * No slugs, no fractions of a batch.
 * No pinned food is built from scratch or given its own block.
-* No grams, no cups of meat, no dry pasta/rice/noodles (except the cooked-in-dish exception), no bare `rice`.
+* No grams, no cups of raw meat (cooked meat by the cup says `cooked`), no dry pasta/rice/noodles (except the cooked-in-dish exception), no bare `rice`.
 * No "to taste", no non-Latin script in AKA, no commas inside URLs, exactly 3 URLs per SOURCE, and every URL opened and loading.
 * Every ID is unique across all recipe files, not just this one.
 * Every new recipe has an entry in `calorie_references.json`, normalised to its serving.

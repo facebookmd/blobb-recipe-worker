@@ -4052,6 +4052,24 @@ def pick_best_portion(food, unit, gram_target, qty=1.0, ingredient="",
         # - If the ingredient names a size (large/small/medium), try to match it first.
         # - Otherwise default to medium if available.
         # Either way fall through to the general keyword scan if nothing matched.
+        # A counted chicken cut with sizes ("small thigh", "medium thigh",
+        # "large thigh", "thigh" on FNDDS's stewed thigh): the size the line
+        # says, else the unsized one, else medium. The first label naming
+        # the cut was the small one (26 Nov 2026).
+        cut_kw = food.get("_cut_keyword")
+        if is_piece and cut_kw:
+            ing_lower = ingredient.lower()
+            named = [p for p in portions
+                     if re.search(rf"\b{re.escape(cut_kw)}s?\b", (p.get("label") or "").lower())]
+            if len(named) > 1:
+                size = next((sz for sz in ("large", "small", "medium") if sz in ing_lower), None)
+                def sized(p, sz):
+                    return re.search(rf"(?<!\w){sz}(?!\w)", re.sub(r"\([^)]*\)", "", p["label"]).lower())
+                pick = (next((p for p in named if sized(p, size)), None) if size else
+                        next((p for p in named if not SIZED_LABEL_RE.search(p["label"])), None)
+                        or next((p for p in named if sized(p, "medium")), None))
+                if pick is not None:
+                    return pick
         if is_piece and not food.get("_cut_keyword"):
             ing_lower = ingredient.lower()
             specified_size = next((sz for sz in ("large", "small", "medium") if sz in ing_lower), None)

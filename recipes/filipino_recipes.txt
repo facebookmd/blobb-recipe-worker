@@ -175,7 +175,7 @@ Chicken Tinola
 ID: chicken_tinola
 AKA: Tinolang manok", "Tinola", "Chicken ginger soup
 Servings: 6
-2 lb bone-in skin-on chicken thigh
+6 stewed skin-on chicken thigh
 2 tbsp vegetable oil
 1 medium onion
 4 clove garlic
@@ -185,6 +185,8 @@ Servings: 6
 1 tbsp fish sauce
 6 cup green papaya chunks
 1 cup moringa leaves
+--Drippings
+4.25 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/chicken-tinola-recipe-2, https://www.recipesbynora.com/chicken-tinola-recipe/, https://www.recepedia.com/ph/r/chicken-tinola-recipe-(filipino-tinolang-manok).html/110276
 
 
@@ -271,13 +273,15 @@ Pork Adobo
 ID: pork_adobo
 AKA: Adobong baboy", "Adobo pork
 Servings: 4
-2 lb pork belly
+4.75 cup cooked pork belly
 1/2 cup soy sauce
 1/2 cup cane vinegar
 6 clove garlic
 1 tbsp black peppercorns
 3 bay leaf
 1 cup water
+--Drippings
+9 tbsp animal fat or drippings
 SOURCE: https://tarasmulticulturaltable.com/wprm_print/adobong-baboy-filipino-pork-adobo, https://pepper.ph/recipes/best-classic-pork-adobo, https://panlasangpinoy.com/wprm_print/47218
 
 
@@ -309,7 +313,7 @@ Beef Caldereta
 ID: beef_caldereta
 AKA: Kaldereta", "Caldereta", "Kalderetang baka
 Servings: 6
-2.25 lb beef chuck
+5.25 cup cooked beef stew meat
 2 tbsp vegetable oil
 1 medium onion
 4 clove garlic
@@ -325,6 +329,8 @@ Servings: 6
 1/2 cup green olives
 3/4 tsp salt
 1/4 tsp black pepper
+--Drippings
+3.25 tbsp animal fat or drippings
 SOURCE: https://www.recipesbynora.com/wprm_print/beef-caldereta-recipe, https://www.bitemybun.com/beef-caldereta-recipe/, https://www.chilipeppermadness.com/wprm_print/beef-caldereta-recipe-filipino-beef-stew
 
 
