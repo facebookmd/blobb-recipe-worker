@@ -1497,7 +1497,7 @@
    "status": "ok",
    "url": "https://www.recipetineats.com/slow-cooker-bbq-pulled-pork-sandwich/",
    "basis": "670 per 295 g sandwich (8)",
-   "note": null
+   "note": "Cooked pork plus half the drippings since 27 Nov 2026 (RECIPE_RULES.md, Drippings): Spend With Pennies skims, RecipeTin says much of the fat is discarded. Ours 659 -> 592, -12% against RecipeTin's printed 670, which doesn't say how much fat it counts."
   },
   "philly_cheesesteak": {
    "kcal": 965,
@@ -1507,11 +1507,11 @@
    "note": "Ribeye 1.5 -> 1 lb since 25 Nov 2026 (Arianna), Natasha's: 1,007 -> 869."
   },
   "sloppy_joes": {
-   "kcal": 439,
-   "status": "ok",
+   "kcal": 380,
+   "status": "recipe_match",
    "url": "https://www.tasteofhome.com/recipes/sloppy-joes-sandwiches/",
-   "basis": "439 per sandwich",
-   "note": null
+   "basis": "Taste of Home's own amounts (1 lb ground beef, drained, 1 cup ketchup, 2 tbsp brown sugar, 4 buns) with our rows: ~440 a sandwich for 4, matching its printed 439; with our 1 lb for 5 sandwiches, ~380",
+   "note": "Checked 27 Nov 2026. The printed 439 already leaves the drained fat out: its 16 g fat and 27 g protein fit 1/4 lb of drained cooked beef. Cooked beef with no drippings since 27 Nov 2026 (Taste of Home and Spend With Pennies drain): ours 429 -> 363, -4% against ~380. Ours also swaps half the ketchup for tomato sauce."
   },
   "tuna_salad_sandwich": {
    "kcal": 410,
