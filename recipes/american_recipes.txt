@@ -44,13 +44,15 @@ Servings: 6
 1 medium onion
 2 medium carrot
 2 stalk celery
-1.25 lb boneless skinless chicken breast
+3 cup stewed skinless chicken breast
 8 cup chicken broth
 1 whole bay leaf
 3 cup uncooked egg noodles
 3/4 tsp salt
 1/4 tsp black pepper
 2 tbsp chopped parsley
+--Drippings
+0.25 tbsp animal fat or drippings
 SOURCE: https://www.spendwithpennies.com/homemade-chicken-noodle-soup/, https://cafedelites.com/chicken-noodle-soup/, https://www.bettycrocker.com/recipes/classic-chicken-noodle-soup/6ba19612-dac4-4e13-b1a9-74ec22988ef7
 
 
@@ -59,7 +61,7 @@ Beef Chili
 ID: beef_chili
 AKA: Chili con carne", "Chili", "Chili with beans
 Servings: 6
-1 lb ground beef
+2.5 cup cooked ground beef
 1 medium onion
 2 clove garlic
 1.5 tbsp chili powder
@@ -68,6 +70,8 @@ Servings: 6
 2.75 cup canned diced tomatoes
 1 tsp salt
 1 tsp sugar
+--Drippings
+3.25 tbsp animal fat or drippings
 SOURCE: https://cheerfulcook.com/chili-recipe/, https://www.the-girl-who-ate-everything.com/classic-chili-recipe/, https://www.apinchofhealthy.com/wprm_print/7044
 
 
@@ -136,7 +140,7 @@ Beef Stew
 ID: beef_stew
 AKA: Classic beef stew", "Beef and potato stew
 Servings: 6
-1.5 lb beef chuck
+3.5 cup cooked beef stew meat
 3 tbsp all-purpose flour
 2 tbsp olive oil
 1 large onion
@@ -150,6 +154,8 @@ Servings: 6
 3 medium yukon gold potato
 3/4 tsp salt
 1/2 tsp black pepper
+--Drippings
+4.25 tbsp animal fat or drippings
 SOURCE: https://www.spendwithpennies.com/beef-stew-recipe/, https://www.recipetineats.com/beef-stew/, https://www.bettycrocker.com/recipes/classic-beef-stew/38aa1b3f-3f9b-44d8-a9c6-2f4e879613de
 
 
@@ -296,7 +302,7 @@ Pot Roast
 ID: pot_roast
 AKA: Beef pot roast", "Sunday pot roast", "Chuck roast with potatoes and carrots
 Servings: 8
-3.25 lb boneless beef chuck roast
+7.75 cup cooked beef pot roast
 1.5 lb baby red potatoes
 1 lb baby carrots
 1 large onion
@@ -305,6 +311,8 @@ Servings: 8
 2 tbsp all-purpose flour
 1/2 tsp salt
 1/2 tsp black pepper
+--Drippings
+8.5 tbsp animal fat or drippings
 SOURCE: https://www.tasteofhome.com/recipes/pot-roast-with-potatoes-carrots-onion-gravy/, https://www.food.com/recipe/perfect-pot-roast-343041, https://www.wellplated.com/crockpot-roast-recipe/
 
 
@@ -344,7 +352,7 @@ Chicken Pot Pie
 ID: chicken_pot_pie
 AKA: Pot pie", "Homemade chicken pot pie
 Servings: 6
-1 lb boneless skinless chicken breast
+2.25 cup stewed skinless chicken breast
 1/3 cup butter
 1/2 cup chopped onion
 2 clove garlic
@@ -359,6 +367,8 @@ Servings: 6
 1/4 tsp black pepper
 2 refrigerated pie crust
 1 large egg yolk
+--Drippings
+0.5 tbsp animal fat or drippings
 SOURCE: https://www.spendwithpennies.com/homemade-chicken-pot-pie/, https://www.jocooks.com/recipes/chicken-pot-pie/, https://www.pillsbury.com/recipes/classic-chicken-pot-pie/1401d418-ac0b-4b50-ad09-c6f1243fb992
 
 
@@ -485,7 +495,7 @@ Pulled Pork Sandwich
 ID: pulled_pork_sandwich
 AKA: BBQ pulled pork sandwich", "Pulled pork", "Barbecue pork sandwich
 Servings: 8
-3 lb boneless pork shoulder
+7 cup cooked pork roast
 2 tbsp brown sugar
 2 tsp paprika
 1 tsp garlic powder
@@ -496,6 +506,8 @@ Servings: 8
 1.5 cup barbecue sauce
 8 hamburger bun
 2 cup coleslaw
+--Drippings
+4 tbsp animal fat or drippings
 SOURCE: https://www.recipetineats.com/slow-cooker-bbq-pulled-pork-sandwich/, https://www.food.com/recipe/bbq-pulled-pork-sandwiches-100626, https://www.spendwithpennies.com/slow-cooker-pulled-pork-sandwiches-zesty-slaw/
 
 
@@ -520,7 +532,7 @@ Sloppy Joes
 ID: sloppy_joes
 AKA: Sloppy joe", "Sloppy joe sandwich
 Servings: 5
-1 lb ground beef
+2.5 cup cooked ground beef
 1/2 medium onion
 1/2 medium green bell pepper
 1 clove garlic
@@ -607,7 +619,7 @@ ID: jambalaya_
 AKA: Chicken sausage and shrimp jambalaya", "Cajun jambalaya", "Creole jambalaya
 Servings: 6
 1 tbsp vegetable oil
-1.75 lb bone-in skin-on chicken thigh
+5 stewed skin-on chicken thigh
 12 oz andouille sausage
 1 medium onion
 1 stalk celery
@@ -621,6 +633,8 @@ Servings: 6
 1/2 tsp salt
 1 lb shrimp
 2 stalk green onion
+--Drippings
+4.25 tbsp animal fat or drippings
 SOURCE: https://www.onceuponachef.com/recipes/jambalaya.html, https://www.jocooks.com/recipes/chicken-and-shrimp-jambalaya/, https://www.spendwithpennies.com/cajun-jambalaya/
 
 

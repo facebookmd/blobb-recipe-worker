@@ -248,6 +248,7 @@ FNDDS's cooked meat is counted as eaten with its drippings gone: 2 lb of belly i
 * Pilot dishes (26 Nov 2026): adobo all (Panlasang Pinoy and Pepper.ph keep it), 9 tbsp for 4; caldereta half (Nora skims the extra fat, Bite My Bun keeps it), 3.25 tbsp for 6; tinola all (Panlasang Pinoy and Nora keep it), 4.25 tbsp for 6.
 * Raw meat by weight or raw count never has drippings: its raw calories already include the fat.
 * Rolled out 26 Nov 2026 to the Filipino, Japanese and Italian braises, soups and stir-fries (32 templates). Half for dinuguan, sinigang, batchoy, bolognese, sotanghon and arroz caldo; none for chashu (its slices are the cooked belly, 21 from 2 lb). Pork shoulder's loss is measured from SR's raw Boston butt (186 kcal/100 g). Under 1/4 tbsp is left out (chawanmushi). Kare-kare's oxtail is in cooked cups with no drippings: USDA has no raw oxtail to measure the loss from.
+* American, 27 Nov 2026 (8 templates): all for beef stew, chili (two of three keep it), pot roast, jambalaya, chicken noodle soup and pot pie; half for pulled pork (Spend With Pennies skims, RecipeTin says much is discarded); none for sloppy joes (Taste of Home and Spend With Pennies drain).
 * Still by weight: bistek (pan-fried), osso buco (SR's 187 g braised cross cut makes 4 shanks read as 3), ribeye (gyudon, nikujaga) and pork loin (ginger pork), which have no cooked row that matches.
 
 ### Brines and pickles (`--Absorbed brine`)
