@@ -510,7 +510,7 @@
    "status": "recipe_match",
    "url": "https://panlasangpinoy.com/wprm_print/filipino-pork-menudo-recipe-2",
    "basis": "Panlasang Pinoy's own amounts for 5 (2 lb shoulder, 4 oz liver, 3 hot dogs, 1/2 cup raisins, 3 tbsp oil): ~720-780; it prints 510",
-   "note": "Reference corrected 25 Nov 2026 (Arianna): the printed 510 is well below its own ingredients. Cooked shoulder plus drippings since 26 Nov 2026, the loss measured from SR's raw Boston butt: ours 655 -> 638."
+   "note": "Reference corrected 25 Nov 2026 (Arianna): the printed 510 is well below its own ingredients. Cooked shoulder plus drippings since 26 Nov 2026, the loss measured from SR's raw Boston butt: ours 655 -> 638. Rechecked 28 Nov 2026: on the cooked basis its 750 stays (all the drippings are kept, so cooked meat plus drippings is the raw meat's calories). The -15% is amounts: Panlasang Pinoy's 2 lb shoulder for 5 (about 181 g raw a serving) against our 5.25 cups cooked for 6 (about 2.2 lb raw, 167 g a serving), and 3 tbsp oil and 3 hot dogs for 5 to our same for 6."
   },
   "bistek_tagalog": {
    "kcal": 234,
@@ -919,11 +919,11 @@
    "note": "Reference implausible. Ours: 1.5 oz unsweetened chocolate (273) + sugar per cup."
   },
   "bolognese_sauce": {
-   "kcal": 329,
+   "kcal": 321,
    "status": "recipe_match",
    "url": "https://bitingatthebits.com/ragu-alla-bolognese/print/13294/",
-   "basis": "mean of Biting at the Bits 406 per 1/2 cup (printed) and The Clever Carrot ~252 per 1/2 cup (its own amounts over its stated 5-6 cup yield; the page prints no nutrition)",
-   "note": "Pancetta 4 -> 8 oz, butter 2 -> 4 tbsp, oil 2 -> 3 tbsp since 19 Nov 2026 (Arianna), toward Biting at the Bits (11 oz pancetta, 1/2 cup butter, 4 tbsp oil), whose figure holds for its amounts (~400 per 1/2 cup). Second reference added 25 Nov 2026 (Arianna): The Clever Carrot's classic ragu (2 tbsp butter, 2 tbsp oil, 2 oz pancetta, 1 lb beef and pork, 1 cup milk, 1 cup wine, 28 oz tomatoes; 5-6 cups). Biting at the Bits is the richest version found (11 oz pancetta, 1/2 cup butter). Half the drippings skimmed since 26 Nov 2026: 331 -> 310. Both references are printed or rescaled figures, not our raw rows, so they stay."
+   "basis": "mean of Biting at the Bits 406 per 1/2 cup (printed) and The Clever Carrot ~237 per 1/2 cup (its own amounts over its stated 5-6 cup yield with our rows, half the drippings skimmed as ours; the page prints no nutrition)",
+   "note": "Pancetta 4 -> 8 oz, butter 2 -> 4 tbsp, oil 2 -> 3 tbsp since 19 Nov 2026 (Arianna), toward Biting at the Bits (11 oz pancetta, 1/2 cup butter, 4 tbsp oil), whose figure holds for its amounts (~400 per 1/2 cup). Second reference added 25 Nov 2026 (Arianna): The Clever Carrot's classic ragu (2 tbsp butter, 2 tbsp oil, 2 oz pancetta, 1 lb beef and pork, 1 cup milk, 1 cup wine, 28 oz tomatoes; 5-6 cups). Biting at the Bits is the richest version found (11 oz pancetta, 1/2 cup butter). Half the drippings skimmed since 26 Nov 2026: 331 -> 310. Both references are printed or rescaled figures, not our raw rows, so they stay. Recomputed 28 Nov 2026: The Clever Carrot's figure is its own amounts with our rows, so it takes the same cooked basis as ours: its 1 lb of meat over 11 half cups, 105 kcal raw a serving, loses 14% skimmed (as ours, 143.5 raw -> 123 cooked plus kept drippings): 252 -> 237, and the mean 329 -> 321."
   },
   "italian_meatballs": {
    "kcal": 89,
