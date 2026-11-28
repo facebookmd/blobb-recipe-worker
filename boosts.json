@@ -425,11 +425,6 @@
     "weight": 0.9
   },
   {
-    "trigger": "mirin",
-    "portion_gram_weight": 17.0,
-    "portion_label": "1 tbsp"
-  },
-  {
     "trigger": "tonkatsu sauce",
     "fdc_id": "B_2455990",
     "weight": 0.95,

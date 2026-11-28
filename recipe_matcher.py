@@ -131,8 +131,6 @@ BUILTIN_BOOSTS = [
     {"trigger": "large egg",     "boost": "whole egg large",             "weight": 0.9},
     # Japanese cooking essentials — short names with no USDA standard entry;
     # boost to the branded/common name so the token index finds them.
-    {"trigger": "mirin",         "boost": "mirin sweet rice wine",       "weight": 0.9,
-     "exclude": ["vinegar"]},
     {"trigger": "sake",          "boost": "sake rice wine",              "weight": 0.9,
      "exclude": ["vinegar","salmon"]},
     {"trigger": "katsuobushi",   "boost": "bonito flakes",               "weight": 0.9},
