@@ -337,7 +337,7 @@ Roast Chicken
 ID: roast_chicken
 AKA: Whole roast chicken", "Lemon garlic roast chicken", "Roasted chicken
 Servings: 4
-1 whole chicken
+1 roasted whole chicken
 2 tbsp butter
 2 tbsp olive oil
 1.5 tbsp lemon juice

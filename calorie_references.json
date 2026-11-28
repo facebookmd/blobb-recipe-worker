@@ -1430,11 +1430,11 @@
    "note": "Reference corrected 25 Nov 2026 (Arianna)."
   },
   "roast_chicken": {
-   "kcal": 608,
-   "status": "recipe_match",
+   "kcal": 532,
+   "status": "ok",
    "url": "https://www.spendwithpennies.com/lemon-roasted-chicken/",
-   "basis": "Spend with Pennies' own amounts (a 3 lb chicken, 2 tbsp oil, 2 tbsp butter for 4): ~608; it prints 532",
-   "note": "Butter 4 -> 2 tbsp since 25 Nov 2026 (Arianna): 666 -> 615. '1 whole chicken' is USDA's broiler, meat and skin."
+   "basis": "4 servings",
+   "note": "28 Nov 2026 (Arianna): the bird is counted cooked, as eaten: '1 roasted whole chicken' is USDA's roasted broiler, meat and skin (SR 171450, 598 g a bird from its half chicken of 299 g, 239 kcal/100 g), not the raw one (920 g): 615 -> 478. Spend with Pennies' 532 (3 lb bird, 2 tbsp each of butter and oil for 4) sits near the cooked basis: about 477 cooked, 614 raw by its amounts, and its 35 g protein a serving is about 513 g of roasted chicken. RecipeTin's 505 (3.5-4 lb for 5, 100 g butter) is about 559 cooked, 700 raw; Cafe Delites' 693 (4 lb for 4) about 687 cooked, 870 raw. Was a recipe match: Spend with Pennies' amounts on the raw row, 608. Butter 4 -> 2 tbsp since 25 Nov 2026 (Arianna): 666 -> 615. '1 whole chicken' is USDA's broiler, meat and skin."
   },
   "chicken_pot_pie": {
    "kcal": 573,

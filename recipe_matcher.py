@@ -455,6 +455,14 @@ def _portion_label(portion_row: dict) -> str:
     return _row_text(portion_row, "description", "label")
 
 
+def _is_zero_amount_label(label: str) -> bool:
+    """A portion USDA publishes with amount 0 ("0 cup", 142 g, for Rennin
+    mix): no count to divide by, so it can't measure anything. SR's chicken
+    halves had this until 20261128120000 gave them their 0.5; "1 roasted
+    whole chicken" divided by zero (28 Nov 2026)."""
+    return bool(re.match(r"^0(?:\.0+)?\s", label))
+
+
 def _portion_display_label(portion_row: dict, label: str) -> str:
     """[label] (from [_portion_label]) with the unit's clean name from the
     USDA project's display_label: "1 medium" for 'medium (2-1/2" dia)', "2
@@ -514,7 +522,7 @@ def _build_supabase_usda_food(row: dict, row_index: int, portions_by_food_id: di
             grams_val = float(grams) if grams is not None else None
         except (TypeError, ValueError):
             grams_val = None
-        if not label or grams_val is None:
+        if not label or grams_val is None or _is_zero_amount_label(label):
             continue
         portions.append({
             "portion_id": f"{fdc_id}-{idx}",
