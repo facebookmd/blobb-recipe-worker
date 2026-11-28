@@ -257,7 +257,7 @@ Chicken Cacciatore
 ID: chicken_cacciatore
 AKA: Pollo alla cacciatora", "Hunter's chicken
 Servings: 4
-8 bone-in skin-on chicken thigh
+8 medium stewed skin-on chicken thigh
 1 tsp salt
 1/2 tsp black pepper
 2 tbsp olive oil
@@ -270,6 +270,8 @@ Servings: 4
 3 cup canned crushed tomatoes
 1 cup pitted black olives
 1 sprig rosemary
+--Drippings
+6.25 tbsp animal fat or drippings
 SOURCE: https://www.chilipeppermadness.com/wprm_print/chicken-cacciatore-recipe, https://www.sbs.com.au/food/recipe/chicken-cacciatore-pollo-all-cacciatora/3rrwuiepk, https://grantourismotravels.com/chicken-cacciatore-recipe/
 
 

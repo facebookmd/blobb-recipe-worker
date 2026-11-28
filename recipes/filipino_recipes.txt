@@ -55,7 +55,7 @@ ID: chicken_adobo
 AKA: Adobong manok", "Adobo chicken", "Adobo
 Servings: 6
 Serving size: 1 piece
-6 bone-in skin-on chicken thigh
+6 large stewed skin-on chicken thigh
 6 tbsp soy sauce
 6 tbsp cane vinegar
 6 clove garlic
@@ -63,6 +63,8 @@ Serving size: 1 piece
 4 bay leaf
 1/2 cup water
 3 tbsp vegetable oil
+--Drippings
+5.75 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/easy-chicken-adobo-recipe, https://www.foxyfolksy.com/chicken-adobo-with-browned-garlic/, https://www.foodnetwork.com/recipes/filipino-chicken-adobo-recipe-1955818
 
 
@@ -370,7 +372,7 @@ Chicken Afritada
 ID: chicken_afritada
 AKA: Afritada", "Afritadang manok
 Servings: 4
-4 bone-in skin-on chicken thigh
+4 medium stewed skin-on chicken thigh
 2 tbsp vegetable oil
 1 medium onion
 2 clove garlic
@@ -383,6 +385,8 @@ Servings: 4
 1/2 tsp sugar
 1/2 tsp salt
 1/4 tsp black pepper
+--Drippings
+3 tbsp animal fat or drippings
 SOURCE: https://panlasangpinoy.com/wprm_print/chicken-afritada-recipe, https://www.jocooks.com/wprm_print/chicken-afritada, https://pepper.ph/recipes/one-pot-chicken-afritada
 
 
@@ -506,7 +510,7 @@ Chicken Inasal
 ID: chicken_inasal
 AKA: Inasal", "Bacolod chicken inasal", "Inasal na manok
 Servings: 4
-4 chicken leg quarter
+4 medium broiled skin-on chicken leg
 --Absorbed marinade
 2 tbsp cane vinegar
 1 tbsp lemon juice

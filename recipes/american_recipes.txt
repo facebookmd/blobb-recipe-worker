@@ -377,7 +377,7 @@ Buffalo Wings
 ID: buffalo_wings
 AKA: Buffalo chicken wings", "Hot wings", "Chicken wings
 Servings: 24
-2 lb chicken wings
+12 baked chicken wing
 2 tsp baking powder
 1/2 tsp salt
 1/4 tsp black pepper

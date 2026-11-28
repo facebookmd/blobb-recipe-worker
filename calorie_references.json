@@ -391,7 +391,7 @@
    "status": "recipe_match",
    "url": "https://panlasangpinoy.com/wprm_print/easy-chicken-adobo-recipe",
    "basis": "Panlasang Pinoy's own amounts for 4 (one of our sources): 2 lb bone-in chicken pieces (about one USDA thigh a serving, as ours), 4 tbsp oil, chicken cube, soy sauce, vinegar; about 569 with our rows. It prints 661, counting the bone as meat",
-   "note": "Swapped 25 Nov 2026 (Arianna): Foxy Folksy's 374 is 2 lb of chicken for 6, the lightest of the sources (about 365 by its amounts). Food Network: 4-5 lb thighs for 6-8, about 548 by its amounts (prints 611). Skin-on is how all of them cook it."
+   "note": "Swapped 25 Nov 2026 (Arianna): Foxy Folksy's 374 is 2 lb of chicken for 6, the lightest of the sources (about 365 by its amounts). Food Network: 4-5 lb thighs for 6-8, about 548 by its amounts (prints 611). Skin-on is how all of them cook it. 28 Nov 2026 (Arianna): chicken pieces are FNDDS's cooked pieces, sized from the sources (USDA SR's raw pieces are big US broiler parts). Ours is 6 large stewed thighs (110 g) plus 5.75 tbsp drippings, all kept as the sources do: 504 -> 424. The sources serve 90-173 g cooked chicken a serving (Foxy Folksy 2 lb for 6, Panlasang Pinoy 2 lb for 4, Food Network 4-5 lb for 6-8); Panlasang Pinoy's is about 135 g, ours one large thigh, and it uses 4 tbsp oil for 4. Its 569 is unchanged cooked: with all the drippings kept, cooked meat plus drippings is the raw meat's calories."
   },
   "lechon_kawali": {
    "kcal": 238,
@@ -499,11 +499,11 @@
    "note": "Panlasang Pinoy's 361 dropped 25 Nov 2026 (Arianna): its page no longer loads the recipe."
   },
   "chicken_afritada": {
-   "kcal": 583,
+   "kcal": 433,
    "status": "ok",
-   "url": "https://panlasangpinoy.com/wprm_print/chicken-afritada-recipe",
-   "basis": "4 servings",
-   "note": null
+   "url": "https://www.jocooks.com/wprm_print/chicken-afritada",
+   "basis": "6 servings",
+   "note": "28 Nov 2026 (Arianna): chicken pieces are FNDDS's cooked pieces, sized from the sources (USDA SR's raw pieces are big US broiler parts). Ours is 4 medium stewed thighs (90 g) plus 3 tbsp drippings, all kept: 617 -> 470. Jo Cooks' 433 adds up (about 441 by its amounts: 2 lb bone-in skin-on thighs or drumsticks for 6, about 90 g cooked a serving). Swapped from Panlasang Pinoy's 583, which has 3 hotdogs (about 110 a serving) that ours doesn't; about 663 by its amounts. Pepper.ph prints none (6 drumsticks for 4-6, about 406 for 5)."
   },
   "pork_menudo": {
    "kcal": 750,
@@ -552,7 +552,7 @@
    "status": "ok",
    "url": "https://www.hungryhuy.com/chicken-inasal/",
    "basis": "5 servings",
-   "note": "One skin-on leg quarter a serving: USDA's \"1 leg with skin\" is 344 g (thigh, drumstick and back), 736 kcal, consistent with the thigh weight. Settled 16 Nov 2026: the recipe says skin-on, as its sources cook it, so the skin is counted as eaten; a user who removes it switches the line to skinless. Checked 25 Nov 2026: Hungry Huy's 694 adds up (about 720 by its own amounts); it is 3 1/2 lb of legs for 5 (about 230 g of meat and skin a serving), ours one USDA leg quarter (344 g). Kawaling Pinoy's quarter of a 3-4 lb chicken is about 275 g. Rechecked 25 Nov 2026: kept at one leg quarter by count (Arianna: a weight is no use to someone logging, who can't estimate it). Every source serves less chicken than USDA's leg quarter (344 g meat and skin, bone removed: SR 173619's meat-only leg is 265 g 'bone and skin removed', so 79 g is skin; a big US broiler part, about 1 lb bone-in): Not Quite Nigella's 400 g marylands are about 290 g without bone, Hungry Huy's legs about 230 g, Kawaling Pinoy's quarters of a 3-4 lb bird about 230 g, Foxy Folksy's 2 lb for 4 about 165 g. The +25% is that size difference. The other part of the gap is raw vs cooked: USDA's roasted leg quarter, meat and skin (SR 173617), is 258 g and about 475 kcal against 736 raw; grilling renders the skin's fat. With it inasal would be about 600 (-13%). Counting chicken cooked is a rules change for every grilled or roasted skin-on template, Arianna's call (not made). Calorie sites, not recipes, for scale: FNDDS cooked leg quarter 331 (FatSecret), Mang Inasal paa about 500 (MyNetDiary)."
+   "note": "28 Nov 2026 (Arianna): chicken pieces are FNDDS's cooked pieces, sized from the sources (USDA SR's raw pieces are big US broiler parts). Ours is 4 medium broiled legs, skin eaten (140 g, 300 kcal each): the sources serve about 160 g cooked a leg (Hungry Huy's 3 1/2 lb for 5 and Kawaling Pinoy's quarters of a 3-4 lb bird about 162 g, Not Quite Nigella's 400 g marylands about 204 g, Foxy Folksy's 2 lb for 4 about 116 g), nearest FNDDS's medium (large is 185 g). Grilled: the rendered fat drips away, so no drippings. Was one raw SR leg quarter (344 g, 736 kcal): 866. Hungry Huy's 694 adds up (about 742 by its amounts, all raw); cooked, about 597. The rest of the gap is the oil and butter: its 1/4 cup annatto oil in the marinade and 4 tbsp butter basting for 5, ours 2 tbsp butter and 2 tbsp oil for 4. Foxy Folksy's 773 doesn't add up (71 g carbs a serving; about 638 by its amounts). Kawaling Pinoy's page refuses access since 28 Nov 2026."
   },
   "pinakbet_": {
    "kcal": 308,
@@ -643,7 +643,7 @@
    "status": "ok",
    "url": "https://www.recipesbynora.com/wprm_print/filipino-adobo-fried-rice",
    "basis": "4 servings",
-   "note": "Rice 4.5 -> 3 cups and chicken adobo 2.5 -> 1.5 pieces for 4 since 25 Nov 2026 (Arianna), as Nora (3 cups rice, 1 1/2 cups adobo)."
+   "note": "Rice 4.5 -> 3 cups and chicken adobo 2.5 -> 1.5 pieces for 4 since 25 Nov 2026 (Arianna), as Nora (3 cups rice, 1 1/2 cups adobo). Chicken adobo's thighs are FNDDS's large stewed thigh plus drippings since 28 Nov 2026: 426 -> 363 (the 1.5 pieces are smaller)."
   },
   "arroz_caldo": {
    "kcal": 408,
@@ -1003,11 +1003,11 @@
    "note": "1/2 cup heavy cream added since 25 Nov 2026 (Arianna), as both references finish the sauce with cream: 441 -> 543."
   },
   "chicken_cacciatore": {
-   "kcal": 1218,
-   "status": "recipe_match",
+   "kcal": 860,
+   "status": "ok",
    "url": "https://grantourismotravels.com/chicken-cacciatore-recipe/",
-   "basis": "Grantourismo's own amounts for 4 (one of our sources): 8 bone-in skin-on thighs, 5 tbsp olive oil, red wine, 14 oz crushed tomatoes, 14 oz purée, 1 cup olives; about 1,218 with our rows. It prints 860",
-   "note": "Swapped 25 Nov 2026 (Arianna): Once Upon a Chef trims the skin. Grantourismo keeps it, with the same 8 thighs for 4 as ours; its 860 fits thighs of about 140 g, smaller than USDA's 193 g skin-on thigh. Chili Pepper Madness (2.5 lb of thighs for 4) comes to about 854 by its amounts and prints 478."
+   "basis": "4 servings",
+   "note": "28 Nov 2026 (Arianna): chicken pieces are FNDDS's cooked pieces, sized from the sources (USDA SR's raw pieces are big US broiler parts). Ours is 8 medium stewed thighs (90 g) plus 6.25 tbsp drippings, all kept (Grantourismo makes the soffritto in the chicken's fat; SBS reuses the pan): 1,079 -> 792. Grantourismo's printed 860 now counts: its 42 g protein a serving is two thighs of about 120 g raw meat and skin, FNDDS's medium; about 911 by its amounts at that size. Was a recipe match of 1,218 on SR's 193 g raw thigh. Ours is under from 2 tbsp oil to its 5, and no tomato purée or green olives. SBS: 4 marylands for 4, about 1,005 if 400 g each (none printed). Chili Pepper Madness refuses access. Swapped 25 Nov 2026 (Arianna): Once Upon a Chef trims the skin. Grantourismo keeps it, with the same 8 thighs for 4 as ours; its 860 fits thighs of about 140 g, smaller than USDA's 193 g skin-on thigh. Chili Pepper Madness (2.5 lb of thighs for 4) comes to about 854 by its amounts and prints 478."
   },
   "saltimbocca_": {
    "kcal": null,
